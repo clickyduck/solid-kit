@@ -1,0 +1,65 @@
+{
+  "name": "@clickyduck/solid-kit",
+  "version": "0.1.0",
+  "description": "solid-kit — SolidJS component library with Tailwind CSS and Flowbite",
+  "type": "module",
+  "main": "./public/index.cjs",
+  "module": "./public/index.js",
+  "types": "./public/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./public/index.d.ts",
+        "default": "./public/index.js"
+      },
+      "require": {
+        "types": "./public/index.d.ts",
+        "default": "./public/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "public"
+  ],
+  "scripts": {
+    "development": "vite",
+    "format": "npx prettier --write .",
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "build:clean": "node --eval \"import('fs').then(({ rmSync }) => { rmSync('public', { recursive: true, force: true }); console.log('Cleaned public/'); })\" && vite build",
+    "type:check": "tsc --noEmit",
+    "type:watch": "tsc --noEmit --watch"
+  },
+  "peerDependencies": {
+    "solid-js": "^1.9.0",
+    "tailwindcss": "^3.4.0"
+  },
+  "dependencies": {
+    "@material-symbols/svg-500": "*",
+    "clsx": "^2.1.1",
+    "flowbite": "^4.0.1",
+    "tailwind-merge": "^3.5.0"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/clickyduck/solid-kit.git"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^25.6.0",
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.10",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.2",
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.8",
+    "vite-plugin-dts": "^4.5.4",
+    "vite-plugin-solid": "^2.11.12",
+    "vite-plugin-solid-svg": "^0.8.1"
+  }
+}
