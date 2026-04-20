@@ -1,5 +1,4 @@
-import { TEXT_BLOCK_CONTROL_PADDING_CLASS } from "@/utilities/controlLayoutClasses";
-import { mergeClasses } from "@/utilities/mergeClasses";
+import { TEXTAREA_CLASSES, mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { splitProps } from "solid-js";
 
@@ -79,8 +78,8 @@ export const Textarea = (properties: TextareaProperties) => {
       ref={local.autoGrow ? handleRef : local.ref}
       rows={local.autoGrow ? minRows() : local.rows}
       class={mergeClasses(
-        "block w-full rounded-lg border border-gray-700 bg-gray-800/50 text-white placeholder-gray-500 transition-colors duration-150 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
-        TEXT_BLOCK_CONTROL_PADDING_CLASS,
+        "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-400 transition-colors duration-150 focus:border-blue-500 focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400",
+        TEXTAREA_CLASSES,
         local.autoGrow && "overflow-hidden",
         resizeClass(),
         local.class

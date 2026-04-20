@@ -1,6 +1,6 @@
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon, closeCircle } from "@/components/icons";
-import { mergeClasses } from "@/utilities/mergeClasses";
+import { mergeClasses } from "@/utilities";
 import { Modal } from "flowbite";
 import type { ModalInterface, ModalOptions } from "flowbite";
 import type { ComponentProps, JSX } from "solid-js";
@@ -39,7 +39,7 @@ export const Dialog = (properties: DialogRootProperties) => {
       const modalOptions: ModalOptions = {
         placement: "center",
         backdrop: "dynamic",
-        backdropClasses: "bg-gray-900/50 backdrop-blur-xl fixed inset-0 z-40",
+        backdropClasses: "fixed inset-0 z-40 bg-black/30 backdrop-blur-xl dark:bg-gray-900/50",
         closable: false,
         onHide: () => {
           if (properties.onOpenChange) {
@@ -116,10 +116,10 @@ export const DialogContent = (properties: DialogContentPropertiesType) => {
   const [local, rest] = splitProps(properties, ["class", "children"]);
 
   return (
-    <div class="relative my-auto h-dvh w-full p-0 sm:h-auto sm:max-w-2xl sm:p-1.5 md:p-4">
+    <div class="relative my-auto h-dvh w-full p-0 sm:h-auto sm:max-w-2xl sm:p-4">
       <div
         class={mergeClasses(
-          "relative flex h-full flex-col bg-gray-900 sm:max-h-[calc(100dvh-0.75rem)] sm:rounded-lg sm:border sm:border-gray-700 sm:shadow-sm md:max-h-[calc(100dvh-4rem)] [&>form]:flex [&>form]:min-h-0 [&>form]:flex-1 [&>form]:flex-col",
+          "relative flex h-full flex-col bg-white sm:max-h-[calc(100dvh-0.75rem)] sm:rounded-lg sm:border sm:border-gray-200 sm:shadow-lg md:max-h-[calc(100dvh-4rem)] dark:bg-gray-900 dark:sm:border-gray-700 dark:sm:shadow-sm [&>form]:flex [&>form]:min-h-0 [&>form]:flex-1 [&>form]:flex-col",
           local.class
         )}
         {...rest}
@@ -137,7 +137,7 @@ type DialogTitlePropertiesType = ComponentProps<"h2"> & { class?: string };
  */
 export const DialogTitle = (properties: DialogTitlePropertiesType) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return <h3 class={mergeClasses("text-lg font-medium text-white", local.class)} {...rest} />;
+  return <h3 class={mergeClasses("text-lg font-medium text-gray-900 dark:text-white", local.class)} {...rest} />;
 };
 
 type DialogDescriptionPropertiesType = ComponentProps<"p"> & { class?: string };
@@ -147,7 +147,7 @@ type DialogDescriptionPropertiesType = ComponentProps<"p"> & { class?: string };
  */
 export const DialogDescription = (properties: DialogDescriptionPropertiesType) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return <div class={mergeClasses("leading-relaxed text-gray-300", local.class)} {...rest} />;
+  return <div class={mergeClasses("leading-relaxed text-gray-600 dark:text-gray-300", local.class)} {...rest} />;
 };
 
 /**
@@ -159,7 +159,7 @@ export const DialogHeader = (properties: ComponentProps<"div"> & { actions?: JSX
   const hideModal = context?.hideModal ?? (() => {});
 
   return (
-    <div class={mergeClasses("flex shrink-0 items-center justify-between border-b border-gray-700 px-5 py-4 md:px-6 md:py-5", local.class)} {...rest}>
+    <div class={mergeClasses("flex shrink-0 items-center justify-between border-b border-gray-200 px-6 py-5 dark:border-gray-700", local.class)} {...rest}>
       <div class="flex flex-1 items-center overflow-hidden">{local.children}</div>
       <div class="flex items-center gap-2">
         <Show when={properties.actions}>{properties.actions}</Show>
@@ -181,7 +181,7 @@ type DialogBodyPropertiesType = Omit<ComponentProps<"div">, "children"> & { chil
 export const DialogBody = (properties: DialogBodyPropertiesType) => {
   const [local, rest] = splitProps(properties, ["class", "children"]);
   return (
-    <div class={mergeClasses("min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-4 md:space-y-6 md:px-6 md:py-5", local.class)} {...rest}>
+    <div class={mergeClasses("min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5", local.class)} {...rest}>
       {local.children}
     </div>
   );
@@ -195,7 +195,7 @@ export const DialogFooter = (properties: ComponentProps<"div">) => {
   return (
     <div
       class={mergeClasses(
-        "flex w-full shrink-0 flex-row items-stretch gap-3 border-t border-gray-700 px-5 py-4 sm:flex-row sm:items-center sm:justify-end sm:gap-0 sm:space-x-4 md:px-6 md:py-5 [&>button]:min-w-32 [&>button]:flex-1 sm:[&>button]:flex-initial [&>div]:hidden sm:[&>div]:block",
+        "flex w-full shrink-0 flex-row items-stretch gap-3 border-t border-gray-200 px-6 py-5 sm:flex-row sm:items-center sm:justify-end sm:gap-0 sm:space-x-4 dark:border-gray-700 [&>button]:min-w-32 [&>button]:flex-1 sm:[&>button]:flex-initial [&>div]:hidden sm:[&>div]:block",
         local.class
       )}
       {...rest}

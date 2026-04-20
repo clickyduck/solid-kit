@@ -1,7 +1,5 @@
 import { Icon, type IconComponent } from "@/components/icons";
-import { CLICKABLE_COMPONENT_PADDING, INLINE_ICON_END_PADDING_CLASS, INLINE_ICON_START_PADDING_CLASS } from "@/utilities/controlLayoutClasses";
-import { INLINE_ICON_WITHIN_CLICKABLE_CLASS, type IconPosition } from "@/utilities/icon";
-import { mergeClasses } from "@/utilities/mergeClasses";
+import { BUTTON_CLASSES, BUTTON_LEADING_ICON_CLASSES, BUTTON_TRAILING_ICON_CLASSES, type IconPosition, mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
@@ -20,13 +18,13 @@ type ButtonProps = ComponentProps<"button"> & {
 const getVariantClasses = (variant: ButtonVariant = "default"): string => {
   switch (variant) {
     case "default":
-      return "text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900";
+      return "border-2 border-transparent text-white bg-blue-600 enabled:hover:bg-blue-700 focus-visible:border-white dark:focus-visible:border-gray-100";
     case "outline":
-      return "text-white bg-gray-800 border border-gray-700 hover:bg-gray-700 focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900";
+      return "border border-solid border-gray-300 bg-white text-gray-700 enabled:hover:bg-gray-50 focus-visible:border-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:enabled:hover:bg-gray-700 dark:focus-visible:border-blue-400";
     case "ghost":
-      return "text-white hover:bg-gray-700/60 focus-visible:ring-2 focus-visible:ring-blue-500/40";
+      return "border-2 border-transparent text-gray-700 enabled:hover:bg-gray-100/60 focus-visible:border-gray-400 dark:text-white dark:enabled:hover:bg-gray-700/60 dark:focus-visible:border-gray-500";
     case "link":
-      return "text-blue-500 underline-offset-4 hover:underline focus-visible:ring-2 focus-visible:ring-blue-500/40";
+      return "border-2 border-transparent text-blue-600 underline-offset-4 enabled:hover:underline focus-visible:border-blue-500 dark:text-blue-500 dark:focus-visible:border-blue-400";
   }
 };
 
@@ -40,9 +38,9 @@ export const Button = (properties: ButtonProps) => {
     <button
       type="button"
       class={mergeClasses(
-        "flex cursor-pointer items-center justify-center gap-2 rounded-lg text-center font-medium transition-all duration-150 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+        "flex cursor-pointer items-center justify-center gap-2 rounded-lg text-center font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50",
         getVariantClasses(local.variant),
-        CLICKABLE_COMPONENT_PADDING,
+        BUTTON_CLASSES,
         local.class
       )}
       {...rest}
@@ -52,11 +50,11 @@ export const Button = (properties: ButtonProps) => {
           return (
             <>
               <Show when={local.iconPosition !== "end"}>
-                <Icon icon={resolvedIconComponent} class={mergeClasses(INLINE_ICON_WITHIN_CLICKABLE_CLASS, INLINE_ICON_START_PADDING_CLASS, "pointer-events-none shrink-0 text-current")} aria-hidden="true" />
+                <Icon icon={resolvedIconComponent} class={BUTTON_LEADING_ICON_CLASSES} aria-hidden="true" />
               </Show>
               {local.children}
               <Show when={local.iconPosition === "end"}>
-                <Icon icon={resolvedIconComponent} class={mergeClasses(INLINE_ICON_WITHIN_CLICKABLE_CLASS, INLINE_ICON_END_PADDING_CLASS, "pointer-events-none ml-auto shrink-0 text-current")} aria-hidden="true" />
+                <Icon icon={resolvedIconComponent} class={BUTTON_TRAILING_ICON_CLASSES} aria-hidden="true" />
               </Show>
             </>
           );

@@ -2,31 +2,26 @@ import type { BadgeVariant } from "@/components/badge/Badge";
 import { Badge } from "@/components/badge/Badge";
 import { Button } from "@/components/button/Button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/card/Card";
-import { Checkbox } from "@/components/checkbox/Checkbox";
-import type { CheckboxOption } from "@/components/checkboxes/Checkboxes";
-import { Checkboxes } from "@/components/checkboxes/Checkboxes";
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/dialog/Dialog";
 import { Dropdown, DropdownIconTrigger, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
 import { EmptyState } from "@/components/empty-state/EmptyState";
 import { Field } from "@/components/field/Field";
-import { Header } from "@/components/header/Header";
 import { Heading } from "@/components/heading/Heading";
 import { IconButton } from "@/components/icon-button/IconButton";
-import { arrowLeft, calendarDays, checkCircle, dashboard, ellipsisVertical, inventory, pencil, search, settings, tag, wallet } from "@/components/icons/Icons";
+import { calendarDays, checkCircle, darkMode, dashboard, ellipsisVertical, inventory, lightMode, pencil, search, settings, tag, wallet } from "@/components/icons/Icons";
 import { Input } from "@/components/input/Input";
 import { Loading } from "@/components/loading/Loading";
 import { Metric } from "@/components/metric/Metric";
 import { Spinner } from "@/components/spinner/Spinner";
-import type { StatusVariant } from "@/components/status/Status";
-import { Status } from "@/components/status/Status";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TablePagination, TableRow } from "@/components/table/Table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TablePagination, TableRow } from "@/components/table/Table";
 import type { TabDefinition } from "@/components/tabs/Tabs";
 import { Tabs } from "@/components/tabs/Tabs";
 import { Textarea } from "@/components/textarea/Textarea";
 import { addToast } from "@/components/toast/Toast";
 import { Toaster } from "@/components/toast/Toaster";
+import { ToggleGroup } from "@/components/toggle-group/ToggleGroup";
 import { Upload } from "@/components/upload/Upload";
-import type { Color } from "@/utilities/color";
+import { type Color, createDocumentColorSchemePreferenceSignal } from "@/utilities";
 import type { JSX } from "solid-js";
 import { For, Show, createMemo, createSignal } from "solid-js";
 
@@ -52,14 +47,6 @@ type ShowcaseCategoryProperties = {
 const badgeVariants: BadgeVariant[] = ["prominent", "subtle", "ghost"];
 
 const semanticColors: Color[] = ["primary", "secondary", "neutral", "success", "warning", "danger"];
-
-const statusVariants: StatusVariant[] = ["success", "info", "warning", "danger", "neutral"];
-
-const checkboxOptions: CheckboxOption[] = [
-  { label: "Inventory sync", value: "inventory", description: "Pull latest stock levels" },
-  { label: "Price updates", value: "prices", description: "Apply scheduled price rules" },
-  { label: "Notifications", value: "alerts" }
-];
 
 const tableRows: { name: string; role: string; amount: string }[] = [
   { name: "North warehouse", role: "Active", amount: "₹12,450" },
@@ -94,12 +81,10 @@ const tabDefinitions: readonly TabDefinition<ShowcaseTabValue>[] = [
 const showcaseNavigationEntries: readonly ShowcaseNavigationEntry[] = [
   { anchorIdentifier: "showcase-heading-badges", navigationLabel: "Badges" },
   { anchorIdentifier: "showcase-heading-buttons", navigationLabel: "Buttons" },
-  { anchorIdentifier: "showcase-heading-status", navigationLabel: "Status" },
   { anchorIdentifier: "showcase-heading-spinner-loading", navigationLabel: "Spinner and loading" },
   { anchorIdentifier: "showcase-heading-metrics", navigationLabel: "Metric cards" },
   { anchorIdentifier: "showcase-heading-card-empty", navigationLabel: "Card and empty state" },
   { anchorIdentifier: "showcase-heading-forms", navigationLabel: "Fields and inputs" },
-  { anchorIdentifier: "showcase-heading-checkboxes", navigationLabel: "Checkbox groups" },
   { anchorIdentifier: "showcase-heading-tabs", navigationLabel: "Tabs" },
   { anchorIdentifier: "showcase-heading-dropdowns", navigationLabel: "Dropdowns" },
   { anchorIdentifier: "showcase-heading-table", navigationLabel: "Table" },
@@ -111,10 +96,7 @@ const showcaseNavigationEntries: readonly ShowcaseNavigationEntry[] = [
  */
 export const ShowcaseApplication = (): JSX.Element => {
   const [dialogOpen, setDialogOpen] = createSignal(false);
-  const [checkboxChecked, setCheckboxChecked] = createSignal(true);
-  const [checkboxListValues, setCheckboxListValues] = createSignal<string[]>(["inventory"]);
-  const [singleSelectValues, setSingleSelectValues] = createSignal<string[]>(["prices"]);
-  const [endCheckmarkValues, setEndCheckmarkValues] = createSignal<string[]>(["inventory"]);
+  const [digestSelection, setDigestSelection] = createSignal<string[]>(["weekly"]);
   const [dropdownValue, setDropdownValue] = createSignal<string | undefined>("Cherry");
   const [itemizedDropdownValue, setItemizedDropdownValue] = createSignal<string | undefined>("Banana");
   const [searchableDropdownValue, setSearchableDropdownValue] = createSignal<string | undefined>("Mumbai");
@@ -125,9 +107,10 @@ export const ShowcaseApplication = (): JSX.Element => {
   const [textareaAutoGrowValue, setTextareaAutoGrowValue] = createSignal("Type multiple lines to watch auto-grow clamp between min and max rows.");
   const [uploadSelectedFiles, setUploadSelectedFiles] = createSignal<File[]>([]);
   const [activeShowcaseTab, setActiveShowcaseTab] = createSignal<ShowcaseTabValue>("overview");
-  const [tabsDisabled, setTabsDisabled] = createSignal(false);
   const [tablePagination, setTablePagination] = createSignal<{ limit: number; offset: number }>({ limit: 25, offset: 0 });
-  const [metricLoading, setMetricLoading] = createSignal(false);
+  const [shippingMethod, setShippingMethod] = createSignal<string | undefined>("standard");
+  const [contactChannelsWithoutDescription, setContactChannelsWithoutDescription] = createSignal<string[]>(["email"]);
+  const [documentColorSchemeName, setDocumentColorSchemeName] = createDocumentColorSchemePreferenceSignal();
 
   const dropdownOptions = (): string[] => {
     return ["Apple", "Banana", "Cherry", "Date", "Elderberry"];
@@ -162,29 +145,42 @@ export const ShowcaseApplication = (): JSX.Element => {
     <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <Toaster />
 
-      <Header
-        title="Solid Kit Showcase"
-        description="Showcase for buttons, forms, data surfaces, overlays, and feedback primitives from this package."
-        back={
-          <Button variant="ghost" class="px-0 text-sm text-gray-400 hover:text-white" icon={arrowLeft}>
-            Back to documentation
-          </Button>
-        }
-      >
-        <Button variant="outline" onClick={() => setMetricLoading((previous) => !previous)}>
-          Toggle metric loading
-        </Button>
-        <Button onClick={() => setTabsDisabled((previous) => !previous)}>Toggle tabs disabled</Button>
-      </Header>
+      <header class="flex flex-col gap-6 border-b border-gray-200 pb-8 sm:flex-row sm:items-center sm:justify-between dark:border-gray-800">
+        <div class="space-y-1">
+          <h1 class="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">Solid Kit showcase</h1>
+          <p class="max-w-2xl text-sm text-gray-600 dark:text-gray-400">Interactive samples for buttons, forms, data surfaces, and overlays. Toggle the document color scheme to preview light and dark styling.</p>
+        </div>
+        <div class="flex shrink-0 items-center gap-1 rounded-full border border-gray-200 bg-gray-100/80 p-1 dark:border-gray-700 dark:bg-gray-900/60">
+          <IconButton
+            variant={documentColorSchemeName() === "light" ? "default" : "ghost"}
+            icon={lightMode}
+            aria-label="Use light color scheme"
+            onClick={() => {
+              setDocumentColorSchemeName("light");
+            }}
+          />
+          <IconButton
+            variant={documentColorSchemeName() === "dark" ? "default" : "ghost"}
+            icon={darkMode}
+            aria-label="Use dark color scheme"
+            onClick={() => {
+              setDocumentColorSchemeName("dark");
+            }}
+          />
+        </div>
+      </header>
 
-      <nav class="mt-10 rounded-2xl border border-gray-800/90 bg-gray-950/40 p-5 ring-1 ring-white/4 sm:p-6" aria-label="Showcase sections">
-        <p class="text-xs font-semibold tracking-wide text-gray-500 uppercase">On this page</p>
+      <nav class="mt-10 rounded-2xl border border-gray-200 bg-white/90 p-5 shadow-sm ring-1 ring-black/5 sm:p-6 dark:border-gray-800/90 dark:bg-gray-950/40 dark:shadow-none dark:ring-white/4" aria-label="Showcase sections">
+        <p class="text-xs font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-500">On this page</p>
         <ul class="mt-4 flex flex-wrap gap-2">
           <For each={showcaseNavigationEntries}>
             {(entry) => {
               return (
                 <li>
-                  <a class="inline-flex rounded-full border border-gray-700/90 bg-gray-900/60 px-3 py-1.5 text-xs font-medium text-gray-300 transition hover:border-gray-600 hover:bg-gray-800 hover:text-white" href={`#${entry.anchorIdentifier}`}>
+                  <a
+                    class="inline-flex rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:border-gray-300 hover:bg-gray-50 hover:text-gray-900 dark:border-gray-700/90 dark:bg-gray-900/60 dark:text-gray-300 dark:hover:border-gray-600 dark:hover:bg-gray-800 dark:hover:text-white"
+                    href={`#${entry.anchorIdentifier}`}
+                  >
                     {entry.navigationLabel}
                   </a>
                 </li>
@@ -202,7 +198,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                 {(variant) => {
                   return (
                     <div class="space-y-2">
-                      <p class="text-xs font-semibold tracking-wide text-gray-500 uppercase">{variant}</p>
+                      <p class="text-xs font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-500">{variant}</p>
                       <div class="flex flex-wrap gap-2">
                         <For each={semanticColors}>
                           {(color) => {
@@ -248,32 +244,11 @@ export const ShowcaseApplication = (): JSX.Element => {
               </Button>
             </div>
             <div class="flex flex-wrap gap-3">
-              <IconButton variant="default" icon={settings} aria-label="Settings default" />
-              <IconButton variant="ghost" icon={ellipsisVertical} aria-label="More ghost" />
-              <IconButton variant="primary" icon={checkCircle} aria-label="Confirm primary" />
-              <IconButton variant="secondary" icon={search} aria-label="Search secondary" />
+              <IconButton variant="default" icon={checkCircle} aria-label="Default icon button" />
+              <IconButton variant="outline" icon={settings} aria-label="Outline icon button" />
+              <IconButton variant="ghost" icon={ellipsisVertical} aria-label="Ghost icon button" />
+              <IconButton variant="link" icon={search} aria-label="Link icon button" />
               <IconButton variant="default" icon={settings} aria-label="Disabled icon button" disabled />
-            </div>
-          </ShowcaseSection>
-
-          <ShowcaseSection sectionHeadingIdentifier="showcase-heading-status" sectionTitle="Status">
-            <div class="flex flex-wrap gap-2">
-              <For each={statusVariants}>
-                {(variant) => {
-                  return (
-                    <Status variant={variant} dot>
-                      {variant}
-                    </Status>
-                  );
-                }}
-              </For>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <For each={statusVariants}>
-                {(variant) => {
-                  return <Status variant={variant}>Plain {variant}</Status>;
-                }}
-              </For>
             </div>
           </ShowcaseSection>
         </ShowcaseCategory>
@@ -281,9 +256,8 @@ export const ShowcaseApplication = (): JSX.Element => {
         <ShowcaseCategory categoryTitle="Progress and loading">
           <ShowcaseSection sectionHeadingIdentifier="showcase-heading-spinner-loading" sectionTitle="Spinner and loading">
             <div class="flex flex-wrap items-center gap-6">
-              <Spinner size={20} class="text-blue-400" />
-              <Spinner size={32} class="text-emerald-400" />
-              <Spinner size={48} class="text-amber-400" aria-label="Loading content" />
+              <Spinner class="text-blue-400" />
+              <Spinner class="text-emerald-400" aria-label="Loading content" />
             </div>
             <Card>
               <CardContent>
@@ -296,11 +270,11 @@ export const ShowcaseApplication = (): JSX.Element => {
         <ShowcaseCategory categoryTitle="Data surfaces">
           <ShowcaseSection sectionHeadingIdentifier="showcase-heading-metrics" sectionTitle="Metric cards">
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <Metric title="Gross volume" accent="emerald" icon={wallet} loading={metricLoading()} value="₹4.2M" linkHref="#" linkLabel="View settlements" />
-              <Metric title="Active users" accent="blue" icon={dashboard} loading={metricLoading()} value="1,284" />
-              <Metric title="Risk score" accent="amber" icon={tag} loading={metricLoading()} value="Medium" />
-              <Metric title="Automation" accent="violet" icon={settings} loading={metricLoading()} value="Running" />
-              <Metric title="Incidents" accent="rose" icon={checkCircle} loading={metricLoading()} value="0 open" />
+              <Metric title="Gross volume" accent="emerald" icon={wallet} value="₹4.2M" linkHref="#" linkLabel="View settlements" />
+              <Metric title="Active users" accent="blue" icon={dashboard} value="1,284" />
+              <Metric title="Risk score" accent="amber" icon={tag} value="Medium" />
+              <Metric title="Automation" accent="violet" icon={settings} value="Running" />
+              <Metric title="Incidents" accent="rose" icon={checkCircle} value="0 open" />
             </div>
           </ShowcaseSection>
 
@@ -311,20 +285,19 @@ export const ShowcaseApplication = (): JSX.Element => {
                 <CardDescription>Compound card primitives with header, description, content, and footer actions for the Showcase.</CardDescription>
               </CardHeader>
               <CardContent>
-                <p class="text-sm leading-relaxed">Card content uses muted body copy. Pair with Header or Metric for dashboard layouts.</p>
+                <p class="text-sm leading-relaxed text-gray-700 dark:text-gray-300">Card content uses muted body copy. Pair with Header or Metric for dashboard layouts.</p>
               </CardContent>
               <CardFooter class="justify-end gap-2">
                 <Button variant="ghost">Dismiss</Button>
                 <Button>Save layout</Button>
               </CardFooter>
             </Card>
-            <EmptyState icon={inventory} title="No records yet" message="Create your first inventory movement to populate this list." class="rounded-lg border border-dashed border-gray-700 p-12" />
+            <EmptyState icon={inventory} title="No records yet" message="Create your first inventory movement to populate this list." class="rounded-lg border border-dashed border-gray-300 p-12 dark:border-gray-700" />
           </ShowcaseSection>
 
           <ShowcaseSection sectionHeadingIdentifier="showcase-heading-table" sectionTitle="Table and pagination">
             <Card class="overflow-hidden p-0">
               <Table>
-                <TableCaption>Showcase inventory snapshot</TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Location</TableHead>
@@ -341,9 +314,9 @@ export const ShowcaseApplication = (): JSX.Element => {
                         <TableRow clickable active={index() === 0} onClick={() => {}}>
                           <TableCell>{row.name}</TableCell>
                           <TableCell>
-                            <Status variant={row.role === "Active" ? "success" : "warning"} dot>
+                            <Badge variant="subtle" color={row.role === "Active" ? "success" : "warning"}>
                               {row.role}
-                            </Status>
+                            </Badge>
                           </TableCell>
                           <TableCell align="right" monospace>
                             {row.amount}
@@ -354,7 +327,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                   </For>
                   <TableRow verticalAlign="top">
                     <TableCell>Notes row (top aligned)</TableCell>
-                    <TableCell colSpan={2} class="text-gray-500">
+                    <TableCell colSpan={2} class="text-gray-600 dark:text-gray-500">
                       Use verticalAlign=&quot;top&quot; when a row mixes chips with multi-line copy.
                     </TableCell>
                   </TableRow>
@@ -366,7 +339,7 @@ export const ShowcaseApplication = (): JSX.Element => {
         </ShowcaseCategory>
 
         <ShowcaseCategory categoryTitle="Forms and selection">
-          <ShowcaseSection sectionHeadingIdentifier="showcase-heading-forms" sectionTitle="Fields, input, textarea, upload" sectionDescription="Single controls and compound fields; checkbox demos live below with grouped lists.">
+          <ShowcaseSection sectionHeadingIdentifier="showcase-heading-forms" sectionTitle="Fields, input, textarea, upload" sectionDescription="Single controls and compound fields.">
             <div class="grid gap-8 lg:grid-cols-2">
               <Field label="Plain text" for="showcase-input-plain" hint="Standard single-line control.">
                 <Input
@@ -426,56 +399,88 @@ export const ShowcaseApplication = (): JSX.Element => {
             <Field label="Upload" for="showcase-upload" hint="Shows count of selected files; supports multiple.">
               <Upload id="showcase-upload" multiple selectedFiles={uploadSelectedFiles()} onSelectedFilesChange={setUploadSelectedFiles} />
             </Field>
-            <div class="flex flex-col gap-4 rounded-lg border border-gray-800 p-4">
-              <Checkbox
-                id="showcase-checkbox"
-                label="Receive weekly digest"
-                checked={checkboxChecked()}
-                onInput={(event: InputEvent & { currentTarget: HTMLInputElement }) => {
-                  setCheckboxChecked(event.currentTarget.checked);
-                }}
+            <div class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+              <ToggleGroup
+                name="showcase-toggle-digest"
+                selectionMode="multiple"
+                value={digestSelection()}
+                onChange={setDigestSelection}
+                options={[
+                  {
+                    label: "Receive weekly digest",
+                    value: "weekly",
+                    description: "One email every Monday with product updates and tips."
+                  }
+                ]}
               />
-              <Checkbox id="showcase-checkbox-disabled" label="Disabled checkbox" disabled checked onInput={() => {}} />
+              <ToggleGroup
+                name="showcase-toggle-digest-disabled"
+                selectionMode="multiple"
+                disabled
+                value={["weekly"]}
+                onChange={() => {}}
+                options={[
+                  {
+                    label: "Disabled option",
+                    value: "weekly",
+                    description: "You cannot change this option while the account is locked."
+                  }
+                ]}
+              />
             </div>
-          </ShowcaseSection>
-
-          <ShowcaseSection sectionHeadingIdentifier="showcase-heading-checkboxes" sectionTitle="Checkbox groups">
-            <div class="grid gap-8 lg:grid-cols-2">
-              <Field label="Multi select (leading control)" for="showcase-checkboxes-multi" hint="Default multi-select layout.">
-                <div id="showcase-checkboxes-multi" tabIndex={-1} class="rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
-                  <Checkboxes options={checkboxOptions} values={checkboxListValues()} onChange={setCheckboxListValues} />
-                </div>
+            <div class="grid gap-6 lg:grid-cols-2">
+              <Field label="Shipping method" hint="Single selection; click the active option again to clear when allowNoSelection is on.">
+                <ToggleGroup
+                  name="showcase-toggle-shipping"
+                  selectionMode="single"
+                  allowNoSelection
+                  value={shippingMethod()}
+                  onChange={setShippingMethod}
+                  options={[
+                    { label: "Standard (3–5 days)", value: "standard", description: "Best value for non-urgent orders." },
+                    { label: "Express (1–2 days)", value: "express", description: "Faster delivery with tracking updates." },
+                    { label: "Overnight", value: "overnight", description: "Arrives next business day when ordered before 2pm." }
+                  ]}
+                />
               </Field>
-              <Field label="Single select" for="showcase-checkboxes-single" hint="Radio-style surface with list semantics.">
-                <div id="showcase-checkboxes-single" tabIndex={-1} class="rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
-                  <Checkboxes options={checkboxOptions} values={singleSelectValues()} onChange={setSingleSelectValues} multiple={false} />
-                </div>
-              </Field>
-              <Field label="End checkmark" for="showcase-checkboxes-end" hint="Selection indicator on the trailing edge.">
-                <div id="showcase-checkboxes-end" tabIndex={-1} class="rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
-                  <Checkboxes options={checkboxOptions} values={endCheckmarkValues()} onChange={setEndCheckmarkValues} useEndCheckMarkForMultiple />
-                </div>
-              </Field>
-              <Field label="Disabled group" for="showcase-checkboxes-disabled">
-                <div id="showcase-checkboxes-disabled" tabIndex={-1} class="rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
-                  <Checkboxes options={checkboxOptions} values={["inventory"]} onChange={() => {}} disabled />
-                </div>
-              </Field>
-              <Field label="Empty options fallback" for="showcase-checkboxes-empty">
-                <div id="showcase-checkboxes-empty" tabIndex={-1} class="rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40">
-                  <Checkboxes options={[]} values={[]} onChange={() => {}} emptyMessage="No integrations available for this workspace." />
-                </div>
+              <Field label="Disabled group">
+                <ToggleGroup
+                  name="showcase-toggle-shipping-disabled"
+                  selectionMode="single"
+                  allowNoSelection={false}
+                  value="express"
+                  disabled
+                  onChange={() => {}}
+                  options={[
+                    { label: "Standard (3–5 days)", value: "standard", description: "Best value for non-urgent orders." },
+                    { label: "Express (1–2 days)", value: "express", description: "Faster delivery with tracking updates." },
+                    { label: "Overnight", value: "overnight", description: "Arrives next business day when ordered before 2pm." }
+                  ]}
+                />
               </Field>
             </div>
+            <Field label="Contact channels (labels only, no descriptions)">
+              <ToggleGroup
+                name="showcase-toggle-no-description"
+                selectionMode="multiple"
+                value={contactChannelsWithoutDescription()}
+                onChange={setContactChannelsWithoutDescription}
+                options={[
+                  { label: "Email", value: "email" },
+                  { label: "SMS", value: "sms" },
+                  { label: "Push", value: "push" }
+                ]}
+              />
+            </Field>
           </ShowcaseSection>
         </ShowcaseCategory>
 
         <ShowcaseCategory categoryTitle="Navigation">
           <ShowcaseSection sectionHeadingIdentifier="showcase-heading-tabs" sectionTitle="Tabs">
-            <Tabs tabDefinitions={tabDefinitions} activeTabValue={activeShowcaseTab} onTabSelect={setActiveShowcaseTab} isDisabled={tabsDisabled} />
+            <Tabs tabDefinitions={tabDefinitions} activeTabValue={activeShowcaseTab} onTabSelect={setActiveShowcaseTab} />
             <Card>
               <CardContent class="pt-6">
-                <p class="text-sm text-gray-300">{tabPanelCopy()}</p>
+                <p class="text-sm text-gray-700 dark:text-gray-300">{tabPanelCopy()}</p>
               </CardContent>
             </Card>
           </ShowcaseSection>
@@ -507,7 +512,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                   value={itemizedDropdownValue()}
                   onChange={setItemizedDropdownValue}
                   itemComponent={({ item }) => {
-                    return <span class="font-semibold text-blue-200">{item.rawValue}</span>;
+                    return <span class="font-semibold text-blue-700 dark:text-blue-200">{item.rawValue}</span>;
                   }}
                 >
                   <DropdownTrigger id="showcase-dropdown-custom">
@@ -520,10 +525,10 @@ export const ShowcaseApplication = (): JSX.Element => {
                   <DropdownIconTrigger id="showcase-dropdown-icon" icon={ellipsisVertical} aria-label="Open numeric menu" />
                 </Dropdown>
               </Field>
-              <Field label="Ghost trigger" for="showcase-dropdown-ghost">
+              <Field label="Custom trigger classes" for="showcase-dropdown-custom-classes" hint="Text triggers use outline styling; adjust appearance with class.">
                 <Dropdown options={dropdownOptions()} value={dropdownValue()} onChange={setDropdownValue}>
-                  <DropdownTrigger id="showcase-dropdown-ghost" variant="ghost" icon={tag}>
-                    {dropdownValue() ?? "Tagged fruit"}
+                  <DropdownTrigger id="showcase-dropdown-custom-classes" class="border-transparent bg-transparent text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800/80" icon={tag}>
+                    <DropdownValue>{dropdownValue() ?? "Tagged fruit"}</DropdownValue>
                   </DropdownTrigger>
                 </Dropdown>
               </Field>
@@ -612,10 +617,10 @@ export const ShowcaseApplication = (): JSX.Element => {
         </ShowcaseCategory>
       </main>
 
-      <footer class="mt-16 border-t border-gray-800 pt-8 text-center text-xs text-gray-600">
+      <footer class="mt-16 border-t border-gray-200 pt-8 text-center text-xs text-gray-600 dark:border-gray-800 dark:text-gray-500">
         <Show when={import.meta.env.DEV}>
           <p>
-            Launch the Showcase with <code class="rounded bg-gray-900 px-1 py-0.5 text-gray-300">npm run dev</code> from the repository root.
+            Launch the Showcase with <code class="rounded bg-gray-100 px-1 py-0.5 text-gray-800 dark:bg-gray-900 dark:text-gray-300">npm run dev</code> from the repository root.
           </p>
         </Show>
       </footer>
@@ -627,9 +632,9 @@ const ShowcaseCategory = (properties: ShowcaseCategoryProperties): JSX.Element =
   return (
     <section class="space-y-12" aria-label={properties.categoryTitle}>
       <div class="flex items-center gap-4">
-        <span class="h-px flex-1 bg-linear-to-r from-transparent via-gray-700 to-gray-700/30" aria-hidden />
-        <h2 class="shrink-0 text-xs font-semibold tracking-[0.22em] text-gray-500 uppercase">{properties.categoryTitle}</h2>
-        <span class="h-px flex-1 bg-linear-to-l from-transparent via-gray-700 to-gray-700/30" aria-hidden />
+        <span class="h-px flex-1 bg-linear-to-r from-transparent via-gray-300 to-gray-300/30 dark:via-gray-700 dark:to-gray-700/30" aria-hidden />
+        <h2 class="shrink-0 text-xs font-semibold tracking-[0.22em] text-gray-600 uppercase dark:text-gray-500">{properties.categoryTitle}</h2>
+        <span class="h-px flex-1 bg-linear-to-l from-transparent via-gray-300 to-gray-300/30 dark:via-gray-700 dark:to-gray-700/30" aria-hidden />
       </div>
       <div class="space-y-10">{properties.children}</div>
     </section>
@@ -638,11 +643,11 @@ const ShowcaseCategory = (properties: ShowcaseCategoryProperties): JSX.Element =
 
 const ShowcaseSection = (properties: ShowcaseSectionProperties): JSX.Element => {
   return (
-    <section class="scroll-mt-28 space-y-6 rounded-2xl border border-gray-800/90 bg-gray-950/35 p-6 shadow-sm ring-1 ring-white/4 sm:p-8" aria-labelledby={properties.sectionHeadingIdentifier}>
-      <header class="space-y-2 border-b border-gray-800/70 pb-5">
+    <section class="scroll-mt-28 space-y-6 rounded-2xl border border-gray-200/90 bg-white/90 p-6 shadow-sm ring-1 ring-black/5 sm:p-8 dark:border-gray-800/90 dark:bg-gray-950/35 dark:ring-white/4" aria-labelledby={properties.sectionHeadingIdentifier}>
+      <header class="space-y-2 border-b border-gray-200/80 pb-5 dark:border-gray-800/70">
         <Heading id={properties.sectionHeadingIdentifier}>{properties.sectionTitle}</Heading>
         <Show when={properties.sectionDescription}>
-          <p class="max-w-3xl text-sm text-gray-500">{properties.sectionDescription}</p>
+          <p class="max-w-3xl text-sm text-gray-600 dark:text-gray-500">{properties.sectionDescription}</p>
         </Show>
       </header>
       <div class="space-y-6">{properties.children}</div>

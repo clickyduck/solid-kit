@@ -2,24 +2,23 @@ import { Button } from "@/components/button/Button";
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon, type IconComponent, chevronDown, search } from "@/components/icons";
 import {
-  CLICKABLE_COMPONENT_PADDING,
-  DROPDOWN_MENU_ITEM_ROW_CLASS,
-  DROPDOWN_MENU_LIST_VERTICAL_PADDING_CLASS,
-  DROPDOWN_MENU_PANEL_PADDING_CLASS,
-  DROPDOWN_MENU_SEARCH_REGION_PADDING_CLASS,
-  DROPDOWN_SURFACE_MINIMUM_WIDTH_CLASS,
-  FORM_CONTROL_LEADING_ICON_INPUT_CLASS,
-  FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS,
-  INLINE_ICON_START_PADDING_CLASS,
-  PRIMARY_LABEL_TEXT_CLASS
-} from "@/utilities/controlLayoutClasses";
-import { INLINE_ICON_WITHIN_CLICKABLE_CLASS } from "@/utilities/icon";
-import { mergeClasses } from "@/utilities/mergeClasses";
+  DROPDOWN_MENU_ITEM_CLASSES,
+  DROPDOWN_MENU_LIST_CLASSES,
+  DROPDOWN_MENU_PANEL_CLASSES,
+  DROPDOWN_MENU_SURFACE_CLASSES,
+  DROPDOWN_SEARCH_CLASSES,
+  DROPDOWN_SEARCH_ICON_CLASSES,
+  DROPDOWN_SEARCH_ICON_WRAPPER_CLASSES,
+  DROPDOWN_SEARCH_REGION_CLASSES,
+  DROPDOWN_SEARCH_WITH_ICON_CLASSES,
+  DROPDOWN_SURFACE_CLASSES,
+  DROPDOWN_TRIGGER_ICON_CLASSES,
+  DROPDOWN_TRIGGER_VALUE_CLASSES,
+  mergeClasses
+} from "@/utilities";
 import type { Component, ComponentProps, JSX } from "solid-js";
 import { For, ParentComponent, Show, createContext, createEffect, createMemo, createSignal, on, onCleanup, onMount, splitProps, useContext } from "solid-js";
 import { Portal } from "solid-js/web";
-
-const DROPDOWN_MENU_SURFACE_CLASS = "overflow-hidden rounded-lg border border-gray-700 bg-gray-800 shadow-xl";
 
 type DropdownContextType = {
   options: string[];
@@ -75,10 +74,10 @@ type DropdownBuiltInSearchFieldProperties = {
 
 const DropdownBuiltInSearchField: Component<DropdownBuiltInSearchFieldProperties> = (properties) => {
   return (
-    <div class={DROPDOWN_MENU_SEARCH_REGION_PADDING_CLASS}>
+    <div class={DROPDOWN_SEARCH_REGION_CLASSES}>
       <div class="relative">
-        <div class={mergeClasses("pointer-events-none absolute inset-y-0 left-0 flex items-center", FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS)}>
-          <Icon icon={search} class={mergeClasses(INLINE_ICON_WITHIN_CLICKABLE_CLASS, INLINE_ICON_START_PADDING_CLASS, "pointer-events-none shrink-0 text-gray-400")} aria-hidden="true" />
+        <div class={mergeClasses("pointer-events-none absolute inset-y-0 left-0 flex items-center", DROPDOWN_SEARCH_ICON_WRAPPER_CLASSES)}>
+          <Icon icon={search} class={DROPDOWN_SEARCH_ICON_CLASSES} aria-hidden="true" />
         </div>
         <input
           ref={properties.searchInputReference}
@@ -89,9 +88,9 @@ const DropdownBuiltInSearchField: Component<DropdownBuiltInSearchFieldProperties
           }}
           placeholder="Search…"
           class={mergeClasses(
-            "block w-full rounded-lg border border-gray-700 bg-gray-800/50 text-white placeholder-gray-500 transition-colors duration-150 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40 focus:outline-none",
-            CLICKABLE_COMPONENT_PADDING,
-            FORM_CONTROL_LEADING_ICON_INPUT_CLASS,
+            "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-400 transition-colors duration-150 focus:border-blue-500 focus:ring-0 focus:outline-none dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400",
+            DROPDOWN_SEARCH_CLASSES,
+            DROPDOWN_SEARCH_WITH_ICON_CLASSES,
             "pr-3"
           )}
           onClick={(event) => {
@@ -112,13 +111,13 @@ type DropdownBuiltInOptionsListProperties = {
 
 const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties> = (properties) => {
   return (
-    <ul class={DROPDOWN_MENU_LIST_VERTICAL_PADDING_CLASS}>
-      <Show when={properties.filteredOptions().length > 0} fallback={<li class="py-4 text-center text-gray-500">No matches found</li>}>
+    <ul class={DROPDOWN_MENU_LIST_CLASSES}>
+      <Show when={properties.filteredOptions().length > 0} fallback={<li class="py-4 text-center text-gray-500 dark:text-gray-400">No matches found</li>}>
         <For each={properties.filteredOptions()}>
           {(option: string) => {
-            const selectedClasses = properties.selectedValue() === option ? "bg-blue-600/20" : "";
+            const selectedClasses = properties.selectedValue() === option ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-200" : "";
             const itemClass = (): string => {
-              return DROPDOWN_MENU_ITEM_ROW_CLASS;
+              return DROPDOWN_MENU_ITEM_CLASSES;
             };
             if (properties.itemComponent) {
               return (
@@ -292,7 +291,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
   };
 
   const builtInMenuChromeClass = () => {
-    return mergeClasses(DROPDOWN_MENU_SURFACE_CLASS, local.menuClass);
+    return mergeClasses(DROPDOWN_MENU_SURFACE_CLASSES, local.menuClass);
   };
 
   return (
@@ -334,24 +333,27 @@ const Dropdown = (properties: DropdownRootProperties) => {
  */
 const DropdownValue: ParentComponent<ComponentProps<"div">> = (properties) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return <div class={mergeClasses("min-w-0 flex-1 truncate text-left", PRIMARY_LABEL_TEXT_CLASS, local.class)} {...rest} />;
+  return <div class={mergeClasses("min-w-0 flex-1 truncate text-left", DROPDOWN_TRIGGER_VALUE_CLASSES, local.class)} {...rest} />;
 };
 
-type DropdownTriggerProperties = ComponentProps<typeof Button> & {
-  children?: JSX.Element;
+type DropdownTriggerWithLabel = Omit<ComponentProps<typeof Button>, "variant"> & {
+  children: JSX.Element;
   icon?: IconComponent;
-  variant?: "default" | "ghost";
 };
+
+type DropdownTriggerIconOnly = Omit<ComponentProps<typeof IconButton>, "variant" | "children"> & {
+  children?: undefined;
+};
+
+type DropdownTriggerProperties = DropdownTriggerWithLabel | DropdownTriggerIconOnly;
 
 /**
  * Button that toggles the menu. Use inside Dropdown.
+ * Styling is fixed to the outline trigger (text or icon-only).
  */
 const DropdownTrigger = (properties: DropdownTriggerProperties) => {
   const context = useDropdownContext();
-  const [local, rest] = splitProps(properties, ["class", "children", "onClick", "id", "icon", "variant"]);
-  const resolvedButtonVariant = (): "outline" | "ghost" => {
-    return local.variant === "ghost" ? "ghost" : "outline";
-  };
+  const [local, rest] = splitProps(properties, ["class", "children", "onClick", "id", "icon"]);
 
   const resolvedIcon = (): IconComponent | undefined => {
     if (!local.icon) {
@@ -361,21 +363,16 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
   };
 
   const triggerButtonClass = (): string => {
-    return mergeClasses(
-      "justify-between text-left font-medium focus-visible:ring-offset-gray-900",
-      local.variant === "ghost" ? "min-w-0" : "w-full min-w-0",
-      local.variant === "ghost" ? "border-transparent bg-transparent text-gray-400 hover:bg-gray-700/60 hover:text-white aria-expanded:bg-gray-700/60 aria-expanded:text-white" : "aria-expanded:bg-gray-700",
-      local.class
-    );
+    return mergeClasses("w-full min-w-0 justify-between text-left font-medium aria-expanded:bg-gray-100 dark:aria-expanded:bg-gray-700", local.class);
   };
 
   if (!local.children) {
     return (
       <IconButton
         id={local.id}
-        variant={local.variant === "ghost" ? "ghost" : "default"}
+        variant="outline"
         icon={local.icon ?? chevronDown}
-        class={mergeClasses("focus-visible:ring-offset-gray-900", local.class)}
+        class={local.class}
         onClick={(event) => {
           if (context.disabled()) {
             return;
@@ -397,7 +394,7 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
   return (
     <Button
       id={local.id}
-      variant={resolvedButtonVariant()}
+      variant="outline"
       icon={chevronDown}
       iconPosition="end"
       class={triggerButtonClass()}
@@ -419,7 +416,7 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
       <span class="flex min-w-0 flex-1 items-center gap-2">
         <Show when={resolvedIcon()}>
           {(iconComponentAccessor) => {
-            return <Icon icon={iconComponentAccessor()} class={mergeClasses(INLINE_ICON_WITHIN_CLICKABLE_CLASS, INLINE_ICON_START_PADDING_CLASS, "pointer-events-none shrink-0 text-current")} aria-hidden="true" />;
+            return <Icon icon={iconComponentAccessor()} class={DROPDOWN_TRIGGER_ICON_CLASSES} aria-hidden="true" />;
           }}
         </Show>
         <span class="min-w-0 flex-1 truncate">{local.children}</span>
@@ -428,7 +425,7 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
   );
 };
 
-type DropdownIconTriggerProperties = Omit<ComponentProps<typeof IconButton>, "onClick" | "disabled"> & {
+type DropdownIconTriggerProperties = Omit<ComponentProps<typeof IconButton>, "onClick" | "disabled" | "variant"> & {
   onClick?: ComponentProps<typeof IconButton>["onClick"];
 };
 
@@ -440,8 +437,8 @@ const DropdownIconTrigger = (properties: DropdownIconTriggerProperties) => {
   const [local, rest] = splitProps(properties, ["onClick", "class"]);
   return (
     <IconButton
-      variant="ghost"
-      class={mergeClasses("text-gray-400 hover:bg-gray-700/60 hover:text-white aria-expanded:bg-gray-700/60 aria-expanded:text-white", local.class)}
+      variant="outline"
+      class={local.class}
       disabled={context.disabled()}
       aria-expanded={context.dropdownOpen()}
       aria-haspopup="true"
@@ -481,15 +478,15 @@ const DropdownContent = (properties: DropdownContentProperties) => {
   };
 
   const listClass = (): string => {
-    return DROPDOWN_MENU_LIST_VERTICAL_PADDING_CLASS;
+    return DROPDOWN_MENU_LIST_CLASSES;
   };
 
   const panelClass = (): string => {
-    return DROPDOWN_MENU_PANEL_PADDING_CLASS;
+    return DROPDOWN_MENU_PANEL_CLASSES;
   };
 
   const contentMinimumWidthClass = (): string => {
-    return DROPDOWN_SURFACE_MINIMUM_WIDTH_CLASS;
+    return DROPDOWN_SURFACE_CLASSES;
   };
 
   const useDocumentPortalResolved = (): boolean => {
@@ -550,7 +547,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
   return (
     <>
       <Show when={context.dropdownOpen() && !useDocumentPortalResolved()}>
-        <div class={mergeClasses("absolute top-full z-10 mt-1", contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASS, local.class)} {...rest}>
+        <div class={mergeClasses("absolute top-full z-10 mt-1", contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES, local.class)} {...rest}>
           <Show when={shouldWrapChildrenInList()} fallback={<div class={panelClass()}>{local.children}</div>}>
             <ul class={listClass()}>{local.children}</ul>
           </Show>
@@ -562,7 +559,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
             ref={(element) => {
               setPortalMenuElement(element === null ? undefined : element);
             }}
-            class={mergeClasses(contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASS, local.class)}
+            class={mergeClasses(contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES, local.class)}
             {...rest}
           >
             <Show when={shouldWrapChildrenInList()} fallback={<div class={panelClass()}>{local.children}</div>}>
@@ -598,7 +595,7 @@ const DropdownItem = (properties: DropdownItemProperties) => {
   };
 
   const itemClass = (): string => {
-    return DROPDOWN_MENU_ITEM_ROW_CLASS;
+    return DROPDOWN_MENU_ITEM_CLASSES;
   };
 
   const shouldCloseOnSelect = (): boolean => {
@@ -609,7 +606,7 @@ const DropdownItem = (properties: DropdownItemProperties) => {
     <li>
       <a
         href="#"
-        class={mergeClasses(itemClass(), local.disabled ? "cursor-not-allowed opacity-50" : "", isSelected() ? "bg-blue-600/20 text-blue-300" : "", local.class)}
+        class={mergeClasses(itemClass(), local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : "", isSelected() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "", local.class)}
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
@@ -648,7 +645,7 @@ const DropdownLabel = (properties: ComponentProps<"label">) => {
  * Horizontal separator line inside a dropdown menu.
  */
 const DropdownSeparator = (properties: ComponentProps<"div">) => {
-  return <div class="my-1 border-t border-gray-700" {...properties} />;
+  return <div class="my-1 border-t border-gray-200 dark:border-gray-700" {...properties} />;
 };
 
 export { Dropdown, DropdownValue, DropdownTrigger, DropdownIconTrigger, DropdownContent, DropdownLabel, DropdownItem, DropdownSeparator };

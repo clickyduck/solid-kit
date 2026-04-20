@@ -1,11 +1,9 @@
 import { Icon, type IconComponent } from "@/components/icons";
-import { ICON_ONLY_BUTTON_PADDING } from "@/utilities/controlLayoutClasses";
-import { INLINE_ICON_WITHIN_CLICKABLE_CLASS } from "@/utilities/icon";
-import { mergeClasses } from "@/utilities/mergeClasses";
+import { ICON_BUTTON_CLASSES, ICON_BUTTON_ICON_CLASSES, mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
-type IconButtonVariant = "default" | "ghost" | "primary" | "secondary";
+type IconButtonVariant = "default" | "outline" | "ghost" | "link";
 
 type IconButtonProperties = ComponentProps<"button"> & {
   variant?: IconButtonVariant;
@@ -13,19 +11,16 @@ type IconButtonProperties = ComponentProps<"button"> & {
   icon?: IconComponent;
 };
 
-/**
- * Returns Tailwind classes for the given icon button variant.
- */
 const getVariantClasses = (variant: IconButtonVariant = "default"): string => {
   switch (variant) {
+    case "default":
+      return "border-2 border-transparent text-white bg-blue-600 enabled:hover:bg-blue-700 focus-visible:border-white dark:focus-visible:border-gray-100";
+    case "outline":
+      return "border border-solid border-gray-300 bg-white text-gray-700 enabled:hover:bg-gray-50 focus-visible:border-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:enabled:hover:bg-gray-700 dark:focus-visible:border-blue-400";
     case "ghost":
-      return "text-gray-400 hover:bg-gray-700 hover:text-white";
-    case "primary":
-      return "text-white bg-blue-600 hover:bg-blue-700 focus-visible:ring-2 focus-visible:ring-blue-500/40";
-    case "secondary":
-      return "text-white bg-gray-700 hover:bg-gray-600";
-    default:
-      return "text-gray-400 bg-gray-800 border border-gray-700 hover:bg-gray-700 hover:text-white";
+      return "border-2 border-transparent text-gray-700 enabled:hover:bg-gray-100/60 focus-visible:border-gray-400 dark:text-white dark:enabled:hover:bg-gray-700/60 dark:focus-visible:border-gray-500";
+    case "link":
+      return "border-2 border-transparent text-blue-600 enabled:hover:text-blue-500 focus-visible:border-blue-500 dark:text-blue-500 dark:enabled:hover:text-blue-400 dark:focus-visible:border-blue-400";
   }
 };
 
@@ -38,16 +33,16 @@ export const IconButton = (properties: IconButtonProperties) => {
     <button
       type="button"
       class={mergeClasses(
-        "inline-flex cursor-pointer items-center justify-center rounded-lg transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-50",
+        "inline-flex cursor-pointer items-center justify-center rounded-lg transition-colors duration-150 focus:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50",
         getVariantClasses(local.variant),
-        ICON_ONLY_BUTTON_PADDING,
+        ICON_BUTTON_CLASSES,
         local.class
       )}
       {...rest}
     >
       <Show when={local.icon} keyed>
         {(resolvedIconComponent) => {
-          return <Icon icon={resolvedIconComponent} class={mergeClasses(INLINE_ICON_WITHIN_CLICKABLE_CLASS, "pointer-events-none shrink-0 text-current")} aria-hidden="true" />;
+          return <Icon icon={resolvedIconComponent} class={ICON_BUTTON_ICON_CLASSES} aria-hidden="true" />;
         }}
       </Show>
       {local.children}

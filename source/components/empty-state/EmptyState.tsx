@@ -1,5 +1,5 @@
 import { Icon } from "@/components/icons";
-import { mergeClasses } from "@/utilities/mergeClasses";
+import { mergeClasses } from "@/utilities";
 import type { Component, ComponentProps } from "solid-js";
 
 type EmptyStateProperties = {

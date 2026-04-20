@@ -1,4 +1,4 @@
-import { mergeClasses } from "@/utilities/mergeClasses";
+import { mergeClasses } from "@/utilities";
 import type { ComponentProps, ParentComponent } from "solid-js";
 import { splitProps } from "solid-js";
 
@@ -11,5 +11,5 @@ type HeadingProperties = ComponentProps<"h3"> & {
  */
 export const Heading: ParentComponent<HeadingProperties> = (properties) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return <h3 class={mergeClasses("text-sm font-semibold tracking-wide text-gray-400 uppercase", local.class)} {...rest} />;
+  return <h3 class={mergeClasses("text-sm font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-400", local.class)} {...rest} />;
 };

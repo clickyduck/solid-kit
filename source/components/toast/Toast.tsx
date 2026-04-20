@@ -1,6 +1,6 @@
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon, checkCircle, closeCircle, exclamationTriangle } from "@/components/icons";
-import { mergeClasses } from "@/utilities/mergeClasses";
+import { mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { Match, Show, Switch, createSignal } from "solid-js";
 
@@ -43,13 +43,13 @@ export const removeToast = (toastId: string): void => {
 const getIconContainerClasses = (variant: ToastData["variant"]): string => {
   switch (variant) {
     case "success":
-      return "bg-emerald-500/15 text-emerald-400";
+      return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400";
     case "danger":
-      return "bg-red-500/15 text-red-400";
+      return "bg-red-500/15 text-red-700 dark:text-red-400";
     case "warning":
-      return "bg-amber-500/15 text-amber-400";
+      return "bg-amber-500/15 text-amber-800 dark:text-amber-400";
     default:
-      return "bg-emerald-500/15 text-emerald-400";
+      return "bg-gray-500/15 text-gray-700 dark:bg-slate-500/15 dark:text-gray-300";
   }
 };
 
@@ -60,7 +60,7 @@ export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) 
   const { toast, ...rest } = properties;
 
   return (
-    <div class="flex w-full max-w-sm items-center rounded-lg border border-gray-700 bg-gray-800/80 p-4 text-gray-300 shadow-lg backdrop-blur-sm" role="alert" {...rest}>
+    <div class="flex w-full max-w-sm items-center rounded-lg border border-gray-200 bg-white/95 p-4 text-gray-600 shadow-lg backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-300" role="alert" {...rest}>
       <div class={mergeClasses("inline-flex h-7 w-7 shrink-0 items-center justify-center rounded", getIconContainerClasses(toast.variant))}>
         <Switch fallback={<Icon icon={checkCircle} width={20} height={20} aria-hidden="true" />}>
           <Match when={toast.variant === "success"}>
@@ -79,10 +79,10 @@ export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) 
       </div>
       <div class="ms-3 text-sm font-normal">
         <Show when={toast.title}>
-          <div class="font-medium text-white">{toast.title}</div>
+          <div class="font-medium text-gray-900 dark:text-white">{toast.title}</div>
         </Show>
         <Show when={toast.description}>
-          <div>{toast.description}</div>
+          <div class="text-gray-600 dark:text-gray-400">{toast.description}</div>
         </Show>
       </div>
       <IconButton

@@ -1,7 +1,5 @@
 import { Icon, type IconComponent } from "@/components/icons";
-import { CLICKABLE_COMPONENT_PADDING, FORM_CONTROL_LEADING_ICON_INPUT_CLASS, FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS, INLINE_ICON_START_PADDING_CLASS, PRIMARY_LABEL_TEXT_CLASS } from "@/utilities/controlLayoutClasses";
-import { INLINE_ICON_WITHIN_CLICKABLE_CLASS } from "@/utilities/icon";
-import { mergeClasses } from "@/utilities/mergeClasses";
+import { INPUT_CLASSES, INPUT_LEADING_ICON_CLASSES, INPUT_LEADING_ICON_WRAPPER_CLASSES, INPUT_TRAILING_TEXT_CLASSES, INPUT_WITH_LEADING_ICON_CLASSES, mergeClasses } from "@/utilities";
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
@@ -82,7 +80,7 @@ const callInputHandler = (handler: InputProperties["onInput"], event: unknown): 
 const Input = (properties: InputProperties) => {
   const [local, rest] = splitProps(properties, ["class", "icon", "trailingText", "currency", "autocomplete", "disabled", "value", "onInput"]);
   const baseClasses =
-    "block w-full rounded-lg border border-gray-700 bg-gray-800/50 text-white placeholder-gray-500 transition-colors duration-150 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/40 disabled:cursor-not-allowed disabled:opacity-50";
+    "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-400 transition-colors duration-150 focus:border-blue-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
   const inputProps = { step: properties.type === "number" ? "0.01" : undefined, ...rest, autocomplete: local.autocomplete ?? "off" };
   const resolvedInputProps = local.currency ? { ...inputProps, type: "text", inputMode: "decimal" as const, autocomplete: "off" } : inputProps;
 
@@ -96,7 +94,7 @@ const Input = (properties: InputProperties) => {
   };
 
   if (!local.icon && !local.trailingText) {
-    return <input class={mergeClasses(baseClasses, CLICKABLE_COMPONENT_PADDING, local.class)} disabled={local.disabled} value={properties.value} onInput={handleInput} {...resolvedInputProps} />;
+    return <input class={mergeClasses(baseClasses, INPUT_CLASSES, local.class)} disabled={local.disabled} value={properties.value} onInput={handleInput} {...resolvedInputProps} />;
   }
 
   return (
@@ -104,20 +102,20 @@ const Input = (properties: InputProperties) => {
       <Show when={local.icon}>
         {(iconAccessor) => {
           return (
-            <div class={mergeClasses("pointer-events-none absolute inset-y-0 left-0 flex items-center", FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS)}>
-              <Icon icon={iconAccessor()} class={mergeClasses(INLINE_ICON_WITHIN_CLICKABLE_CLASS, INLINE_ICON_START_PADDING_CLASS, "pointer-events-none shrink-0 text-gray-400")} aria-hidden="true" />
+            <div class={mergeClasses("pointer-events-none absolute inset-y-0 left-0 flex items-center", INPUT_LEADING_ICON_WRAPPER_CLASSES)}>
+              <Icon icon={iconAccessor()} class={INPUT_LEADING_ICON_CLASSES} aria-hidden="true" />
             </div>
           );
         }}
       </Show>
       <input
-        class={mergeClasses(baseClasses, CLICKABLE_COMPONENT_PADDING, local.icon ? FORM_CONTROL_LEADING_ICON_INPUT_CLASS : "", local.trailingText ? "pr-12" : "", local.class)}
+        class={mergeClasses(baseClasses, INPUT_CLASSES, local.icon ? INPUT_WITH_LEADING_ICON_CLASSES : "", local.trailingText ? "pr-12" : "", local.class)}
         disabled={local.disabled}
         value={properties.value}
         onInput={handleInput}
         {...resolvedInputProps}
       />
-      {local.trailingText && <div class={mergeClasses("pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400", PRIMARY_LABEL_TEXT_CLASS)}>{local.trailingText}</div>}
+      {local.trailingText && <div class={mergeClasses("pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400", INPUT_TRAILING_TEXT_CLASSES)}>{local.trailingText}</div>}
     </div>
   );
 };
