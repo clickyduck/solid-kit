@@ -2,21 +2,23 @@ import { Button } from "@/components/button/Button";
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon, type IconComponent, chevronDown, search } from "@/components/icons";
 import {
-  DROPDOWN_MENU_ITEM_CLASSES,
-  DROPDOWN_MENU_LIST_CLASSES,
-  DROPDOWN_MENU_PANEL_CLASSES,
+  CHROME_MUTED_ICON_CLASSES,
   DROPDOWN_MENU_SURFACE_CLASSES,
-  DROPDOWN_SEARCH_CLASSES,
-  DROPDOWN_SEARCH_ICON_CLASSES,
-  DROPDOWN_SEARCH_ICON_WRAPPER_CLASSES,
-  DROPDOWN_SEARCH_REGION_CLASSES,
-  DROPDOWN_SEARCH_WITH_ICON_CLASSES,
-  DROPDOWN_SURFACE_CLASSES,
-  DROPDOWN_TRIGGER_ICON_CLASSES,
-  DROPDOWN_TRIGGER_VALUE_CLASSES,
-  mergeClasses
+  FORM_CONTROL_DROP_DOWN_CONTENT_MIN_WIDTH_CLASS_BY_SIZE,
+  FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE,
+  FORM_CONTROL_DROP_DOWN_MENU_LIST_CLASS_BY_SIZE,
+  FORM_CONTROL_DROP_DOWN_MENU_PANEL_CLASS_BY_SIZE,
+  FORM_CONTROL_DROP_DOWN_MENU_SEARCH_WRAPPER_CLASS_BY_SIZE,
+  FORM_CONTROL_ICON_SIZE,
+  FORM_CONTROL_LEADING_ICON_INPUT_CLASS,
+  FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS,
+  FORM_CONTROL_SIZE_CLASSES,
+  FORM_CONTROL_TEXT_CLASS_BY_SIZE,
+  type FormControlSize,
+  mergeClasses,
+  useEffectiveFormControlSize
 } from "@/utilities";
-import type { Component, ComponentProps, JSX } from "solid-js";
+import type { Accessor, Component, ComponentProps, JSX } from "solid-js";
 import { For, ParentComponent, Show, createContext, createEffect, createMemo, createSignal, on, onCleanup, onMount, splitProps, useContext } from "solid-js";
 import { Portal } from "solid-js/web";
 
@@ -31,6 +33,7 @@ type DropdownContextType = {
   setDropdownOpen: (open: boolean) => void;
   searchable: boolean;
   filteredOptions: () => string[];
+  effectiveFormControlSize: Accessor<FormControlSize>;
   getDropdownContainerElement: () => HTMLDivElement | undefined;
   setContentPortalMenuElement: (element: HTMLElement | null) => void;
 };
@@ -70,14 +73,21 @@ type DropdownBuiltInSearchFieldProperties = {
   searchQuery: () => string;
   setSearchQuery: (value: string) => void;
   searchInputReference: (element: HTMLInputElement) => void;
+  effectiveFormControlSize: Accessor<FormControlSize>;
 };
 
 const DropdownBuiltInSearchField: Component<DropdownBuiltInSearchFieldProperties> = (properties) => {
   return (
-    <div class={DROPDOWN_SEARCH_REGION_CLASSES}>
+    <div class={FORM_CONTROL_DROP_DOWN_MENU_SEARCH_WRAPPER_CLASS_BY_SIZE[properties.effectiveFormControlSize()]}>
       <div class="relative">
-        <div class={mergeClasses("pointer-events-none absolute inset-y-0 left-0 flex items-center", DROPDOWN_SEARCH_ICON_WRAPPER_CLASSES)}>
-          <Icon icon={search} class={DROPDOWN_SEARCH_ICON_CLASSES} aria-hidden="true" />
+        <div class={mergeClasses("pointer-events-none absolute inset-y-0 left-0 flex items-center", FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS)}>
+          <Icon
+            icon={search}
+            width={FORM_CONTROL_ICON_SIZE[properties.effectiveFormControlSize()]}
+            height={FORM_CONTROL_ICON_SIZE[properties.effectiveFormControlSize()]}
+            class={mergeClasses("pointer-events-none shrink-0", CHROME_MUTED_ICON_CLASSES)}
+            aria-hidden="true"
+          />
         </div>
         <input
           ref={properties.searchInputReference}
@@ -89,8 +99,8 @@ const DropdownBuiltInSearchField: Component<DropdownBuiltInSearchFieldProperties
           placeholder="Search…"
           class={mergeClasses(
             "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-400 transition-colors duration-150 focus:border-blue-500 focus:ring-0 focus:outline-none dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400",
-            DROPDOWN_SEARCH_CLASSES,
-            DROPDOWN_SEARCH_WITH_ICON_CLASSES,
+            FORM_CONTROL_SIZE_CLASSES[properties.effectiveFormControlSize()],
+            FORM_CONTROL_LEADING_ICON_INPUT_CLASS,
             "pr-3"
           )}
           onClick={(event) => {
@@ -107,18 +117,17 @@ type DropdownBuiltInOptionsListProperties = {
   selectedValue: () => string | undefined;
   itemComponent: DropdownRootProperties["itemComponent"];
   onSelectOption: (option: string) => void;
+  effectiveFormControlSize: Accessor<FormControlSize>;
 };
 
 const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties> = (properties) => {
   return (
-    <ul class={DROPDOWN_MENU_LIST_CLASSES}>
+    <ul class={FORM_CONTROL_DROP_DOWN_MENU_LIST_CLASS_BY_SIZE[properties.effectiveFormControlSize()]}>
       <Show when={properties.filteredOptions().length > 0} fallback={<li class="py-4 text-center text-gray-500 dark:text-gray-400">No matches found</li>}>
         <For each={properties.filteredOptions()}>
           {(option: string) => {
             const selectedClasses = properties.selectedValue() === option ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-200" : "";
-            const itemClass = (): string => {
-              return DROPDOWN_MENU_ITEM_CLASSES;
-            };
+            const itemClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE[properties.effectiveFormControlSize()];
             if (properties.itemComponent) {
               return (
                 <li>
@@ -163,6 +172,7 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
  */
 const Dropdown = (properties: DropdownRootProperties) => {
   const [local] = splitProps(properties, ["options", "value", "onChange", "disabled", "searchable", "itemComponent", "children", "menuClass", "menuFullWidth", "class", "usePortal", "initialOpen"]);
+  const effectiveFormControlSize = useEffectiveFormControlSize();
   const [selectedValue, setSelectedValue] = createSignal(properties.value);
   const [dropdownOpen, setDropdownOpen] = createSignal(local.initialOpen ?? false);
   const [searchQuery, setSearchQuery] = createSignal("");
@@ -171,27 +181,19 @@ const Dropdown = (properties: DropdownRootProperties) => {
   let contentPortalMenuElement: HTMLElement | null = null;
   let searchInputElement: HTMLInputElement | undefined;
 
-  const disabledState = createMemo(() => {
-    return properties.disabled;
-  });
-  const isSearchable = () => {
-    return properties.searchable === true;
-  };
+  const disabledState = createMemo(() => properties.disabled);
+  const isSearchable = () => properties.searchable === true;
   const filteredOptions = createMemo(() => {
     const query = searchQuery().trim().toLowerCase();
     if (!isSearchable() || query === "") {
       return properties.options;
     }
-    return properties.options.filter((option) => {
-      return option.toLowerCase().includes(query);
-    });
+    return properties.options.filter((option) => option.toLowerCase().includes(query));
   });
 
   createEffect(
     on(
-      () => {
-        return properties.value;
-      },
+      () => properties.value,
       (value) => {
         setSelectedValue(value);
       }
@@ -278,9 +280,8 @@ const Dropdown = (properties: DropdownRootProperties) => {
     setDropdownOpen,
     searchable: isSearchable(),
     filteredOptions,
-    getDropdownContainerElement: () => {
-      return dropdownContainerElement;
-    },
+    effectiveFormControlSize,
+    getDropdownContainerElement: () => dropdownContainerElement,
     setContentPortalMenuElement: (element: HTMLElement | null) => {
       contentPortalMenuElement = element;
     }
@@ -290,9 +291,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
     searchInputElement = element;
   };
 
-  const builtInMenuChromeClass = () => {
-    return mergeClasses(DROPDOWN_MENU_SURFACE_CLASSES, local.menuClass);
-  };
+  const builtInMenuChromeClass = () => mergeClasses(DROPDOWN_MENU_SURFACE_CLASSES, local.menuClass);
 
   return (
     <DropdownContext.Provider value={contextValue}>
@@ -306,9 +305,9 @@ const Dropdown = (properties: DropdownRootProperties) => {
         <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && !properties.usePortal}>
           <div class={mergeClasses("absolute top-full z-10 mt-1", local.menuFullWidth !== false ? "left-0 w-full" : "", builtInMenuChromeClass())}>
             <Show when={isSearchable()}>
-              <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
+              <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} effectiveFormControlSize={effectiveFormControlSize} />
             </Show>
-            <DropdownBuiltInOptionsList filteredOptions={filteredOptions} selectedValue={selectedValue} itemComponent={properties.itemComponent} onSelectOption={handleSelect} />
+            <DropdownBuiltInOptionsList filteredOptions={filteredOptions} selectedValue={selectedValue} itemComponent={properties.itemComponent} onSelectOption={handleSelect} effectiveFormControlSize={effectiveFormControlSize} />
           </div>
         </Show>
         <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && properties.usePortal && portalPosition()}>
@@ -316,9 +315,9 @@ const Dropdown = (properties: DropdownRootProperties) => {
             <Portal mount={document.body}>
               <div class={mergeClasses("z-50 min-w-min", builtInMenuChromeClass())} style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, width: `${position().width}px` }}>
                 <Show when={isSearchable()}>
-                  <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
+                  <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} effectiveFormControlSize={effectiveFormControlSize} />
                 </Show>
-                <DropdownBuiltInOptionsList filteredOptions={filteredOptions} selectedValue={selectedValue} itemComponent={properties.itemComponent} onSelectOption={handleSelect} />
+                <DropdownBuiltInOptionsList filteredOptions={filteredOptions} selectedValue={selectedValue} itemComponent={properties.itemComponent} onSelectOption={handleSelect} effectiveFormControlSize={effectiveFormControlSize} />
               </div>
             </Portal>
           )}
@@ -332,8 +331,9 @@ const Dropdown = (properties: DropdownRootProperties) => {
  * Displays the selected value. Use inside Dropdown.
  */
 const DropdownValue: ParentComponent<ComponentProps<"div">> = (properties) => {
+  const context = useDropdownContext();
   const [local, rest] = splitProps(properties, ["class"]);
-  return <div class={mergeClasses("min-w-0 flex-1 truncate text-left", DROPDOWN_TRIGGER_VALUE_CLASSES, local.class)} {...rest} />;
+  return <div class={mergeClasses("min-w-0 flex-1 truncate text-left", FORM_CONTROL_TEXT_CLASS_BY_SIZE[context.effectiveFormControlSize()], local.class)} {...rest} />;
 };
 
 type DropdownTriggerWithLabel = Omit<ComponentProps<typeof Button>, "variant"> & {
@@ -416,7 +416,15 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
       <span class="flex min-w-0 flex-1 items-center gap-2">
         <Show when={resolvedIcon()}>
           {(iconComponentAccessor) => {
-            return <Icon icon={iconComponentAccessor()} class={DROPDOWN_TRIGGER_ICON_CLASSES} aria-hidden="true" />;
+            return (
+              <Icon
+                icon={iconComponentAccessor()}
+                width={FORM_CONTROL_ICON_SIZE[context.effectiveFormControlSize()]}
+                height={FORM_CONTROL_ICON_SIZE[context.effectiveFormControlSize()]}
+                class="pointer-events-none shrink-0 text-current"
+                aria-hidden="true"
+              />
+            );
           }}
         </Show>
         <span class="min-w-0 flex-1 truncate">{local.children}</span>
@@ -473,35 +481,21 @@ const DropdownContent = (properties: DropdownContentProperties) => {
   const [local, rest] = splitProps(properties, ["class", "children", "useDocumentPortal", "documentPortalPlacement", "wrapChildrenInList"]);
   const [portalMenuElement, setPortalMenuElement] = createSignal<HTMLDivElement | undefined>();
 
-  const shouldWrapChildrenInList = (): boolean => {
-    return local.wrapChildrenInList !== false;
-  };
+  const shouldWrapChildrenInList = (): boolean => local.wrapChildrenInList !== false;
 
-  const listClass = (): string => {
-    return DROPDOWN_MENU_LIST_CLASSES;
-  };
+  const listClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_LIST_CLASS_BY_SIZE[context.effectiveFormControlSize()];
 
-  const panelClass = (): string => {
-    return DROPDOWN_MENU_PANEL_CLASSES;
-  };
+  const panelClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_PANEL_CLASS_BY_SIZE[context.effectiveFormControlSize()];
 
-  const contentMinimumWidthClass = (): string => {
-    return DROPDOWN_SURFACE_CLASSES;
-  };
+  const contentMinimumWidthClass = (): string => FORM_CONTROL_DROP_DOWN_CONTENT_MIN_WIDTH_CLASS_BY_SIZE[context.effectiveFormControlSize()];
 
-  const useDocumentPortalResolved = (): boolean => {
-    return local.useDocumentPortal === true;
-  };
+  const useDocumentPortalResolved = (): boolean => local.useDocumentPortal === true;
 
-  const documentPortalPlacementResolved = (): "top" | "bottom" => {
-    return local.documentPortalPlacement ?? "bottom";
-  };
+  const documentPortalPlacementResolved = (): "top" | "bottom" => local.documentPortalPlacement ?? "bottom";
 
   createEffect(
     on(
-      (): [HTMLDivElement | undefined, boolean, boolean] => {
-        return [portalMenuElement(), context.dropdownOpen(), useDocumentPortalResolved()];
-      },
+      (): [HTMLDivElement | undefined, boolean, boolean] => [portalMenuElement(), context.dropdownOpen(), useDocumentPortalResolved()],
       ([element, open, useDocumentPortal]) => {
         if (!open || !useDocumentPortal) {
           context.setContentPortalMenuElement(null);
@@ -594,13 +588,9 @@ const DropdownItem = (properties: DropdownItemProperties) => {
     return Boolean(local.item && context.selectedValue() === local.item.rawValue);
   };
 
-  const itemClass = (): string => {
-    return DROPDOWN_MENU_ITEM_CLASSES;
-  };
+  const itemClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE[context.effectiveFormControlSize()];
 
-  const shouldCloseOnSelect = (): boolean => {
-    return local.closeOnSelect !== false;
-  };
+  const shouldCloseOnSelect = (): boolean => local.closeOnSelect !== false;
 
   return (
     <li>

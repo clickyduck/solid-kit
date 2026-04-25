@@ -1,9 +1,9 @@
 import { Icon, type IconComponent } from "@/components/icons";
-import { ICON_BUTTON_CLASSES, ICON_BUTTON_ICON_CLASSES, mergeClasses } from "@/utilities";
+import { FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses, useEffectiveFormControlSize } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
-type IconButtonVariant = "default" | "outline" | "ghost" | "link";
+type IconButtonVariant = "solid" | "outline" | "ghost" | "link";
 
 type IconButtonProperties = ComponentProps<"button"> & {
   variant?: IconButtonVariant;
@@ -11,9 +11,9 @@ type IconButtonProperties = ComponentProps<"button"> & {
   icon?: IconComponent;
 };
 
-const getVariantClasses = (variant: IconButtonVariant = "default"): string => {
+const getVariantClasses = (variant: IconButtonVariant = "solid"): string => {
   switch (variant) {
-    case "default":
+    case "solid":
       return "border-2 border-transparent text-white bg-blue-600 enabled:hover:bg-blue-700 focus-visible:border-white dark:focus-visible:border-gray-100";
     case "outline":
       return "border border-solid border-gray-300 bg-white text-gray-700 enabled:hover:bg-gray-50 focus-visible:border-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:enabled:hover:bg-gray-700 dark:focus-visible:border-blue-400";
@@ -25,24 +25,26 @@ const getVariantClasses = (variant: IconButtonVariant = "default"): string => {
 };
 
 /**
- * Compact icon-only button sized to fit its icon with minimal padding.
+ * Compact icon-only button sized to match the sibling form controls.
  */
 export const IconButton = (properties: IconButtonProperties) => {
   const [local, rest] = splitProps(properties, ["class", "variant", "icon", "children"]);
+  const effectiveSize = useEffectiveFormControlSize();
+
   return (
     <button
       type="button"
       class={mergeClasses(
         "inline-flex cursor-pointer items-center justify-center rounded-lg transition-colors duration-150 focus:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50",
         getVariantClasses(local.variant),
-        ICON_BUTTON_CLASSES,
+        FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES[effectiveSize()],
         local.class
       )}
       {...rest}
     >
       <Show when={local.icon} keyed>
         {(resolvedIconComponent) => {
-          return <Icon icon={resolvedIconComponent} class={ICON_BUTTON_ICON_CLASSES} aria-hidden="true" />;
+          return <Icon icon={resolvedIconComponent} width={FORM_CONTROL_ICON_SIZE[effectiveSize()]} height={FORM_CONTROL_ICON_SIZE[effectiveSize()]} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />;
         }}
       </Show>
       {local.children}

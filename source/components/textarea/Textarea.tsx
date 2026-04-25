@@ -1,10 +1,8 @@
-import { TEXTAREA_CLASSES, mergeClasses } from "@/utilities";
+import { FORM_CONTROL_TEXTAREA_LINE_HEIGHT_REM, FORM_CONTROL_TEXTAREA_SIZE_CLASSES, mergeClasses, useEffectiveFormControlSize } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { splitProps } from "solid-js";
 
 type ResizeOption = "none" | "vertical" | "horizontal" | "both";
-
-const TEXTAREA_LINE_HEIGHT_REM = 1.5;
 
 const RESIZE_CLASS: Record<ResizeOption, string> = {
   none: "resize-none",
@@ -23,11 +21,9 @@ type TextareaProperties = ComponentProps<"textarea"> & {
 
 const adjustAutoGrowHeight = (element: HTMLTextAreaElement, minRows: number, maxRows: number): void => {
   element.style.height = "auto";
-  const lineHeightRem = TEXTAREA_LINE_HEIGHT_REM;
-  const minHeightRem = minRows * lineHeightRem;
-  const maxHeightRem = maxRows * lineHeightRem;
-  const scrollHeightPx = element.scrollHeight;
-  const scrollHeightRem = scrollHeightPx / 16;
+  const minHeightRem = minRows * FORM_CONTROL_TEXTAREA_LINE_HEIGHT_REM;
+  const maxHeightRem = maxRows * FORM_CONTROL_TEXTAREA_LINE_HEIGHT_REM;
+  const scrollHeightRem = element.scrollHeight / 16;
   const clampedRem = Math.min(maxHeightRem, Math.max(minHeightRem, scrollHeightRem));
   element.style.height = `${clampedRem}rem`;
 };
@@ -37,15 +33,10 @@ const adjustAutoGrowHeight = (element: HTMLTextAreaElement, minRows: number, max
  */
 export const Textarea = (properties: TextareaProperties) => {
   const [local, rest] = splitProps(properties, ["class", "resize", "autoGrow", "minRows", "maxRows", "ref", "onInput", "rows"]);
-  const resizeClass = () => {
-    return local.resize !== undefined ? RESIZE_CLASS[local.resize] : "";
-  };
-  const minRows = () => {
-    return local.minRows ?? 1;
-  };
-  const maxRows = () => {
-    return local.maxRows ?? 8;
-  };
+  const effectiveSize = useEffectiveFormControlSize();
+  const resizeClass = () => (local.resize !== undefined ? RESIZE_CLASS[local.resize] : "");
+  const minRows = () => local.minRows ?? 1;
+  const maxRows = () => local.maxRows ?? 8;
 
   const handleInput = (event: InputEvent & { currentTarget: HTMLTextAreaElement; target: HTMLTextAreaElement }): void => {
     const element = event.currentTarget;
@@ -79,7 +70,7 @@ export const Textarea = (properties: TextareaProperties) => {
       rows={local.autoGrow ? minRows() : local.rows}
       class={mergeClasses(
         "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-400 transition-colors duration-150 focus:border-blue-500 focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400",
-        TEXTAREA_CLASSES,
+        FORM_CONTROL_TEXTAREA_SIZE_CLASSES[effectiveSize()],
         local.autoGrow && "overflow-hidden",
         resizeClass(),
         local.class

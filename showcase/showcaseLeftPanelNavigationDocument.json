@@ -1,0 +1,68 @@
+{
+  "groups": [
+    {
+      "groupLabel": "Primitives and progress",
+      "navigationGroupIdentifier": "showcase-navigation-primitives",
+      "collapsibleNavigationGroup": true,
+      "items": [
+        {
+          "href": "#showcase-heading-badges",
+          "label": "Badges",
+          "iconExportName": "tag"
+        },
+        {
+          "href": "#showcase-heading-buttons",
+          "label": "Buttons",
+          "iconExportName": "checkCircle"
+        },
+        {
+          "href": "#showcase-heading-spinner-loading",
+          "label": "Spinner and loading",
+          "iconExportName": "settings"
+        }
+      ]
+    },
+    {
+      "groupLabel": "Data, forms, and overlays",
+      "navigationGroupIdentifier": "showcase-navigation-surfaces",
+      "collapsibleNavigationGroup": true,
+      "items": [
+        {
+          "href": "#showcase-heading-metrics",
+          "label": "Metric cards",
+          "iconExportName": "wallet"
+        },
+        {
+          "href": "#showcase-heading-card-empty",
+          "label": "Card and empty state",
+          "iconExportName": "inventory"
+        },
+        {
+          "href": "#showcase-heading-forms",
+          "label": "Fields and inputs",
+          "iconExportName": "list"
+        },
+        {
+          "href": "#showcase-heading-tabs",
+          "label": "Tabs",
+          "iconExportName": "calendarDays"
+        },
+        {
+          "href": "#showcase-heading-dropdowns",
+          "label": "Dropdowns",
+          "iconExportName": "arrowTrendingUp"
+        },
+        {
+          "href": "#showcase-heading-table",
+          "label": "Table",
+          "iconExportName": "groups"
+        },
+        {
+          "href": "#showcase-heading-dialog-toast",
+          "label": "Dialog and toasts",
+          "iconExportName": "chat"
+        }
+      ]
+    }
+  ]
+}

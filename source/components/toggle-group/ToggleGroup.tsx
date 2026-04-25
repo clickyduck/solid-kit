@@ -7,7 +7,10 @@ import {
   CHOICE_CONTROL_LABEL_CLASS,
   CHOICE_CONTROL_LABEL_HAS_INTERACTION_CLASSES,
   CHOICE_CONTROL_TITLE_CLASS,
-  mergeClasses
+  FORM_CONTROL_CHOICE_FACE_SIZE_CLASSES_BY_SIZE,
+  FORM_CONTROL_ICON_SIZE,
+  mergeClasses,
+  useEffectiveFormControlSize
 } from "@/utilities";
 import { For, Show } from "solid-js";
 
@@ -48,6 +51,8 @@ export type ToggleGroupProperties = ToggleGroupBase &
   );
 
 const ToggleGroup = (properties: ToggleGroupProperties) => {
+  const effectiveSize = useEffectiveFormControlSize();
+
   const selectedValues = (): string[] => {
     if (properties.selectionMode === "multiple") {
       return (properties as Extract<ToggleGroupProperties, { selectionMode: "multiple" }>).value ?? [];
@@ -123,14 +128,14 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
                   onChange={(event) => handleMultipleInput(option.value, event.currentTarget.checked)}
                 />
               </Show>
-              <span class={mergeClasses(CHOICE_CONTROL_FACE_CLASS, option.class)}>
+              <span class={mergeClasses(CHOICE_CONTROL_FACE_CLASS, FORM_CONTROL_CHOICE_FACE_SIZE_CLASSES_BY_SIZE[effectiveSize()], option.class)}>
                 <span class="flex min-w-0 flex-1 flex-col gap-0.5">
                   <span class={CHOICE_CONTROL_TITLE_CLASS}>{option.label}</span>
                   <Show when={option.description != null}>
                     <span class={CHOICE_CONTROL_DESCRIPTION_CLASS}>{option.description}</span>
                   </Show>
                 </span>
-                <Icon icon={checkCircle} class={mergeClasses(CHOICE_CONTROL_CHECK_CLASS)} aria-hidden="true" />
+                <Icon icon={checkCircle} width={FORM_CONTROL_ICON_SIZE[effectiveSize()]} height={FORM_CONTROL_ICON_SIZE[effectiveSize()]} class={mergeClasses(CHOICE_CONTROL_CHECK_CLASS)} aria-hidden="true" />
               </span>
             </label>
           );

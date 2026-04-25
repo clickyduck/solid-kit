@@ -1,3 +1,4 @@
+import { mergeClasses } from "@/utilities";
 import type { JSX, ParentComponent } from "solid-js";
 import { Show } from "solid-js";
 
@@ -18,7 +19,7 @@ export const Header: ParentComponent<HeaderProperties> = (properties) => {
   }
 
   return (
-    <div class={properties.class ?? "flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6"}>
+    <div class={mergeClasses("flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6", properties.class)}>
       <div class="min-w-0 shrink-0">
         <Show when={properties.back}>
           <div class="mb-2">{properties.back}</div>

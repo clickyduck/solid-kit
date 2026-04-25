@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/card/Card";
-import { Icon, arrowRight } from "@/components/icons";
+import { Icon, type IconComponent, arrowRight } from "@/components/icons";
 import { mergeClasses } from "@/utilities";
-import { type Component, type ComponentProps, Show } from "solid-js";
+import { Show } from "solid-js";
 
 type AccentColor = "emerald" | "blue" | "amber" | "violet" | "rose";
 
@@ -41,7 +41,7 @@ const ACCENT_CLASSES: Record<AccentColor, { card: string; iconBox: string; iconC
 type MetricProperties = {
   title: string;
   accent: AccentColor;
-  icon: Component<ComponentProps<"svg">>;
+  icon: IconComponent;
   loading?: boolean;
   value: string;
   linkHref?: string;
