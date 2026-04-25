@@ -28,9 +28,7 @@
     "format": "npx prettier --write .",
     "build": "node --eval \"import('fs').then(({ rmSync }) => { rmSync('public', { recursive: true, force: true }); console.log('Cleaned public/'); })\" && vite build",
     "typecheck": "tsc --noEmit",
-    "verify": "npm run typecheck && npm run build",
-    "prepublishOnly": "npm run verify",
-    "preversion": "npm run verify",
+    "prepublishOnly": "npm run typecheck && npm run build",
     "postversion": "git push --follow-tags",
     "release": "dotenv -e .env -- npm publish"
   },

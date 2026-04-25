@@ -55,8 +55,8 @@ npm run typecheck
 # Type check with file watcher
 npm run typecheck -- --watch
 
-# Type check + build (no publish)
-npm run verify
+# Type check then build (no publish; same as prepublishOnly)
+npm run typecheck && npm run build
 
 # Format sources
 npm run format
@@ -75,15 +75,14 @@ material-symbols-rounded-glyph-host.css   # Published with the package: .materia
 
 This section is the full checklist for publishing **`@clickyduck/solid-kit`** to GitHub Packages.
 
-### Build, verify, and release (how they relate)
+### Build, typecheck, and release (how they relate)
 
 | Command               | What it does                                                                                                                                                                                                                                   |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`npm run build`**   | Deletes the **`public/`** output folder, then runs the Vite library build. Produces the files that ship inside the package (see **`files`** in **`package.json`**). Use this when you only want a local build (for example to inspect output). |
-| **`npm run verify`**  | Runs **`npm run typecheck`**, then **`npm run build`**. Same checks as the automated gates below, without publishing.                                                                                                                          |
-| **`npm run release`** | Runs **`prepublishOnly`**, which runs **`verify`** (typecheck + build), then **`npm publish`** with **`GITHUB_TOKEN`** loaded from **`.env`** via **`dotenv-cli`**.                                                                            |
+| **`npm run release`** | Runs **`prepublishOnly`** (**`npm run typecheck`** then **`npm run build`**), then **`npm publish`** with **`GITHUB_TOKEN`** loaded from **`.env`** via **`dotenv-cli`**.                                                                    |
 
-You **do not** need to run **`npm run build`** manually immediately before **`npm run release`** or **`npm version`**: both paths already run **`verify`**, which includes a full build. Run **`npm run build`** (or **`npm run verify`**) on its own when you want to confirm the bundle locally without bumping a version or uploading.
+You **do not** need to run **`npm run build`** manually immediately before **`npm run release`**: **`prepublishOnly`** already runs typecheck and build. Before **`npm version`**, run **`npm run typecheck && npm run build`** so you do not tag a commit that fails typecheck or build (**`npm version`** does not run those steps). Run **`npm run typecheck`**, **`npm run build`**, or both in sequence any time you want to confirm output locally.
 
 ### 1. One-time setup: GitHub token
 
@@ -100,8 +99,9 @@ Alternatively, export it in the shell: `export GITHUB_TOKEN=your_token_here` (Un
 ### 3. Before you version or publish
 
 1. Commit or stash every change you want in the release. **`npm version`** creates a git commit; it refuses a dirty working tree unless you pass flags you should use only when you know why.
-2. Push your branch as usual so collaborators see your commits before you tag.
-3. Confirm **`.env`** exists with **`GITHUB_TOKEN`** if you rely on the file (see step 2).
+2. Run **`npm run typecheck && npm run build`** before **`npm version`** so the tagged commit is known good.
+3. Push your branch as usual so collaborators see your commits before you tag.
+4. Confirm **`.env`** exists with **`GITHUB_TOKEN`** if you rely on the file (see step 2).
 
 ### 4. Bump the package version (git commit, tag, push)
 
@@ -115,10 +115,9 @@ npm version major   # 0.1.0 → 1.0.0  (breaking changes)
 
 What **`npm version`** does in this repository:
 
-1. **`preversion`**: runs **`npm run verify`** (typecheck, then **`npm run build`** including cleaning **`public/`**).
-2. Updates the **`version`** field in **`package.json`** (and **`package-lock.json`** if npm updates it).
-3. Creates a git commit for that version bump and a git tag (for example **`v0.1.1`**).
-4. **`postversion`**: runs **`git push --follow-tags`** so the commit and tag are on the remote.
+1. Updates the **`version`** field in **`package.json`** (and **`package-lock.json`** if npm updates it).
+2. Creates a git commit for that version bump and a git tag (for example **`v0.1.1`**).
+3. **`postversion`**: runs **`git push --follow-tags`** so the commit and tag are on the remote.
 
 If **`postversion`** fails to push, fix your remote or credentials, then run **`git push --follow-tags`** manually so the version commit and tag reach the remote.
 
@@ -132,7 +131,7 @@ npm run release
 
 What **`npm run release`** does:
 
-1. **`prepublishOnly`**: runs **`npm run verify`** again (typecheck + build, so the tarball always matches current sources).
+1. **`prepublishOnly`**: runs **`npm run typecheck`** then **`npm run build`** so the tarball matches current sources.
 2. **`npm publish`** to the registry configured in **`publishConfig`** (GitHub Packages for this package), using **`GITHUB_TOKEN`** from **`.env`** when you use **`dotenv-cli`** as in the script.
 
 First-time publish from a machine: same commands; ensure the package name and registry scope match your GitHub organization and **`.npmrc`**.
@@ -148,7 +147,7 @@ npm run release -- --dry-run
 Typecheck and build only (no **`npm version`**, no publish):
 
 ```bash
-npm run verify
+npm run typecheck && npm run build
 ```
 
 Library build only (no typecheck):
