@@ -186,7 +186,15 @@ export const ShowcaseApplication = (): JSX.Element => {
 
       <div class="flex min-h-0 flex-1 overflow-hidden">
         <div class={mergeClasses("shrink-0 overflow-visible transition-[width] duration-200 ease-in-out md:overflow-hidden", sidebarCollapsed() ? "w-0 md:w-16" : "w-0 md:w-64")}>
-          <LeftPanel collapsed={sidebarCollapsed()} onClose={closeSidebar} navigationDocument={showcaseLeftPanelNavigationDocument} />
+          <LeftPanel
+            collapsed={sidebarCollapsed()}
+            onOpenChange={(isPanelOpen) => {
+              if (!isPanelOpen) {
+                closeSidebar();
+              }
+            }}
+            navigationDocument={showcaseLeftPanelNavigationDocument}
+          />
         </div>
         <main class="flex min-h-0 min-w-0 flex-1 flex-row" id="showcase-main-content">
           <RightPanelLayout class="min-h-0 w-full min-w-0">
@@ -651,9 +659,10 @@ export const ShowcaseApplication = (): JSX.Element => {
             <RightPanel
               title="Right panel"
               subtitle="In flow with the main column on medium screens and up; fixed overlay on small viewports"
-              onBeginClose={() => {}}
-              onClose={() => {
-                setIsRightPanelOpen(false);
+              onOpenChange={(isPanelOpen) => {
+                if (!isPanelOpen) {
+                  setIsRightPanelOpen(false);
+                }
               }}
               closeAriaLabel="Close right panel showcase"
             >

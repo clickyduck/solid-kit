@@ -11,8 +11,8 @@ type RightPanelProperties = {
   headerActions?: JSX.Element;
   children: JSX.Element;
   footer?: JSX.Element;
-  onBeginClose: () => void;
-  onClose: () => void;
+  /** Fires with `true` when the open transition is applied, and with `false` when the close animation has finished (200ms) so a parent can unmount after `Show`. */
+  onOpenChange: (isPanelOpen: boolean) => void;
   closeAriaLabel: string;
 };
 
@@ -25,14 +25,14 @@ export const RightPanel: Component<RightPanelProperties> = (properties) => {
   onMount(() => {
     requestAnimationFrame(() => {
       setIsPanelVisible(true);
+      properties.onOpenChange(true);
     });
   });
 
   const closeRightPanel = (): void => {
-    properties.onBeginClose();
     setIsPanelVisible(false);
     setTimeout(() => {
-      properties.onClose();
+      properties.onOpenChange(false);
     }, 200);
   };
 

@@ -4,7 +4,7 @@ import { mergeClasses } from "@/utilities/mergeClasses";
 import { themedScrollControlClassName } from "@/utilities/themedScrollControlClassName";
 import { useIsMobile } from "@/utilities/useIsMobile";
 import type { Component, JSX } from "solid-js";
-import { For, Show, createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import { For, Show, createEffect, createMemo, createSignal, on, onCleanup, onMount } from "solid-js";
 
 /** Maps JSON `iconExportName` values to icon components; extend this object when supporting new icon names in navigation JSON. */
 export const leftPanelNavigationIconByExportName = {
@@ -210,7 +210,10 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
 
 type LeftPanelProperties = {
   collapsed: boolean;
-  onClose?: () => void;
+  /**
+   * Fires when the panel becomes open or closed. Use `false` from link tap or swipe to request closing; the parent should set `collapsed` to match.
+   */
+  onOpenChange?: (isPanelOpen: boolean) => void;
   navigationDocument: LeftPanelNavigationDocumentJson;
 };
 
@@ -226,6 +229,19 @@ export const LeftPanel: Component<LeftPanelProperties> = (properties) => {
   const [swipeTranslationX, setSwipeTranslationX] = createSignal<number>(0);
   const [isSwipeGestureActive, setIsSwipeGestureActive] = createSignal<boolean>(false);
   const [isSwipeDragging, setIsSwipeDragging] = createSignal<boolean>(false);
+
+  createEffect(
+    on(
+      () => {
+        return !properties.collapsed;
+      },
+      (isPanelOpen: boolean) => {
+        if (properties.onOpenChange) {
+          properties.onOpenChange(isPanelOpen);
+        }
+      }
+    )
+  );
 
   const resetSwipeGesture = (): void => {
     setSwipeStartClientX(null);
@@ -326,7 +342,9 @@ export const LeftPanel: Component<LeftPanelProperties> = (properties) => {
         resetSwipeGesture();
         if (shouldClose) {
           setSwipeTranslationX(0);
-          properties.onClose?.();
+          if (properties.onOpenChange) {
+            properties.onOpenChange(false);
+          }
           return;
         }
         setSwipeTranslationX(0);
@@ -346,7 +364,15 @@ export const LeftPanel: Component<LeftPanelProperties> = (properties) => {
       }}
     >
       <div class={mergeClasses("flex min-h-0 flex-1 flex-col gap-2 overflow-x-hidden overflow-y-auto", themedScrollControlClassName, properties.collapsed ? "px-2 py-4" : "p-4")}>
-        <LeftPanelNavigationBody collapsed={properties.collapsed} navigationDocument={properties.navigationDocument} onItemClick={properties.onClose} />
+        <LeftPanelNavigationBody
+          collapsed={properties.collapsed}
+          navigationDocument={properties.navigationDocument}
+          onItemClick={() => {
+            if (properties.onOpenChange) {
+              properties.onOpenChange(false);
+            }
+          }}
+        />
       </div>
     </aside>
   );

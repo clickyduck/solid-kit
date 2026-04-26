@@ -36,19 +36,21 @@ Chip/tag with optional icon and remove button.
 
 **Exports:** `Badge`
 
-| Prop        | Type                                                          | Default     | Description                        |
-| ----------- | ------------------------------------------------------------- | ----------- | ---------------------------------- |
-| `children`  | `JSX.Element`                                                 | —           | Badge label (required)             |
-| `variant`   | `"solid" \| "outline"`                                        | `"solid"`   | Visual style                       |
-| `color`     | `"primary" \| "secondary" \| "neutral" \| "success" \| "warning" \| "danger"` | `"neutral"` | Color scheme |
-| `icon`      | `IconComponent`                                               | —           | Leading icon                       |
-| `onRemove`  | `() => void`                                                  | —           | Shows × button; called on click    |
-| `class`     | `string`                                                      | —           | Extra CSS classes                  |
+| Prop       | Type                                                                          | Default     | Description                     |
+| ---------- | ----------------------------------------------------------------------------- | ----------- | ------------------------------- |
+| `children` | `JSX.Element`                                                                 | —           | Badge label (required)          |
+| `variant`  | `"solid" \| "outline"`                                                        | `"solid"`   | Visual style                    |
+| `color`    | `"primary" \| "secondary" \| "neutral" \| "success" \| "warning" \| "danger"` | `"neutral"` | Color scheme                    |
+| `icon`     | `IconComponent`                                                               | —           | Leading icon                    |
+| `onRemove` | `() => void`                                                                  | —           | Shows × button; called on click |
+| `class`    | `string`                                                                      | —           | Extra CSS classes               |
 
 ```tsx
 import { Badge } from "@clickyduck/solid-kit";
 
-<Badge color="success" onRemove={() => {}}>Active</Badge>
+<Badge color="success" onRemove={() => {}}>
+  Active
+</Badge>;
 ```
 
 ---
@@ -61,22 +63,24 @@ Standard action button with optional icon.
 
 Extends all native `<button>` HTML attributes.
 
-| Prop            | Type                                       | Default     | Description                         |
-| --------------- | ------------------------------------------ | ----------- | ----------------------------------- |
-| `children`      | `JSX.Element`                              | —           | Button label                        |
-| `variant`       | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"`   | Visual style                        |
-| `icon`          | `IconComponent`                            | —           | Icon displayed alongside label      |
-| `iconPosition`  | `"start" \| "end"`                         | `"start"`   | Icon placement relative to label    |
-| `class`         | `string`                                   | —           | Extra CSS classes                   |
-| `disabled`      | `boolean`                                  | —           | Native disabled attribute           |
-| `type`          | `"button" \| "submit" \| "reset"`          | —           | Native type attribute               |
+| Prop           | Type                                        | Default   | Description                      |
+| -------------- | ------------------------------------------- | --------- | -------------------------------- |
+| `children`     | `JSX.Element`                               | —         | Button label                     |
+| `variant`      | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style                     |
+| `icon`         | `IconComponent`                             | —         | Icon displayed alongside label   |
+| `iconPosition` | `"start" \| "end"`                          | `"start"` | Icon placement relative to label |
+| `class`        | `string`                                    | —         | Extra CSS classes                |
+| `disabled`     | `boolean`                                   | —         | Native disabled attribute        |
+| `type`         | `"button" \| "submit" \| "reset"`           | —         | Native type attribute            |
 
 Size is responsive: `large` on mobile (≤767 px), `default` on desktop.
 
 ```tsx
 import { Button } from "@clickyduck/solid-kit";
 
-<Button variant="outline" icon={SearchIcon}>Search</Button>
+<Button variant="outline" icon={SearchIcon}>
+  Search
+</Button>;
 ```
 
 ---
@@ -90,7 +94,7 @@ Compound component for content panels.
 All parts accept standard `<div>` HTML attributes (title/description use `<h3>`/`<p>`) plus an optional `class` prop for extra CSS classes. No custom props beyond what HTML provides.
 
 ```tsx
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@clickyduck/solid-kit";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@clickyduck/solid-kit";
 
 <Card>
   <CardHeader>
@@ -99,7 +103,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
   </CardHeader>
   <CardContent>Body content</CardContent>
   <CardFooter>Footer</CardFooter>
-</Card>
+</Card>;
 ```
 
 ---
@@ -112,32 +116,36 @@ Modal dialog with managed open/close state.
 
 **`Dialog` (root) props:**
 
-| Prop           | Type                          | Default | Description                              |
-| -------------- | ----------------------------- | ------- | ---------------------------------------- |
-| `open`         | `boolean`                     | —       | Controlled open state                    |
-| `onOpenChange` | `(open: boolean) => void`     | —       | Called when open state should change     |
-| `closeable`    | `boolean`                     | `true`  | Show × button in header                  |
-| `children`     | `JSX.Element`                 | —       |                                          |
+| Prop           | Type                      | Default | Description                          |
+| -------------- | ------------------------- | ------- | ------------------------------------ |
+| `open`         | `boolean`                 | —       | Controlled open state                |
+| `onOpenChange` | `(open: boolean) => void` | —       | Called when open state should change |
+| `closeable`    | `boolean`                 | `true`  | Show × button in header              |
+| `children`     | `JSX.Element`             | —       |                                      |
 
 **`DialogHeader` extra prop:**
 
-| Prop      | Type          | Description                         |
-| --------- | ------------- | ----------------------------------- |
-| `actions` | `JSX.Element` | Additional elements in the header   |
+| Prop      | Type          | Description                       |
+| --------- | ------------- | --------------------------------- |
+| `actions` | `JSX.Element` | Additional elements in the header |
 
 All other parts (`DialogTrigger`, `DialogContent`, `DialogTitle`, `DialogDescription`, `DialogBody`, `DialogFooter`) accept standard `<div>` / `<button>` HTML attributes plus `class`.
 
 ```tsx
-import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from "@clickyduck/solid-kit";
+import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@clickyduck/solid-kit";
 
 <Dialog open={open()} onOpenChange={setOpen}>
   <DialogTrigger>Open</DialogTrigger>
   <DialogContent>
-    <DialogHeader><DialogTitle>Confirm</DialogTitle></DialogHeader>
+    <DialogHeader>
+      <DialogTitle>Confirm</DialogTitle>
+    </DialogHeader>
     <DialogBody>Are you sure?</DialogBody>
-    <DialogFooter><Button onClick={() => setOpen(false)}>Cancel</Button></DialogFooter>
+    <DialogFooter>
+      <Button onClick={() => setOpen(false)}>Cancel</Button>
+    </DialogFooter>
   </DialogContent>
-</Dialog>
+</Dialog>;
 ```
 
 ---
@@ -150,45 +158,40 @@ Accessible select-style dropdown with optional search.
 
 **`Dropdown` (root) props:**
 
-| Prop            | Type                                                         | Default  | Description                                      |
-| --------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------ |
-| `options`       | `string[]`                                                   | —        | List of option values (required)                 |
-| `value`         | `string`                                                     | —        | Controlled selected value                        |
-| `onChange`      | `(value: string \| undefined) => void`                       | —        | Called on selection change                       |
-| `disabled`      | `boolean`                                                    | —        | Disables the trigger                             |
-| `searchable`    | `boolean`                                                    | —        | Adds a filter input inside the menu              |
-| `itemComponent` | `(props: { item: { rawValue: string } }) => JSX.Element`     | —        | Custom item renderer                             |
-| `menuClass`     | `string`                                                     | —        | Extra classes on the menu surface                |
-| `menuFullWidth` | `boolean`                                                    | `true`   | Menu width matches trigger width                 |
-| `usePortal`     | `boolean`                                                    | —        | Render menu on `document.body` to escape overflow |
-| `initialOpen`   | `boolean`                                                    | —        | Open on first render                             |
+| Prop            | Type                                                     | Default | Description                                       |
+| --------------- | -------------------------------------------------------- | ------- | ------------------------------------------------- |
+| `options`       | `string[]`                                               | —       | List of option values (required)                  |
+| `value`         | `string`                                                 | —       | Controlled selected value                         |
+| `onChange`      | `(value: string \| undefined) => void`                   | —       | Called on selection change                        |
+| `disabled`      | `boolean`                                                | —       | Disables the trigger                              |
+| `searchable`    | `boolean`                                                | —       | Adds a filter input inside the menu               |
+| `itemComponent` | `(props: { item: { rawValue: string } }) => JSX.Element` | —       | Custom item renderer                              |
+| `menuClass`     | `string`                                                 | —       | Extra classes on the menu surface                 |
+| `menuFullWidth` | `boolean`                                                | `true`  | Menu width matches trigger width                  |
+| `usePortal`     | `boolean`                                                | —       | Render menu on `document.body` to escape overflow |
+| `initialOpen`   | `boolean`                                                | —       | Open on first render                              |
 
 **`DropdownContent` extra props:**
 
-| Prop                       | Type                       | Default    | Description                          |
-| -------------------------- | -------------------------- | ---------- | ------------------------------------ |
-| `useDocumentPortal`        | `boolean`                  | —          | Portal to document body              |
-| `documentPortalPlacement`  | `"top" \| "bottom"`        | `"bottom"` | Menu opening direction               |
-| `wrapChildrenInList`       | `boolean`                  | `true`     | Wrap items in `<ul>`                 |
+| Prop                      | Type                | Default    | Description             |
+| ------------------------- | ------------------- | ---------- | ----------------------- |
+| `useDocumentPortal`       | `boolean`           | —          | Portal to document body |
+| `documentPortalPlacement` | `"top" \| "bottom"` | `"bottom"` | Menu opening direction  |
+| `wrapChildrenInList`      | `boolean`           | `true`     | Wrap items in `<ul>`    |
 
 **`DropdownItem` extra props:**
 
-| Prop            | Type      | Default | Description                        |
-| --------------- | --------- | ------- | ---------------------------------- |
-| `item`          | `{ rawValue: string }` | — | Item data             |
-| `disabled`      | `boolean` | —       | Disables this item                 |
-| `selected`      | `boolean` | —       | Marks item as selected             |
-| `closeOnSelect` | `boolean` | `true`  | Close menu when item is clicked    |
+| Prop            | Type                   | Default | Description                     |
+| --------------- | ---------------------- | ------- | ------------------------------- |
+| `item`          | `{ rawValue: string }` | —       | Item data                       |
+| `disabled`      | `boolean`              | —       | Disables this item              |
+| `selected`      | `boolean`              | —       | Marks item as selected          |
+| `closeOnSelect` | `boolean`              | `true`  | Close menu when item is clicked |
 
 ```tsx
 import { Dropdown } from "@clickyduck/solid-kit";
 
-<Dropdown
-  options={["Option A", "Option B", "Option C"]}
-  value={selected()}
-  onChange={setSelected}
-  searchable
-/>
+<Dropdown options={["Option A", "Option B", "Option C"]} value={selected()} onChange={setSelected} searchable />;
 ```
 
 ---
@@ -199,17 +202,17 @@ Centered placeholder for empty lists or zero-data views.
 
 **Exports:** `EmptyState`
 
-| Prop      | Type            | Description               |
-| --------- | --------------- | ------------------------- |
-| `icon`    | `IconComponent` | Icon to display (required)|
-| `title`   | `string`        | Heading text (required)   |
-| `message` | `string`        | Body text (required)      |
-| `class`   | `string`        | Extra CSS classes         |
+| Prop      | Type            | Description                |
+| --------- | --------------- | -------------------------- |
+| `icon`    | `IconComponent` | Icon to display (required) |
+| `title`   | `string`        | Heading text (required)    |
+| `message` | `string`        | Body text (required)       |
+| `class`   | `string`        | Extra CSS classes          |
 
 ```tsx
 import { EmptyState } from "@clickyduck/solid-kit";
 
-<EmptyState icon={InboxIcon} title="No results" message="Try a different search." />
+<EmptyState icon={InboxIcon} title="No results" message="Try a different search." />;
 ```
 
 ---
@@ -220,20 +223,20 @@ Form field wrapper with label, control slot, and hint text.
 
 **Exports:** `Field`
 
-| Prop       | Type                    | Description                                                        |
-| ---------- | ----------------------- | ------------------------------------------------------------------ |
-| `label`    | `string`                | Field label (required)                                             |
-| `children` | `JSX.Element`           | The form control (required)                                        |
-| `for`      | `string`                | `htmlFor` on the label; omit for radio/checkbox groups             |
-| `hint`     | `string \| JSX.Element` | Helper text shown below the control                                |
-| `class`    | `string`                | Extra CSS classes                                                  |
+| Prop       | Type                    | Description                                            |
+| ---------- | ----------------------- | ------------------------------------------------------ |
+| `label`    | `string`                | Field label (required)                                 |
+| `children` | `JSX.Element`           | The form control (required)                            |
+| `for`      | `string`                | `htmlFor` on the label; omit for radio/checkbox groups |
+| `hint`     | `string \| JSX.Element` | Helper text shown below the control                    |
+| `class`    | `string`                | Extra CSS classes                                      |
 
 ```tsx
 import { Field, Input } from "@clickyduck/solid-kit";
 
 <Field label="Email" for="email" hint="We'll never share it.">
   <Input id="email" type="email" />
-</Field>
+</Field>;
 ```
 
 ---
@@ -244,21 +247,21 @@ Page-level header row with title, description, back link, and actions slot.
 
 **Exports:** `Header`
 
-| Prop           | Type          | Description                                         |
-| -------------- | ------------- | --------------------------------------------------- |
-| `title`        | `string`      | Page title; component returns `null` if absent      |
-| `titleElement` | `JSX.Element` | Custom title element (replaces `title` string)      |
-| `description`  | `string`      | Optional subtitle below the title                  |
-| `back`         | `JSX.Element` | Back link or button rendered to the left            |
-| `children`     | `JSX.Element` | Actions rendered on the right side                  |
-| `class`        | `string`      | Extra CSS classes                                   |
+| Prop           | Type          | Description                                    |
+| -------------- | ------------- | ---------------------------------------------- |
+| `title`        | `string`      | Page title; component returns `null` if absent |
+| `titleElement` | `JSX.Element` | Custom title element (replaces `title` string) |
+| `description`  | `string`      | Optional subtitle below the title              |
+| `back`         | `JSX.Element` | Back link or button rendered to the left       |
+| `children`     | `JSX.Element` | Actions rendered on the right side             |
+| `class`        | `string`      | Extra CSS classes                              |
 
 ```tsx
-import { Header, Button } from "@clickyduck/solid-kit";
+import { Button, Header } from "@clickyduck/solid-kit";
 
 <Header title="Users" description="Manage your team">
   <Button>Invite</Button>
-</Header>
+</Header>;
 ```
 
 ---
@@ -274,7 +277,7 @@ Extends all native `<h3>` HTML attributes plus `class`.
 ```tsx
 import { Heading } from "@clickyduck/solid-kit";
 
-<Heading>Section Title</Heading>
+<Heading>Section Title</Heading>;
 ```
 
 ---
@@ -287,18 +290,18 @@ Square icon-only button sized to match form controls.
 
 Extends all native `<button>` HTML attributes.
 
-| Prop      | Type                                       | Default   | Description              |
-| --------- | ------------------------------------------ | --------- | ------------------------ |
-| `icon`    | `IconComponent`                            | —         | Icon to render (required)|
-| `variant` | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style             |
-| `class`   | `string`                                   | —         | Extra CSS classes        |
+| Prop      | Type                                        | Default   | Description               |
+| --------- | ------------------------------------------- | --------- | ------------------------- |
+| `icon`    | `IconComponent`                             | —         | Icon to render (required) |
+| `variant` | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style              |
+| `class`   | `string`                                    | —         | Extra CSS classes         |
 
 Size is responsive: `large` on mobile (≤767 px), `default` on desktop.
 
 ```tsx
 import { IconButton } from "@clickyduck/solid-kit";
 
-<IconButton icon={CloseIcon} variant="ghost" aria-label="Close" />
+<IconButton icon={CloseIcon} variant="ghost" aria-label="Close" />;
 ```
 
 ---
@@ -311,13 +314,13 @@ SVG icon renderer and bundled icon symbols.
 
 **`Icon` props:**
 
-| Prop     | Type            | Default          | Description                    |
-| -------- | --------------- | ---------------- | ------------------------------ |
+| Prop     | Type            | Default          | Description                        |
+| -------- | --------------- | ---------------- | ---------------------------------- |
 | `icon`   | `IconComponent` | —                | SVG component to render (required) |
-| `width`  | `number`        | —                | Override width                 |
-| `height` | `number`        | —                | Override height                |
-| `fill`   | `string`        | `"currentColor"` | SVG fill color                 |
-| `class`  | `string`        | —                | Extra CSS classes              |
+| `width`  | `number`        | —                | Override width                     |
+| `height` | `number`        | —                | Override height                    |
+| `fill`   | `string`        | `"currentColor"` | SVG fill color                     |
+| `class`  | `string`        | —                | Extra CSS classes                  |
 
 **Bundled named icons** (used by built-in components such as `LeftPanel` navigation and `Toast`; for your own buttons, metrics, tabs etc. pass icons from your own module):
 
@@ -326,7 +329,7 @@ SVG icon renderer and bundled icon symbols.
 ```tsx
 import { Icon, search } from "@clickyduck/solid-kit";
 
-<Icon icon={search} width={20} />
+<Icon icon={search} width={20} />;
 ```
 
 ---
@@ -339,17 +342,17 @@ Styled text input with optional leading icon and trailing text.
 
 Extends all native `<input>` HTML attributes.
 
-| Prop           | Type            | Description                                                   |
-| -------------- | --------------- | ------------------------------------------------------------- |
-| `icon`         | `IconComponent` | Leading icon inside the input                                 |
-| `trailingText` | `string`        | Right-side label (e.g. a unit or currency symbol)             |
-| `currency`     | `boolean`       | Indian currency formatting: comma grouping, max 2 decimals    |
-| `class`        | `string`        | Extra CSS classes                                             |
+| Prop           | Type            | Description                                                |
+| -------------- | --------------- | ---------------------------------------------------------- |
+| `icon`         | `IconComponent` | Leading icon inside the input                              |
+| `trailingText` | `string`        | Right-side label (e.g. a unit or currency symbol)          |
+| `currency`     | `boolean`       | Indian currency formatting: comma grouping, max 2 decimals |
+| `class`        | `string`        | Extra CSS classes                                          |
 
 ```tsx
 import { Input } from "@clickyduck/solid-kit";
 
-<Input type="number" currency trailingText="INR" />
+<Input type="number" currency trailingText="INR" />;
 ```
 
 ---
@@ -362,11 +365,11 @@ Collapsible sidebar navigation panel.
 
 **`LeftPanel` props:**
 
-| Prop                 | Type                               | Description                                               |
-| -------------------- | ---------------------------------- | --------------------------------------------------------- |
-| `collapsed`          | `boolean`                          | When `true`, shows icon-only mode (required)              |
-| `navigationDocument` | `LeftPanelNavigationDocumentJson`  | Navigation tree configuration (required)                  |
-| `onClose`            | `() => void`                       | Called on mobile swipe-to-close gesture                   |
+| Prop                 | Type                              | Description                                                                                           |
+| -------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `collapsed`          | `boolean`                         | When `true`, shows icon-only mode (required)                                                          |
+| `navigationDocument` | `LeftPanelNavigationDocumentJson` | Navigation tree configuration (required)                                                              |
+| `onOpenChange`       | `(isPanelOpen: boolean) => void`  | Fires when open state changes; use `false` to react to close (nav link, swipe, or parent `collapsed`) |
 
 **`LeftPanelNavigationDocumentJson`** — root navigation config:
 
@@ -378,22 +381,22 @@ Collapsible sidebar navigation panel.
 
 **`LeftPanelNavigationGroupJson`** — a collapsible nav group:
 
-| Field                              | Type                                   | Description                       |
-| ---------------------------------- | -------------------------------------- | --------------------------------- |
-| `groupLabel`                       | `string`                               | Group heading                     |
-| `navigationGroupIdentifier`        | `string`                               | Unique key                        |
-| `collapsibleNavigationGroup`       | `boolean`                              | Whether the group can be toggled  |
-| `navigationGroupInitiallyCollapsed`| `boolean`                              | Start collapsed                   |
-| `items`                            | `LeftPanelNavigationItemJson[]`        | Nav items in this group           |
+| Field                               | Type                            | Description                      |
+| ----------------------------------- | ------------------------------- | -------------------------------- |
+| `groupLabel`                        | `string`                        | Group heading                    |
+| `navigationGroupIdentifier`         | `string`                        | Unique key                       |
+| `collapsibleNavigationGroup`        | `boolean`                       | Whether the group can be toggled |
+| `navigationGroupInitiallyCollapsed` | `boolean`                       | Start collapsed                  |
+| `items`                             | `LeftPanelNavigationItemJson[]` | Nav items in this group          |
 
 **`LeftPanelNavigationItemJson`** — a single nav link:
 
-| Field                | Type                                 | Description                               |
-| -------------------- | ------------------------------------ | ----------------------------------------- |
-| `href`               | `string`                             | Link URL                                  |
-| `label`              | `string`                             | Nav item text                             |
-| `iconExportName`     | `LeftPanelNavigationIconExportName`  | Icon key from `leftPanelNavigationIconByExportName` |
-| `matchRouteExactly`  | `boolean`                            | Use exact path match for active highlight |
+| Field               | Type                                | Description                                         |
+| ------------------- | ----------------------------------- | --------------------------------------------------- |
+| `href`              | `string`                            | Link URL                                            |
+| `label`             | `string`                            | Nav item text                                       |
+| `iconExportName`    | `LeftPanelNavigationIconExportName` | Icon key from `leftPanelNavigationIconByExportName` |
+| `matchRouteExactly` | `boolean`                           | Use exact path match for active highlight           |
 
 On mobile the panel is full-width with a swipe-to-close gesture. On desktop it switches between full labels and icon-only mode via `collapsed`.
 
@@ -405,15 +408,15 @@ Centered spinner with a status message.
 
 **Exports:** `Loading`
 
-| Prop      | Type     | Description                  |
-| --------- | -------- | ---------------------------- |
-| `message` | `string` | Status text (required)       |
-| `class`   | `string` | Extra CSS classes            |
+| Prop      | Type     | Description            |
+| --------- | -------- | ---------------------- |
+| `message` | `string` | Status text (required) |
+| `class`   | `string` | Extra CSS classes      |
 
 ```tsx
 import { Loading } from "@clickyduck/solid-kit";
 
-<Loading message="Fetching data…" />
+<Loading message="Fetching data…" />;
 ```
 
 ---
@@ -424,21 +427,21 @@ Stat card with accent color, icon, value, and optional link.
 
 **Exports:** `Metric`
 
-| Prop       | Type                                               | Description                              |
-| ---------- | -------------------------------------------------- | ---------------------------------------- |
-| `title`    | `string`                                           | Metric label (rendered uppercase, required) |
-| `accent`   | `"emerald" \| "blue" \| "amber" \| "violet" \| "rose"` | Left-border and icon box color (required) |
-| `icon`     | `IconComponent`                                    | Icon in the top-right (required)         |
-| `value`    | `string`                                           | Large primary value (required)           |
-| `loading`  | `boolean`                                          | Shows an em dash instead of `value`      |
-| `linkHref` | `string`                                           | Makes the footer a link                  |
-| `linkLabel`| `string`                                           | Link text                                |
-| `class`    | `string`                                           | Extra CSS classes                        |
+| Prop        | Type                                                   | Description                                 |
+| ----------- | ------------------------------------------------------ | ------------------------------------------- |
+| `title`     | `string`                                               | Metric label (rendered uppercase, required) |
+| `accent`    | `"emerald" \| "blue" \| "amber" \| "violet" \| "rose"` | Left-border and icon box color (required)   |
+| `icon`      | `IconComponent`                                        | Icon in the top-right (required)            |
+| `value`     | `string`                                               | Large primary value (required)              |
+| `loading`   | `boolean`                                              | Shows an em dash instead of `value`         |
+| `linkHref`  | `string`                                               | Makes the footer a link                     |
+| `linkLabel` | `string`                                               | Link text                                   |
+| `class`     | `string`                                               | Extra CSS classes                           |
 
 ```tsx
 import { Metric } from "@clickyduck/solid-kit";
 
-<Metric title="Revenue" accent="emerald" icon={CurrencyIcon} value="₹1,24,000" linkHref="/revenue" linkLabel="View report" />
+<Metric title="Revenue" accent="emerald" icon={CurrencyIcon} value="₹1,24,000" linkHref="/revenue" linkLabel="View report" />;
 ```
 
 ---
@@ -451,23 +454,22 @@ Responsive detail/drawer panel that slides in from the right.
 
 **`RightPanel` props:**
 
-| Prop              | Type          | Description                                               |
-| ----------------- | ------------- | --------------------------------------------------------- |
-| `title`           | `string`      | Panel heading (required)                                  |
-| `subtitle`        | `string`      | Optional subtitle                                         |
-| `headerActions`   | `JSX.Element` | Extra elements in the header row                          |
-| `children`        | `JSX.Element` | Scrollable body content (required)                        |
-| `footer`          | `JSX.Element` | Sticky footer slot                                        |
-| `onBeginClose`    | `() => void`  | Called when close animation starts (required)             |
-| `onClose`         | `() => void`  | Called when close animation completes (required)          |
-| `closeAriaLabel`  | `string`      | Accessible label for the close button (required)          |
+| Prop             | Type                             | Description                                                                                                          |
+| ---------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `title`          | `string`                         | Panel heading (required)                                                                                             |
+| `subtitle`       | `string`                         | Optional subtitle                                                                                                    |
+| `headerActions`  | `JSX.Element`                    | Extra elements in the header row                                                                                     |
+| `children`       | `JSX.Element`                    | Scrollable body content (required)                                                                                   |
+| `footer`         | `JSX.Element`                    | Sticky footer slot                                                                                                   |
+| `onOpenChange`   | `(isPanelOpen: boolean) => void` | `true` when the open transition runs; `false` after the close animation finishes (200ms), for unmounting with `Show` |
+| `closeAriaLabel` | `string`                         | Accessible label for the close button (required)                                                                     |
 
 **`RightPanelLayout` props:**
 
-| Prop       | Type          | Description                                                       |
-| ---------- | ------------- | ----------------------------------------------------------------- |
-| `children` | `JSX.Element` | Main content area; shifts left on desktop when panel is open      |
-| `class`    | `string`      | Extra CSS classes                                                 |
+| Prop       | Type          | Description                                                  |
+| ---------- | ------------- | ------------------------------------------------------------ |
+| `children` | `JSX.Element` | Main content area; shifts left on desktop when panel is open |
+| `class`    | `string`      | Extra CSS classes                                            |
 
 On desktop the panel pushes the main area. On mobile it overlays full-screen with smooth entrance/exit transitions.
 
@@ -479,15 +481,15 @@ Animated loading indicator.
 
 **Exports:** `Spinner`
 
-| Prop         | Type     | Description                                          |
-| ------------ | -------- | ---------------------------------------------------- |
-| `class`      | `string` | Extra CSS classes (default size is `size-8`)         |
+| Prop         | Type     | Description                                                           |
+| ------------ | -------- | --------------------------------------------------------------------- |
+| `class`      | `string` | Extra CSS classes (default size is `size-8`)                          |
 | `aria-label` | `string` | Accessible label; omit to make the spinner decorative (`aria-hidden`) |
 
 ```tsx
 import { Spinner } from "@clickyduck/solid-kit";
 
-<Spinner aria-label="Loading" />
+<Spinner aria-label="Loading" />;
 ```
 
 ---
@@ -502,35 +504,35 @@ Full compound component for data tables with pagination.
 
 **`TableRow` extra props:**
 
-| Prop            | Type                    | Default    | Description                              |
-| --------------- | ----------------------- | ---------- | ---------------------------------------- |
-| `clickable`     | `boolean`               | —          | Pointer cursor + hover highlight         |
-| `active`        | `boolean`               | —          | Blue highlight for the selected row      |
-| `verticalAlign` | `"top" \| "middle"`     | `"middle"` | Cell vertical alignment                  |
+| Prop            | Type                | Default    | Description                         |
+| --------------- | ------------------- | ---------- | ----------------------------------- |
+| `clickable`     | `boolean`           | —          | Pointer cursor + hover highlight    |
+| `active`        | `boolean`           | —          | Blue highlight for the selected row |
+| `verticalAlign` | `"top" \| "middle"` | `"middle"` | Cell vertical alignment             |
 
 **`TableHead` / `TableCell` extra props:**
 
-| Prop        | Type                          | Default  | Description               |
-| ----------- | ----------------------------- | -------- | ------------------------- |
-| `align`     | `"left" \| "right" \| "center"` | `"left"` | Text alignment            |
-| `monospace` | `boolean`                     | —        | Applies `font-mono`       |
+| Prop        | Type                            | Default  | Description         |
+| ----------- | ------------------------------- | -------- | ------------------- |
+| `align`     | `"left" \| "right" \| "center"` | `"left"` | Text alignment      |
+| `monospace` | `boolean`                       | —        | Applies `font-mono` |
 
 **`TablePagination` props:**
 
-| Prop               | Type                                      | Default              | Description                                   |
-| ------------------ | ----------------------------------------- | -------------------- | --------------------------------------------- |
-| `limit`            | `number`                                  | —                    | Rows per page (required)                      |
-| `offset`           | `number`                                  | —                    | Current row offset (required)                 |
-| `currentPageCount` | `number`                                  | —                    | Number of rows on the current page (required) |
-| `totalCount`       | `number`                                  | —                    | Total rows; used to disable Next when at end  |
-| `onChange`         | `(next: { limit: number; offset: number }) => void` | —       | Called on page or limit change (required)     |
-| `limitOptions`     | `number[]`                                | `[25, 50, 100, 200]` | Rows-per-page choices                         |
-| `class`            | `string`                                  | —                    | Extra CSS classes                             |
+| Prop               | Type                                                | Default              | Description                                   |
+| ------------------ | --------------------------------------------------- | -------------------- | --------------------------------------------- |
+| `limit`            | `number`                                            | —                    | Rows per page (required)                      |
+| `offset`           | `number`                                            | —                    | Current row offset (required)                 |
+| `currentPageCount` | `number`                                            | —                    | Number of rows on the current page (required) |
+| `totalCount`       | `number`                                            | —                    | Total rows; used to disable Next when at end  |
+| `onChange`         | `(next: { limit: number; offset: number }) => void` | —                    | Called on page or limit change (required)     |
+| `limitOptions`     | `number[]`                                          | `[25, 50, 100, 200]` | Rows-per-page choices                         |
+| `class`            | `string`                                            | —                    | Extra CSS classes                             |
 
 Clickable rows support keyboard activation via Enter / Space.
 
 ```tsx
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell, TablePagination } from "@clickyduck/solid-kit";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TablePagination, TableRow } from "@clickyduck/solid-kit";
 
 <Table>
   <TableHeader>
@@ -542,10 +544,12 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell, TablePag
   <TableBody>
     <TableRow clickable onClick={() => {}}>
       <TableCell>Alice</TableCell>
-      <TableCell align="right" monospace>₹500</TableCell>
+      <TableCell align="right" monospace>
+        ₹500
+      </TableCell>
     </TableRow>
   </TableBody>
-</Table>
+</Table>;
 ```
 
 ---
@@ -560,26 +564,26 @@ Accessible tab bar with ARIA roles and underline indicator.
 
 **`TabDefinition<TabValue>` shape:**
 
-| Field                  | Type            | Description                   |
-| ---------------------- | --------------- | ----------------------------- |
-| `tabValue`             | `TabValue`      | Unique tab identifier         |
-| `label`                | `string`        | Display label                 |
-| `tabElementIdentifier` | `string`        | DOM id for the tab button     |
-| `panelElementIdentifier` | `string`      | DOM id for the tab panel      |
-| `icon`                 | `IconComponent` | Optional leading icon         |
+| Field                    | Type            | Description               |
+| ------------------------ | --------------- | ------------------------- |
+| `tabValue`               | `TabValue`      | Unique tab identifier     |
+| `label`                  | `string`        | Display label             |
+| `tabElementIdentifier`   | `string`        | DOM id for the tab button |
+| `panelElementIdentifier` | `string`        | DOM id for the tab panel  |
+| `icon`                   | `IconComponent` | Optional leading icon     |
 
 **`Tabs` props:**
 
-| Prop             | Type                               | Description                                    |
-| ---------------- | ---------------------------------- | ---------------------------------------------- |
-| `tabDefinitions` | `readonly TabDefinition<TabValue>[]` | Tab configuration (required)                 |
-| `activeTabValue` | `Accessor<TabValue>`               | Currently active tab (required)                |
-| `onTabSelect`    | `(value: TabValue) => void`        | Called when a tab is clicked (required)        |
-| `isDisabled`     | `Accessor<boolean>`                | Disables all tabs                              |
-| `class`          | `string`                           | Extra classes on the root element              |
-| `tabListClass`   | `string`                           | Extra classes on the `<ul>` tab list           |
-| `listItemClass`  | `string`                           | Extra classes on each `<li>` (default: `flex-1 basis-0`) |
-| `tabButtonClass` | `string`                           | Extra classes on each tab `<button>`           |
+| Prop             | Type                                 | Description                                              |
+| ---------------- | ------------------------------------ | -------------------------------------------------------- |
+| `tabDefinitions` | `readonly TabDefinition<TabValue>[]` | Tab configuration (required)                             |
+| `activeTabValue` | `Accessor<TabValue>`                 | Currently active tab (required)                          |
+| `onTabSelect`    | `(value: TabValue) => void`          | Called when a tab is clicked (required)                  |
+| `isDisabled`     | `Accessor<boolean>`                  | Disables all tabs                                        |
+| `class`          | `string`                             | Extra classes on the root element                        |
+| `tabListClass`   | `string`                             | Extra classes on the `<ul>` tab list                     |
+| `listItemClass`  | `string`                             | Extra classes on each `<li>` (default: `flex-1 basis-0`) |
+| `tabButtonClass` | `string`                             | Extra classes on each tab `<button>`                     |
 
 ```tsx
 import { Tabs } from "@clickyduck/solid-kit";
@@ -590,11 +594,11 @@ const [tab, setTab] = createSignal("overview");
 <Tabs
   tabDefinitions={[
     { tabValue: "overview", label: "Overview", tabElementIdentifier: "tab-overview", panelElementIdentifier: "panel-overview" },
-    { tabValue: "details",  label: "Details",  tabElementIdentifier: "tab-details",  panelElementIdentifier: "panel-details" },
+    { tabValue: "details", label: "Details", tabElementIdentifier: "tab-details", panelElementIdentifier: "panel-details" }
   ]}
   activeTabValue={tab}
   onTabSelect={setTab}
-/>
+/>;
 ```
 
 ---
@@ -607,18 +611,18 @@ Auto-growing styled textarea.
 
 Extends all native `<textarea>` HTML attributes.
 
-| Prop       | Type                                        | Default | Description                                    |
-| ---------- | ------------------------------------------- | ------- | ---------------------------------------------- |
-| `resize`   | `"none" \| "vertical" \| "horizontal" \| "both"` | —  | CSS resize handle                              |
-| `autoGrow` | `boolean`                                   | —       | Height expands automatically to fit content    |
-| `minRows`  | `number`                                    | `1`     | Minimum visible rows when `autoGrow` is active |
-| `maxRows`  | `number`                                    | `8`     | Maximum rows before scroll when `autoGrow`     |
-| `class`    | `string`                                    | —       | Extra CSS classes                              |
+| Prop       | Type                                             | Default | Description                                    |
+| ---------- | ------------------------------------------------ | ------- | ---------------------------------------------- |
+| `resize`   | `"none" \| "vertical" \| "horizontal" \| "both"` | —       | CSS resize handle                              |
+| `autoGrow` | `boolean`                                        | —       | Height expands automatically to fit content    |
+| `minRows`  | `number`                                         | `1`     | Minimum visible rows when `autoGrow` is active |
+| `maxRows`  | `number`                                         | `8`     | Maximum rows before scroll when `autoGrow`     |
+| `class`    | `string`                                         | —       | Extra CSS classes                              |
 
 ```tsx
 import { Textarea } from "@clickyduck/solid-kit";
 
-<Textarea autoGrow minRows={3} maxRows={10} placeholder="Enter notes…" />
+<Textarea autoGrow minRows={3} maxRows={10} placeholder="Enter notes…" />;
 ```
 
 ---
@@ -645,22 +649,23 @@ addToast(toast: {
 
 Toasts auto-dismiss after 5 seconds. `variant` controls the icon:
 
-| Variant     | Icon              |
-| ----------- | ----------------- |
-| `"success"` | Check circle      |
-| `"danger"`  | Close circle      |
+| Variant     | Icon                 |
+| ----------- | -------------------- |
+| `"success"` | Check circle         |
+| `"danger"`  | Close circle         |
 | `"warning"` | Exclamation triangle |
-| `"default"` | No icon           |
+| `"default"` | No icon              |
 
 **`Toaster`** — no props; renders a fixed bottom-right region.
 
 ```tsx
 // App root
 import { Toaster } from "@clickyduck/solid-kit";
-<Toaster />
-
 // Anywhere in your app
 import { addToast } from "@clickyduck/solid-kit";
+
+<Toaster />;
+
 addToast({ title: "Saved", description: "Your changes were saved.", variant: "success" });
 ```
 
@@ -674,38 +679,38 @@ Radio or checkbox toggle card group.
 
 **`ToggleGroupOption` shape:**
 
-| Field         | Type      | Description                        |
-| ------------- | --------- | ---------------------------------- |
-| `value`       | `string`  | Option value (required)            |
-| `label`       | `string`  | Display label (required)           |
-| `description` | `string`  | Optional secondary text            |
-| `disabled`    | `boolean` | Disables this option               |
-| `class`       | `string`  | Extra CSS classes on this option   |
+| Field         | Type      | Description                      |
+| ------------- | --------- | -------------------------------- |
+| `value`       | `string`  | Option value (required)          |
+| `label`       | `string`  | Display label (required)         |
+| `description` | `string`  | Optional secondary text          |
+| `disabled`    | `boolean` | Disables this option             |
+| `class`       | `string`  | Extra CSS classes on this option |
 
 **`ToggleGroup` props** (union discriminated by `selectionMode`):
 
 Single selection:
 
-| Prop               | Type                                   | Description                              |
-| ------------------ | -------------------------------------- | ---------------------------------------- |
-| `selectionMode`    | `"single"`                             | (required)                               |
-| `name`             | `string`                               | Radio group name (required)              |
-| `options`          | `ToggleGroupOption[]`                  | (required)                               |
-| `value`            | `string`                               | Selected value                           |
-| `onChange`         | `(value: string \| undefined) => void` | Called on selection                      |
-| `disabled`         | `boolean`                              | Disables all options                     |
-| `allowNoSelection` | `boolean`                              | Clicking the selected option clears it   |
+| Prop               | Type                                   | Description                            |
+| ------------------ | -------------------------------------- | -------------------------------------- |
+| `selectionMode`    | `"single"`                             | (required)                             |
+| `name`             | `string`                               | Radio group name (required)            |
+| `options`          | `ToggleGroupOption[]`                  | (required)                             |
+| `value`            | `string`                               | Selected value                         |
+| `onChange`         | `(value: string \| undefined) => void` | Called on selection                    |
+| `disabled`         | `boolean`                              | Disables all options                   |
+| `allowNoSelection` | `boolean`                              | Clicking the selected option clears it |
 
 Multiple selection:
 
-| Prop            | Type                          | Description                  |
-| --------------- | ----------------------------- | ---------------------------- |
-| `selectionMode` | `"multiple"`                  | (required)                   |
-| `name`          | `string`                      | Checkbox group name (required)|
-| `options`       | `ToggleGroupOption[]`         | (required)                   |
-| `value`         | `string[]`                    | Selected values              |
-| `onChange`      | `(value: string[]) => void`   | Called on selection change   |
-| `disabled`      | `boolean`                     | Disables all options         |
+| Prop            | Type                        | Description                    |
+| --------------- | --------------------------- | ------------------------------ |
+| `selectionMode` | `"multiple"`                | (required)                     |
+| `name`          | `string`                    | Checkbox group name (required) |
+| `options`       | `ToggleGroupOption[]`       | (required)                     |
+| `value`         | `string[]`                  | Selected values                |
+| `onChange`      | `(value: string[]) => void` | Called on selection change     |
+| `disabled`      | `boolean`                   | Disables all options           |
 
 ```tsx
 import { ToggleGroup } from "@clickyduck/solid-kit";
@@ -718,11 +723,11 @@ const [plan, setPlan] = createSignal<string>();
   name="plan"
   options={[
     { value: "starter", label: "Starter", description: "Up to 5 users" },
-    { value: "pro",     label: "Pro",     description: "Unlimited users" },
+    { value: "pro", label: "Pro", description: "Unlimited users" }
   ]}
   value={plan()}
   onChange={setPlan}
-/>
+/>;
 ```
 
 ---
@@ -735,14 +740,14 @@ Styled file input with file-count display.
 
 Extends all native `<input type="file">` HTML attributes.
 
-| Prop                    | Type                               | Description                            |
-| ----------------------- | ---------------------------------- | -------------------------------------- |
-| `selectedFiles`         | `File[]`                           | Controlled file list (required)        |
-| `onSelectedFilesChange` | `(files: File[]) => void`          | Called when the selection changes (required) |
-| `class`                 | `string`                           | Extra CSS classes                      |
-| `accept`                | `string`                           | Native file type filter                |
-| `multiple`              | `boolean`                          | Allow multiple file selection          |
-| `disabled`              | `boolean`                          | Disables the control                   |
+| Prop                    | Type                      | Description                                  |
+| ----------------------- | ------------------------- | -------------------------------------------- |
+| `selectedFiles`         | `File[]`                  | Controlled file list (required)              |
+| `onSelectedFilesChange` | `(files: File[]) => void` | Called when the selection changes (required) |
+| `class`                 | `string`                  | Extra CSS classes                            |
+| `accept`                | `string`                  | Native file type filter                      |
+| `multiple`              | `boolean`                 | Allow multiple file selection                |
+| `disabled`              | `boolean`                 | Disables the control                         |
 
 ```tsx
 import { Upload } from "@clickyduck/solid-kit";
@@ -750,7 +755,7 @@ import { createSignal } from "solid-js";
 
 const [files, setFiles] = createSignal<File[]>([]);
 
-<Upload selectedFiles={files()} onSelectedFilesChange={setFiles} accept=".csv" multiple />
+<Upload selectedFiles={files()} onSelectedFilesChange={setFiles} accept=".csv" multiple />;
 ```
 
 ---
@@ -765,7 +770,8 @@ Merges Tailwind CSS class strings; later arguments override conflicting utilitie
 
 ```ts
 import { mergeClasses } from "@clickyduck/solid-kit";
-mergeClasses("px-4 py-2", conditionalClass, "py-4") // → "px-4 py-4 …"
+
+mergeClasses("px-4 py-2", conditionalClass, "py-4"); // → "px-4 py-4 …"
 ```
 
 ### `useIsMobile`
@@ -774,6 +780,7 @@ Solid.js signal tracking whether the viewport is ≤767 px.
 
 ```ts
 import { useIsMobile } from "@clickyduck/solid-kit";
+
 const isMobile = useIsMobile(); // Accessor<boolean>
 ```
 
@@ -783,6 +790,7 @@ Returns `"large"` on mobile (≤767 px) and `"default"` on desktop. Used interna
 
 ```ts
 import { useEffectiveFormControlSize } from "@clickyduck/solid-kit";
+
 const size = useEffectiveFormControlSize(); // Accessor<"default" | "large">
 ```
 
@@ -791,10 +799,7 @@ const size = useEffectiveFormControlSize(); // Accessor<"default" | "large">
 Manage the app's light/dark theme with `localStorage` persistence and cross-tab sync.
 
 ```ts
-import {
-  createDocumentColorSchemePreferenceSignal,
-  persistDocumentColorSchemeName,
-} from "@clickyduck/solid-kit";
+import { createDocumentColorSchemePreferenceSignal, persistDocumentColorSchemeName } from "@clickyduck/solid-kit";
 
 // In your root component:
 const [scheme, setScheme] = createDocumentColorSchemePreferenceSignal();
