@@ -6,33 +6,33 @@ A SolidJS component library built with Tailwind CSS and Flowbite-style patterns,
 
 Exports from `@clickyduck/solid-kit` include the following.
 
-| Component    | Main exports                                                                                                   |
-| ------------ | -------------------------------------------------------------------------------------------------------------- |
-| Badge        | `Badge`                                                                                                        |
-| Button       | `Button`                                                                                                       |
-| Card         | `Card`                                                                                                         |
-| Dialog       | `Dialog`                                                                                                       |
-| Dropdown     | `Dropdown`                                                                                                     |
-| Empty state  | `EmptyState`                                                                                                   |
-| Field        | `Field`                                                                                                        |
-| Header       | `Header`                                                                                                       |
-| Heading      | `Heading`                                                                                                      |
-| Icon button  | `IconButton`                                                                                                   |
-| Icons        | `Icon`, `IconComponent`, named icons (list below); Material Symbols via Fontsource + host CSS — **Installing** |
-| Input        | `Input`                                                                                                        |
-| Left panel   | `LeftPanel`, `leftPanelNavigationIconByExportName`, related types                                              |
-| Loading      | `Loading`                                                                                                      |
-| Metric       | `Metric`                                                                                                       |
-| Right panel  | `RightPanel`, `RightPanelLayout`                                                                               |
-| Spinner      | `Spinner`                                                                                                      |
-| Table        | `Table`                                                                                                        |
-| Tabs         | `Tabs`, `TabDefinition`, `TabsProperties`                                                                      |
-| Textarea     | `Textarea`                                                                                                     |
-| Toast        | `Toast`, `Toaster`                                                                                             |
-| Toggle group | `ToggleGroup`                                                                                                  |
-| Upload       | `Upload`                                                                                                       |
+| Component    | Main exports                                                                                                                              |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| Badge        | `Badge`                                                                                                                                   |
+| Button       | `Button`                                                                                                                                  |
+| Card         | `Card`                                                                                                                                    |
+| Dialog       | `Dialog`                                                                                                                                  |
+| Dropdown     | `Dropdown`                                                                                                                                |
+| Empty state  | `EmptyState`                                                                                                                              |
+| Field        | `Field`                                                                                                                                   |
+| Header       | `Header`                                                                                                                                  |
+| Heading      | `Heading`                                                                                                                                 |
+| Icon button  | `IconButton`                                                                                                                              |
+| Icons        | `Icon`, `IconComponent`, and named symbols used only by built-in components (list below); define your own icon module for everything else |
+| Input        | `Input`                                                                                                                                   |
+| Left panel   | `LeftPanel`, `leftPanelNavigationIconByExportName`, related types                                                                         |
+| Loading      | `Loading`                                                                                                                                 |
+| Metric       | `Metric`                                                                                                                                  |
+| Right panel  | `RightPanel`, `RightPanelLayout`                                                                                                          |
+| Spinner      | `Spinner`                                                                                                                                 |
+| Table        | `Table`                                                                                                                                   |
+| Tabs         | `Tabs`, `TabDefinition`, `TabsProperties`                                                                                                 |
+| Textarea     | `Textarea`                                                                                                                                |
+| Toast        | `Toast`, `Toaster`                                                                                                                        |
+| Toggle group | `ToggleGroup`                                                                                                                             |
+| Upload       | `Upload`                                                                                                                                  |
 
-**Named icons** (each is an `IconComponent` you can render like other Solid components): `arrowLeft`, `arrowLeftOnRectangle`, `arrowPath`, `arrowRight`, `arrowRightOnRectangle`, `arrowTrendingUp`, `banknotes`, `barcode`, `bars3`, `calculate`, `calendarDays`, `candlestickChart`, `category`, `chat`, `checkCircle`, `chevronDown`, `chevronRight`, `circle`, `closeCircle`, `confirmationNumber`, `currencyRupee`, `darkMode`, `dashboard`, `documentPlus`, `documentText`, `download`, `ellipsisHorizontal`, `ellipsisVertical`, `exclamationTriangle`, `forum`, `groups`, `home`, `inventory`, `lightMode`, `list`, `menuOpen`, `pencil`, `percent`, `pieChart`, `playCircle`, `plusCircle`, `save`, `scale`, `search`, `settings`, `straighten`, `tag`, `trash`, `upload`, `userCircle`, `userPlus`, `visibility`, `wallet`, `work`.
+**Named icons from the package** (only symbols wired into solid-kit components, for example `LeftPanel` navigation JSON and `Toast` defaults). For buttons, metrics, empty states, tabs, and so on, pass your own `IconComponent` from a local module (see **Installing in another project**): `arrowLeft`, `arrowRight`, `arrowTrendingUp`, `calendarDays`, `chat`, `checkCircle`, `chevronDown`, `closeCircle`, `confirmationNumber`, `currencyRupee`, `dashboard`, `forum`, `groups`, `inventory`, `list`, `pieChart`, `search`, `settings`, `tag`, `upload`, `wallet`, `work`, `exclamationTriangle`.
 
 ## Development
 
@@ -68,7 +68,6 @@ npm run format
 source/
   components/   # Reusable UI components
   utilities/    # Utility functions and helpers
-material-symbols-rounded-glyph-host.css   # Published with the package: .material-symbols-rounded + variation defaults
 ```
 
 ## Publishing
@@ -80,7 +79,7 @@ This section is the full checklist for publishing **`@clickyduck/solid-kit`** to
 | Command               | What it does                                                                                                                                                                                                                                   |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`npm run build`**   | Deletes the **`public/`** output folder, then runs the Vite library build. Produces the files that ship inside the package (see **`files`** in **`package.json`**). Use this when you only want a local build (for example to inspect output). |
-| **`npm run release`** | Runs **`prepublishOnly`** (**`npm run typecheck`** then **`npm run build`**), then **`npm publish`** with **`GITHUB_TOKEN`** loaded from **`.env`** via **`dotenv-cli`**.                                                                    |
+| **`npm run release`** | Runs **`prepublishOnly`** (**`npm run typecheck`** then **`npm run build`**), then **`npm publish`** with **`GITHUB_TOKEN`** loaded from **`.env`** via **`dotenv-cli`**.                                                                      |
 
 You **do not** need to run **`npm run build`** manually immediately before **`npm run release`**: **`prepublishOnly`** already runs typecheck and build. Before **`npm version`**, run **`npm run typecheck && npm run build`** so you do not tag a commit that fails typecheck or build (**`npm version`** does not run those steps). Run **`npm run typecheck`**, **`npm run build`**, or both in sequence any time you want to confirm output locally.
 
@@ -176,30 +175,12 @@ export GITHUB_TOKEN=your_token_here
 ### 3. Install packages
 
 ```bash
-npm install @clickyduck/solid-kit solid-js tailwindcss @fontsource-variable/material-symbols-rounded
+npm install @clickyduck/solid-kit solid-js tailwindcss
 ```
 
-`@fontsource-variable/material-symbols-rounded` is a **peer dependency**: kit icons expect **Material Symbols Rounded** with **FILL 1** (filled), self-hosted from that package. Names match the [Material Symbols](https://fonts.google.com/icons?icon.set=Material+Symbols&icon.style=Rounded) catalogue.
+Built-in components that need a fixed glyph bundle only the Material Symbols they use; you do **not** install **`@material-symbols/svg-500`** for those. When you want custom icons (same pattern as **`showcase/showcaseIcons.tsx`** in this repository), add **`@material-symbols/svg-500`** (or another SVG source), **`vite-plugin-solid-svg`** if you use Vite, and export **`IconComponent`** values from your application. Pass those into **`Button`**, **`IconButton`**, **`Metric`**, **`EmptyState`**, **`Tabs`**, **`Input`**, **`Dropdown`**, **`Badge`**, and any other prop typed as **`IconComponent`**.
 
-### 4. Load fonts (default icons)
-
-Fontsource ships `@font-face` only. Import its CSS **first**, then the kit **glyph host** layer (defines `.material-symbols-rounded`, `font-family`, and `font-variation-settings`). You can copy those rules into your own global CSS instead of importing the host file.
-
-```css
-@import "@fontsource-variable/material-symbols-rounded/full.css";
-@import "@clickyduck/solid-kit/material-symbols-rounded-glyph-host.css";
-```
-
-From TypeScript or JavaScript (order matters):
-
-```tsx
-import "@clickyduck/solid-kit/material-symbols-rounded-glyph-host.css";
-import "@fontsource-variable/material-symbols-rounded/full.css";
-```
-
-For a smaller bundle, import specific axis files from Fontsource instead of `full.css`; keep the host import **after** the `@font-face` rules.
-
-### 5. Usage
+### 4. Usage
 
 ```tsx
 import { Button } from "@clickyduck/solid-kit";

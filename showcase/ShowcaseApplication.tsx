@@ -8,7 +8,6 @@ import { EmptyState } from "@/components/empty-state/EmptyState";
 import { Field } from "@/components/field/Field";
 import { Heading } from "@/components/heading/Heading";
 import { IconButton } from "@/components/icon-button/IconButton";
-import { bars3, calendarDays, checkCircle, darkMode, dashboard, ellipsisVertical, inventory, lightMode, menuOpen, pencil, search, settings, tag, wallet } from "@/components/icons/Icons";
 import { Input } from "@/components/input/Input";
 import { LeftPanel, type LeftPanelNavigationDocumentJson } from "@/components/left-panel";
 import { Loading } from "@/components/loading/Loading";
@@ -27,6 +26,7 @@ import { type Color, createDocumentColorSchemePreferenceSignal, mergeClasses, us
 import type { JSX } from "solid-js";
 import { For, Show, createMemo, createSignal } from "solid-js";
 
+import { bars3, calendarDays, checkCircle, darkMode, dashboard, ellipsisVertical, inventory, lightMode, menuOpen, pencil, search, settings, tag, wallet } from "./showcaseIcons";
 import showcaseLeftPanelNavigationDocumentJson from "./showcaseLeftPanelNavigationDocument.json";
 
 const showcaseLeftPanelNavigationDocument = showcaseLeftPanelNavigationDocumentJson as LeftPanelNavigationDocumentJson;

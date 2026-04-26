@@ -1,5 +1,5 @@
 import { Button } from "@/components/button/Button";
-import { Icon, type IconComponent, arrowTrendingUp, calendarDays, chat, checkCircle, chevronDown, confirmationNumber, currencyRupee, dashboard, forum, groups, inventory, list, pieChart, settings, tag, wallet, work } from "@/components/icons/Icons";
+import { Icon, type IconComponent, arrowTrendingUp, calendarDays, chat, checkCircle, chevronDown, confirmationNumber, currencyRupee, dashboard, forum, groups, inventory, list, pieChart, settings, tag, wallet, work } from "@/components/icons";
 import { mergeClasses } from "@/utilities/mergeClasses";
 import { themedScrollControlClassName } from "@/utilities/themedScrollControlClassName";
 import { useIsMobile } from "@/utilities/useIsMobile";

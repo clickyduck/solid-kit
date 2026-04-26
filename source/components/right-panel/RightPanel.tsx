@@ -1,5 +1,5 @@
 import { IconButton } from "@/components/icon-button/IconButton";
-import { closeCircle } from "@/components/icons/Icons";
+import { closeCircle } from "@/components/icons";
 import { mergeClasses } from "@/utilities/mergeClasses";
 import { themedScrollControlClassName } from "@/utilities/themedScrollControlClassName";
 import type { Component, JSX } from "solid-js";
