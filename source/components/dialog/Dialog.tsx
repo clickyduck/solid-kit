@@ -13,7 +13,7 @@ type DialogRootProperties = {
   children?: JSX.Element;
 };
 
-const DialogContext = createContext<{ modalId: string; closeable: boolean; hideModal: () => void }>();
+const DialogContext = createContext<{ modalId: string; closeable: () => boolean; hideModal: () => void }>();
 
 let modalIdCounter = 0;
 
@@ -83,7 +83,7 @@ export const Dialog = (properties: DialogRootProperties) => {
   });
 
   return (
-    <DialogContext.Provider value={{ modalId, closeable: closeable(), hideModal }}>
+    <DialogContext.Provider value={{ modalId, closeable, hideModal }}>
       <div
         ref={(element) => {
           modalElement = element as HTMLElement;
@@ -103,7 +103,7 @@ export const Dialog = (properties: DialogRootProperties) => {
 /**
  * Button that opens the dialog. Use inside Dialog.
  */
-export const DialogTrigger = (properties: ComponentProps<"button"> & { children?: Element }) => {
+export const DialogTrigger = (properties: ComponentProps<"button"> & { children?: JSX.Element }) => {
   return <button type="button" {...properties} />;
 };
 
@@ -130,7 +130,7 @@ export const DialogContent = (properties: DialogContentPropertiesType) => {
   );
 };
 
-type DialogTitlePropertiesType = ComponentProps<"h2"> & { class?: string };
+type DialogTitlePropertiesType = ComponentProps<"h3"> & { class?: string };
 
 /**
  * Dialog title heading.
@@ -140,7 +140,7 @@ export const DialogTitle = (properties: DialogTitlePropertiesType) => {
   return <h3 class={mergeClasses("text-lg font-medium text-gray-900 dark:text-white", local.class)} {...rest} />;
 };
 
-type DialogDescriptionPropertiesType = ComponentProps<"p"> & { class?: string };
+type DialogDescriptionPropertiesType = ComponentProps<"div"> & { class?: string };
 
 /**
  * Dialog description text.
@@ -155,7 +155,7 @@ export const DialogDescription = (properties: DialogDescriptionPropertiesType) =
  */
 export const DialogHeader = (properties: ComponentProps<"div"> & { actions?: JSX.Element }) => {
   const context = useContext(DialogContext);
-  const [local, rest] = splitProps(properties, ["class", "children"]);
+  const [local, rest] = splitProps(properties, ["class", "children", "actions"]);
   const hideModal = context?.hideModal ?? (() => {});
 
   return (
@@ -163,7 +163,7 @@ export const DialogHeader = (properties: ComponentProps<"div"> & { actions?: JSX
       <div class="flex flex-1 items-center overflow-hidden">{local.children}</div>
       <div class="flex items-center gap-2">
         <Show when={properties.actions}>{properties.actions}</Show>
-        <Show when={context?.closeable}>
+        <Show when={context?.closeable?.()}>
           <IconButton variant="ghost" onClick={hideModal} aria-label="Close modal">
             <Icon icon={closeCircle} width={20} height={20} />
           </IconButton>

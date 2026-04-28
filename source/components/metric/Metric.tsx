@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/card/Card";
+import { BackgroundCard, BackgroundCardContent, BackgroundCardHeader, BackgroundCardTitle } from "@/components/card/BackgroundCard";
 import { Icon, type IconComponent, arrowRight } from "@/components/icons";
 import { mergeClasses } from "@/utilities";
 import { Show } from "solid-js";
@@ -53,19 +53,19 @@ type MetricProperties = {
  * Metric/stat card with left border accent, icon, value, and optional link. When loading, the value shows an em dash.
  */
 export const Metric = (properties: MetricProperties) => {
-  const accent = ACCENT_CLASSES[properties.accent];
+  const accent = () => ACCENT_CLASSES[properties.accent];
   const isLoading = (): boolean => {
     return properties.loading === true;
   };
   return (
-    <Card class={mergeClasses("border-l-4", accent.card, properties.class)}>
-      <CardHeader class="mb-3 flex flex-row items-center justify-between space-y-0">
-        <CardTitle class="text-sm font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">{properties.title}</CardTitle>
-        <span class={mergeClasses("flex h-9 w-9 items-center justify-center rounded-lg", accent.iconBox, accent.iconColor)}>
+    <BackgroundCard class={mergeClasses("border-l-4", accent().card, properties.class)}>
+      <BackgroundCardHeader class="mb-3 flex flex-row items-center justify-between space-y-0">
+        <BackgroundCardTitle class="text-sm font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400">{properties.title}</BackgroundCardTitle>
+        <span class={mergeClasses("flex h-9 w-9 items-center justify-center rounded-lg", accent().iconBox, accent().iconColor)}>
           <Icon icon={properties.icon} width={20} height={20} aria-hidden="true" />
         </span>
-      </CardHeader>
-      <CardContent class="space-y-3">
+      </BackgroundCardHeader>
+      <BackgroundCardContent class="space-y-3">
         <Show
           when={!isLoading()}
           fallback={
@@ -77,12 +77,12 @@ export const Metric = (properties: MetricProperties) => {
           <div class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{properties.value}</div>
         </Show>
         <Show when={properties.linkHref !== undefined && properties.linkLabel !== undefined}>
-          <a href={properties.linkHref} class={mergeClasses("inline-flex items-center gap-1.5 text-sm font-medium", accent.link)}>
+          <a href={properties.linkHref} class={mergeClasses("inline-flex items-center gap-1.5 text-sm font-medium", accent().link)}>
             {properties.linkLabel}
             <Icon icon={arrowRight} width={16} height={16} aria-hidden="true" />
           </a>
         </Show>
-      </CardContent>
-    </Card>
+      </BackgroundCardContent>
+    </BackgroundCard>
   );
 };

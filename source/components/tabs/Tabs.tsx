@@ -32,7 +32,7 @@ export function Tabs<TabValue extends string>(properties: TabsProperties<TabValu
   };
 
   return (
-    <div class={mergeClasses("w-full min-w-0 border-b border-gray-700 text-center font-medium text-gray-600 dark:text-gray-400", properties.class)}>
+    <div class={mergeClasses("w-full min-w-0 border-b border-gray-200 text-center font-medium text-gray-600 dark:border-gray-700 dark:text-gray-400", properties.class)}>
       <ul class={mergeClasses("-mb-px flex w-full flex-nowrap", properties.tabListClass)} role="tablist">
         <For each={[...properties.tabDefinitions]}>
           {(tabDefinition) => {

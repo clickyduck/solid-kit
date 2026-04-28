@@ -25,7 +25,7 @@ import { Portal } from "solid-js/web";
 type DropdownContextType = {
   options: string[];
   value: string | undefined;
-  onChange: ((value: string | undefined) => void) | undefined;
+  onChange: (value: string | undefined) => void;
   disabled: () => boolean | undefined;
   selectedValue: () => string | undefined;
   setSelectedValue: (value: string | undefined) => void;
@@ -126,14 +126,14 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
       <Show when={properties.filteredOptions().length > 0} fallback={<li class="py-4 text-center text-gray-500 dark:text-gray-400">No matches found</li>}>
         <For each={properties.filteredOptions()}>
           {(option: string) => {
-            const selectedClasses = properties.selectedValue() === option ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-200" : "";
+            const selectedClasses = (): string => (properties.selectedValue() === option ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-200" : "");
             const itemClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE[properties.effectiveFormControlSize()];
             if (properties.itemComponent) {
               return (
                 <li>
                   <a
                     href="#"
-                    class={mergeClasses(itemClass(), selectedClasses)}
+                    class={mergeClasses(itemClass(), selectedClasses())}
                     onClick={(event) => {
                       event.preventDefault();
                       event.stopPropagation();
@@ -149,7 +149,7 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
               <li>
                 <a
                   href="#"
-                  class={mergeClasses(itemClass(), selectedClasses)}
+                  class={mergeClasses(itemClass(), selectedClasses())}
                   onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
@@ -272,7 +272,9 @@ const Dropdown = (properties: DropdownRootProperties) => {
   const contextValue: DropdownContextType = {
     options: properties.options,
     value: properties.value,
-    onChange: properties.onChange,
+    onChange: (value: string | undefined) => {
+      properties.onChange?.(value);
+    },
     disabled: disabledState,
     selectedValue,
     setSelectedValue,
@@ -336,7 +338,7 @@ const DropdownValue: ParentComponent<ComponentProps<"div">> = (properties) => {
   return <div class={mergeClasses("min-w-0 flex-1 truncate text-left", FORM_CONTROL_TEXT_CLASS_BY_SIZE[context.effectiveFormControlSize()], local.class)} {...rest} />;
 };
 
-type DropdownTriggerWithLabel = Omit<ComponentProps<typeof Button>, "variant"> & {
+type DropdownTriggerWithLabel = Omit<ComponentProps<typeof Button>, "variant" | "iconPosition"> & {
   children: JSX.Element;
   icon?: IconComponent;
 };
@@ -605,9 +607,7 @@ const DropdownItem = (properties: DropdownItemProperties) => {
           }
           if (local.item) {
             context.setSelectedValue(local.item.rawValue);
-            if (context.onChange) {
-              context.onChange(local.item.rawValue);
-            }
+            context.onChange(local.item.rawValue);
           }
           if (shouldCloseOnSelect()) {
             context.setDropdownOpen(false);

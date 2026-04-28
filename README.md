@@ -6,7 +6,8 @@ A SolidJS component library built with Tailwind CSS and Flowbite-style patterns,
 
 - [Badge](#badge)
 - [Button](#button)
-- [Card](#card)
+- [BackgroundCard](#backgroundcard)
+- [DataCard](#datacard)
 - [Dialog](#dialog)
 - [Dropdown](#dropdown)
 - [EmptyState](#emptystate)
@@ -85,25 +86,47 @@ import { Button } from "@clickyduck/solid-kit";
 
 ---
 
-### Card
+### BackgroundCard
 
 Compound component for content panels.
 
-**Exports:** `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`
+**Exports:** `BackgroundCard`, `BackgroundCardHeader`, `BackgroundCardTitle`, `BackgroundCardDescription`, `BackgroundCardContent`, `BackgroundCardFooter`
 
 All parts accept standard `<div>` HTML attributes (title/description use `<h3>`/`<p>`) plus an optional `class` prop for extra CSS classes. No custom props beyond what HTML provides.
 
 ```tsx
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@clickyduck/solid-kit";
+import { BackgroundCard, BackgroundCardContent, BackgroundCardDescription, BackgroundCardFooter, BackgroundCardHeader, BackgroundCardTitle } from "@clickyduck/solid-kit";
 
-<Card>
-  <CardHeader>
-    <CardTitle>Title</CardTitle>
-    <CardDescription>Subtitle</CardDescription>
-  </CardHeader>
-  <CardContent>Body content</CardContent>
-  <CardFooter>Footer</CardFooter>
-</Card>;
+<BackgroundCard>
+  <BackgroundCardHeader>
+    <BackgroundCardTitle>Title</BackgroundCardTitle>
+    <BackgroundCardDescription>Subtitle</BackgroundCardDescription>
+  </BackgroundCardHeader>
+  <BackgroundCardContent>Body content</BackgroundCardContent>
+  <BackgroundCardFooter>Footer</BackgroundCardFooter>
+</BackgroundCard>;
+```
+
+---
+
+### DataCard
+
+Clickable “ticket style” data surface card with title, optional description, optional top-right slot, and an optional footer row of icon/label/value items.
+
+**Exports:** `DataCard`
+
+```tsx
+import { DataCard, calendarDays, userCircle } from "@clickyduck/solid-kit";
+
+<DataCard
+  title="Fix upload progress indicator"
+  description="Progress indicator gets stuck at 100% when retrying."
+  footerItems={[
+    { icon: userCircle, label: "Assignee", value: "Unassigned" },
+    { icon: calendarDays, label: "Due", value: "29 Apr 2026", valueClass: "text-gray-300" }
+  ]}
+  onClick={() => {}}
+/>;
 ```
 
 ---

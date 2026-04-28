@@ -2,7 +2,7 @@ import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon, checkCircle, closeCircle, exclamationTriangle } from "@/components/icons";
 import { mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
-import { Match, Show, Switch, createSignal } from "solid-js";
+import { Match, Show, Switch, createSignal, splitProps } from "solid-js";
 
 export type ToastData = {
   id: string;
@@ -57,32 +57,33 @@ const getIconContainerClasses = (variant: ToastData["variant"]): string => {
  * Single toast item with icon, title, description and close button.
  */
 export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) => {
-  const { toast, ...rest } = properties;
+  const [local, rest] = splitProps(properties, ["toast"]);
+  const toast = () => local.toast;
 
   return (
     <div class="flex w-full max-w-sm items-center rounded-lg border border-gray-200 bg-white/95 p-4 text-gray-600 shadow-lg backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-300" role="alert" {...rest}>
-      <div class={mergeClasses("inline-flex h-7 w-7 shrink-0 items-center justify-center rounded", getIconContainerClasses(toast.variant))}>
+      <div class={mergeClasses("inline-flex h-7 w-7 shrink-0 items-center justify-center rounded", getIconContainerClasses(toast().variant))}>
         <Switch fallback={<Icon icon={checkCircle} width={20} height={20} aria-hidden="true" />}>
-          <Match when={toast.variant === "success"}>
+          <Match when={toast().variant === "success"}>
             <Icon icon={checkCircle} width={20} height={20} aria-hidden="true" />
             <span class="sr-only">Check icon</span>
           </Match>
-          <Match when={toast.variant === "danger"}>
+          <Match when={toast().variant === "danger"}>
             <Icon icon={closeCircle} width={20} height={20} aria-hidden="true" />
             <span class="sr-only">Error icon</span>
           </Match>
-          <Match when={toast.variant === "warning"}>
+          <Match when={toast().variant === "warning"}>
             <Icon icon={exclamationTriangle} width={20} height={20} aria-hidden="true" />
             <span class="sr-only">Warning icon</span>
           </Match>
         </Switch>
       </div>
       <div class="ms-3 text-sm font-normal">
-        <Show when={toast.title}>
-          <div class="font-medium text-gray-900 dark:text-white">{toast.title}</div>
+        <Show when={toast().title}>
+          <div class="font-medium text-gray-900 dark:text-white">{toast().title}</div>
         </Show>
-        <Show when={toast.description}>
-          <div class="text-gray-600 dark:text-gray-400">{toast.description}</div>
+        <Show when={toast().description}>
+          <div class="text-gray-600 dark:text-gray-400">{toast().description}</div>
         </Show>
       </div>
       <IconButton
@@ -90,7 +91,7 @@ export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) 
         variant="ghost"
         class="ms-auto"
         onClick={() => {
-          removeToast(toast.id);
+          removeToast(toast().id);
         }}
         aria-label="Close"
       />

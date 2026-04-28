@@ -1,7 +1,7 @@
 import type { BadgeVariant } from "@/components/badge/Badge";
 import { Badge } from "@/components/badge/Badge";
 import { Button } from "@/components/button/Button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/card/Card";
+import { BackgroundCard, BackgroundCardContent, BackgroundCardDescription, BackgroundCardFooter, BackgroundCardHeader, BackgroundCardTitle } from "@/components/card/BackgroundCard";
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/dialog/Dialog";
 import { Dropdown, DropdownIconTrigger, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
 import { EmptyState } from "@/components/empty-state/EmptyState";
@@ -85,6 +85,7 @@ const tabDefinitions: readonly TabDefinition<ShowcaseTabValue>[] = [
 export const ShowcaseApplication = (): JSX.Element => {
   const isMobileViewport = useIsMobile();
   const [sidebarCollapsed, setSidebarCollapsed] = createSignal(isMobileViewport());
+  const [navigationFilterValue, setNavigationFilterValue] = createSignal<string>("");
   const toggleSidebar = (): void => {
     setSidebarCollapsed((previous) => {
       return !previous;
@@ -148,8 +149,29 @@ export const ShowcaseApplication = (): JSX.Element => {
     }
   });
 
+  const filteredShowcaseLeftPanelNavigationDocument = createMemo<LeftPanelNavigationDocumentJson>(() => {
+    const normalizedFilterValue = navigationFilterValue().trim().toLowerCase();
+    if (normalizedFilterValue.length === 0) {
+      return showcaseLeftPanelNavigationDocument;
+    }
+    return {
+      groups: showcaseLeftPanelNavigationDocument.groups
+        .map((group) => {
+          return {
+            ...group,
+            items: group.items.filter((item) => {
+              return item.label.toLowerCase().includes(normalizedFilterValue);
+            })
+          };
+        })
+        .filter((group) => {
+          return group.items.length > 0;
+        })
+    };
+  });
+
   return (
-    <div class="flex h-full min-h-0 flex-col overflow-hidden bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
+    <div class="flex h-full min-h-0 flex-col bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
       <Toaster />
 
       <header class="sticky top-0 z-30 w-full shrink-0 border-b border-gray-200/90 bg-white/90 backdrop-blur-md dark:border-gray-700/60 dark:bg-gray-950/90">
@@ -159,6 +181,28 @@ export const ShowcaseApplication = (): JSX.Element => {
             <div class="min-w-0 space-y-0.5">
               <h1 class="truncate text-base font-bold tracking-tight text-gray-900 sm:text-xl dark:text-white">Solid Kit showcase</h1>
               <p class="hidden max-w-2xl truncate text-xs text-gray-600 sm:block dark:text-gray-400">Interactive samples for buttons, forms, data surfaces, and overlays.</p>
+            </div>
+            <div class="hidden max-w-sm min-w-0 flex-1 md:block">
+              <Input
+                id="showcase-navigation-search"
+                icon={search}
+                placeholder="Search components (press /)"
+                value={navigationFilterValue()}
+                onInput={(event) => {
+                  setNavigationFilterValue(event.currentTarget.value);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Escape") {
+                    setNavigationFilterValue("");
+                    (event.currentTarget as HTMLInputElement).blur();
+                  }
+                }}
+                onFocus={() => {
+                  if (sidebarCollapsed()) {
+                    setSidebarCollapsed(false);
+                  }
+                }}
+              />
             </div>
           </div>
           <div class="flex shrink-0 items-center gap-1 rounded-full border border-gray-200 bg-gray-100/80 p-1 dark:border-gray-700 dark:bg-gray-900/60">
@@ -193,11 +237,11 @@ export const ShowcaseApplication = (): JSX.Element => {
                 closeSidebar();
               }
             }}
-            navigationDocument={showcaseLeftPanelNavigationDocument}
+            navigationDocument={filteredShowcaseLeftPanelNavigationDocument()}
           />
         </div>
         <main class="flex min-h-0 min-w-0 flex-1 flex-row" id="showcase-main-content">
-          <RightPanelLayout class="min-h-0 w-full min-w-0">
+          <RightPanelLayout class="min-h-0 w-full min-w-0 scroll-smooth">
             <div class="mx-auto max-w-6xl space-y-16 px-4 py-10 sm:px-6 lg:px-8">
               <ShowcaseCategory categoryTitle="Primitives">
                 <ShowcaseSection sectionHeadingIdentifier="showcase-heading-badges" sectionTitle="Badges" sectionDescription="Variants crossed with semantic colors; optional leading icon and removable chip.">
@@ -267,11 +311,11 @@ export const ShowcaseApplication = (): JSX.Element => {
                     <Spinner class="text-blue-400" />
                     <Spinner class="text-emerald-400" aria-label="Loading content" />
                   </div>
-                  <Card>
-                    <CardContent>
+                  <BackgroundCard>
+                    <BackgroundCardContent>
                       <Loading message="Loading workspace preferences…" />
-                    </CardContent>
-                  </Card>
+                    </BackgroundCardContent>
+                  </BackgroundCard>
                 </ShowcaseSection>
               </ShowcaseCategory>
 
@@ -287,24 +331,24 @@ export const ShowcaseApplication = (): JSX.Element => {
                 </ShowcaseSection>
 
                 <ShowcaseSection sectionHeadingIdentifier="showcase-heading-card-empty" sectionTitle="Card and empty state">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Workspace usage</CardTitle>
-                      <CardDescription>Compound card primitives with header, description, content, and footer actions for the Showcase.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
+                  <BackgroundCard>
+                    <BackgroundCardHeader>
+                      <BackgroundCardTitle>Workspace usage</BackgroundCardTitle>
+                      <BackgroundCardDescription>Compound card primitives with header, description, content, and footer actions for the Showcase.</BackgroundCardDescription>
+                    </BackgroundCardHeader>
+                    <BackgroundCardContent>
                       <p class="text-sm leading-relaxed text-gray-700 dark:text-gray-300">Card content uses muted body copy. Pair with Header or Metric for dashboard layouts.</p>
-                    </CardContent>
-                    <CardFooter class="justify-end gap-2">
+                    </BackgroundCardContent>
+                    <BackgroundCardFooter class="justify-end gap-2">
                       <Button variant="ghost">Dismiss</Button>
                       <Button>Save layout</Button>
-                    </CardFooter>
-                  </Card>
+                    </BackgroundCardFooter>
+                  </BackgroundCard>
                   <EmptyState icon={inventory} title="No records yet" message="Create your first inventory movement to populate this list." class="rounded-lg border border-dashed border-gray-300 p-12 dark:border-gray-700" />
                 </ShowcaseSection>
 
                 <ShowcaseSection sectionHeadingIdentifier="showcase-heading-table" sectionTitle="Table and pagination">
-                  <Card class="overflow-hidden p-0">
+                  <BackgroundCard class="overflow-hidden p-0">
                     <Table>
                       <TableHeader>
                         <TableRow>
@@ -342,7 +386,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                       </TableBody>
                     </Table>
                     <TablePagination limit={tablePagination().limit} offset={tablePagination().offset} currentPageCount={tableRows.length} totalCount={120} onChange={setTablePagination} />
-                  </Card>
+                  </BackgroundCard>
                 </ShowcaseSection>
               </ShowcaseCategory>
 
@@ -508,11 +552,11 @@ export const ShowcaseApplication = (): JSX.Element => {
 
                 <ShowcaseSection sectionHeadingIdentifier="showcase-heading-tabs" sectionTitle="Tabs">
                   <Tabs tabDefinitions={tabDefinitions} activeTabValue={activeShowcaseTab} onTabSelect={setActiveShowcaseTab} />
-                  <Card>
-                    <CardContent class="pt-6">
+                  <BackgroundCard>
+                    <BackgroundCardContent class="pt-6">
                       <p class="text-sm text-gray-700 dark:text-gray-300">{tabPanelCopy()}</p>
-                    </CardContent>
-                  </Card>
+                    </BackgroundCardContent>
+                  </BackgroundCard>
                 </ShowcaseSection>
 
                 <ShowcaseSection sectionHeadingIdentifier="showcase-heading-dropdowns" sectionTitle="Dropdowns">
@@ -666,34 +710,12 @@ export const ShowcaseApplication = (): JSX.Element => {
               }}
               closeAriaLabel="Close right panel showcase"
             >
-              <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-                Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium
-                screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a
-                narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details,
-                filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main
-                column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers
-                the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here.
-                On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface;
-                on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details,
-                filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main
-                column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers
-                the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here.
-                On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface;
-                on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details,
-                filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main
-                column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers
-                the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here.
-                On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface;
-                on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details,
-                filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main
-                column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers
-                the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here.
-                On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface;
-                on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details,
-                filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main
-                column reflows beside this surface; on a narrow viewport it covers the full width.Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers
-                the full width.{" "}
-              </p>
+              <div class="space-y-3">
+                <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                  Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.
+                </p>
+                <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300">This panel scrolls independently from the main column so it can hold long forms without shifting the page.</p>
+              </div>
             </RightPanel>
           </Show>
         </main>
@@ -717,7 +739,7 @@ const ShowcaseCategory = (properties: ShowcaseCategoryProperties): JSX.Element =
 
 const ShowcaseSection = (properties: ShowcaseSectionProperties): JSX.Element => {
   return (
-    <section class="scroll-mt-28 space-y-6 rounded-2xl border border-gray-200/90 bg-white/90 p-6 shadow-sm ring-1 ring-black/5 sm:p-8 dark:border-gray-800/90 dark:bg-gray-950/35 dark:ring-white/4" aria-labelledby={properties.sectionHeadingIdentifier}>
+    <BackgroundCard class="scroll-mt-28 space-y-6 rounded-2xl border-gray-200/90 bg-white/90 p-6 sm:p-8 dark:border-gray-800/90 dark:bg-gray-950/35" aria-labelledby={properties.sectionHeadingIdentifier}>
       <header class="space-y-2 border-b border-gray-200/80 pb-5 dark:border-gray-800/70">
         <Heading id={properties.sectionHeadingIdentifier}>{properties.sectionTitle}</Heading>
         <Show when={properties.sectionDescription}>
@@ -725,6 +747,6 @@ const ShowcaseSection = (properties: ShowcaseSectionProperties): JSX.Element => 
         </Show>
       </header>
       <div class="space-y-6">{properties.children}</div>
-    </section>
+    </BackgroundCard>
   );
 };

@@ -52,6 +52,7 @@ export type ToggleGroupProperties = ToggleGroupBase &
 
 const ToggleGroup = (properties: ToggleGroupProperties) => {
   const effectiveSize = useEffectiveFormControlSize();
+  let skipNextSingleChange = false;
 
   const selectedValues = (): string[] => {
     if (properties.selectionMode === "multiple") {
@@ -69,6 +70,10 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
     if (properties.selectionMode !== "single") {
       return;
     }
+    if (skipNextSingleChange) {
+      skipNextSingleChange = false;
+      return;
+    }
     (properties as Extract<ToggleGroupProperties, { selectionMode: "single" }>).onChange?.(optionValue);
   };
 
@@ -83,6 +88,7 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
       return;
     }
     event.preventDefault();
+    skipNextSingleChange = true;
     (properties as Extract<ToggleGroupProperties, { selectionMode: "single" }>).onChange?.(undefined);
   };
 
@@ -99,10 +105,10 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
     <div class="flex flex-col gap-3">
       <For each={properties.options}>
         {(option) => {
-          const isDisabled = properties.disabled || (option.disabled ?? false);
+          const isDisabled = () => properties.disabled || (option.disabled ?? false);
           const selected = () => isSelected(option.value);
           return (
-            <label class={mergeClasses(CHOICE_CONTROL_LABEL_CLASS, CHOICE_CONTROL_LABEL_HAS_INTERACTION_CLASSES, CHOICE_CONTROL_FACE_DISABLED_CLASS, isDisabled ? "cursor-not-allowed" : "cursor-pointer")}>
+            <label class={mergeClasses(CHOICE_CONTROL_LABEL_CLASS, CHOICE_CONTROL_LABEL_HAS_INTERACTION_CLASSES, CHOICE_CONTROL_FACE_DISABLED_CLASS, isDisabled() ? "cursor-not-allowed" : "cursor-pointer")}>
               <Show
                 when={properties.selectionMode === "multiple"}
                 fallback={
@@ -111,8 +117,8 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
                     name={properties.name}
                     value={option.value}
                     checked={selected()}
-                    disabled={isDisabled}
-                    class={mergeClasses(CHOICE_INPUT_SR_ONLY_CLASS, isDisabled ? "cursor-not-allowed" : "cursor-pointer")}
+                    disabled={isDisabled()}
+                    class={mergeClasses(CHOICE_INPUT_SR_ONLY_CLASS, isDisabled() ? "cursor-not-allowed" : "cursor-pointer")}
                     onMouseDown={(event) => handleSingleSelectedMouseDown(event, option.value)}
                     onChange={() => handleSingleChange(option.value)}
                   />
@@ -123,8 +129,8 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
                   name={properties.name}
                   value={option.value}
                   checked={selected()}
-                  disabled={isDisabled}
-                  class={mergeClasses(CHOICE_INPUT_SR_ONLY_CLASS, isDisabled ? "cursor-not-allowed" : "cursor-pointer")}
+                  disabled={isDisabled()}
+                  class={mergeClasses(CHOICE_INPUT_SR_ONLY_CLASS, isDisabled() ? "cursor-not-allowed" : "cursor-pointer")}
                   onChange={(event) => handleMultipleInput(option.value, event.currentTarget.checked)}
                 />
               </Show>

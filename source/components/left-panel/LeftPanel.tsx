@@ -97,6 +97,12 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
   const [hash, setHash] = createSignal(typeof window === "undefined" ? "" : window.location.hash);
   const [groupBodyExpandedByIdentifier, setGroupBodyExpandedByIdentifier] = createSignal<Record<string, boolean>>({});
 
+  const hasAnyNavigationItems = createMemo(() => {
+    return properties.navigationDocument.groups.some((group) => {
+      return group.items.length > 0;
+    });
+  });
+
   onMount(() => {
     if (typeof window === "undefined") {
       return;
@@ -131,79 +137,103 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
 
   return (
     <nav class="space-y-8 md:space-y-7">
-      <For each={properties.navigationDocument.groups}>
-        {(group, groupIndex) => {
-          const navigationGroupIdentifierMemo = createMemo(() => {
-            if (group.navigationGroupIdentifier !== undefined && group.navigationGroupIdentifier.length > 0) {
-              return group.navigationGroupIdentifier;
-            }
-            return `${group.groupLabel}-${groupIndex()}`;
-          });
-          const navigationGroupInitiallyCollapsedMemo = createMemo(() => {
-            return group.navigationGroupInitiallyCollapsed === true;
-          });
-          const useCollapsibleNavigationGroupMemo = createMemo(() => {
-            return group.collapsibleNavigationGroup === true && !properties.collapsed;
-          });
-          const isNavigationGroupBodyExpandedMemo = createMemo(() => {
-            return resolveNavigationGroupBodyExpanded(navigationGroupIdentifierMemo(), navigationGroupInitiallyCollapsedMemo());
-          });
+      <Show
+        when={hasAnyNavigationItems()}
+        fallback={<div class={mergeClasses("rounded-lg border border-dashed border-gray-200 p-4 text-sm text-gray-600 dark:border-gray-800 dark:text-gray-400", properties.collapsed ? "hidden" : "")}>No matches. Try a different search term.</div>}
+      >
+        <For each={properties.navigationDocument.groups}>
+          {(group, groupIndex) => {
+            const navigationGroupIdentifierMemo = createMemo(() => {
+              if (group.navigationGroupIdentifier !== undefined && group.navigationGroupIdentifier.length > 0) {
+                return group.navigationGroupIdentifier;
+              }
+              return `${group.groupLabel}-${groupIndex()}`;
+            });
+            const navigationGroupInitiallyCollapsedMemo = createMemo(() => {
+              return group.navigationGroupInitiallyCollapsed === true;
+            });
+            const useCollapsibleNavigationGroupMemo = createMemo(() => {
+              return group.collapsibleNavigationGroup === true && !properties.collapsed;
+            });
+            const isNavigationGroupBodyExpandedMemo = createMemo(() => {
+              return resolveNavigationGroupBodyExpanded(navigationGroupIdentifierMemo(), navigationGroupInitiallyCollapsedMemo());
+            });
 
-          const renderNavigationItemLink = (item: LeftPanelNavigationItemJson): JSX.Element => {
-            const isActive = (): boolean => {
-              return computeIsNavigationItemActive(item, pathname(), hash());
-            };
-            return (
-              <a
-                href={item.href}
-                class={mergeClasses(NAVIGATION_LINK_ROW_CLASS, properties.collapsed ? NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS : NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS, isActive() ? NAVIGATION_LINK_ACTIVE_CLASS : NAVIGATION_LINK_INACTIVE_CLASS)}
-                aria-current={isActive() ? "page" : undefined}
-                onClick={() => {
-                  properties.onItemClick?.();
-                }}
-              >
-                <Icon icon={leftPanelNavigationIconByExportName[item.iconExportName]} class={NAVIGATION_LINK_ICON_CLASS} />
-                <Show when={!properties.collapsed}>
-                  <span class={NAVIGATION_LINK_LABEL_CLASS}>{item.label}</span>
-                </Show>
-              </a>
-            );
-          };
-
-          return (
-            <div class="space-y-1">
-              <div class={NAVIGATION_GROUP_HEADING_SLOT_CLASS}>
-                <Show
-                  when={useCollapsibleNavigationGroupMemo()}
-                  fallback={
-                    <div class={mergeClasses("h-full min-h-0", GROUP_LABEL_TEXT_CLASS, properties.collapsed ? "pointer-events-none invisible" : "")} aria-hidden={properties.collapsed ? true : undefined}>
-                      <span class="min-w-0 truncate">{group.groupLabel}</span>
-                    </div>
-                  }
+            const renderNavigationItemLink = (item: LeftPanelNavigationItemJson): JSX.Element => {
+              const isActive = (): boolean => {
+                return computeIsNavigationItemActive(item, pathname(), hash());
+              };
+              return (
+                <a
+                  href={item.href}
+                  class={mergeClasses(NAVIGATION_LINK_ROW_CLASS, properties.collapsed ? NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS : NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS, isActive() ? NAVIGATION_LINK_ACTIVE_CLASS : NAVIGATION_LINK_INACTIVE_CLASS)}
+                  aria-current={isActive() ? "page" : undefined}
+                  onClick={(event: MouseEvent) => {
+                    if (typeof window === "undefined") {
+                      return;
+                    }
+                    if (item.href.startsWith("#")) {
+                      event.preventDefault();
+                      const targetIdentifier = item.href.slice(1);
+                      if (targetIdentifier.length === 0) {
+                        return;
+                      }
+                      const targetElement = window.document.getElementById(targetIdentifier);
+                      if (!targetElement) {
+                        return;
+                      }
+                      if (window.location.hash !== item.href) {
+                        window.history.pushState(null, "", item.href);
+                        setHash(item.href);
+                      }
+                      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                    }
+                    properties.onItemClick?.();
+                  }}
                 >
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    class={mergeClasses("h-full min-h-0 w-full min-w-0 justify-between gap-2 px-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase hover:bg-gray-100 md:h-full md:px-2 dark:text-gray-400 dark:hover:bg-gray-800/60")}
-                    aria-expanded={isNavigationGroupBodyExpandedMemo()}
-                    onClick={() => {
-                      toggleNavigationGroupBody(navigationGroupIdentifierMemo(), navigationGroupInitiallyCollapsedMemo());
-                    }}
+                  <Icon icon={leftPanelNavigationIconByExportName[item.iconExportName]} class={NAVIGATION_LINK_ICON_CLASS} />
+                  <Show when={!properties.collapsed}>
+                    <span class={NAVIGATION_LINK_LABEL_CLASS}>{item.label}</span>
+                  </Show>
+                </a>
+              );
+            };
+
+            return (
+              <div class="space-y-1">
+                <div class={NAVIGATION_GROUP_HEADING_SLOT_CLASS}>
+                  <Show
+                    when={useCollapsibleNavigationGroupMemo()}
+                    fallback={
+                      <div class={mergeClasses("h-full min-h-0", GROUP_LABEL_TEXT_CLASS, properties.collapsed ? "pointer-events-none invisible" : "")} aria-hidden={properties.collapsed ? true : undefined}>
+                        <span class="min-w-0 truncate">{group.groupLabel}</span>
+                      </div>
+                    }
                   >
-                    <span class="min-w-0 flex-1 truncate">{group.groupLabel}</span>
-                    <span class={mergeClasses("inline-flex shrink-0 items-center justify-center text-gray-500 transition-transform duration-200 ease-out", isNavigationGroupBodyExpandedMemo() ? "rotate-180" : "rotate-0")} aria-hidden>
-                      <Icon icon={chevronDown} class="size-4" />
-                    </span>
-                  </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      class={mergeClasses("h-full min-h-0 w-full min-w-0 justify-between gap-2 px-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase hover:bg-gray-100 md:h-full md:px-2 dark:text-gray-400 dark:hover:bg-gray-800/60")}
+                      aria-expanded={isNavigationGroupBodyExpandedMemo()}
+                      onClick={() => {
+                        toggleNavigationGroupBody(navigationGroupIdentifierMemo(), navigationGroupInitiallyCollapsedMemo());
+                      }}
+                    >
+                      <span class="min-w-0 flex-1 truncate">{group.groupLabel}</span>
+                      <span class={mergeClasses("inline-flex shrink-0 items-center justify-center text-gray-500 transition-transform duration-200 ease-out", isNavigationGroupBodyExpandedMemo() ? "rotate-180" : "rotate-0")} aria-hidden>
+                        <Icon icon={chevronDown} class="size-4" />
+                      </span>
+                    </Button>
+                  </Show>
+                </div>
+                <Show when={!useCollapsibleNavigationGroupMemo() || isNavigationGroupBodyExpandedMemo()}>
+                  <For each={group.items}>{(item) => renderNavigationItemLink(item)}</For>
                 </Show>
               </div>
-              <Show when={!useCollapsibleNavigationGroupMemo() || isNavigationGroupBodyExpandedMemo()}>
-                <For each={group.items}>{(item) => renderNavigationItemLink(item)}</For>
-              </Show>
-            </div>
-          );
-        }}
-      </For>
+            );
+          }}
+        </For>
+      </Show>
     </nav>
   );
 };
@@ -239,7 +269,8 @@ export const LeftPanel: Component<LeftPanelProperties> = (properties) => {
         if (properties.onOpenChange) {
           properties.onOpenChange(isPanelOpen);
         }
-      }
+      },
+      { defer: true }
     )
   );
 
@@ -315,10 +346,6 @@ export const LeftPanel: Component<LeftPanelProperties> = (properties) => {
             return;
           }
           setIsSwipeGestureActive(true);
-        }
-
-        if (!isSwipeGestureActive()) {
-          return;
         }
 
         event.preventDefault();

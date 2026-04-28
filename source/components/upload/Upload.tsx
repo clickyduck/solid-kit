@@ -28,7 +28,7 @@ export const Upload = (properties: UploadProperties) => {
       local.onSelectedFilesChange([]);
       return;
     }
-    local.onSelectedFilesChange([...fileList]);
+    local.onSelectedFilesChange(local.multiple ? [...fileList] : [fileList[0]]);
   };
 
   return (
@@ -46,6 +46,15 @@ export const Upload = (properties: UploadProperties) => {
         }}
         onDrop={(event) => {
           event.preventDefault();
+          if (local.disabled) {
+            return;
+          }
+          const fileList = event.dataTransfer?.files;
+          if (!fileList || fileList.length === 0) {
+            local.onSelectedFilesChange([]);
+            return;
+          }
+          local.onSelectedFilesChange(local.multiple ? [...fileList] : [fileList[0]]);
         }}
       >
         <span class="flex min-w-0 items-center gap-2">

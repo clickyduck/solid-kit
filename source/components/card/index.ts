@@ -1,1 +1,2 @@
-export * from "./Card";
+export * from "./BackgroundCard";
+export * from "./DataCard";
