@@ -21,7 +21,7 @@ type MainLayoutProperties = {
 export const MainLayout: ParentComponent<MainLayoutProperties> = (properties) => {
   return (
     <div
-      class={mergeClasses("grid h-full min-h-0 w-full min-w-0 overflow-hidden", "gap-x-6", properties.class)}
+      class={mergeClasses("grid min-h-screen w-full min-w-0 overflow-hidden", "bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100", "gap-x-6", properties.class)}
       style={{
         "--solid-kit-header-height": "4rem",
         "grid-template-areas": `"header header header" "left main right"`,

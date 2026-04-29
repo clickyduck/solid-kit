@@ -19,7 +19,10 @@ export const HeaderLayout: ParentComponent<HeaderLayoutProperties> = (properties
   return (
     <Show when={properties.title || properties.titleElement || properties.children}>
       <div
-        class={mergeClasses("layout-header flex min-h-16 flex-col gap-3 border-b border-gray-200 bg-white px-4 py-3 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-6 dark:border-gray-700/80 dark:bg-gray-950", properties.class)}
+        class={mergeClasses(
+          "layout-header sticky top-0 z-30 flex min-h-16 flex-col gap-3 border-b border-gray-200 bg-white/90 px-4 py-3 backdrop-blur-md sm:px-6 md:flex-row md:items-center md:justify-between md:gap-6 dark:border-gray-700/80 dark:bg-gray-950/90",
+          properties.class
+        )}
         style={{ "grid-area": "header" }}
       >
         <div class="min-w-0">
