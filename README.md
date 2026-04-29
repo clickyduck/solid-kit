@@ -526,7 +526,7 @@ Main application page column content wrapper.
 
 Responsive detail/drawer panel that slides in from the right.
 
-**Exports:** `RightPanelLayout`, `MainContentLayout`
+**Exports:** `RightPanelLayout`
 
 **`RightPanelLayout` props:**
 
@@ -539,13 +539,6 @@ Responsive detail/drawer panel that slides in from the right.
 | `footer`         | `JSX.Element`                    | Sticky footer slot                                                                                                   |
 | `onOpenChange`   | `(isPanelOpen: boolean) => void` | `true` when the open transition runs; `false` after the close animation finishes (200ms), for unmounting with `Show` |
 | `closeAriaLabel` | `string`                         | Accessible label for the close button (required)                                                                     |
-
-**`MainContentLayout` props:**
-
-| Prop       | Type          | Description                                                  |
-| ---------- | ------------- | ------------------------------------------------------------ |
-| `children` | `JSX.Element` | Main content area; shifts left on desktop when panel is open |
-| `class`    | `string`      | Extra CSS classes                                            |
 
 On desktop the panel pushes the main area. On mobile it overlays full-screen with smooth entrance/exit transitions.
 

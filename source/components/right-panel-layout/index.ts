@@ -1,1 +1,1 @@
-export { RightPanelLayout, MainContentLayout } from "./RightPanelLayout";
+export { RightPanelLayout } from "./RightPanelLayout";

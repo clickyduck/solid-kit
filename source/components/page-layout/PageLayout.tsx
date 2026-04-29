@@ -1,4 +1,5 @@
 import { mergeClasses } from "@/utilities/mergeClasses";
+import { themedScrollControlClassName } from "@/utilities/themedScrollControlClassName";
 import type { JSX, ParentComponent } from "solid-js";
 import { Show } from "solid-js";
 
@@ -14,7 +15,7 @@ type PageLayoutProperties = {
  */
 export const PageLayout: ParentComponent<PageLayoutProperties> = (properties) => {
   return (
-    <div class={mergeClasses("layout-page mx-auto min-h-0 w-full max-w-screen-2xl min-w-0 px-4 py-6 sm:px-6", properties.class)} style={{ "grid-area": "main" }}>
+    <div class={mergeClasses("layout-page mx-auto min-h-0 w-full max-w-screen-2xl min-w-0 overflow-auto px-4 py-6 sm:px-6", themedScrollControlClassName, properties.class)} style={{ "grid-area": "main" }}>
       {properties.children}
     </div>
   );

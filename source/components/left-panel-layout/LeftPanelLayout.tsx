@@ -256,6 +256,21 @@ type LeftPanelLayoutProperties = {
    */
   onOpenChange?: (isPanelOpen: boolean) => void;
   navigationDocument: LeftPanelLayoutNavigationDocumentJson;
+  /**
+   * When true, renders a mobile scrim behind the panel when it is open.
+   * Clicking the scrim triggers `onOpenChange(false)`.
+   *
+   * Defaults to `true` so consumers don't need to re-implement overlay behavior.
+   */
+  scrim?: boolean;
+  /** Tailwind z-index for the scrim layer (panel stays above). */
+  scrimZIndexClass?: string;
+  /** Tailwind z-index for the panel layer. */
+  panelZIndexClass?: string;
+  /** Desktop width when expanded (defaults to `md:w-64`). */
+  expandedWidthClass?: string;
+  /** Desktop width when collapsed (defaults to `md:w-16`). */
+  collapsedWidthClass?: string;
 };
 
 /**
@@ -279,123 +294,138 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
   };
 
   return (
-    <aside
-      ref={(element: HTMLElement) => {
-        setSidebarElement(element);
-      }}
-      class={mergeClasses(
-        "layout-left-panel flex min-h-0 flex-col overflow-hidden bg-white md:border-r md:border-gray-200 dark:bg-gray-950 dark:md:border-gray-700/60",
-        "fixed inset-x-0 top-16 bottom-0 z-100 w-full max-w-none transition-transform duration-200 ease-in-out",
-        "md:static md:z-auto md:h-full md:w-auto md:max-w-none md:transition-[width] md:duration-200 md:ease-in-out",
-        properties.collapsed ? "-translate-x-full md:pointer-events-auto md:translate-x-0" : "translate-x-0"
-      )}
-      style={
-        !properties.collapsed && isMobileViewport()
-          ? {
-              "grid-area": "left",
-              transform: `translateX(${swipeTranslationX()}px)`,
-              "touch-action": "pan-y",
-              transition: isSwipeDragging() ? "none" : undefined
-            }
-          : { "grid-area": "left", "touch-action": "auto" }
-      }
-      onPointerDown={(event: PointerEvent) => {
-        if (properties.collapsed) {
-          return;
-        }
-        if (!isMobileViewport()) {
-          return;
-        }
-        if (event.pointerType !== "touch") {
-          return;
-        }
-        (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
-        setSwipeStartClientX(event.clientX);
-        setSwipeStartClientY(event.clientY);
-        setSwipeTranslationX(0);
-        setIsSwipeGestureActive(false);
-        setIsSwipeDragging(false);
-      }}
-      onPointerMove={(event: PointerEvent) => {
-        if (properties.collapsed) {
-          return;
-        }
-        if (!isMobileViewport()) {
-          return;
-        }
-        if (event.pointerType !== "touch") {
-          return;
-        }
-        const initialClientX = swipeStartClientX();
-        const initialClientY = swipeStartClientY();
-        if (initialClientX == null || initialClientY == null) {
-          return;
-        }
-        const deltaX = event.clientX - initialClientX;
-        const deltaY = event.clientY - initialClientY;
-
-        if (!isSwipeGestureActive()) {
-          if (Math.abs(deltaX) < 8) {
-            return;
-          }
-          if (Math.abs(deltaY) > 12 && Math.abs(deltaY) > Math.abs(deltaX) * 1.5) {
-            resetSwipeGesture();
-            setSwipeTranslationX(0);
-            return;
-          }
-          setIsSwipeGestureActive(true);
-        }
-
-        event.preventDefault();
-        setIsSwipeDragging(true);
-        setSwipeTranslationX(Math.min(0, deltaX));
-      }}
-      onPointerUp={(event: PointerEvent) => {
-        if (properties.collapsed) {
-          return;
-        }
-        if (!isMobileViewport()) {
-          return;
-        }
-        if (event.pointerType !== "touch") {
-          return;
-        }
-        const translationX = swipeTranslationX();
-        const width = sidebarElement()?.offsetWidth ?? 0;
-        const closeThreshold = Math.max(60, Math.floor(width / 2));
-        const shouldClose = isSwipeGestureActive() && translationX <= -closeThreshold;
-        resetSwipeGesture();
-        if (shouldClose) {
-          setSwipeTranslationX(0);
-          properties.onOpenChange?.(false);
-          return;
-        }
-        setSwipeTranslationX(0);
-      }}
-      onPointerCancel={(event: PointerEvent) => {
-        if (properties.collapsed) {
-          return;
-        }
-        if (!isMobileViewport()) {
-          return;
-        }
-        if (event.pointerType !== "touch") {
-          return;
-        }
-        resetSwipeGesture();
-        setSwipeTranslationX(0);
-      }}
-    >
-      <div class={mergeClasses("flex min-h-0 flex-1 flex-col gap-2 overflow-x-hidden overflow-y-auto", themedScrollControlClassName, properties.collapsed ? "px-2 py-3" : "p-3")}>
-        <LeftPanelNavigationBody
-          collapsed={properties.collapsed}
-          navigationDocument={properties.navigationDocument}
-          onItemClick={() => {
+    <>
+      <Show when={(properties.scrim ?? true) && !properties.collapsed && isMobileViewport()}>
+        <div
+          role="presentation"
+          aria-hidden="true"
+          class={mergeClasses(properties.scrimZIndexClass ?? "z-40", "fixed inset-0 bg-black/50", "top-(--solid-kit-header-height,4rem)", "transition-opacity duration-200")}
+          onClick={() => {
             properties.onOpenChange?.(false);
           }}
         />
-      </div>
-    </aside>
+      </Show>
+
+      <aside
+        ref={(element: HTMLElement) => {
+          setSidebarElement(element);
+        }}
+        class={mergeClasses(
+          "layout-left-panel flex min-h-0 flex-col overflow-hidden bg-white md:border-r md:border-gray-200 dark:bg-gray-950 dark:md:border-gray-700/60",
+          properties.panelZIndexClass ?? "z-50",
+          "fixed inset-x-0 top-(--solid-kit-header-height,4rem) bottom-0 w-full max-w-none transition-transform duration-200 ease-in-out",
+          "md:static md:z-auto md:h-full md:max-w-none md:transition-[width] md:duration-200 md:ease-in-out",
+          properties.collapsed ? "-translate-x-full md:pointer-events-auto md:translate-x-0" : "translate-x-0",
+          properties.collapsed ? (properties.collapsedWidthClass ?? "md:w-16") : (properties.expandedWidthClass ?? "md:w-64")
+        )}
+        style={
+          !properties.collapsed && isMobileViewport()
+            ? {
+                "grid-area": "left",
+                transform: `translateX(${swipeTranslationX()}px)`,
+                "touch-action": "pan-y",
+                transition: isSwipeDragging() ? "none" : undefined
+              }
+            : { "grid-area": "left", "touch-action": "auto" }
+        }
+        onPointerDown={(event: PointerEvent) => {
+          if (properties.collapsed) {
+            return;
+          }
+          if (!isMobileViewport()) {
+            return;
+          }
+          if (event.pointerType !== "touch") {
+            return;
+          }
+          (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+          setSwipeStartClientX(event.clientX);
+          setSwipeStartClientY(event.clientY);
+          setSwipeTranslationX(0);
+          setIsSwipeGestureActive(false);
+          setIsSwipeDragging(false);
+        }}
+        onPointerMove={(event: PointerEvent) => {
+          if (properties.collapsed) {
+            return;
+          }
+          if (!isMobileViewport()) {
+            return;
+          }
+          if (event.pointerType !== "touch") {
+            return;
+          }
+          const initialClientX = swipeStartClientX();
+          const initialClientY = swipeStartClientY();
+          if (initialClientX == null || initialClientY == null) {
+            return;
+          }
+          const deltaX = event.clientX - initialClientX;
+          const deltaY = event.clientY - initialClientY;
+
+          if (!isSwipeGestureActive()) {
+            if (Math.abs(deltaX) < 8) {
+              return;
+            }
+            if (Math.abs(deltaY) > 12 && Math.abs(deltaY) > Math.abs(deltaX) * 1.5) {
+              resetSwipeGesture();
+              setSwipeTranslationX(0);
+              return;
+            }
+            setIsSwipeGestureActive(true);
+          }
+
+          event.preventDefault();
+          setIsSwipeDragging(true);
+          setSwipeTranslationX(Math.min(0, deltaX));
+        }}
+        onPointerUp={(event: PointerEvent) => {
+          if (properties.collapsed) {
+            return;
+          }
+          if (!isMobileViewport()) {
+            return;
+          }
+          if (event.pointerType !== "touch") {
+            return;
+          }
+          const translationX = swipeTranslationX();
+          const width = sidebarElement()?.offsetWidth ?? 0;
+          const closeThreshold = Math.max(60, Math.floor(width / 2));
+          const shouldClose = isSwipeGestureActive() && translationX <= -closeThreshold;
+          resetSwipeGesture();
+          if (shouldClose) {
+            setSwipeTranslationX(0);
+            properties.onOpenChange?.(false);
+            return;
+          }
+          setSwipeTranslationX(0);
+        }}
+        onPointerCancel={(event: PointerEvent) => {
+          if (properties.collapsed) {
+            return;
+          }
+          if (!isMobileViewport()) {
+            return;
+          }
+          if (event.pointerType !== "touch") {
+            return;
+          }
+          resetSwipeGesture();
+          setSwipeTranslationX(0);
+        }}
+      >
+        <div class={mergeClasses("flex min-h-0 flex-1 flex-col gap-2 overflow-x-hidden overflow-y-auto", themedScrollControlClassName, properties.collapsed ? "px-2 py-3" : "p-3")}>
+          <LeftPanelNavigationBody
+            collapsed={properties.collapsed}
+            navigationDocument={properties.navigationDocument}
+            onItemClick={() => {
+              properties.onOpenChange?.(false);
+            }}
+          />
+        </div>
+      </aside>
+    </>
   );
 };
 

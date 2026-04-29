@@ -7,12 +7,14 @@ import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, Dia
 import { Dropdown, DropdownIconTrigger, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
 import { EmptyState } from "@/components/empty-state/EmptyState";
 import { Field } from "@/components/field/Field";
+import { HeaderLayout } from "@/components/header-layout";
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Input } from "@/components/input/Input";
 import { LeftPanelLayout, type LeftPanelLayoutNavigationDocumentJson } from "@/components/left-panel-layout";
 import { Loading } from "@/components/loading/Loading";
 import { MainLayout } from "@/components/main-layout";
-import { MainContentLayout, RightPanelLayout } from "@/components/right-panel-layout";
+import { PageLayout } from "@/components/page-layout";
+import { RightPanelLayout } from "@/components/right-panel-layout";
 import { SectionHeading } from "@/components/section-heading/SectionHeading";
 import { Spinner } from "@/components/spinner/Spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TablePagination, TableRow } from "@/components/table/Table";
@@ -23,7 +25,7 @@ import { addToast } from "@/components/toast/Toast";
 import { Toaster } from "@/components/toast/Toaster";
 import { ToggleGroup } from "@/components/toggle-group/ToggleGroup";
 import { Upload } from "@/components/upload/Upload";
-import { type Color, createDocumentColorSchemePreferenceSignal, mergeClasses, useIsMobile } from "@/utilities";
+import { type Color, createDocumentColorSchemePreferenceSignal, useIsMobile } from "@/utilities";
 import type { JSX } from "solid-js";
 import { For, Show, createMemo, createSignal } from "solid-js";
 
@@ -86,7 +88,7 @@ const tabDefinitions: readonly TabDefinition<ShowcaseTabValue>[] = [
 export const ShowcaseApplication = (): JSX.Element => {
   const isMobileViewport = useIsMobile();
   const [sidebarCollapsed, setSidebarCollapsed] = createSignal(isMobileViewport());
-  const [navigationFilterValue, setNavigationFilterValue] = createSignal<string>("");
+  const [navigationFilterValue] = createSignal<string>("");
   const toggleSidebar = (): void => {
     setSidebarCollapsed((previous) => {
       return !previous;
@@ -176,532 +178,496 @@ export const ShowcaseApplication = (): JSX.Element => {
       <Toaster />
 
       <MainLayout class="flex-1">
-        <header class="layout-header sticky top-0 z-30 w-full shrink-0 border-b border-gray-200/90 bg-white/90 backdrop-blur-md dark:border-gray-700/60 dark:bg-gray-950/90" style={{ "grid-area": "header" }}>
-          <div class="flex h-16 items-center justify-between gap-3 px-3">
-            <div class="flex min-w-0 flex-1 items-center gap-3">
-              <IconButton variant="ghost" class="text-gray-900 dark:text-white" icon={sidebarCollapsed() ? bars3 : menuOpen} onClick={toggleSidebar} aria-label={sidebarCollapsed() ? "Expand sidebar" : "Collapse sidebar"} />
-              <div class="min-w-0 space-y-0.5">
-                <h1 class="truncate text-base font-bold tracking-tight text-gray-900 sm:text-xl dark:text-white">Solid Kit showcase</h1>
-                <p class="hidden max-w-2xl truncate text-xs text-gray-600 sm:block dark:text-gray-400">Interactive samples for buttons, forms, data surfaces, and overlays.</p>
-              </div>
-              <div class="hidden max-w-sm min-w-0 flex-1 md:block">
-                <Input
-                  id="showcase-navigation-search"
-                  icon={search}
-                  placeholder="Search components (press /)"
-                  value={navigationFilterValue()}
-                  onInput={(event) => {
-                    setNavigationFilterValue(event.currentTarget.value);
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === "Escape") {
-                      setNavigationFilterValue("");
-                      (event.currentTarget as HTMLInputElement).blur();
-                    }
-                  }}
-                  onFocus={() => {
-                    if (sidebarCollapsed()) {
-                      setSidebarCollapsed(false);
-                    }
-                  }}
-                />
-              </div>
-            </div>
-            <div class="flex shrink-0 items-center gap-1 rounded-full border border-gray-200 bg-gray-100/80 p-1 dark:border-gray-700 dark:bg-gray-900/60">
-              <IconButton
-                variant={documentColorSchemeName() === "light" ? "solid" : "ghost"}
-                icon={lightMode}
-                aria-label="Use light color scheme"
-                onClick={() => {
-                  setDocumentColorSchemeName("light");
-                }}
-              />
-              <IconButton
-                variant={documentColorSchemeName() === "dark" ? "solid" : "ghost"}
-                icon={darkMode}
-                aria-label="Use dark color scheme"
-                onClick={() => {
-                  setDocumentColorSchemeName("dark");
-                }}
-              />
-            </div>
+        <HeaderLayout title="Solid Kit showcase" description="Interactive samples for buttons, forms, data surfaces, and overlays.">
+          <IconButton variant="ghost" icon={sidebarCollapsed() ? bars3 : menuOpen} onClick={toggleSidebar} aria-label={sidebarCollapsed() ? "Expand sidebar" : "Collapse sidebar"} />
+          <div class="flex shrink-0 items-center gap-1 rounded-full border border-gray-200 bg-gray-100/80 p-1 dark:border-gray-700 dark:bg-gray-900/60">
+            <IconButton
+              variant={documentColorSchemeName() === "light" ? "solid" : "ghost"}
+              icon={lightMode}
+              aria-label="Use light color scheme"
+              onClick={() => {
+                setDocumentColorSchemeName("light");
+              }}
+            />
+            <IconButton
+              variant={documentColorSchemeName() === "dark" ? "solid" : "ghost"}
+              icon={darkMode}
+              aria-label="Use dark color scheme"
+              onClick={() => {
+                setDocumentColorSchemeName("dark");
+              }}
+            />
           </div>
-        </header>
+        </HeaderLayout>
 
-        <div role="presentation" aria-hidden="true" class={mergeClasses(sidebarCollapsed() ? "pointer-events-none opacity-0" : "opacity-100", "fixed inset-0 top-16 z-40 bg-black/50 transition-opacity duration-200 md:hidden")} onClick={toggleSidebar} />
+        <LeftPanelLayout
+          collapsed={sidebarCollapsed()}
+          onOpenChange={(isPanelOpen) => {
+            if (!isPanelOpen) {
+              closeSidebar();
+            }
+          }}
+          navigationDocument={filteredShowcaseLeftPanelNavigationDocument()}
+        />
 
-        <div class={mergeClasses("shrink-0 overflow-visible transition-[width] duration-200 ease-in-out md:overflow-hidden", sidebarCollapsed() ? "w-0 md:w-16" : "w-0 md:w-64")} style={{ "grid-area": "left" }}>
-          <LeftPanelLayout
-            collapsed={sidebarCollapsed()}
-            onOpenChange={(isPanelOpen) => {
-              if (!isPanelOpen) {
-                closeSidebar();
-              }
-            }}
-            navigationDocument={filteredShowcaseLeftPanelNavigationDocument()}
-          />
-        </div>
-
-        <main class="flex min-h-0 min-w-0 flex-1 flex-row overflow-hidden" id="showcase-main-content" style={{ "grid-area": "main" }}>
-          <MainContentLayout class="min-h-0 w-full min-w-0 scroll-smooth">
-            <div class="mx-auto max-w-6xl space-y-16 px-4 py-10 sm:px-6 lg:px-8">
-              <ShowcaseCategory categoryTitle="Primitives">
-                <ShowcaseSection sectionHeadingIdentifier="showcase-heading-badges" sectionTitle="Badges" sectionDescription="Variants crossed with semantic colors; optional leading icon and removable chip.">
-                  <div class="space-y-6">
-                    <For each={badgeVariants}>
-                      {(variant) => {
-                        return (
-                          <div class="space-y-2">
-                            <p class="text-xs font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-500">{variant}</p>
-                            <div class="flex flex-wrap gap-2">
-                              <For each={semanticColors}>
-                                {(color) => {
-                                  return (
-                                    <Badge variant={variant} color={color}>
-                                      {color}
-                                    </Badge>
-                                  );
-                                }}
-                              </For>
-                            </div>
-                          </div>
-                        );
-                      }}
-                    </For>
-                  </div>
-                  <div class="flex flex-wrap gap-2">
-                    <Badge variant="outline" color="primary" icon={tag}>
-                      With icon
-                    </Badge>
-                    <Badge variant="solid" color="warning" onRemove={() => {}}>
-                      Removable
-                    </Badge>
-                  </div>
-                </ShowcaseSection>
-
-                <ShowcaseSection sectionHeadingIdentifier="showcase-heading-buttons" sectionTitle="Buttons and icon buttons">
-                  <div class="flex flex-wrap gap-3">
-                    <Button variant="solid">Default</Button>
-                    <Button variant="outline">Outline</Button>
-                    <Button variant="ghost">Ghost</Button>
-                    <Button variant="link">Link style</Button>
-                    <Button variant="solid" disabled>
-                      Disabled
-                    </Button>
-                  </div>
-                  <div class="flex flex-wrap gap-3">
-                    <Button variant="solid" icon={pencil}>
-                      Leading icon
-                    </Button>
-                    <Button variant="outline" icon={checkCircle} iconPosition="end">
-                      Trailing icon
-                    </Button>
-                  </div>
-                  <div class="flex flex-wrap gap-3">
-                    <IconButton variant="solid" icon={checkCircle} aria-label="Default icon button" />
-                    <IconButton variant="outline" icon={settings} aria-label="Outline icon button" />
-                    <IconButton variant="ghost" icon={ellipsisVertical} aria-label="Ghost icon button" />
-                    <IconButton variant="link" icon={search} aria-label="Link icon button" />
-                    <IconButton variant="solid" icon={settings} aria-label="Disabled icon button" disabled />
-                  </div>
-                </ShowcaseSection>
-              </ShowcaseCategory>
-
-              <ShowcaseCategory categoryTitle="Progress and loading">
-                <ShowcaseSection sectionHeadingIdentifier="showcase-heading-spinner-loading" sectionTitle="Spinner and loading">
-                  <div class="flex flex-wrap items-center gap-6">
-                    <Spinner class="text-blue-400" />
-                    <Spinner class="text-emerald-400" aria-label="Loading content" />
-                  </div>
-                  <BackgroundCard>
-                    <BackgroundCardContent>
-                      <Loading message="Loading workspace preferences…" />
-                    </BackgroundCardContent>
-                  </BackgroundCard>
-                </ShowcaseSection>
-              </ShowcaseCategory>
-
-              <ShowcaseCategory categoryTitle="Data surfaces">
-                <ShowcaseSection sectionHeadingIdentifier="showcase-heading-metrics" sectionTitle="Metric cards">
-                  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    <MetricCard title="Gross volume" accent="emerald" icon={wallet} value="₹4.2M" linkHref="#" linkLabel="View settlements" />
-                    <MetricCard title="Active users" accent="blue" icon={dashboard} value="1,284" />
-                    <MetricCard title="Risk score" accent="amber" icon={tag} value="Medium" />
-                    <MetricCard title="Automation" accent="violet" icon={settings} value="Running" />
-                    <MetricCard title="Incidents" accent="rose" icon={checkCircle} value="0 open" />
-                  </div>
-                </ShowcaseSection>
-
-                <ShowcaseSection sectionHeadingIdentifier="showcase-heading-card-empty" sectionTitle="Card and empty state">
-                  <BackgroundCard>
-                    <BackgroundCardHeader>
-                      <BackgroundCardTitle>Workspace usage</BackgroundCardTitle>
-                      <BackgroundCardDescription>Compound card primitives with header, description, content, and footer actions for the Showcase.</BackgroundCardDescription>
-                    </BackgroundCardHeader>
-                    <BackgroundCardContent>
-                      <p class="text-sm leading-relaxed text-gray-700 dark:text-gray-300">Card content uses muted body copy. Pair with Header or Metric for dashboard layouts.</p>
-                    </BackgroundCardContent>
-                    <BackgroundCardFooter class="justify-end gap-2">
-                      <Button variant="ghost">Dismiss</Button>
-                      <Button>Save layout</Button>
-                    </BackgroundCardFooter>
-                  </BackgroundCard>
-                  <EmptyState icon={inventory} title="No records yet" message="Create your first inventory movement to populate this list." class="rounded-lg border border-dashed border-gray-300 p-12 dark:border-gray-700" />
-                </ShowcaseSection>
-
-                <ShowcaseSection sectionHeadingIdentifier="showcase-heading-table" sectionTitle="Table and pagination">
-                  <BackgroundCard class="overflow-hidden p-0">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Location</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead align="right" monospace>
-                            Amount
-                          </TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        <For each={tableRows}>
-                          {(row, index) => {
-                            return (
-                              <TableRow clickable active={index() === 0} onClick={() => {}}>
-                                <TableCell>{row.name}</TableCell>
-                                <TableCell>
-                                  <Badge variant="solid" color={row.role === "Active" ? "success" : "warning"}>
-                                    {row.role}
+        <PageLayout>
+          <div class="mx-auto max-w-6xl space-y-16 py-4 lg:px-2">
+            <ShowcaseCategory categoryTitle="Primitives">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-badges" sectionTitle="Badges" sectionDescription="Variants crossed with semantic colors; optional leading icon and removable chip.">
+                <div class="space-y-6">
+                  <For each={badgeVariants}>
+                    {(variant) => {
+                      return (
+                        <div class="space-y-2">
+                          <p class="text-xs font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-500">{variant}</p>
+                          <div class="flex flex-wrap gap-2">
+                            <For each={semanticColors}>
+                              {(color) => {
+                                return (
+                                  <Badge variant={variant} color={color}>
+                                    {color}
                                   </Badge>
-                                </TableCell>
-                                <TableCell align="right" monospace>
-                                  {row.amount}
-                                </TableCell>
-                              </TableRow>
-                            );
-                          }}
-                        </For>
-                        <TableRow verticalAlign="top">
-                          <TableCell>Notes row (top aligned)</TableCell>
-                          <TableCell colSpan={2} class="text-gray-600 dark:text-gray-500">
-                            Use verticalAlign=&quot;top&quot; when a row mixes chips with multi-line copy.
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                    <TablePagination limit={tablePagination().limit} offset={tablePagination().offset} currentPageCount={tableRows.length} totalCount={120} onChange={setTablePagination} />
-                  </BackgroundCard>
-                </ShowcaseSection>
-              </ShowcaseCategory>
+                                );
+                              }}
+                            </For>
+                          </div>
+                        </div>
+                      );
+                    }}
+                  </For>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <Badge variant="outline" color="primary" icon={tag}>
+                    With icon
+                  </Badge>
+                  <Badge variant="solid" color="warning" onRemove={() => {}}>
+                    Removable
+                  </Badge>
+                </div>
+              </ShowcaseSection>
 
-              <ShowcaseCategory categoryTitle="Forms and selection">
-                <ShowcaseSection sectionHeadingIdentifier="showcase-heading-forms" sectionTitle="Fields, input, textarea, upload" sectionDescription="Single controls and compound fields.">
-                  <div class="grid gap-8 lg:grid-cols-2">
-                    <Field label="Plain text" for="showcase-input-plain" hint="Standard single-line control.">
-                      <Input
-                        id="showcase-input-plain"
-                        placeholder="Type a workspace name"
-                        value={plainInputValue()}
-                        onInput={(event) => {
-                          setPlainInputValue(event.currentTarget.value);
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-buttons" sectionTitle="Buttons and icon buttons">
+                <div class="flex flex-wrap gap-3">
+                  <Button variant="solid">Default</Button>
+                  <Button variant="outline">Outline</Button>
+                  <Button variant="ghost">Ghost</Button>
+                  <Button variant="link">Link style</Button>
+                  <Button variant="solid" disabled>
+                    Disabled
+                  </Button>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                  <Button variant="solid" icon={pencil}>
+                    Leading icon
+                  </Button>
+                  <Button variant="outline" icon={checkCircle} iconPosition="end">
+                    Trailing icon
+                  </Button>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                  <IconButton variant="solid" icon={checkCircle} aria-label="Default icon button" />
+                  <IconButton variant="outline" icon={settings} aria-label="Outline icon button" />
+                  <IconButton variant="ghost" icon={ellipsisVertical} aria-label="Ghost icon button" />
+                  <IconButton variant="link" icon={search} aria-label="Link icon button" />
+                  <IconButton variant="solid" icon={settings} aria-label="Disabled icon button" disabled />
+                </div>
+              </ShowcaseSection>
+            </ShowcaseCategory>
+
+            <ShowcaseCategory categoryTitle="Progress and loading">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-spinner-loading" sectionTitle="Spinner and loading">
+                <div class="flex flex-wrap items-center gap-6">
+                  <Spinner class="text-blue-400" />
+                  <Spinner class="text-emerald-400" aria-label="Loading content" />
+                </div>
+                <BackgroundCard>
+                  <BackgroundCardContent>
+                    <Loading message="Loading workspace preferences…" />
+                  </BackgroundCardContent>
+                </BackgroundCard>
+              </ShowcaseSection>
+            </ShowcaseCategory>
+
+            <ShowcaseCategory categoryTitle="Data surfaces">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-metrics" sectionTitle="Metric cards">
+                <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <MetricCard title="Gross volume" accent="emerald" icon={wallet} value="₹4.2M" linkHref="#" linkLabel="View settlements" />
+                  <MetricCard title="Active users" accent="blue" icon={dashboard} value="1,284" />
+                  <MetricCard title="Risk score" accent="amber" icon={tag} value="Medium" />
+                  <MetricCard title="Automation" accent="violet" icon={settings} value="Running" />
+                  <MetricCard title="Incidents" accent="rose" icon={checkCircle} value="0 open" />
+                </div>
+              </ShowcaseSection>
+
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-card-empty" sectionTitle="Card and empty state">
+                <BackgroundCard>
+                  <BackgroundCardHeader>
+                    <BackgroundCardTitle>Workspace usage</BackgroundCardTitle>
+                    <BackgroundCardDescription>Compound card primitives with header, description, content, and footer actions for the Showcase.</BackgroundCardDescription>
+                  </BackgroundCardHeader>
+                  <BackgroundCardContent>
+                    <p class="text-sm leading-relaxed text-gray-700 dark:text-gray-300">Card content uses muted body copy. Pair with Header or Metric for dashboard layouts.</p>
+                  </BackgroundCardContent>
+                  <BackgroundCardFooter class="justify-end gap-2">
+                    <Button variant="ghost">Dismiss</Button>
+                    <Button>Save layout</Button>
+                  </BackgroundCardFooter>
+                </BackgroundCard>
+                <EmptyState icon={inventory} title="No records yet" message="Create your first inventory movement to populate this list." class="rounded-lg border border-dashed border-gray-300 p-12 dark:border-gray-700" />
+              </ShowcaseSection>
+
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-table" sectionTitle="Table and pagination">
+                <BackgroundCard class="overflow-hidden p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Location</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead align="right" monospace>
+                          Amount
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <For each={tableRows}>
+                        {(row, index) => {
+                          return (
+                            <TableRow clickable active={index() === 0} onClick={() => {}}>
+                              <TableCell>{row.name}</TableCell>
+                              <TableCell>
+                                <Badge variant="solid" color={row.role === "Active" ? "success" : "warning"}>
+                                  {row.role}
+                                </Badge>
+                              </TableCell>
+                              <TableCell align="right" monospace>
+                                {row.amount}
+                              </TableCell>
+                            </TableRow>
+                          );
                         }}
-                      />
-                    </Field>
-                    <Field label="With leading icon" for="showcase-input-icon" hint="Search fields reuse the same padding balance as production screens.">
-                      <Input
-                        id="showcase-input-icon"
-                        icon={search}
-                        placeholder="Search SKUs"
-                        value={plainInputValue()}
-                        onInput={(event) => {
-                          setPlainInputValue(event.currentTarget.value);
-                        }}
-                      />
-                    </Field>
-                    <Field label="Trailing suffix" for="showcase-input-suffix" hint="Use trailing labels for units.">
-                      <Input id="showcase-input-suffix" type="number" trailingText="KG" placeholder="0.00" onInput={() => {}} />
-                    </Field>
-                    <Field label="Currency mask" for="showcase-input-currency" hint="Indian grouping with decimal guardrails.">
-                      <Input
-                        id="showcase-input-currency"
-                        currency
-                        value={currencyInputValue()}
-                        onInput={(event) => {
-                          setCurrencyInputValue(event.currentTarget.value);
-                        }}
-                      />
-                    </Field>
-                    <Field label="Disabled" for="showcase-input-disabled">
-                      <Input id="showcase-input-disabled" disabled placeholder="Unavailable" value="Locked" onInput={() => {}} />
-                    </Field>
-                  </div>
-                  <div class="grid gap-8 lg:grid-cols-2">
-                    <Field label="Textarea resize" for="showcase-textarea-resize" hint="Resize policy is explicit per instance.">
-                      <Textarea id="showcase-textarea-resize" rows={4} resize="vertical" placeholder="Resize vertically…" />
-                    </Field>
-                    <Field label="Textarea auto-grow" for="showcase-textarea-autogrow" hint="Height clamps between minRows and maxRows.">
-                      <Textarea
-                        id="showcase-textarea-autogrow"
-                        autoGrow
-                        minRows={2}
-                        maxRows={8}
-                        value={textareaAutoGrowValue()}
-                        onInput={(event) => {
-                          setTextareaAutoGrowValue(event.currentTarget.value);
-                        }}
-                      />
-                    </Field>
-                  </div>
-                  <Field label="Upload" for="showcase-upload" hint="Shows count of selected files; supports multiple.">
-                    <Upload id="showcase-upload" multiple selectedFiles={uploadSelectedFiles()} onSelectedFilesChange={setUploadSelectedFiles} />
+                      </For>
+                      <TableRow verticalAlign="top">
+                        <TableCell>Notes row (top aligned)</TableCell>
+                        <TableCell colSpan={2} class="text-gray-600 dark:text-gray-500">
+                          Use verticalAlign=&quot;top&quot; when a row mixes chips with multi-line copy.
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                  <TablePagination limit={tablePagination().limit} offset={tablePagination().offset} currentPageCount={tableRows.length} totalCount={120} onChange={setTablePagination} />
+                </BackgroundCard>
+              </ShowcaseSection>
+            </ShowcaseCategory>
+
+            <ShowcaseCategory categoryTitle="Forms and selection">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-forms" sectionTitle="Fields, input, textarea, upload" sectionDescription="Single controls and compound fields.">
+                <div class="grid gap-8 lg:grid-cols-2">
+                  <Field label="Plain text" for="showcase-input-plain" hint="Standard single-line control.">
+                    <Input
+                      id="showcase-input-plain"
+                      placeholder="Type a workspace name"
+                      value={plainInputValue()}
+                      onInput={(event) => {
+                        setPlainInputValue(event.currentTarget.value);
+                      }}
+                    />
                   </Field>
-                  <div class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+                  <Field label="With leading icon" for="showcase-input-icon" hint="Search fields reuse the same padding balance as production screens.">
+                    <Input
+                      id="showcase-input-icon"
+                      icon={search}
+                      placeholder="Search SKUs"
+                      value={plainInputValue()}
+                      onInput={(event) => {
+                        setPlainInputValue(event.currentTarget.value);
+                      }}
+                    />
+                  </Field>
+                  <Field label="Trailing suffix" for="showcase-input-suffix" hint="Use trailing labels for units.">
+                    <Input id="showcase-input-suffix" type="number" trailingText="KG" placeholder="0.00" onInput={() => {}} />
+                  </Field>
+                  <Field label="Currency mask" for="showcase-input-currency" hint="Indian grouping with decimal guardrails.">
+                    <Input
+                      id="showcase-input-currency"
+                      currency
+                      value={currencyInputValue()}
+                      onInput={(event) => {
+                        setCurrencyInputValue(event.currentTarget.value);
+                      }}
+                    />
+                  </Field>
+                  <Field label="Disabled" for="showcase-input-disabled">
+                    <Input id="showcase-input-disabled" disabled placeholder="Unavailable" value="Locked" onInput={() => {}} />
+                  </Field>
+                </div>
+                <div class="grid gap-8 lg:grid-cols-2">
+                  <Field label="Textarea resize" for="showcase-textarea-resize" hint="Resize policy is explicit per instance.">
+                    <Textarea id="showcase-textarea-resize" rows={4} resize="vertical" placeholder="Resize vertically…" />
+                  </Field>
+                  <Field label="Textarea auto-grow" for="showcase-textarea-autogrow" hint="Height clamps between minRows and maxRows.">
+                    <Textarea
+                      id="showcase-textarea-autogrow"
+                      autoGrow
+                      minRows={2}
+                      maxRows={8}
+                      value={textareaAutoGrowValue()}
+                      onInput={(event) => {
+                        setTextareaAutoGrowValue(event.currentTarget.value);
+                      }}
+                    />
+                  </Field>
+                </div>
+                <Field label="Upload" for="showcase-upload" hint="Shows count of selected files; supports multiple.">
+                  <Upload id="showcase-upload" multiple selectedFiles={uploadSelectedFiles()} onSelectedFilesChange={setUploadSelectedFiles} />
+                </Field>
+                <div class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4 dark:border-gray-800">
+                  <ToggleGroup
+                    name="showcase-toggle-digest"
+                    selectionMode="multiple"
+                    value={digestSelection()}
+                    onChange={setDigestSelection}
+                    options={[
+                      {
+                        label: "Receive weekly digest",
+                        value: "weekly",
+                        description: "One email every Monday with product updates and tips."
+                      }
+                    ]}
+                  />
+                  <ToggleGroup
+                    name="showcase-toggle-digest-disabled"
+                    selectionMode="multiple"
+                    disabled
+                    value={["weekly"]}
+                    onChange={() => {}}
+                    options={[
+                      {
+                        label: "Disabled option",
+                        value: "weekly",
+                        description: "You cannot change this option while the account is locked."
+                      }
+                    ]}
+                  />
+                </div>
+                <div class="grid gap-6 lg:grid-cols-2">
+                  <Field label="Shipping method" hint="Single selection; click the active option again to clear when allowNoSelection is on.">
                     <ToggleGroup
-                      name="showcase-toggle-digest"
-                      selectionMode="multiple"
-                      value={digestSelection()}
-                      onChange={setDigestSelection}
+                      name="showcase-toggle-shipping"
+                      selectionMode="single"
+                      allowNoSelection
+                      value={shippingMethod()}
+                      onChange={setShippingMethod}
                       options={[
-                        {
-                          label: "Receive weekly digest",
-                          value: "weekly",
-                          description: "One email every Monday with product updates and tips."
-                        }
+                        { label: "Standard (3–5 days)", value: "standard", description: "Best value for non-urgent orders." },
+                        { label: "Express (1–2 days)", value: "express", description: "Faster delivery with tracking updates." },
+                        { label: "Overnight", value: "overnight", description: "Arrives next business day when ordered before 2pm." }
                       ]}
                     />
+                  </Field>
+                  <Field label="Disabled group">
                     <ToggleGroup
-                      name="showcase-toggle-digest-disabled"
-                      selectionMode="multiple"
+                      name="showcase-toggle-shipping-disabled"
+                      selectionMode="single"
+                      allowNoSelection={false}
+                      value="express"
                       disabled
-                      value={["weekly"]}
                       onChange={() => {}}
                       options={[
-                        {
-                          label: "Disabled option",
-                          value: "weekly",
-                          description: "You cannot change this option while the account is locked."
-                        }
-                      ]}
-                    />
-                  </div>
-                  <div class="grid gap-6 lg:grid-cols-2">
-                    <Field label="Shipping method" hint="Single selection; click the active option again to clear when allowNoSelection is on.">
-                      <ToggleGroup
-                        name="showcase-toggle-shipping"
-                        selectionMode="single"
-                        allowNoSelection
-                        value={shippingMethod()}
-                        onChange={setShippingMethod}
-                        options={[
-                          { label: "Standard (3–5 days)", value: "standard", description: "Best value for non-urgent orders." },
-                          { label: "Express (1–2 days)", value: "express", description: "Faster delivery with tracking updates." },
-                          { label: "Overnight", value: "overnight", description: "Arrives next business day when ordered before 2pm." }
-                        ]}
-                      />
-                    </Field>
-                    <Field label="Disabled group">
-                      <ToggleGroup
-                        name="showcase-toggle-shipping-disabled"
-                        selectionMode="single"
-                        allowNoSelection={false}
-                        value="express"
-                        disabled
-                        onChange={() => {}}
-                        options={[
-                          { label: "Standard (3–5 days)", value: "standard", description: "Best value for non-urgent orders." },
-                          { label: "Express (1–2 days)", value: "express", description: "Faster delivery with tracking updates." },
-                          { label: "Overnight", value: "overnight", description: "Arrives next business day when ordered before 2pm." }
-                        ]}
-                      />
-                    </Field>
-                  </div>
-                  <Field label="Contact channels (labels only, no descriptions)">
-                    <ToggleGroup
-                      name="showcase-toggle-no-description"
-                      selectionMode="multiple"
-                      value={contactChannelsWithoutDescription()}
-                      onChange={setContactChannelsWithoutDescription}
-                      options={[
-                        { label: "Email", value: "email" },
-                        { label: "SMS", value: "sms" },
-                        { label: "Push", value: "push" }
+                        { label: "Standard (3–5 days)", value: "standard", description: "Best value for non-urgent orders." },
+                        { label: "Express (1–2 days)", value: "express", description: "Faster delivery with tracking updates." },
+                        { label: "Overnight", value: "overnight", description: "Arrives next business day when ordered before 2pm." }
                       ]}
                     />
                   </Field>
-                </ShowcaseSection>
-              </ShowcaseCategory>
+                </div>
+                <Field label="Contact channels (labels only, no descriptions)">
+                  <ToggleGroup
+                    name="showcase-toggle-no-description"
+                    selectionMode="multiple"
+                    value={contactChannelsWithoutDescription()}
+                    onChange={setContactChannelsWithoutDescription}
+                    options={[
+                      { label: "Email", value: "email" },
+                      { label: "SMS", value: "sms" },
+                      { label: "Push", value: "push" }
+                    ]}
+                  />
+                </Field>
+              </ShowcaseSection>
+            </ShowcaseCategory>
 
-              <ShowcaseCategory categoryTitle="Navigation">
-                <ShowcaseSection
-                  sectionHeadingIdentifier="showcase-heading-right-panel"
-                  sectionTitle="Right panel"
-                  sectionDescription="The main region and the right panel are siblings in a row: from the medium breakpoint up the main column reflows when the panel is open. Below the medium breakpoint the panel is a fixed full width overlay. Use the close control to play the exit transition."
-                >
-                  <div class="flex flex-wrap items-center gap-3">
-                    <Button
-                      variant={isRightPanelOpen() ? "solid" : "outline"}
-                      onClick={() => {
-                        if (isRightPanelOpen()) {
-                          return;
-                        }
-                        openRightPanel();
+            <ShowcaseCategory categoryTitle="Navigation">
+              <ShowcaseSection
+                sectionHeadingIdentifier="showcase-heading-right-panel"
+                sectionTitle="Right panel"
+                sectionDescription="The main region and the right panel are siblings in a row: from the medium breakpoint up the main column reflows when the panel is open. Below the medium breakpoint the panel is a fixed full width overlay. Use the close control to play the exit transition."
+              >
+                <div class="flex flex-wrap items-center gap-3">
+                  <Button
+                    variant={isRightPanelOpen() ? "solid" : "outline"}
+                    onClick={() => {
+                      if (isRightPanelOpen()) {
+                        return;
+                      }
+                      openRightPanel();
+                    }}
+                    disabled={isRightPanelOpen()}
+                  >
+                    {isRightPanelOpen() ? "Panel open" : "Open right panel"}
+                  </Button>
+                  <p class="min-w-0 text-sm text-gray-600 dark:text-gray-500">When the left sidebar is open on a phone, opening this panel closes the sidebar so the two full-width overlay layers do not stack.</p>
+                </div>
+              </ShowcaseSection>
+
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-tabs" sectionTitle="Tabs">
+                <Tabs tabDefinitions={tabDefinitions} activeTabValue={activeShowcaseTab} onTabSelect={setActiveShowcaseTab} />
+                <BackgroundCard>
+                  <BackgroundCardContent class="pt-6">
+                    <p class="text-sm text-gray-700 dark:text-gray-300">{tabPanelCopy()}</p>
+                  </BackgroundCardContent>
+                </BackgroundCard>
+              </ShowcaseSection>
+
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-dropdowns" sectionTitle="Dropdowns">
+                <div class="grid gap-6 md:grid-cols-2">
+                  <Field label="Basic menu" for="showcase-dropdown-basic">
+                    <Dropdown options={dropdownOptions()} value={dropdownValue()} onChange={setDropdownValue}>
+                      <DropdownTrigger id="showcase-dropdown-basic">{dropdownValue() ?? "Select a fruit"}</DropdownTrigger>
+                    </Dropdown>
+                  </Field>
+                  <Field label="Searchable" for="showcase-dropdown-search">
+                    <Dropdown options={cityOptions()} value={searchableDropdownValue()} onChange={setSearchableDropdownValue} searchable>
+                      <DropdownTrigger id="showcase-dropdown-search">
+                        <DropdownValue>{searchableDropdownValue() ?? "Pick a city"}</DropdownValue>
+                      </DropdownTrigger>
+                    </Dropdown>
+                  </Field>
+                  <Field label="Document portal" for="showcase-dropdown-portal" hint="Menu anchors to the viewport to avoid clipping.">
+                    <Dropdown options={portalOptions()} value={portalDropdownValue()} onChange={setPortalDropdownValue} usePortal>
+                      <DropdownTrigger id="showcase-dropdown-portal">
+                        <DropdownValue>{portalDropdownValue() ?? "Choose letter"}</DropdownValue>
+                      </DropdownTrigger>
+                    </Dropdown>
+                  </Field>
+                  <Field label="Custom row renderer" for="showcase-dropdown-custom">
+                    <Dropdown
+                      options={dropdownOptions()}
+                      value={itemizedDropdownValue()}
+                      onChange={setItemizedDropdownValue}
+                      itemComponent={({ item }) => {
+                        return <span class="font-semibold text-blue-700 dark:text-blue-200">{item.rawValue}</span>;
                       }}
-                      disabled={isRightPanelOpen()}
                     >
-                      {isRightPanelOpen() ? "Panel open" : "Open right panel"}
-                    </Button>
-                    <p class="min-w-0 text-sm text-gray-600 dark:text-gray-500">When the left sidebar is open on a phone, opening this panel closes the sidebar so the two full-width overlay layers do not stack.</p>
-                  </div>
-                </ShowcaseSection>
+                      <DropdownTrigger id="showcase-dropdown-custom">
+                        <DropdownValue>{itemizedDropdownValue() ?? "Styled options"}</DropdownValue>
+                      </DropdownTrigger>
+                    </Dropdown>
+                  </Field>
+                  <Field label="Icon-only trigger" for="showcase-dropdown-icon">
+                    <Dropdown options={numericOptions()} value={iconTriggerDropdownValue()} onChange={setIconTriggerDropdownValue}>
+                      <DropdownIconTrigger id="showcase-dropdown-icon" icon={ellipsisVertical} aria-label="Open numeric menu" />
+                    </Dropdown>
+                  </Field>
+                  <Field label="Custom trigger classes" for="showcase-dropdown-custom-classes" hint="Text triggers use outline styling; adjust appearance with class.">
+                    <Dropdown options={dropdownOptions()} value={dropdownValue()} onChange={setDropdownValue}>
+                      <DropdownTrigger id="showcase-dropdown-custom-classes" class="border-transparent bg-transparent text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800/80" icon={tag}>
+                        <DropdownValue>{dropdownValue() ?? "Tagged fruit"}</DropdownValue>
+                      </DropdownTrigger>
+                    </Dropdown>
+                  </Field>
+                  <Field label="Disabled menu" for="showcase-dropdown-disabled">
+                    <Dropdown options={dropdownOptions()} value="Apple" onChange={() => {}} disabled>
+                      <DropdownTrigger id="showcase-dropdown-disabled">Disabled</DropdownTrigger>
+                    </Dropdown>
+                  </Field>
+                </div>
+              </ShowcaseSection>
+            </ShowcaseCategory>
 
-                <ShowcaseSection sectionHeadingIdentifier="showcase-heading-tabs" sectionTitle="Tabs">
-                  <Tabs tabDefinitions={tabDefinitions} activeTabValue={activeShowcaseTab} onTabSelect={setActiveShowcaseTab} />
-                  <BackgroundCard>
-                    <BackgroundCardContent class="pt-6">
-                      <p class="text-sm text-gray-700 dark:text-gray-300">{tabPanelCopy()}</p>
-                    </BackgroundCardContent>
-                  </BackgroundCard>
-                </ShowcaseSection>
+            <ShowcaseCategory categoryTitle="Overlays and feedback">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-dialog-toast" sectionTitle="Dialog and toasts">
+                <div class="flex flex-wrap gap-3">
+                  <Button
+                    onClick={() => {
+                      setDialogOpen(true);
+                    }}
+                  >
+                    Open dialog
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      addToast({ title: "Saved", description: "Workspace preferences were updated.", variant: "success" });
+                    }}
+                  >
+                    Toast success
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      addToast({ title: "Payment failed", description: "The bank declined this charge.", variant: "danger" });
+                    }}
+                  >
+                    Toast danger
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      addToast({ title: "Deprecation", description: "This endpoint will be removed next month.", variant: "warning" });
+                    }}
+                  >
+                    Toast warning
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      addToast({ title: "Heads up", description: "Default styling for informational notices." });
+                    }}
+                  >
+                    Toast default
+                  </Button>
+                </div>
 
-                <ShowcaseSection sectionHeadingIdentifier="showcase-heading-dropdowns" sectionTitle="Dropdowns">
-                  <div class="grid gap-6 md:grid-cols-2">
-                    <Field label="Basic menu" for="showcase-dropdown-basic">
-                      <Dropdown options={dropdownOptions()} value={dropdownValue()} onChange={setDropdownValue}>
-                        <DropdownTrigger id="showcase-dropdown-basic">{dropdownValue() ?? "Select a fruit"}</DropdownTrigger>
-                      </Dropdown>
-                    </Field>
-                    <Field label="Searchable" for="showcase-dropdown-search">
-                      <Dropdown options={cityOptions()} value={searchableDropdownValue()} onChange={setSearchableDropdownValue} searchable>
-                        <DropdownTrigger id="showcase-dropdown-search">
-                          <DropdownValue>{searchableDropdownValue() ?? "Pick a city"}</DropdownValue>
-                        </DropdownTrigger>
-                      </Dropdown>
-                    </Field>
-                    <Field label="Document portal" for="showcase-dropdown-portal" hint="Menu anchors to the viewport to avoid clipping.">
-                      <Dropdown options={portalOptions()} value={portalDropdownValue()} onChange={setPortalDropdownValue} usePortal>
-                        <DropdownTrigger id="showcase-dropdown-portal">
-                          <DropdownValue>{portalDropdownValue() ?? "Choose letter"}</DropdownValue>
-                        </DropdownTrigger>
-                      </Dropdown>
-                    </Field>
-                    <Field label="Custom row renderer" for="showcase-dropdown-custom">
-                      <Dropdown
-                        options={dropdownOptions()}
-                        value={itemizedDropdownValue()}
-                        onChange={setItemizedDropdownValue}
-                        itemComponent={({ item }) => {
-                          return <span class="font-semibold text-blue-700 dark:text-blue-200">{item.rawValue}</span>;
+                <Dialog open={dialogOpen()} onOpenChange={setDialogOpen}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Confirm destructive action</DialogTitle>
+                    </DialogHeader>
+                    <DialogBody>
+                      <DialogDescription>Dialogs use Flowbite modal behaviour: focus management, backdrop blur, and scroll locking. Footer actions keep equal minimum widths on wide breakpoints.</DialogDescription>
+                    </DialogBody>
+                    <DialogFooter>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          setDialogOpen(false);
                         }}
                       >
-                        <DropdownTrigger id="showcase-dropdown-custom">
-                          <DropdownValue>{itemizedDropdownValue() ?? "Styled options"}</DropdownValue>
-                        </DropdownTrigger>
-                      </Dropdown>
-                    </Field>
-                    <Field label="Icon-only trigger" for="showcase-dropdown-icon">
-                      <Dropdown options={numericOptions()} value={iconTriggerDropdownValue()} onChange={setIconTriggerDropdownValue}>
-                        <DropdownIconTrigger id="showcase-dropdown-icon" icon={ellipsisVertical} aria-label="Open numeric menu" />
-                      </Dropdown>
-                    </Field>
-                    <Field label="Custom trigger classes" for="showcase-dropdown-custom-classes" hint="Text triggers use outline styling; adjust appearance with class.">
-                      <Dropdown options={dropdownOptions()} value={dropdownValue()} onChange={setDropdownValue}>
-                        <DropdownTrigger id="showcase-dropdown-custom-classes" class="border-transparent bg-transparent text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800/80" icon={tag}>
-                          <DropdownValue>{dropdownValue() ?? "Tagged fruit"}</DropdownValue>
-                        </DropdownTrigger>
-                      </Dropdown>
-                    </Field>
-                    <Field label="Disabled menu" for="showcase-dropdown-disabled">
-                      <Dropdown options={dropdownOptions()} value="Apple" onChange={() => {}} disabled>
-                        <DropdownTrigger id="showcase-dropdown-disabled">Disabled</DropdownTrigger>
-                      </Dropdown>
-                    </Field>
-                  </div>
-                </ShowcaseSection>
-              </ShowcaseCategory>
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="solid"
+                        onClick={() => {
+                          setDialogOpen(false);
+                        }}
+                      >
+                        Confirm
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </ShowcaseSection>
+            </ShowcaseCategory>
 
-              <ShowcaseCategory categoryTitle="Overlays and feedback">
-                <ShowcaseSection sectionHeadingIdentifier="showcase-heading-dialog-toast" sectionTitle="Dialog and toasts">
-                  <div class="flex flex-wrap gap-3">
-                    <Button
-                      onClick={() => {
-                        setDialogOpen(true);
-                      }}
-                    >
-                      Open dialog
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        addToast({ title: "Saved", description: "Workspace preferences were updated.", variant: "success" });
-                      }}
-                    >
-                      Toast success
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        addToast({ title: "Payment failed", description: "The bank declined this charge.", variant: "danger" });
-                      }}
-                    >
-                      Toast danger
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        addToast({ title: "Deprecation", description: "This endpoint will be removed next month.", variant: "warning" });
-                      }}
-                    >
-                      Toast warning
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        addToast({ title: "Heads up", description: "Default styling for informational notices." });
-                      }}
-                    >
-                      Toast default
-                    </Button>
-                  </div>
-
-                  <Dialog open={dialogOpen()} onOpenChange={setDialogOpen}>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Confirm destructive action</DialogTitle>
-                      </DialogHeader>
-                      <DialogBody>
-                        <DialogDescription>Dialogs use Flowbite modal behaviour: focus management, backdrop blur, and scroll locking. Footer actions keep equal minimum widths on wide breakpoints.</DialogDescription>
-                      </DialogBody>
-                      <DialogFooter>
-                        <Button
-                          variant="ghost"
-                          onClick={() => {
-                            setDialogOpen(false);
-                          }}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          variant="solid"
-                          onClick={() => {
-                            setDialogOpen(false);
-                          }}
-                        >
-                          Confirm
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </ShowcaseSection>
-              </ShowcaseCategory>
-
-              <footer class="mt-16 border-t border-gray-200 pt-8 text-center text-xs text-gray-600 dark:border-gray-800 dark:text-gray-500">
-                <Show when={import.meta.env.DEV}>
-                  <p>
-                    Launch the Showcase with <code class="rounded bg-gray-100 px-1 py-0.5 text-gray-800 dark:bg-gray-900 dark:text-gray-300">npm run development</code> from the repository root.
-                  </p>
-                </Show>
-              </footer>
-            </div>
-          </MainContentLayout>
-        </main>
+            <footer class="mt-16 border-t border-gray-200 pt-8 text-center text-xs text-gray-600 dark:border-gray-800 dark:text-gray-500">
+              <Show when={import.meta.env.DEV}>
+                <p>
+                  Launch the Showcase with <code class="rounded bg-gray-100 px-1 py-0.5 text-gray-800 dark:bg-gray-900 dark:text-gray-300">npm run development</code> from the repository root.
+                </p>
+              </Show>
+            </footer>
+          </div>
+        </PageLayout>
 
         <Show when={isRightPanelOpen()}>
           <RightPanelLayout

@@ -99,24 +99,4 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
     </div>
   );
 };
-
-type MainContentLayoutProperties = {
-  children: JSX.Element;
-  class?: string;
-};
-
-/**
- * Main column scroll region (grid area: `main`).
- *
- * Place as the `main` grid child when you want the main column itself to be the scroll container,
- * and the `PageLayout` to be a padded inner wrapper.
- */
-export const MainContentLayout: Component<MainContentLayoutProperties> = (properties) => {
-  return (
-    <div class={mergeClasses("min-h-0 min-w-0 overflow-auto", themedScrollControlClassName, properties.class)} style={{ "grid-area": "main" }}>
-      {properties.children}
-    </div>
-  );
-};
-
-export type { RightPanelLayoutProperties, MainContentLayoutProperties };
+export type { RightPanelLayoutProperties };
