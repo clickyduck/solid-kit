@@ -2,18 +2,19 @@ import { mergeClasses } from "@/utilities/mergeClasses";
 import type { JSX, ParentComponent } from "solid-js";
 import { Show } from "solid-js";
 
-type PageProperties = {
+type PageLayoutProperties = {
   class?: string;
   children: JSX.Element;
 };
 
 /**
- * Main application page column content wrapper.
- * Intended to sit between `LeftPanel` and `RightPanel` inside the app shell row.
+ * Main application page column content wrapper (grid area: `main`).
+ *
+ * Provides consistent shell gutters to complement `HeaderLayout` and the `RightPanelLayout`.
  */
-export const PageLayout: ParentComponent<PageProperties> = (properties) => {
+export const PageLayout: ParentComponent<PageLayoutProperties> = (properties) => {
   return (
-    <div class={mergeClasses("layout-page mx-auto w-full max-w-screen-2xl", properties.class)} style={{ "grid-area": "main" }}>
+    <div class={mergeClasses("layout-page mx-auto min-h-0 w-full max-w-screen-2xl min-w-0 px-4 py-6 sm:px-6", properties.class)} style={{ "grid-area": "main" }}>
       {properties.children}
     </div>
   );
@@ -66,3 +67,5 @@ type PageContentProperties = {
 export const PageContent: ParentComponent<PageContentProperties> = (properties) => {
   return <div class={mergeClasses("min-w-0", properties.class)}>{properties.children}</div>;
 };
+
+export type { PageLayoutProperties, PageHeaderProperties, PageContentProperties };

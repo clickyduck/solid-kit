@@ -13,7 +13,7 @@ A SolidJS component library built with Tailwind CSS and Flowbite-style patterns,
 - [EmptyState](#emptystate)
 - [Field](#field)
 - [HeaderLayout](#headerlayout)
-- [Heading](#heading)
+- [SectionHeading](#sectionheading)
 - [IconButton](#iconbutton)
 - [Icons](#icons)
 - [Input](#input)
@@ -21,7 +21,7 @@ A SolidJS component library built with Tailwind CSS and Flowbite-style patterns,
 - [LeftPanelLayout](#leftpanellayout)
 - [PageLayout](#pagelayout)
 - [Loading](#loading)
-- [Metric](#metric)
+- [MetricCard](#metriccard)
 - [RightPanelLayout](#rightpanellayout)
 - [Spinner](#spinner)
 - [Table](#table)
@@ -302,18 +302,18 @@ import { Button, HeaderLayout } from "@clickyduck/solid-kit";
 
 ---
 
-### Heading
+### SectionHeading
 
 Standardized section heading (`<h3>`, small, semibold, uppercase, tracked).
 
-**Exports:** `Heading`
+**Exports:** `SectionHeading`
 
 Extends all native `<h3>` HTML attributes plus `class`.
 
 ```tsx
-import { Heading } from "@clickyduck/solid-kit";
+import { SectionHeading } from "@clickyduck/solid-kit";
 
-<Heading>Section Title</Heading>;
+<SectionHeading>Section Title</SectionHeading>;
 ```
 
 ---
@@ -489,11 +489,11 @@ import { Loading } from "@clickyduck/solid-kit";
 
 ---
 
-### Metric
+### MetricCard
 
 Stat card with accent color, icon, value, and optional link.
 
-**Exports:** `Metric`
+**Exports:** `MetricCard`
 
 | Prop        | Type                                                   | Description                                 |
 | ----------- | ------------------------------------------------------ | ------------------------------------------- |
@@ -507,9 +507,9 @@ Stat card with accent color, icon, value, and optional link.
 | `class`     | `string`                                               | Extra CSS classes                           |
 
 ```tsx
-import { Metric } from "@clickyduck/solid-kit";
+import { MetricCard } from "@clickyduck/solid-kit";
 
-<Metric title="Revenue" accent="emerald" icon={CurrencyIcon} value="₹1,24,000" linkHref="/revenue" linkLabel="View report" />;
+<MetricCard title="Revenue" accent="emerald" icon={CurrencyIcon} value="₹1,24,000" linkHref="/revenue" linkLabel="View report" />;
 ```
 
 ---
@@ -1031,7 +1031,7 @@ export GITHUB_TOKEN=your_token_here
 npm install @clickyduck/solid-kit solid-js tailwindcss
 ```
 
-Built-in components that need a fixed glyph bundle only the Material Symbols they use; you do **not** install **`@material-symbols/svg-500`** for those. When you want custom icons (same pattern as **`showcase/showcaseIcons.tsx`** in this repository), add **`@material-symbols/svg-500`** (or another SVG source), **`vite-plugin-solid-svg`** if you use Vite, and export **`IconComponent`** values from your application. Pass those into **`Button`**, **`IconButton`**, **`Metric`**, **`EmptyState`**, **`Tabs`**, **`Input`**, **`Dropdown`**, **`Badge`**, and any other prop typed as **`IconComponent`**.
+Built-in components that need a fixed glyph bundle only the Material Symbols they use; you do **not** install **`@material-symbols/svg-500`** for those. When you want custom icons (same pattern as **`showcase/showcaseIcons.tsx`** in this repository), add **`@material-symbols/svg-500`** (or another SVG source), **`vite-plugin-solid-svg`** if you use Vite, and export **`IconComponent`** values from your application. Pass those into **`Button`**, **`IconButton`**, **`MetricCard`**, **`EmptyState`**, **`Tabs`**, **`Input`**, **`Dropdown`**, **`Badge`**, and any other prop typed as **`IconComponent`**.
 
 ### 4. Usage
 

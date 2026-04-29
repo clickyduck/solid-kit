@@ -18,7 +18,7 @@ export const CHOICE_CONTROL_LABEL_HAS_INTERACTION_CLASSES =
 export const CHOICE_CONTROL_FACE_CLASS = "choice-control-face flex w-full min-w-0 items-center rounded-lg border border-solid border-gray-300 text-left transition-[border-color,box-shadow] dark:border-gray-700";
 export const CHOICE_CONTROL_FACE_DISABLED_CLASS = "has-[input:disabled]:[&_.choice-control-face]:opacity-50";
 export const CHOICE_CONTROL_TITLE_CLASS = "text-sm font-semibold text-gray-900 dark:text-gray-100";
-export const CHOICE_CONTROL_DESCRIPTION_CLASS = "text-sm font-normal leading-snug text-gray-600 dark:text-gray-400";
+export const CHOICE_CONTROL_DESCRIPTION_CLASS = "text-xs font-normal leading-snug text-gray-500 dark:text-gray-500";
 export const CHOICE_CONTROL_CHECK_CLASS = "choice-control-check shrink-0 text-blue-600 opacity-0 scale-90 transition-[opacity,transform] duration-150 ease-out dark:text-blue-400";
 
 // Table

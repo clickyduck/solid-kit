@@ -249,7 +249,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
   );
 };
 
-type LeftPanelProperties = {
+type LeftPanelLayoutProperties = {
   collapsed: boolean;
   /**
    * Fires when the panel becomes open or closed. Use `false` from link tap or swipe to request closing; the parent should set `collapsed` to match.
@@ -262,7 +262,7 @@ type LeftPanelProperties = {
  * Collapsible application sidebar with touch swipe-to-close on small viewports; navigation content comes from JSON.
  * On small viewports the panel is full width, fixed under the header, and stacks above the scrim so links stay usable.
  */
-export const LeftPanelLayout: Component<LeftPanelProperties> = (properties) => {
+export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties) => {
   const isMobileViewport = useIsMobile();
   const [sidebarElement, setSidebarElement] = createSignal<HTMLElement | undefined>(undefined);
   const [swipeStartClientX, setSwipeStartClientX] = createSignal<number | null>(null);
@@ -367,9 +367,7 @@ export const LeftPanelLayout: Component<LeftPanelProperties> = (properties) => {
         resetSwipeGesture();
         if (shouldClose) {
           setSwipeTranslationX(0);
-          if (properties.onOpenChange) {
-            properties.onOpenChange(false);
-          }
+          properties.onOpenChange?.(false);
           return;
         }
         setSwipeTranslationX(0);
@@ -393,9 +391,7 @@ export const LeftPanelLayout: Component<LeftPanelProperties> = (properties) => {
           collapsed={properties.collapsed}
           navigationDocument={properties.navigationDocument}
           onItemClick={() => {
-            if (properties.onOpenChange) {
-              properties.onOpenChange(false);
-            }
+            properties.onOpenChange?.(false);
           }}
         />
       </div>
@@ -403,4 +399,4 @@ export const LeftPanelLayout: Component<LeftPanelProperties> = (properties) => {
   );
 };
 
-export type { LeftPanelProperties as LeftPanelLayoutProperties };
+export type { LeftPanelLayoutProperties };

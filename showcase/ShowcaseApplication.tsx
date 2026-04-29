@@ -2,18 +2,18 @@ import type { BadgeVariant } from "@/components/badge/Badge";
 import { Badge } from "@/components/badge/Badge";
 import { Button } from "@/components/button/Button";
 import { BackgroundCard, BackgroundCardContent, BackgroundCardDescription, BackgroundCardFooter, BackgroundCardHeader, BackgroundCardTitle } from "@/components/card/BackgroundCard";
+import { MetricCard } from "@/components/card/MetricCard";
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/dialog/Dialog";
 import { Dropdown, DropdownIconTrigger, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
 import { EmptyState } from "@/components/empty-state/EmptyState";
 import { Field } from "@/components/field/Field";
-import { Heading } from "@/components/heading/Heading";
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Input } from "@/components/input/Input";
-import { LeftPanelLayout, type LeftPanelLayoutNavigationDocumentJson } from "@/components/left-panel";
+import { LeftPanelLayout, type LeftPanelLayoutNavigationDocumentJson } from "@/components/left-panel-layout";
 import { Loading } from "@/components/loading/Loading";
 import { MainLayout } from "@/components/main-layout";
-import { Metric } from "@/components/metric/Metric";
-import { MainContentLayout, RightPanelLayout } from "@/components/right-panel";
+import { MainContentLayout, RightPanelLayout } from "@/components/right-panel-layout";
+import { SectionHeading } from "@/components/section-heading/SectionHeading";
 import { Spinner } from "@/components/spinner/Spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TablePagination, TableRow } from "@/components/table/Table";
 import type { TabDefinition } from "@/components/tabs/Tabs";
@@ -324,11 +324,11 @@ export const ShowcaseApplication = (): JSX.Element => {
               <ShowcaseCategory categoryTitle="Data surfaces">
                 <ShowcaseSection sectionHeadingIdentifier="showcase-heading-metrics" sectionTitle="Metric cards">
                   <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    <Metric title="Gross volume" accent="emerald" icon={wallet} value="₹4.2M" linkHref="#" linkLabel="View settlements" />
-                    <Metric title="Active users" accent="blue" icon={dashboard} value="1,284" />
-                    <Metric title="Risk score" accent="amber" icon={tag} value="Medium" />
-                    <Metric title="Automation" accent="violet" icon={settings} value="Running" />
-                    <Metric title="Incidents" accent="rose" icon={checkCircle} value="0 open" />
+                    <MetricCard title="Gross volume" accent="emerald" icon={wallet} value="₹4.2M" linkHref="#" linkLabel="View settlements" />
+                    <MetricCard title="Active users" accent="blue" icon={dashboard} value="1,284" />
+                    <MetricCard title="Risk score" accent="amber" icon={tag} value="Medium" />
+                    <MetricCard title="Automation" accent="violet" icon={settings} value="Running" />
+                    <MetricCard title="Incidents" accent="rose" icon={checkCircle} value="0 open" />
                   </div>
                 </ShowcaseSection>
 
@@ -744,7 +744,7 @@ const ShowcaseSection = (properties: ShowcaseSectionProperties): JSX.Element => 
   return (
     <BackgroundCard class="scroll-mt-28 space-y-6 rounded-2xl border-gray-200/90 bg-white/90 p-6 sm:p-8 dark:border-gray-800/90 dark:bg-gray-950/35" aria-labelledby={properties.sectionHeadingIdentifier}>
       <header class="space-y-2 border-b border-gray-200/80 pb-5 dark:border-gray-800/70">
-        <Heading id={properties.sectionHeadingIdentifier}>{properties.sectionTitle}</Heading>
+        <SectionHeading id={properties.sectionHeadingIdentifier}>{properties.sectionTitle}</SectionHeading>
         <Show when={properties.sectionDescription}>
           <p class="max-w-3xl text-sm text-gray-600 dark:text-gray-500">{properties.sectionDescription}</p>
         </Show>

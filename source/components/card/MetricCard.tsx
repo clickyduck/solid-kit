@@ -38,7 +38,7 @@ const ACCENT_CLASSES: Record<AccentColor, { card: string; iconBox: string; iconC
   }
 };
 
-type MetricProperties = {
+type MetricCardProperties = {
   title: string;
   accent: AccentColor;
   icon: IconComponent;
@@ -52,7 +52,7 @@ type MetricProperties = {
 /**
  * Metric/stat card with left border accent, icon, value, and optional link. When loading, the value shows an em dash.
  */
-export const Metric = (properties: MetricProperties) => {
+export const MetricCard = (properties: MetricCardProperties) => {
   const accent = () => ACCENT_CLASSES[properties.accent];
   const isLoading = (): boolean => {
     return properties.loading === true;
@@ -86,3 +86,5 @@ export const Metric = (properties: MetricProperties) => {
     </BackgroundCard>
   );
 };
+
+export type { MetricCardProperties };
