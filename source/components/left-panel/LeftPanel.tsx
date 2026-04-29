@@ -286,7 +286,7 @@ export const LeftPanelLayout: Component<LeftPanelProperties> = (properties) => {
       class={mergeClasses(
         "layout-left-panel flex min-h-0 flex-col overflow-hidden bg-white md:border-r md:border-gray-200 dark:bg-gray-950 dark:md:border-gray-700/60",
         "fixed inset-x-0 top-16 bottom-0 z-100 w-full max-w-none transition-transform duration-200 ease-in-out",
-        "md:static md:z-auto md:h-full md:w-full md:max-w-none md:transition-[width] md:duration-200 md:ease-in-out",
+        "md:static md:z-auto md:h-full md:w-auto md:max-w-none md:transition-[width] md:duration-200 md:ease-in-out",
         properties.collapsed ? "-translate-x-full md:pointer-events-auto md:translate-x-0" : "translate-x-0"
       )}
       style={
