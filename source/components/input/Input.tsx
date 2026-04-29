@@ -104,7 +104,7 @@ const Input = (properties: InputProperties) => {
   };
 
   if (!local.icon && !local.trailingText) {
-    return <input class={mergeClasses(baseClasses, FORM_CONTROL_SIZE_CLASSES[effectiveSize()], local.class)} disabled={local.disabled} value={properties.value} onInput={handleInput} {...resolvedInputProps} />;
+    return <input class={mergeClasses(baseClasses, FORM_CONTROL_SIZE_CLASSES[effectiveSize()], local.class)} disabled={local.disabled} value={local.value} onInput={handleInput} {...resolvedInputProps} />;
   }
 
   return (
@@ -121,7 +121,7 @@ const Input = (properties: InputProperties) => {
       <input
         class={mergeClasses(baseClasses, FORM_CONTROL_SIZE_CLASSES[effectiveSize()], local.icon ? FORM_CONTROL_LEADING_ICON_INPUT_CLASS : "", local.trailingText ? "pr-12" : "", local.class)}
         disabled={local.disabled}
-        value={properties.value}
+        value={local.value}
         onInput={handleInput}
         {...resolvedInputProps}
       />

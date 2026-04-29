@@ -3,6 +3,8 @@ import { FORM_CONTROL_AUXILIARY_TEXT_CLASS, FORM_CONTROL_ICON_SIZE, FORM_CONTROL
 import type { JSX } from "solid-js";
 import { splitProps } from "solid-js";
 
+let uploadIdCounter = 0;
+
 export type UploadProperties = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "onInput" | "onChange"> & {
   selectedFiles: File[];
   onSelectedFilesChange: (selectedFiles: File[]) => void;
@@ -19,10 +21,10 @@ const getFileCountLabel = (files: File[]): string => {
 
 export const Upload = (properties: UploadProperties) => {
   const [local, rest] = splitProps(properties, ["selectedFiles", "onSelectedFilesChange", "class", "id", "disabled", "multiple", "accept"]);
-  const resolvedId = () => local.id ?? "upload";
+  const resolvedId = local.id ?? `upload-${uploadIdCounter++}`;
   const effectiveSize = useEffectiveFormControlSize();
 
-  const handleFileSelection: JSX.EventHandler<HTMLInputElement, InputEvent> = (event) => {
+  const handleFileSelection: JSX.EventHandler<HTMLInputElement, Event> = (event) => {
     const fileList = event.currentTarget.files;
     if (!fileList || fileList.length === 0) {
       local.onSelectedFilesChange([]);
@@ -33,9 +35,9 @@ export const Upload = (properties: UploadProperties) => {
 
   return (
     <div class={mergeClasses("w-full has-focus-visible:[&_label]:border-blue-500 dark:has-focus-visible:[&_label]:border-blue-400", local.class)}>
-      <input id={resolvedId()} type="file" class="sr-only" disabled={local.disabled} multiple={local.multiple} accept={local.accept} onInput={handleFileSelection} {...rest} />
+      <input id={resolvedId} type="file" class="sr-only" disabled={local.disabled} multiple={local.multiple} accept={local.accept} onChange={handleFileSelection} {...rest} />
       <label
-        for={resolvedId()}
+        for={resolvedId}
         class={mergeClasses(
           "flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-solid border-gray-300 bg-gray-50 text-gray-700 transition-colors duration-150 hover:border-gray-400 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-200 dark:hover:border-gray-600 dark:hover:bg-gray-900/60",
           FORM_CONTROL_SIZE_CLASSES[effectiveSize()],

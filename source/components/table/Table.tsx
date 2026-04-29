@@ -96,7 +96,7 @@ export const TableRow = (properties: TableRowProperties) => {
     <tr
       tabIndex={clickable() && typeof rest.onClick === "function" ? 0 : undefined}
       class={mergeClasses(
-        "border-b border-gray-100 bg-transparent transition-colors duration-100 last:border-b-0 dark:border-gray-700 dark:bg-gray-900/30",
+        "bg-transparent transition-colors duration-100 dark:bg-gray-900/30",
         resolvedVerticalAlign() === "top" ? "align-top" : "align-middle",
         clickable() ? "cursor-pointer hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:hover:bg-gray-800/50" : "",
         isActive() ? "bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-200 dark:hover:bg-blue-500/20" : "",
@@ -246,7 +246,7 @@ export const TablePagination = (properties: TablePaginationProperties) => {
       </div>
 
       <div class="flex items-center gap-2 md:gap-3">
-        <Show when={properties.currentPageCount >= 0 && properties.currentPageCount > 0}>
+        <Show when={properties.currentPageCount > 0}>
           <span class={mergeClasses("px-1 font-medium tracking-wide text-gray-600 uppercase dark:text-gray-500", TABLE_BODY_TEXT_CLASSES)}>Page {currentPage()}</span>
         </Show>
         <div class="flex items-center gap-1.5">

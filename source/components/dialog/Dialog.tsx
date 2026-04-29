@@ -1,5 +1,5 @@
 import { IconButton } from "@/components/icon-button/IconButton";
-import { Icon, closeCircle } from "@/components/icons";
+import { closeCircle } from "@/components/icons";
 import { mergeClasses } from "@/utilities";
 import { Modal } from "flowbite";
 import type { ModalInterface, ModalOptions } from "flowbite";
@@ -72,7 +72,8 @@ export const Dialog = (properties: DialogRootProperties) => {
             modalInstance.hide();
           }
         }
-      }
+      },
+      { defer: true }
     )
   );
 
@@ -162,11 +163,9 @@ export const DialogHeader = (properties: ComponentProps<"div"> & { actions?: JSX
     <div class={mergeClasses("flex shrink-0 items-center justify-between border-b border-gray-200 px-6 py-5 dark:border-gray-700", local.class)} {...rest}>
       <div class="flex flex-1 items-center overflow-hidden">{local.children}</div>
       <div class="flex items-center gap-2">
-        <Show when={properties.actions}>{properties.actions}</Show>
+        <Show when={local.actions}>{local.actions}</Show>
         <Show when={context?.closeable?.()}>
-          <IconButton variant="ghost" onClick={hideModal} aria-label="Close modal">
-            <Icon icon={closeCircle} width={20} height={20} />
-          </IconButton>
+          <IconButton variant="ghost" icon={closeCircle} onClick={hideModal} aria-label="Close modal" />
         </Show>
       </div>
     </div>

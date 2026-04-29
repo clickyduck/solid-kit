@@ -31,8 +31,11 @@ type DropdownContextType = {
   setSelectedValue: (value: string | undefined) => void;
   dropdownOpen: () => boolean;
   setDropdownOpen: (open: boolean) => void;
-  searchable: boolean;
   filteredOptions: () => string[];
+  isSearchable: () => boolean;
+  searchQuery: () => string;
+  setSearchQuery: (value: string) => void;
+  registerSearchInput: (element: HTMLInputElement) => void;
   effectiveFormControlSize: Accessor<FormControlSize>;
   getDropdownContainerElement: () => HTMLDivElement | undefined;
   setContentPortalMenuElement: (element: HTMLElement | null) => void;
@@ -126,25 +129,8 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
       <Show when={properties.filteredOptions().length > 0} fallback={<li class="py-4 text-center text-gray-500 dark:text-gray-400">No matches found</li>}>
         <For each={properties.filteredOptions()}>
           {(option: string) => {
-            const selectedClasses = (): string => (properties.selectedValue() === option ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-200" : "");
+            const selectedClasses = (): string => (properties.selectedValue() === option ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "");
             const itemClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE[properties.effectiveFormControlSize()];
-            if (properties.itemComponent) {
-              return (
-                <li>
-                  <a
-                    href="#"
-                    class={mergeClasses(itemClass(), selectedClasses())}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                      properties.onSelectOption(option);
-                    }}
-                  >
-                    {properties.itemComponent({ item: { rawValue: option } })}
-                  </a>
-                </li>
-              );
-            }
             return (
               <li>
                 <a
@@ -156,7 +142,7 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
                     properties.onSelectOption(option);
                   }}
                 >
-                  {option}
+                  {properties.itemComponent ? properties.itemComponent({ item: { rawValue: option } }) : option}
                 </a>
               </li>
             );
@@ -280,8 +266,13 @@ const Dropdown = (properties: DropdownRootProperties) => {
     setSelectedValue,
     dropdownOpen,
     setDropdownOpen,
-    searchable: isSearchable(),
     filteredOptions,
+    isSearchable,
+    searchQuery,
+    setSearchQuery,
+    registerSearchInput: (element: HTMLInputElement) => {
+      searchInputElement = element;
+    },
     effectiveFormControlSize,
     getDropdownContainerElement: () => dropdownContainerElement,
     setContentPortalMenuElement: (element: HTMLElement | null) => {
@@ -357,13 +348,6 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
   const context = useDropdownContext();
   const [local, rest] = splitProps(properties, ["class", "children", "onClick", "id", "icon"]);
 
-  const resolvedIcon = (): IconComponent | undefined => {
-    if (!local.icon) {
-      return undefined;
-    }
-    return local.icon;
-  };
-
   const triggerButtonClass = (): string => {
     return mergeClasses("w-full min-w-0 justify-between text-left font-medium aria-expanded:bg-gray-100 dark:aria-expanded:bg-gray-700", local.class);
   };
@@ -416,7 +400,7 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
       {...rest}
     >
       <span class="flex min-w-0 flex-1 items-center gap-2">
-        <Show when={resolvedIcon()}>
+        <Show when={local.icon}>
           {(iconComponentAccessor) => {
             return (
               <Icon
@@ -540,10 +524,17 @@ const DropdownContent = (properties: DropdownContentProperties) => {
     )
   );
 
+  const searchField = () => (
+    <Show when={context.isSearchable()}>
+      <DropdownBuiltInSearchField searchQuery={context.searchQuery} setSearchQuery={context.setSearchQuery} searchInputReference={context.registerSearchInput} effectiveFormControlSize={context.effectiveFormControlSize} />
+    </Show>
+  );
+
   return (
     <>
       <Show when={context.dropdownOpen() && !useDocumentPortalResolved()}>
         <div class={mergeClasses("absolute top-full z-10 mt-1", contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES, local.class)} {...rest}>
+          {searchField()}
           <Show when={shouldWrapChildrenInList()} fallback={<div class={panelClass()}>{local.children}</div>}>
             <ul class={listClass()}>{local.children}</ul>
           </Show>
@@ -558,6 +549,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
             class={mergeClasses(contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES, local.class)}
             {...rest}
           >
+            {searchField()}
             <Show when={shouldWrapChildrenInList()} fallback={<div class={panelClass()}>{local.children}</div>}>
               <ul class={listClass()}>{local.children}</ul>
             </Show>
@@ -590,37 +582,50 @@ const DropdownItem = (properties: DropdownItemProperties) => {
     return Boolean(local.item && context.selectedValue() === local.item.rawValue);
   };
 
+  const isHiddenBySearch = (): boolean => {
+    if (!context.isSearchable()) {
+      return false;
+    }
+    const query = context.searchQuery().trim().toLowerCase();
+    if (query === "" || !local.item) {
+      return false;
+    }
+    return !local.item.rawValue.toLowerCase().includes(query);
+  };
+
   const itemClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE[context.effectiveFormControlSize()];
 
   const shouldCloseOnSelect = (): boolean => local.closeOnSelect !== false;
 
   return (
-    <li>
-      <a
-        href="#"
-        class={mergeClasses(itemClass(), local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : "", isSelected() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "", local.class)}
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          if (local.disabled || context.disabled()) {
-            return;
-          }
-          if (local.item) {
-            context.setSelectedValue(local.item.rawValue);
-            context.onChange(local.item.rawValue);
-          }
-          if (shouldCloseOnSelect()) {
-            context.setDropdownOpen(false);
-          }
-          if (typeof local.onClick === "function") {
-            local.onClick(event);
-          }
-        }}
-        {...rest}
-      >
-        {local.children}
-      </a>
-    </li>
+    <Show when={!isHiddenBySearch()}>
+      <li>
+        <a
+          href="#"
+          class={mergeClasses(itemClass(), local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : "", isSelected() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "", local.class)}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            if (local.disabled || context.disabled()) {
+              return;
+            }
+            if (local.item) {
+              context.setSelectedValue(local.item.rawValue);
+              context.onChange(local.item.rawValue);
+            }
+            if (shouldCloseOnSelect()) {
+              context.setDropdownOpen(false);
+            }
+            if (typeof local.onClick === "function") {
+              local.onClick(event);
+            }
+          }}
+          {...rest}
+        >
+          {local.children}
+        </a>
+      </li>
+    </Show>
   );
 };
 

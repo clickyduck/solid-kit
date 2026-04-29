@@ -12,6 +12,7 @@ export type ToastData = {
 };
 
 const [toastStore, setToastStore] = createSignal<ToastData[]>([]);
+const toastTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 export { toastStore };
 
@@ -22,9 +23,11 @@ export const addToast = (toast: Omit<ToastData, "id">): string => {
   const toastId = `toast-${Date.now()}-${Math.random().toString()}`;
   setToastStore([...toastStore(), { ...toast, id: toastId }]);
 
-  setTimeout(() => {
+  const timerId = setTimeout(() => {
+    toastTimers.delete(toastId);
     removeToast(toastId);
   }, 5000);
+  toastTimers.set(toastId, timerId);
 
   return toastId;
 };
@@ -33,6 +36,11 @@ export const addToast = (toast: Omit<ToastData, "id">): string => {
  * Removes a toast from the store by id.
  */
 export const removeToast = (toastId: string): void => {
+  const timerId = toastTimers.get(toastId);
+  if (timerId !== undefined) {
+    clearTimeout(timerId);
+    toastTimers.delete(toastId);
+  }
   setToastStore(
     toastStore().filter((toast) => {
       return toast.id !== toastId;
@@ -63,7 +71,14 @@ export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) 
   return (
     <div class="flex w-full max-w-sm items-center rounded-lg border border-gray-200 bg-white/95 p-4 text-gray-600 shadow-lg backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-300" role="alert" {...rest}>
       <div class={mergeClasses("inline-flex h-7 w-7 shrink-0 items-center justify-center rounded", getIconContainerClasses(toast().variant))}>
-        <Switch fallback={<Icon icon={checkCircle} width={20} height={20} aria-hidden="true" />}>
+        <Switch
+          fallback={
+            <>
+              <Icon icon={checkCircle} width={20} height={20} aria-hidden="true" />
+              <span class="sr-only">Notification icon</span>
+            </>
+          }
+        >
           <Match when={toast().variant === "success"}>
             <Icon icon={checkCircle} width={20} height={20} aria-hidden="true" />
             <span class="sr-only">Check icon</span>
@@ -97,24 +112,4 @@ export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) 
       />
     </div>
   );
-};
-
-export const ToastTitle = (properties: ComponentProps<"div">) => {
-  return <div {...properties} />;
-};
-
-export const ToastDescription = (properties: ComponentProps<"div">) => {
-  return <div {...properties} />;
-};
-
-export const ToastContent = (properties: ComponentProps<"div">) => {
-  return <div {...properties} />;
-};
-
-export const ToastRegion = (properties: ComponentProps<"div">) => {
-  return <div {...properties} />;
-};
-
-export const ToastList = (properties: ComponentProps<"ol">) => {
-  return <ol {...properties} />;
 };

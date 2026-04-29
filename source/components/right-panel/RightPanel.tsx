@@ -3,7 +3,7 @@ import { closeCircle } from "@/components/icons";
 import { mergeClasses } from "@/utilities/mergeClasses";
 import { themedScrollControlClassName } from "@/utilities/themedScrollControlClassName";
 import type { Component, JSX } from "solid-js";
-import { createSignal, onMount } from "solid-js";
+import { createSignal, onCleanup, onMount } from "solid-js";
 
 type RightPanelProperties = {
   title: string;
@@ -29,9 +29,18 @@ export const RightPanel: Component<RightPanelProperties> = (properties) => {
     });
   });
 
+  let closeTimer: ReturnType<typeof setTimeout> | undefined;
+  onCleanup(() => {
+    clearTimeout(closeTimer);
+  });
+
   const closeRightPanel = (): void => {
+    if (closeTimer !== undefined) {
+      return;
+    }
     setIsPanelVisible(false);
-    setTimeout(() => {
+    closeTimer = setTimeout(() => {
+      closeTimer = undefined;
       properties.onOpenChange(false);
     }, 200);
   };

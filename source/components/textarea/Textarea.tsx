@@ -23,7 +23,8 @@ const adjustAutoGrowHeight = (element: HTMLTextAreaElement, minRows: number, max
   element.style.height = "auto";
   const minHeightRem = minRows * FORM_CONTROL_TEXTAREA_LINE_HEIGHT_REM;
   const maxHeightRem = maxRows * FORM_CONTROL_TEXTAREA_LINE_HEIGHT_REM;
-  const scrollHeightRem = element.scrollHeight / 16;
+  const rootFontSizePx = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  const scrollHeightRem = element.scrollHeight / (rootFontSizePx || 16);
   const clampedRem = Math.min(maxHeightRem, Math.max(minHeightRem, scrollHeightRem));
   element.style.height = `${clampedRem}rem`;
 };

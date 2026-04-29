@@ -4,7 +4,7 @@ import { mergeClasses } from "@/utilities/mergeClasses";
 import { themedScrollControlClassName } from "@/utilities/themedScrollControlClassName";
 import { useIsMobile } from "@/utilities/useIsMobile";
 import type { Component, JSX } from "solid-js";
-import { For, Show, createEffect, createMemo, createSignal, on, onCleanup, onMount } from "solid-js";
+import { For, Show, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 
 /** Maps JSON `iconExportName` values to icon components; extend this object when supporting new icon names in navigation JSON. */
 export const leftPanelNavigationIconByExportName = {
@@ -168,6 +168,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                   href={item.href}
                   class={mergeClasses(NAVIGATION_LINK_ROW_CLASS, properties.collapsed ? NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS : NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS, isActive() ? NAVIGATION_LINK_ACTIVE_CLASS : NAVIGATION_LINK_INACTIVE_CLASS)}
                   aria-current={isActive() ? "page" : undefined}
+                  aria-label={item.label}
                   onClick={(event: MouseEvent) => {
                     if (typeof window === "undefined") {
                       return;
@@ -191,7 +192,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                     properties.onItemClick?.();
                   }}
                 >
-                  <Icon icon={leftPanelNavigationIconByExportName[item.iconExportName]} class={NAVIGATION_LINK_ICON_CLASS} />
+                  <Icon icon={leftPanelNavigationIconByExportName[item.iconExportName]} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
                   <Show when={!properties.collapsed}>
                     <span class={NAVIGATION_LINK_LABEL_CLASS}>{item.label}</span>
                   </Show>
@@ -259,20 +260,6 @@ export const LeftPanel: Component<LeftPanelProperties> = (properties) => {
   const [swipeTranslationX, setSwipeTranslationX] = createSignal<number>(0);
   const [isSwipeGestureActive, setIsSwipeGestureActive] = createSignal<boolean>(false);
   const [isSwipeDragging, setIsSwipeDragging] = createSignal<boolean>(false);
-
-  createEffect(
-    on(
-      () => {
-        return !properties.collapsed;
-      },
-      (isPanelOpen: boolean) => {
-        if (properties.onOpenChange) {
-          properties.onOpenChange(isPanelOpen);
-        }
-      },
-      { defer: true }
-    )
-  );
 
   const resetSwipeGesture = (): void => {
     setSwipeStartClientX(null);

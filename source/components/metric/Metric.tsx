@@ -77,7 +77,7 @@ export const Metric = (properties: MetricProperties) => {
           <div class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{properties.value}</div>
         </Show>
         <Show when={properties.linkHref !== undefined && properties.linkLabel !== undefined}>
-          <a href={properties.linkHref} class={mergeClasses("inline-flex items-center gap-1.5 text-sm font-medium", accent().link)}>
+          <a href={properties.linkHref!} class={mergeClasses("inline-flex items-center gap-1.5 text-sm font-medium", accent().link)}>
             {properties.linkLabel}
             <Icon icon={arrowRight} width={16} height={16} aria-hidden="true" />
           </a>

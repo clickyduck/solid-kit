@@ -4,6 +4,7 @@
  * module (for example wrapping `@material-symbols/svg-500`) and pass `IconComponent`
  * into props such as `Button` `icon`, `Metric` `icon`, `EmptyState` `icon`, and tab icons.
  */
+import { mergeClasses } from "@/utilities";
 import AccountBalanceWalletSvg from "@material-symbols/svg-500/rounded/account_balance_wallet-fill.svg";
 import ArrowBackSvg from "@material-symbols/svg-500/rounded/arrow_back-fill.svg";
 import ArrowForwardSvg from "@material-symbols/svg-500/rounded/arrow_forward-fill.svg";
@@ -47,8 +48,7 @@ interface IconProperties {
 export const Icon = (properties: IconProperties) => {
   const [local, rest] = splitProps(properties, ["icon", "class", "width", "height", "fill"]);
   const IconComponent = local.icon;
-  const baseClasses = "inline-flex shrink-0 items-center justify-center align-middle";
-  const combinedClasses = local.class ? `${baseClasses} ${local.class}` : baseClasses;
+  const combinedClasses = mergeClasses("inline-flex shrink-0 items-center justify-center align-middle", local.class);
   const forwardedRest = rest as Record<string, unknown>;
   const explicitWidth = local.width;
   const explicitHeight = local.height;

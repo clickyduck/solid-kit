@@ -115,14 +115,25 @@ Clickable “ticket style” data surface card with title, optional description,
 
 **Exports:** `DataCard`
 
+| Prop          | Type                   | Description                                   |
+| ------------- | ---------------------- | --------------------------------------------- |
+| `title`       | `string`               | Card heading (required)                       |
+| `description` | `string`               | Optional secondary text                       |
+| `topRight`    | `JSX.Element`          | Optional element in the top-right corner      |
+| `footerItems` | `DataCardFooterItem[]` | Optional footer row of icon/label/value items |
+| `active`      | `boolean`              | Highlights the card as selected               |
+| `class`       | `string`               | Extra CSS classes                             |
+
+`DataCardFooterItem`: `{ icon: IconComponent; label: string; value: string; valueClass?: string }`
+
 ```tsx
-import { DataCard, calendarDays, userCircle } from "@clickyduck/solid-kit";
+import { DataCard, calendarDays, groups } from "@clickyduck/solid-kit";
 
 <DataCard
   title="Fix upload progress indicator"
   description="Progress indicator gets stuck at 100% when retrying."
   footerItems={[
-    { icon: userCircle, label: "Assignee", value: "Unassigned" },
+    { icon: groups, label: "Assignee", value: "Unassigned" },
     { icon: calendarDays, label: "Due", value: "29 Apr 2026", valueClass: "text-gray-300" }
   ]}
   onClick={() => {}}
@@ -407,7 +418,7 @@ Collapsible sidebar navigation panel.
 | Field                               | Type                            | Description                      |
 | ----------------------------------- | ------------------------------- | -------------------------------- |
 | `groupLabel`                        | `string`                        | Group heading                    |
-| `navigationGroupIdentifier`         | `string`                        | Unique key                       |
+| `navigationGroupIdentifier`         | `string`                        | Unique key (optional)            |
 | `collapsibleNavigationGroup`        | `boolean`                       | Whether the group can be toggled |
 | `navigationGroupInitiallyCollapsed` | `boolean`                       | Start collapsed                  |
 | `items`                             | `LeftPanelNavigationItemJson[]` | Nav items in this group          |
@@ -677,7 +688,7 @@ Toasts auto-dismiss after 5 seconds. `variant` controls the icon:
 | `"success"` | Check circle         |
 | `"danger"`  | Close circle         |
 | `"warning"` | Exclamation triangle |
-| `"default"` | No icon              |
+| `"default"` | Check circle         |
 
 **`Toaster`** — no props; renders a fixed bottom-right region.
 
