@@ -21,3 +21,4 @@ export * from "./textarea";
 export * from "./toast";
 export * from "./tabs";
 export * from "./upload";
+export * from "./page";

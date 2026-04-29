@@ -153,7 +153,9 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
               return group.navigationGroupInitiallyCollapsed === true;
             });
             const useCollapsibleNavigationGroupMemo = createMemo(() => {
-              return group.collapsibleNavigationGroup === true && !properties.collapsed;
+              // Collapsible-by-default so consumers get the "group header button" UX without extra flags.
+              // Opt out explicitly with `collapsibleNavigationGroup: false`.
+              return group.collapsibleNavigationGroup !== false && !properties.collapsed;
             });
             const isNavigationGroupBodyExpandedMemo = createMemo(() => {
               return resolveNavigationGroupBodyExpanded(navigationGroupIdentifierMemo(), navigationGroupInitiallyCollapsedMemo());
@@ -377,7 +379,7 @@ export const LeftPanel: Component<LeftPanelProperties> = (properties) => {
         setSwipeTranslationX(0);
       }}
     >
-      <div class={mergeClasses("flex min-h-0 flex-1 flex-col gap-2 overflow-x-hidden overflow-y-auto", themedScrollControlClassName, properties.collapsed ? "px-2 py-4" : "p-4")}>
+      <div class={mergeClasses("flex min-h-0 flex-1 flex-col gap-2 overflow-x-hidden overflow-y-auto", themedScrollControlClassName, properties.collapsed ? "px-2 py-3" : "p-3")}>
         <LeftPanelNavigationBody
           collapsed={properties.collapsed}
           navigationDocument={properties.navigationDocument}
