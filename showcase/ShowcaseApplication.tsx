@@ -9,10 +9,11 @@ import { Field } from "@/components/field/Field";
 import { Heading } from "@/components/heading/Heading";
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Input } from "@/components/input/Input";
-import { LeftPanel, type LeftPanelNavigationDocumentJson } from "@/components/left-panel";
+import { LeftPanelLayout, type LeftPanelLayoutNavigationDocumentJson } from "@/components/left-panel";
 import { Loading } from "@/components/loading/Loading";
+import { MainLayout } from "@/components/main-layout";
 import { Metric } from "@/components/metric/Metric";
-import { RightPanel, RightPanelLayout } from "@/components/right-panel";
+import { MainContentLayout, RightPanelLayout } from "@/components/right-panel";
 import { Spinner } from "@/components/spinner/Spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TablePagination, TableRow } from "@/components/table/Table";
 import type { TabDefinition } from "@/components/tabs/Tabs";
@@ -29,7 +30,7 @@ import { For, Show, createMemo, createSignal } from "solid-js";
 import { bars3, calendarDays, checkCircle, darkMode, dashboard, ellipsisVertical, inventory, lightMode, menuOpen, pencil, search, settings, tag, wallet } from "./showcaseIcons";
 import showcaseLeftPanelNavigationDocumentJson from "./showcaseLeftPanelNavigationDocument.json";
 
-const showcaseLeftPanelNavigationDocument = showcaseLeftPanelNavigationDocumentJson as LeftPanelNavigationDocumentJson;
+const showcaseLeftPanelNavigationDocument = showcaseLeftPanelNavigationDocumentJson as LeftPanelLayoutNavigationDocumentJson;
 
 type ShowcaseTabValue = "overview" | "reports" | "settings";
 
@@ -149,7 +150,7 @@ export const ShowcaseApplication = (): JSX.Element => {
     }
   });
 
-  const filteredShowcaseLeftPanelNavigationDocument = createMemo<LeftPanelNavigationDocumentJson>(() => {
+  const filteredShowcaseLeftPanelNavigationDocument = createMemo<LeftPanelLayoutNavigationDocumentJson>(() => {
     const normalizedFilterValue = navigationFilterValue().trim().toLowerCase();
     if (normalizedFilterValue.length === 0) {
       return showcaseLeftPanelNavigationDocument;
@@ -174,63 +175,63 @@ export const ShowcaseApplication = (): JSX.Element => {
     <div class="flex h-full min-h-0 flex-col bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
       <Toaster />
 
-      <header class="sticky top-0 z-30 w-full shrink-0 border-b border-gray-200/90 bg-white/90 backdrop-blur-md dark:border-gray-700/60 dark:bg-gray-950/90">
-        <div class="flex h-16 items-center justify-between gap-3 px-3">
-          <div class="flex min-w-0 flex-1 items-center gap-3">
-            <IconButton variant="ghost" class="text-gray-900 dark:text-white" icon={sidebarCollapsed() ? bars3 : menuOpen} onClick={toggleSidebar} aria-label={sidebarCollapsed() ? "Expand sidebar" : "Collapse sidebar"} />
-            <div class="min-w-0 space-y-0.5">
-              <h1 class="truncate text-base font-bold tracking-tight text-gray-900 sm:text-xl dark:text-white">Solid Kit showcase</h1>
-              <p class="hidden max-w-2xl truncate text-xs text-gray-600 sm:block dark:text-gray-400">Interactive samples for buttons, forms, data surfaces, and overlays.</p>
+      <MainLayout class="flex-1">
+        <header class="layout-header sticky top-0 z-30 w-full shrink-0 border-b border-gray-200/90 bg-white/90 backdrop-blur-md dark:border-gray-700/60 dark:bg-gray-950/90" style={{ "grid-area": "header" }}>
+          <div class="flex h-16 items-center justify-between gap-3 px-3">
+            <div class="flex min-w-0 flex-1 items-center gap-3">
+              <IconButton variant="ghost" class="text-gray-900 dark:text-white" icon={sidebarCollapsed() ? bars3 : menuOpen} onClick={toggleSidebar} aria-label={sidebarCollapsed() ? "Expand sidebar" : "Collapse sidebar"} />
+              <div class="min-w-0 space-y-0.5">
+                <h1 class="truncate text-base font-bold tracking-tight text-gray-900 sm:text-xl dark:text-white">Solid Kit showcase</h1>
+                <p class="hidden max-w-2xl truncate text-xs text-gray-600 sm:block dark:text-gray-400">Interactive samples for buttons, forms, data surfaces, and overlays.</p>
+              </div>
+              <div class="hidden max-w-sm min-w-0 flex-1 md:block">
+                <Input
+                  id="showcase-navigation-search"
+                  icon={search}
+                  placeholder="Search components (press /)"
+                  value={navigationFilterValue()}
+                  onInput={(event) => {
+                    setNavigationFilterValue(event.currentTarget.value);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Escape") {
+                      setNavigationFilterValue("");
+                      (event.currentTarget as HTMLInputElement).blur();
+                    }
+                  }}
+                  onFocus={() => {
+                    if (sidebarCollapsed()) {
+                      setSidebarCollapsed(false);
+                    }
+                  }}
+                />
+              </div>
             </div>
-            <div class="hidden max-w-sm min-w-0 flex-1 md:block">
-              <Input
-                id="showcase-navigation-search"
-                icon={search}
-                placeholder="Search components (press /)"
-                value={navigationFilterValue()}
-                onInput={(event) => {
-                  setNavigationFilterValue(event.currentTarget.value);
+            <div class="flex shrink-0 items-center gap-1 rounded-full border border-gray-200 bg-gray-100/80 p-1 dark:border-gray-700 dark:bg-gray-900/60">
+              <IconButton
+                variant={documentColorSchemeName() === "light" ? "solid" : "ghost"}
+                icon={lightMode}
+                aria-label="Use light color scheme"
+                onClick={() => {
+                  setDocumentColorSchemeName("light");
                 }}
-                onKeyDown={(event) => {
-                  if (event.key === "Escape") {
-                    setNavigationFilterValue("");
-                    (event.currentTarget as HTMLInputElement).blur();
-                  }
-                }}
-                onFocus={() => {
-                  if (sidebarCollapsed()) {
-                    setSidebarCollapsed(false);
-                  }
+              />
+              <IconButton
+                variant={documentColorSchemeName() === "dark" ? "solid" : "ghost"}
+                icon={darkMode}
+                aria-label="Use dark color scheme"
+                onClick={() => {
+                  setDocumentColorSchemeName("dark");
                 }}
               />
             </div>
           </div>
-          <div class="flex shrink-0 items-center gap-1 rounded-full border border-gray-200 bg-gray-100/80 p-1 dark:border-gray-700 dark:bg-gray-900/60">
-            <IconButton
-              variant={documentColorSchemeName() === "light" ? "solid" : "ghost"}
-              icon={lightMode}
-              aria-label="Use light color scheme"
-              onClick={() => {
-                setDocumentColorSchemeName("light");
-              }}
-            />
-            <IconButton
-              variant={documentColorSchemeName() === "dark" ? "solid" : "ghost"}
-              icon={darkMode}
-              aria-label="Use dark color scheme"
-              onClick={() => {
-                setDocumentColorSchemeName("dark");
-              }}
-            />
-          </div>
-        </div>
-      </header>
+        </header>
 
-      <div role="presentation" aria-hidden="true" class={mergeClasses(sidebarCollapsed() ? "pointer-events-none opacity-0" : "opacity-100", "fixed inset-0 top-16 z-40 bg-black/50 transition-opacity duration-200 md:hidden")} onClick={toggleSidebar} />
+        <div role="presentation" aria-hidden="true" class={mergeClasses(sidebarCollapsed() ? "pointer-events-none opacity-0" : "opacity-100", "fixed inset-0 top-16 z-40 bg-black/50 transition-opacity duration-200 md:hidden")} onClick={toggleSidebar} />
 
-      <div class="flex min-h-0 flex-1 overflow-hidden">
-        <div class={mergeClasses("shrink-0 overflow-visible transition-[width] duration-200 ease-in-out md:overflow-hidden", sidebarCollapsed() ? "w-0 md:w-16" : "w-0 md:w-64")}>
-          <LeftPanel
+        <div class={mergeClasses("shrink-0 overflow-visible transition-[width] duration-200 ease-in-out md:overflow-hidden", sidebarCollapsed() ? "w-0 md:w-16" : "w-0 md:w-64")} style={{ "grid-area": "left" }}>
+          <LeftPanelLayout
             collapsed={sidebarCollapsed()}
             onOpenChange={(isPanelOpen) => {
               if (!isPanelOpen) {
@@ -240,8 +241,9 @@ export const ShowcaseApplication = (): JSX.Element => {
             navigationDocument={filteredShowcaseLeftPanelNavigationDocument()}
           />
         </div>
-        <main class="flex min-h-0 min-w-0 flex-1 flex-row" id="showcase-main-content">
-          <RightPanelLayout class="min-h-0 w-full min-w-0 scroll-smooth">
+
+        <main class="flex min-h-0 min-w-0 flex-1 flex-row overflow-hidden" id="showcase-main-content" style={{ "grid-area": "main" }}>
+          <MainContentLayout class="min-h-0 w-full min-w-0 scroll-smooth">
             <div class="mx-auto max-w-6xl space-y-16 px-4 py-10 sm:px-6 lg:px-8">
               <ShowcaseCategory categoryTitle="Primitives">
                 <ShowcaseSection sectionHeadingIdentifier="showcase-heading-badges" sectionTitle="Badges" sectionDescription="Variants crossed with semantic colors; optional leading icon and removable chip.">
@@ -698,28 +700,29 @@ export const ShowcaseApplication = (): JSX.Element => {
                 </Show>
               </footer>
             </div>
-          </RightPanelLayout>
-          <Show when={isRightPanelOpen()}>
-            <RightPanel
-              title="Right panel"
-              subtitle="In flow with the main column on medium screens and up; fixed overlay on small viewports"
-              onOpenChange={(isPanelOpen) => {
-                if (!isPanelOpen) {
-                  setIsRightPanelOpen(false);
-                }
-              }}
-              closeAriaLabel="Close right panel showcase"
-            >
-              <div class="space-y-3">
-                <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-                  Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.
-                </p>
-                <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300">This panel scrolls independently from the main column so it can hold long forms without shifting the page.</p>
-              </div>
-            </RightPanel>
-          </Show>
+          </MainContentLayout>
         </main>
-      </div>
+
+        <Show when={isRightPanelOpen()}>
+          <RightPanelLayout
+            title="Right panel"
+            subtitle="In flow with the main column on medium screens and up; fixed overlay on small viewports"
+            onOpenChange={(isPanelOpen) => {
+              if (!isPanelOpen) {
+                setIsRightPanelOpen(false);
+              }
+            }}
+            closeAriaLabel="Close right panel showcase"
+          >
+            <div class="space-y-3">
+              <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface; on a narrow viewport it covers the full width.
+              </p>
+              <p class="text-sm leading-relaxed text-gray-600 dark:text-gray-300">This panel scrolls independently from the main column so it can hold long forms without shifting the page.</p>
+            </div>
+          </RightPanelLayout>
+        </Show>
+      </MainLayout>
     </div>
   );
 };

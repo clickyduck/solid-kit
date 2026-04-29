@@ -1,1 +1,2 @@
-export * from "./Header";
+export { HeaderLayout } from "./Header";
+export type { HeaderLayoutProperties } from "./Header";

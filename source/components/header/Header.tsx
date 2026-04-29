@@ -13,10 +13,10 @@ type HeaderProperties = {
 /**
  * Page title row with optional back link, subtitle, and actions slot.
  */
-export const Header: ParentComponent<HeaderProperties> = (properties) => {
+export const HeaderLayout: ParentComponent<HeaderProperties> = (properties) => {
   return (
     <Show when={properties.title || properties.titleElement || properties.children}>
-      <div class={mergeClasses("flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6", properties.class)}>
+      <div class={mergeClasses("layout-header flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6", properties.class)} style={{ "grid-area": "header" }}>
         <div class="min-w-0">
           <Show when={properties.back}>
             <div class="mb-2">{properties.back}</div>
@@ -35,3 +35,5 @@ export const Header: ParentComponent<HeaderProperties> = (properties) => {
     </Show>
   );
 };
+
+export type { HeaderProperties as HeaderLayoutProperties };

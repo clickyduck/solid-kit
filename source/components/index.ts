@@ -12,6 +12,7 @@ export * from "./header";
 export * from "./icon-button";
 export * from "./input";
 export * from "./left-panel";
+export * from "./main-layout";
 export * from "./right-panel";
 export * from "./loading";
 export * from "./metric";

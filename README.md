@@ -12,15 +12,17 @@ A SolidJS component library built with Tailwind CSS and Flowbite-style patterns,
 - [Dropdown](#dropdown)
 - [EmptyState](#emptystate)
 - [Field](#field)
-- [Header](#header)
+- [HeaderLayout](#headerlayout)
 - [Heading](#heading)
 - [IconButton](#iconbutton)
 - [Icons](#icons)
 - [Input](#input)
-- [LeftPanel](#leftpanel)
+- [MainLayout](#mainlayout)
+- [LeftPanelLayout](#leftpanellayout)
+- [PageLayout](#pagelayout)
 - [Loading](#loading)
 - [Metric](#metric)
-- [RightPanel](#rightpanel)
+- [RightPanelLayout](#rightpanellayout)
 - [Spinner](#spinner)
 - [Table](#table)
 - [Tabs](#tabs)
@@ -275,11 +277,11 @@ import { Field, Input } from "@clickyduck/solid-kit";
 
 ---
 
-### Header
+### HeaderLayout
 
 Page-level header row with title, description, back link, and actions slot.
 
-**Exports:** `Header`
+**Exports:** `HeaderLayout`
 
 | Prop           | Type          | Description                                    |
 | -------------- | ------------- | ---------------------------------------------- |
@@ -291,11 +293,11 @@ Page-level header row with title, description, back link, and actions slot.
 | `class`        | `string`      | Extra CSS classes                              |
 
 ```tsx
-import { Button, Header } from "@clickyduck/solid-kit";
+import { Button, HeaderLayout } from "@clickyduck/solid-kit";
 
-<Header title="Users" description="Manage your team">
+<HeaderLayout title="Users" description="Manage your team">
   <Button>Invite</Button>
-</Header>;
+</HeaderLayout>;
 ```
 
 ---
@@ -356,7 +358,7 @@ SVG icon renderer and bundled icon symbols.
 | `fill`   | `string`        | `"currentColor"` | SVG fill color                     |
 | `class`  | `string`        | —                | Extra CSS classes                  |
 
-**Bundled named icons** (used by built-in components such as `LeftPanel` navigation and `Toast`; for your own buttons, metrics, tabs etc. pass icons from your own module):
+**Bundled named icons** (used by built-in components such as `LeftPanelLayout` navigation and `Toast`; for your own buttons, metrics, tabs etc. pass icons from your own module):
 
 `arrowLeft`, `arrowRight`, `arrowTrendingUp`, `calendarDays`, `chat`, `checkCircle`, `chevronDown`, `closeCircle`, `confirmationNumber`, `currencyRupee`, `dashboard`, `forum`, `groups`, `inventory`, `list`, `pieChart`, `search`, `settings`, `tag`, `upload`, `wallet`, `work`, `exclamationTriangle`
 
@@ -391,46 +393,78 @@ import { Input } from "@clickyduck/solid-kit";
 
 ---
 
-### LeftPanel
+### MainLayout
+
+Application shell layout that positions a header at the top, a left navigation panel, the main page column, and an optional right panel.
+
+**Exports:** `MainLayout`
+
+#### Guide (recommended composition)
+
+```tsx
+import { HeaderLayout, LeftPanelLayout, MainLayout, PageContent, PageHeader, PageLayout, RightPanelLayout } from "@clickyduck/solid-kit";
+
+<MainLayout>
+  <HeaderLayout title="Workspace" description="Overview">
+    {/* actions */}
+  </HeaderLayout>
+
+  <LeftPanelLayout collapsed={false} navigationDocument={navigationDocument} />
+
+  <PageLayout>
+    <PageHeader title="Dashboard" />
+    <PageContent>{/* page content */}</PageContent>
+  </PageLayout>
+
+  {/* Optional: show/hide with <Show when={...}> */}
+  <RightPanelLayout title="Details" closeAriaLabel="Close details" onOpenChange={() => {}}>
+    {/* right panel content */}
+  </RightPanelLayout>
+</MainLayout>;
+```
+
+---
+
+### LeftPanelLayout
 
 Collapsible sidebar navigation panel.
 
-**Exports:** `LeftPanel`, `leftPanelNavigationIconByExportName`, `LeftPanelNavigationDocumentJson`, `LeftPanelNavigationGroupJson`, `LeftPanelNavigationItemJson`, `LeftPanelNavigationIconExportName`
+**Exports:** `LeftPanelLayout`, `leftPanelLayoutNavigationIconByExportName`, `LeftPanelLayoutNavigationDocumentJson`, `LeftPanelLayoutNavigationGroupJson`, `LeftPanelLayoutNavigationItemJson`, `LeftPanelLayoutNavigationIconExportName`
 
-**`LeftPanel` props:**
+**`LeftPanelLayout` props:**
 
-| Prop                 | Type                              | Description                                                                                           |
-| -------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `collapsed`          | `boolean`                         | When `true`, shows icon-only mode (required)                                                          |
-| `navigationDocument` | `LeftPanelNavigationDocumentJson` | Navigation tree configuration (required)                                                              |
-| `onOpenChange`       | `(isPanelOpen: boolean) => void`  | Fires when open state changes; use `false` to react to close (nav link, swipe, or parent `collapsed`) |
+| Prop                 | Type                                    | Description                                                                                           |
+| -------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `collapsed`          | `boolean`                               | When `true`, shows icon-only mode (required)                                                          |
+| `navigationDocument` | `LeftPanelLayoutNavigationDocumentJson` | Navigation tree configuration (required)                                                              |
+| `onOpenChange`       | `(isPanelOpen: boolean) => void`        | Fires when open state changes; use `false` to react to close (nav link, swipe, or parent `collapsed`) |
 
-**`LeftPanelNavigationDocumentJson`** — root navigation config:
+**`LeftPanelLayoutNavigationDocumentJson`** — root navigation config:
 
 ```ts
 {
-  groups: LeftPanelNavigationGroupJson[]
+  groups: LeftPanelLayoutNavigationGroupJson[]
 }
 ```
 
-**`LeftPanelNavigationGroupJson`** — a collapsible nav group:
+**`LeftPanelLayoutNavigationGroupJson`** — a collapsible nav group:
 
-| Field                               | Type                            | Description                      |
-| ----------------------------------- | ------------------------------- | -------------------------------- |
-| `groupLabel`                        | `string`                        | Group heading                    |
-| `navigationGroupIdentifier`         | `string`                        | Unique key (optional)            |
-| `collapsibleNavigationGroup`        | `boolean`                       | Whether the group can be toggled |
-| `navigationGroupInitiallyCollapsed` | `boolean`                       | Start collapsed                  |
-| `items`                             | `LeftPanelNavigationItemJson[]` | Nav items in this group          |
+| Field                               | Type                                  | Description                      |
+| ----------------------------------- | ------------------------------------- | -------------------------------- |
+| `groupLabel`                        | `string`                              | Group heading                    |
+| `navigationGroupIdentifier`         | `string`                              | Unique key (optional)            |
+| `collapsibleNavigationGroup`        | `boolean`                             | Whether the group can be toggled |
+| `navigationGroupInitiallyCollapsed` | `boolean`                             | Start collapsed                  |
+| `items`                             | `LeftPanelLayoutNavigationItemJson[]` | Nav items in this group          |
 
-**`LeftPanelNavigationItemJson`** — a single nav link:
+**`LeftPanelLayoutNavigationItemJson`** — a single nav link:
 
-| Field               | Type                                | Description                                         |
-| ------------------- | ----------------------------------- | --------------------------------------------------- |
-| `href`              | `string`                            | Link URL                                            |
-| `label`             | `string`                            | Nav item text                                       |
-| `iconExportName`    | `LeftPanelNavigationIconExportName` | Icon key from `leftPanelNavigationIconByExportName` |
-| `matchRouteExactly` | `boolean`                           | Use exact path match for active highlight           |
+| Field               | Type                                      | Description                                               |
+| ------------------- | ----------------------------------------- | --------------------------------------------------------- |
+| `href`              | `string`                                  | Link URL                                                  |
+| `label`             | `string`                                  | Nav item text                                             |
+| `iconExportName`    | `LeftPanelLayoutNavigationIconExportName` | Icon key from `leftPanelLayoutNavigationIconByExportName` |
+| `matchRouteExactly` | `boolean`                                 | Use exact path match for active highlight                 |
 
 On mobile the panel is full-width with a swipe-to-close gesture. On desktop it switches between full labels and icon-only mode via `collapsed`.
 
@@ -480,13 +514,21 @@ import { Metric } from "@clickyduck/solid-kit";
 
 ---
 
-### RightPanel
+### PageLayout
+
+Main application page column content wrapper.
+
+**Exports:** `PageLayout`, `PageHeader`, `PageContent`
+
+---
+
+### RightPanelLayout
 
 Responsive detail/drawer panel that slides in from the right.
 
-**Exports:** `RightPanel`, `RightPanelLayout`
+**Exports:** `RightPanelLayout`, `MainContentLayout`
 
-**`RightPanel` props:**
+**`RightPanelLayout` props:**
 
 | Prop             | Type                             | Description                                                                                                          |
 | ---------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -498,7 +540,7 @@ Responsive detail/drawer panel that slides in from the right.
 | `onOpenChange`   | `(isPanelOpen: boolean) => void` | `true` when the open transition runs; `false` after the close animation finishes (200ms), for unmounting with `Show` |
 | `closeAriaLabel` | `string`                         | Accessible label for the close button (required)                                                                     |
 
-**`RightPanelLayout` props:**
+**`MainContentLayout` props:**
 
 | Prop       | Type          | Description                                                  |
 | ---------- | ------------- | ------------------------------------------------------------ |

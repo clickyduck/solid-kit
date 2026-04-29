@@ -11,8 +11,12 @@ type PageProperties = {
  * Main application page column content wrapper.
  * Intended to sit between `LeftPanel` and `RightPanel` inside the app shell row.
  */
-export const Page: ParentComponent<PageProperties> = (properties) => {
-  return <div class={mergeClasses("mx-auto w-full max-w-screen-2xl", properties.class)}>{properties.children}</div>;
+export const PageLayout: ParentComponent<PageProperties> = (properties) => {
+  return (
+    <div class={mergeClasses("layout-page mx-auto w-full max-w-screen-2xl", properties.class)} style={{ "grid-area": "main" }}>
+      {properties.children}
+    </div>
+  );
 };
 
 type PageHeaderProperties = {

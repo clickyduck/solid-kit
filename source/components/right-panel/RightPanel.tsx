@@ -19,7 +19,7 @@ type RightPanelProperties = {
 /**
  * Sibling of the main column inside a `flex` row: from `md` and up the panel is in the document flow (pushes the main area). Below `md` the root unwraps to `display: contents` and the `aside` is `fixed` for a full width overlay. Parent shell should be `class="flex min-h-0 min-w-0 flex-1 flex-row"` (or similar) with `RightPanelLayout` (main) then `Show` + this component.
  */
-export const RightPanel: Component<RightPanelProperties> = (properties) => {
+export const RightPanelLayout: Component<RightPanelProperties> = (properties) => {
   const [isPanelVisible, setIsPanelVisible] = createSignal<boolean>(false);
 
   onMount(() => {
@@ -46,7 +46,7 @@ export const RightPanel: Component<RightPanelProperties> = (properties) => {
   };
 
   return (
-    <div class={mergeClasses("min-h-0 shrink-0 max-md:contents", "md:min-w-0 md:overflow-hidden md:transition-[width] md:duration-200 md:ease-in-out", isPanelVisible() ? "md:w-md lg:w-xl" : "md:w-0")}>
+    <div class={mergeClasses("layout-right-panel min-h-0 shrink-0 max-md:contents", "md:min-w-0 md:overflow-hidden md:transition-[width] md:duration-200 md:ease-in-out", isPanelVisible() ? "md:w-md lg:w-xl" : "md:w-0")} style={{ "grid-area": "right" }}>
       <aside
         class={mergeClasses(
           "flex h-full min-h-0 w-full min-w-0 flex-col bg-white text-gray-900 shadow-xl dark:bg-gray-950 dark:text-gray-100",
@@ -95,6 +95,10 @@ type RightPanelLayoutProperties = {
 /**
  * Main column: `flex-1` scroll region. Place as the first `flex` child; place `RightPanel` after as a sibling when open so the main area narrows on desktop. On small viewports the right `aside` is `fixed` and this column keeps full width.
  */
-export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properties) => {
-  return <div class={mergeClasses("min-h-0 min-w-0 flex-1 overflow-auto", themedScrollControlClassName, properties.class)}>{properties.children}</div>;
+export const MainContentLayout: Component<RightPanelLayoutProperties> = (properties) => {
+  return (
+    <div class={mergeClasses("min-h-0 min-w-0 flex-1 overflow-auto", themedScrollControlClassName, properties.class)} style={{ "grid-area": "main" }}>
+      {properties.children}
+    </div>
+  );
 };

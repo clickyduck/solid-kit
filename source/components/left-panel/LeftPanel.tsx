@@ -26,16 +26,20 @@ export const leftPanelNavigationIconByExportName = {
   work
 } as const satisfies Record<string, IconComponent>;
 
-export type LeftPanelNavigationIconExportName = keyof typeof leftPanelNavigationIconByExportName;
+export const leftPanelLayoutNavigationIconByExportName = leftPanelNavigationIconByExportName;
+
+export type LeftPanelLayoutNavigationIconExportName = keyof typeof leftPanelLayoutNavigationIconByExportName;
 
 /** One navigation row rendered inside a group. */
 export type LeftPanelNavigationItemJson = {
   href: string;
   label: string;
-  iconExportName: LeftPanelNavigationIconExportName;
+  iconExportName: LeftPanelLayoutNavigationIconExportName;
   /** When true, only the exact pathname matches (Solid Router `end` on root). */
   matchRouteExactly?: boolean;
 };
+
+export type LeftPanelLayoutNavigationItemJson = LeftPanelNavigationItemJson;
 
 /** Labeled section containing one or more links; optional collapsible body. */
 export type LeftPanelNavigationGroupJson = {
@@ -49,10 +53,14 @@ export type LeftPanelNavigationGroupJson = {
   items: LeftPanelNavigationItemJson[];
 };
 
+export type LeftPanelLayoutNavigationGroupJson = LeftPanelNavigationGroupJson;
+
 /** Full navigation tree consumed by the left panel. */
 export type LeftPanelNavigationDocumentJson = {
   groups: LeftPanelNavigationGroupJson[];
 };
+
+export type LeftPanelLayoutNavigationDocumentJson = LeftPanelNavigationDocumentJson;
 
 const NAVIGATION_LINK_ICON_CLASS = "nav-link-icon shrink-0 opacity-80 w-4 h-4 md:w-3.5 md:h-3.5";
 const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-11 min-h-11 text-sm font-medium transition-all duration-150 text-gray-800 dark:text-white md:h-9 md:min-h-9 md:max-h-9 md:text-xs";
@@ -88,7 +96,7 @@ const computeIsNavigationItemActive = (item: LeftPanelNavigationItemJson, pathna
 
 type LeftPanelNavigationBodyProperties = {
   collapsed: boolean;
-  navigationDocument: LeftPanelNavigationDocumentJson;
+  navigationDocument: LeftPanelLayoutNavigationDocumentJson;
   onItemClick?: () => void;
 };
 
@@ -161,7 +169,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
               return resolveNavigationGroupBodyExpanded(navigationGroupIdentifierMemo(), navigationGroupInitiallyCollapsedMemo());
             });
 
-            const renderNavigationItemLink = (item: LeftPanelNavigationItemJson): JSX.Element => {
+            const renderNavigationItemLink = (item: LeftPanelLayoutNavigationItemJson): JSX.Element => {
               const isActive = (): boolean => {
                 return computeIsNavigationItemActive(item, pathname(), hash());
               };
@@ -194,7 +202,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                     properties.onItemClick?.();
                   }}
                 >
-                  <Icon icon={leftPanelNavigationIconByExportName[item.iconExportName]} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
+                  <Icon icon={leftPanelLayoutNavigationIconByExportName[item.iconExportName]} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
                   <Show when={!properties.collapsed}>
                     <span class={NAVIGATION_LINK_LABEL_CLASS}>{item.label}</span>
                   </Show>
@@ -247,14 +255,14 @@ type LeftPanelProperties = {
    * Fires when the panel becomes open or closed. Use `false` from link tap or swipe to request closing; the parent should set `collapsed` to match.
    */
   onOpenChange?: (isPanelOpen: boolean) => void;
-  navigationDocument: LeftPanelNavigationDocumentJson;
+  navigationDocument: LeftPanelLayoutNavigationDocumentJson;
 };
 
 /**
  * Collapsible application sidebar with touch swipe-to-close on small viewports; navigation content comes from JSON.
  * On small viewports the panel is full width, fixed under the header, and stacks above the scrim so links stay usable.
  */
-export const LeftPanel: Component<LeftPanelProperties> = (properties) => {
+export const LeftPanelLayout: Component<LeftPanelProperties> = (properties) => {
   const isMobileViewport = useIsMobile();
   const [sidebarElement, setSidebarElement] = createSignal<HTMLElement | undefined>(undefined);
   const [swipeStartClientX, setSwipeStartClientX] = createSignal<number | null>(null);
@@ -276,7 +284,7 @@ export const LeftPanel: Component<LeftPanelProperties> = (properties) => {
         setSidebarElement(element);
       }}
       class={mergeClasses(
-        "layout-sidebar flex min-h-0 flex-col overflow-hidden bg-white md:border-r md:border-gray-200 dark:bg-gray-950 dark:md:border-gray-700/60",
+        "layout-left-panel flex min-h-0 flex-col overflow-hidden bg-white md:border-r md:border-gray-200 dark:bg-gray-950 dark:md:border-gray-700/60",
         "fixed inset-x-0 top-16 bottom-0 z-100 w-full max-w-none transition-transform duration-200 ease-in-out",
         "md:static md:z-auto md:h-full md:w-full md:max-w-none md:transition-[width] md:duration-200 md:ease-in-out",
         properties.collapsed ? "-translate-x-full md:pointer-events-auto md:translate-x-0" : "translate-x-0"
@@ -284,11 +292,12 @@ export const LeftPanel: Component<LeftPanelProperties> = (properties) => {
       style={
         !properties.collapsed && isMobileViewport()
           ? {
+              "grid-area": "left",
               transform: `translateX(${swipeTranslationX()}px)`,
               "touch-action": "pan-y",
               transition: isSwipeDragging() ? "none" : undefined
             }
-          : { "touch-action": "auto" }
+          : { "grid-area": "left", "touch-action": "auto" }
       }
       onPointerDown={(event: PointerEvent) => {
         if (properties.collapsed) {
@@ -393,3 +402,5 @@ export const LeftPanel: Component<LeftPanelProperties> = (properties) => {
     </aside>
   );
 };
+
+export type { LeftPanelProperties as LeftPanelLayoutProperties };
