@@ -1,6 +1,5 @@
 import { mergeClasses } from "@/utilities/mergeClasses";
-import { themedScrollControlClassName } from "@/utilities/themedScrollControlClassName";
-import type { JSX, ParentComponent } from "solid-js";
+import type { Component, JSX, ParentComponent } from "solid-js";
 import { Show } from "solid-js";
 
 type PageLayoutProperties = {
@@ -15,7 +14,7 @@ type PageLayoutProperties = {
  */
 export const PageLayout: ParentComponent<PageLayoutProperties> = (properties) => {
   return (
-    <div class={mergeClasses("layout-page mx-auto min-h-0 w-full max-w-screen-2xl min-w-0 overflow-auto px-4 py-6 sm:px-6", themedScrollControlClassName, properties.class)} style={{ "grid-area": "main" }}>
+    <div class={mergeClasses("layout-page min-h-0 w-full min-w-0 space-y-6 overflow-y-scroll px-4 py-6 md:px-6", properties.class)} style={{ "grid-area": "main" }}>
       {properties.children}
     </div>
   );
@@ -24,49 +23,65 @@ export const PageLayout: ParentComponent<PageLayoutProperties> = (properties) =>
 type PageHeaderProperties = {
   title?: string;
   titleElement?: JSX.Element;
-  description?: string;
+  caption?: string;
   back?: JSX.Element;
+  sidebutton?: JSX.Element;
   class?: string;
 };
 
 /**
  * Page title row with optional back link, subtitle, and actions slot.
  */
-export const PageHeader: ParentComponent<PageHeaderProperties> = (properties) => {
+export const PageHeader: Component<PageHeaderProperties> = (properties) => {
   if (!properties.title && !properties.titleElement) {
     return null;
   }
 
   return (
-    <div class={properties.class ?? "flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6"}>
-      <div class="min-w-0 shrink-0">
+    <div class={properties.class ?? "flex flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-6"}>
+      <div class="min-w-0 flex-1">
         <Show when={properties.back}>
           <div class="mb-2">{properties.back}</div>
         </Show>
-        <Show when={properties.titleElement} fallback={<h2 class="shrink-0 text-2xl font-semibold tracking-tight text-white md:text-3xl">{properties.title}</h2>}>
+        <Show when={properties.titleElement} fallback={<h2 class="text-foreground min-w-0 text-2xl font-semibold tracking-tight wrap-break-word whitespace-normal md:text-3xl">{properties.title}</h2>}>
           {properties.titleElement}
         </Show>
-        <Show when={properties.description}>
-          <p class="mt-1 text-sm text-gray-400">{properties.description}</p>
+        <Show when={properties.caption}>
+          <p class="text-muted-foreground mt-1 min-w-0 text-sm wrap-break-word whitespace-normal">{properties.caption}</p>
         </Show>
       </div>
-      <Show when={properties.children}>
-        <div class="flex w-full flex-col flex-wrap gap-3 sm:w-auto sm:flex-row sm:items-center sm:gap-3">{properties.children}</div>
+      <Show when={properties.sidebutton}>
+        <div class="flex w-full min-w-0 flex-wrap gap-3 sm:w-auto sm:justify-end">{properties.sidebutton}</div>
       </Show>
     </div>
   );
 };
 
-type PageContentProperties = {
+type PageSectionProperties = {
+  title?: string;
+  caption?: string;
   class?: string;
-  children: JSX.Element;
 };
 
 /**
- * Page body/content wrapper (below `PageHeader`).
+ * Page section with optional title and caption, wrapping a logical block of page content.
  */
-export const PageContent: ParentComponent<PageContentProperties> = (properties) => {
-  return <div class={mergeClasses("min-w-0", properties.class)}>{properties.children}</div>;
+export const PageSection: ParentComponent<PageSectionProperties> = (properties) => {
+  return (
+    <section class={mergeClasses("space-y-4", properties.class)}>
+      <Show when={properties.title || properties.caption}>
+        <div>
+          <Show when={properties.title}>
+            <h3 class="text-foreground text-base font-semibold">{properties.title}</h3>
+          </Show>
+          <Show when={properties.caption}>
+            <p class="text-muted-foreground mt-0.5 text-sm">{properties.caption}</p>
+          </Show>
+        </div>
+      </Show>
+      {properties.children}
+    </section>
+  );
 };
 
-export type { PageLayoutProperties, PageHeaderProperties, PageContentProperties };
+export type { PageLayoutProperties, PageHeaderProperties, PageSectionProperties };

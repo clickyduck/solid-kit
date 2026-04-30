@@ -1,73 +1,45 @@
-import { Icon, type IconComponent } from "@/components/icons";
 import { mergeClasses } from "@/utilities";
-import type { ComponentProps, JSX } from "solid-js";
-import { For, Show, splitProps } from "solid-js";
+import type { Component, ComponentProps, JSX } from "solid-js";
+import { splitProps } from "solid-js";
 
-type DataCardFooterItem = {
-  icon: IconComponent;
-  label: string;
-  value: string;
-  valueClass?: string;
-};
-
-type DataCardProps = Omit<ComponentProps<"button">, "children"> & {
-  title: string;
-  description?: string;
-  topRight?: JSX.Element;
-  footerItems?: DataCardFooterItem[];
+type DataCardProperties = {
+  /** When true, shows hover/cursor affordances and uses a `<button>`. */
+  clickable?: boolean;
+  /** Optional "selected" style for clickable cards. */
   active?: boolean;
-  class?: string;
-};
+  children: JSX.Element;
+} & Omit<ComponentProps<"div">, "class" | "children" | "onClick"> &
+  Omit<ComponentProps<"button">, "class" | "children">;
 
 /**
  * Clickable data card with the same layout/styling as the app's ticket card.
  */
-export const DataCard = (properties: DataCardProps) => {
-  const [local, rest] = splitProps(properties, ["title", "description", "topRight", "footerItems", "active", "class"]);
+export const DataCard: Component<DataCardProperties> = (properties) => {
+  const [local, rest] = splitProps(properties, ["clickable", "active", "children", "onClick", "type"]);
+  const isClickable = (): boolean => local.clickable === true || typeof local.onClick === "function";
+  const isActive = (): boolean => local.active === true;
 
-  const isActive = (): boolean => {
-    return local.active === true;
-  };
+  const baseClass = () =>
+    mergeClasses(
+      "group w-full rounded-xl border border-gray-200 bg-white text-left text-gray-900 transition focus-visible:ring-2 focus-visible:ring-blue-500/70 focus-visible:outline-none",
+      "dark:border-gray-800 dark:bg-gray-950 dark:text-gray-100",
+      isClickable() ? "cursor-pointer hover:border-gray-300 dark:hover:border-gray-700" : "cursor-default",
+      isClickable() && isActive() ? "border-blue-500 ring-1 ring-blue-500/10 dark:border-blue-400 dark:ring-blue-500/20" : ""
+    );
 
+  if (isClickable()) {
+    const buttonProps = rest as Omit<ComponentProps<"button">, "class" | "children">;
+    return (
+      <button type={local.type ?? "button"} class={baseClass()} onClick={local.onClick as ComponentProps<"button">["onClick"]} {...buttonProps}>
+        <div class="p-3">{local.children}</div>
+      </button>
+    );
+  }
+
+  const divProps = rest as Omit<ComponentProps<"div">, "class" | "children">;
   return (
-    <button
-      type="button"
-      class={mergeClasses(
-        "group w-full cursor-pointer rounded-lg border text-left transition focus-visible:ring-2 focus-visible:ring-blue-500/70 focus-visible:outline-none",
-        isActive() ? "border-blue-500/70 bg-gray-800/90 ring-1 ring-blue-500/30" : "border-gray-700/60 bg-gray-800/60 hover:border-gray-600 hover:bg-gray-800/80",
-        "h-auto min-h-0 items-stretch justify-start px-0 py-0",
-        local.class
-      )}
-      {...rest}
-    >
-      <div class="flex w-full flex-col gap-2 p-3">
-        <div class="flex items-start gap-2">
-          <span class="line-clamp-2 min-w-0 flex-1 text-sm leading-snug font-semibold text-white">{local.title}</span>
-          <Show when={local.topRight} keyed>
-            {(resolvedTopRight) => {
-              return <span class="shrink-0 opacity-80">{resolvedTopRight}</span>;
-            }}
-          </Show>
-        </div>
-        <Show when={local.description?.trim()}>
-          <p class="line-clamp-2 text-xs leading-relaxed text-gray-400">{local.description!.trim()}</p>
-        </Show>
-        <Show when={(local.footerItems?.length ?? 0) > 0}>
-          <div class="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 border-t border-gray-700/50 pt-2 text-xs text-gray-400">
-            <For each={local.footerItems ?? []}>
-              {(footerItem) => {
-                return (
-                  <span class="inline-flex min-w-0 items-center gap-1.5">
-                    <Icon icon={footerItem.icon} width={14} height={14} class="shrink-0 text-gray-500" aria-hidden="true" />
-                    <span class="shrink-0 text-gray-500">{footerItem.label}</span>
-                    <span class={mergeClasses("truncate text-gray-300", footerItem.valueClass)}>{footerItem.value}</span>
-                  </span>
-                );
-              }}
-            </For>
-          </div>
-        </Show>
-      </div>
-    </button>
+    <div class={baseClass()} {...divProps}>
+      <div class="p-3">{local.children}</div>
+    </div>
   );
 };

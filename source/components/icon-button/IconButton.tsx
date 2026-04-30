@@ -1,5 +1,5 @@
 import { Icon, type IconComponent } from "@/components/icons";
-import { FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses, useEffectiveFormControlSize } from "@/utilities";
+import { FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
@@ -29,7 +29,6 @@ const getVariantClasses = (variant: IconButtonVariant = "solid"): string => {
  */
 export const IconButton = (properties: IconButtonProperties) => {
   const [local, rest] = splitProps(properties, ["class", "variant", "icon", "children"]);
-  const effectiveSize = useEffectiveFormControlSize();
 
   return (
     <button
@@ -37,14 +36,14 @@ export const IconButton = (properties: IconButtonProperties) => {
       class={mergeClasses(
         "inline-flex cursor-pointer items-center justify-center rounded-lg transition-colors duration-150 focus:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50",
         getVariantClasses(local.variant),
-        FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES[effectiveSize()],
+        FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES,
         local.class
       )}
       {...rest}
     >
       <Show when={local.icon} keyed>
         {(resolvedIconComponent) => {
-          return <Icon icon={resolvedIconComponent} width={FORM_CONTROL_ICON_SIZE[effectiveSize()]} height={FORM_CONTROL_ICON_SIZE[effectiveSize()]} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />;
+          return <Icon icon={resolvedIconComponent} width={FORM_CONTROL_ICON_SIZE} height={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />;
         }}
       </Show>
       {local.children}

@@ -98,6 +98,7 @@ type LeftPanelNavigationBodyProperties = {
   collapsed: boolean;
   navigationDocument: LeftPanelLayoutNavigationDocumentJson;
   onItemClick?: () => void;
+  anchorComponent?: Component<Record<string, unknown>>;
 };
 
 const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (properties) => {
@@ -170,42 +171,48 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
             });
 
             const renderNavigationItemLink = (item: LeftPanelLayoutNavigationItemJson): JSX.Element => {
-              const isActive = (): boolean => {
-                return computeIsNavigationItemActive(item, pathname(), hash());
+              const isActive = (): boolean => computeIsNavigationItemActive(item, pathname(), hash());
+              const linkClass = (): string =>
+                mergeClasses(NAVIGATION_LINK_ROW_CLASS, properties.collapsed ? NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS : NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS, isActive() ? NAVIGATION_LINK_ACTIVE_CLASS : NAVIGATION_LINK_INACTIVE_CLASS);
+              const handleClick = (event: MouseEvent): void => {
+                if (typeof window === "undefined") return;
+                if (item.href.startsWith("#")) {
+                  event.preventDefault();
+                  const targetIdentifier = item.href.slice(1);
+                  if (targetIdentifier.length === 0) return;
+                  const targetElement = window.document.getElementById(targetIdentifier);
+                  if (!targetElement) return;
+                  if (window.location.hash !== item.href) {
+                    window.history.pushState(null, "", item.href);
+                    setHash(item.href);
+                  }
+                  targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                } else {
+                  // SolidJS Router's A uses history.pushState which doesn't fire popstate,
+                  // so sync pathname after the router has committed the navigation.
+                  setTimeout(() => {
+                    setPathname(window.location.pathname);
+                    setHash(window.location.hash);
+                  }, 0);
+                }
+                properties.onItemClick?.();
               };
-              return (
-                <a
-                  href={item.href}
-                  class={mergeClasses(NAVIGATION_LINK_ROW_CLASS, properties.collapsed ? NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS : NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS, isActive() ? NAVIGATION_LINK_ACTIVE_CLASS : NAVIGATION_LINK_INACTIVE_CLASS)}
-                  aria-current={isActive() ? "page" : undefined}
-                  aria-label={item.label}
-                  onClick={(event: MouseEvent) => {
-                    if (typeof window === "undefined") {
-                      return;
-                    }
-                    if (item.href.startsWith("#")) {
-                      event.preventDefault();
-                      const targetIdentifier = item.href.slice(1);
-                      if (targetIdentifier.length === 0) {
-                        return;
-                      }
-                      const targetElement = window.document.getElementById(targetIdentifier);
-                      if (!targetElement) {
-                        return;
-                      }
-                      if (window.location.hash !== item.href) {
-                        window.history.pushState(null, "", item.href);
-                        setHash(item.href);
-                      }
-                      targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }
-                    properties.onItemClick?.();
-                  }}
-                >
+              const linkChildren = (
+                <>
                   <Icon icon={leftPanelLayoutNavigationIconByExportName[item.iconExportName]} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
                   <Show when={!properties.collapsed}>
                     <span class={NAVIGATION_LINK_LABEL_CLASS}>{item.label}</span>
                   </Show>
+                </>
+              );
+              const CustomAnchor = properties.anchorComponent;
+              return CustomAnchor ? (
+                <CustomAnchor href={item.href} class={linkClass()} aria-current={isActive() ? "page" : undefined} aria-label={item.label} onClick={handleClick}>
+                  {linkChildren}
+                </CustomAnchor>
+              ) : (
+                <a href={item.href} class={linkClass()} aria-current={isActive() ? "page" : undefined} aria-label={item.label} onClick={handleClick}>
+                  {linkChildren}
                 </a>
               );
             };
@@ -271,6 +278,7 @@ type LeftPanelLayoutProperties = {
   expandedWidthClass?: string;
   /** Desktop width when collapsed (defaults to `md:w-16`). */
   collapsedWidthClass?: string;
+  anchorComponent?: Component<Record<string, unknown>>;
 };
 
 /**
@@ -311,12 +319,10 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setSidebarElement(element);
         }}
         class={mergeClasses(
-          "layout-left-panel flex min-h-0 flex-col overflow-hidden bg-white md:border-r md:border-gray-200 dark:bg-gray-950 dark:md:border-gray-700/60",
-          properties.panelZIndexClass ?? "z-50",
-          "fixed inset-x-0 top-(--solid-kit-header-height,4rem) bottom-0 w-full max-w-none transition-transform duration-200 ease-in-out",
-          "md:static md:z-auto md:h-full md:max-w-none md:transition-[width] md:duration-200 md:ease-in-out",
-          properties.collapsed ? "-translate-x-full md:pointer-events-auto md:translate-x-0" : "translate-x-0",
-          properties.collapsed ? (properties.collapsedWidthClass ?? "md:w-16") : (properties.expandedWidthClass ?? "md:w-64")
+          "layout-left-panel flex min-h-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700/60 dark:bg-gray-950",
+          isMobileViewport()
+            ? [properties.panelZIndexClass ?? "z-50", "fixed inset-x-0 bottom-0 w-full transition-transform duration-200 ease-in-out", "top-(--solid-kit-header-height,4rem)", properties.collapsed ? "-translate-x-full" : "translate-x-0"]
+            : ["static h-full transition-[width] duration-200 ease-in-out", properties.collapsed ? (properties.collapsedWidthClass ?? "w-16") : (properties.expandedWidthClass ?? "w-64")]
         )}
         style={
           !properties.collapsed && isMobileViewport()
@@ -415,10 +421,11 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setSwipeTranslationX(0);
         }}
       >
-        <div class={mergeClasses("flex min-h-0 flex-1 flex-col gap-2 overflow-x-hidden overflow-y-auto", themedScrollControlClassName, properties.collapsed ? "px-2 py-3" : "p-3")}>
+        <div class={mergeClasses("flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-y-scroll px-3 py-4", themedScrollControlClassName)}>
           <LeftPanelNavigationBody
             collapsed={properties.collapsed}
             navigationDocument={properties.navigationDocument}
+            anchorComponent={properties.anchorComponent}
             onItemClick={() => {
               properties.onOpenChange?.(false);
             }}

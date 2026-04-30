@@ -22,3 +22,4 @@ export * from "./toast";
 export * from "./tabs";
 export * from "./upload";
 export * from "./page-layout";
+export * from "./typography";

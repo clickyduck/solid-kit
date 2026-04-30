@@ -1,5 +1,5 @@
 import { Icon, type IconComponent } from "@/components/icons";
-import { FORM_CONTROL_ICON_SIZE, FORM_CONTROL_SIZE_CLASSES, type IconPosition, mergeClasses, useEffectiveFormControlSize } from "@/utilities";
+import { FORM_CONTROL_ICON_SIZE, FORM_CONTROL_SIZE_CLASSES, type IconPosition, mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
@@ -27,7 +27,6 @@ const getVariantClasses = (variant: ButtonVariant = "solid"): string => {
 
 export const Button = (properties: ButtonProps) => {
   const [local, rest] = splitProps(properties, ["class", "variant", "icon", "iconPosition", "children"]);
-  const effectiveSize = useEffectiveFormControlSize();
 
   return (
     <button
@@ -35,7 +34,7 @@ export const Button = (properties: ButtonProps) => {
       class={mergeClasses(
         "flex cursor-pointer items-center justify-center gap-2 rounded-lg text-center font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50",
         getVariantClasses(local.variant),
-        FORM_CONTROL_SIZE_CLASSES[effectiveSize()],
+        FORM_CONTROL_SIZE_CLASSES,
         local.class
       )}
       {...rest}
@@ -45,11 +44,11 @@ export const Button = (properties: ButtonProps) => {
           return (
             <>
               <Show when={local.iconPosition !== "end"}>
-                <Icon icon={resolvedIconComponent} width={FORM_CONTROL_ICON_SIZE[effectiveSize()]} height={FORM_CONTROL_ICON_SIZE[effectiveSize()]} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
+                <Icon icon={resolvedIconComponent} width={FORM_CONTROL_ICON_SIZE} height={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
               </Show>
               {local.children}
               <Show when={local.iconPosition === "end"}>
-                <Icon icon={resolvedIconComponent} width={FORM_CONTROL_ICON_SIZE[effectiveSize()]} height={FORM_CONTROL_ICON_SIZE[effectiveSize()]} class="pointer-events-none ml-auto shrink-0 text-current" aria-hidden="true" />
+                <Icon icon={resolvedIconComponent} width={FORM_CONTROL_ICON_SIZE} height={FORM_CONTROL_ICON_SIZE} class="pointer-events-none ml-auto shrink-0 text-current" aria-hidden="true" />
               </Show>
             </>
           );

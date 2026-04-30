@@ -1,5 +1,5 @@
 import { Icon, upload } from "@/components/icons";
-import { FORM_CONTROL_AUXILIARY_TEXT_CLASS, FORM_CONTROL_ICON_SIZE, FORM_CONTROL_LINK_ACCENT_TEXT_CLASS, FORM_CONTROL_SIZE_CLASSES, FORM_CONTROL_TEXT_CLASS_BY_SIZE, mergeClasses, useEffectiveFormControlSize } from "@/utilities";
+import { FORM_CONTROL_AUXILIARY_TEXT_CLASS, FORM_CONTROL_ICON_SIZE, FORM_CONTROL_LINK_ACCENT_TEXT_CLASS, FORM_CONTROL_SIZE_CLASSES, FORM_CONTROL_TEXT_CLASS_BY_SIZE, mergeClasses } from "@/utilities";
 import type { JSX } from "solid-js";
 import { splitProps } from "solid-js";
 
@@ -22,7 +22,6 @@ const getFileCountLabel = (files: File[]): string => {
 export const Upload = (properties: UploadProperties) => {
   const [local, rest] = splitProps(properties, ["selectedFiles", "onSelectedFilesChange", "class", "id", "disabled", "multiple", "accept"]);
   const resolvedId = local.id ?? `upload-${uploadIdCounter++}`;
-  const effectiveSize = useEffectiveFormControlSize();
 
   const handleFileSelection: JSX.EventHandler<HTMLInputElement, Event> = (event) => {
     const fileList = event.currentTarget.files;
@@ -40,7 +39,7 @@ export const Upload = (properties: UploadProperties) => {
         for={resolvedId}
         class={mergeClasses(
           "flex cursor-pointer items-center justify-between gap-3 rounded-lg border border-solid border-gray-300 bg-gray-50 text-gray-700 transition-colors duration-150 hover:border-gray-400 hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-200 dark:hover:border-gray-600 dark:hover:bg-gray-900/60",
-          FORM_CONTROL_SIZE_CLASSES[effectiveSize()],
+          FORM_CONTROL_SIZE_CLASSES,
           local.disabled ? "cursor-not-allowed opacity-50 hover:border-gray-300 hover:bg-gray-50 dark:hover:border-gray-700 dark:hover:bg-gray-900/40" : ""
         )}
         onDragOver={(event) => {
@@ -60,9 +59,9 @@ export const Upload = (properties: UploadProperties) => {
         }}
       >
         <span class="flex min-w-0 items-center gap-2">
-          <Icon icon={upload} width={FORM_CONTROL_ICON_SIZE[effectiveSize()]} height={FORM_CONTROL_ICON_SIZE[effectiveSize()]} aria-hidden="true" />
+          <Icon icon={upload} width={FORM_CONTROL_ICON_SIZE} height={FORM_CONTROL_ICON_SIZE} aria-hidden="true" />
           <span class="flex min-w-0 items-center gap-2">
-            <span class={mergeClasses("truncate font-medium text-gray-900 dark:text-white", FORM_CONTROL_TEXT_CLASS_BY_SIZE[effectiveSize()])}>Select files</span>
+            <span class={mergeClasses("truncate font-medium text-gray-900 dark:text-white", FORM_CONTROL_TEXT_CLASS_BY_SIZE)}>Select files</span>
             <span class={mergeClasses("truncate", FORM_CONTROL_AUXILIARY_TEXT_CLASS)}>{getFileCountLabel(local.selectedFiles)}</span>
           </span>
         </span>

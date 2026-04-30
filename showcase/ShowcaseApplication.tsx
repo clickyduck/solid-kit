@@ -1,7 +1,7 @@
 import type { BadgeVariant } from "@/components/badge/Badge";
 import { Badge } from "@/components/badge/Badge";
 import { Button } from "@/components/button/Button";
-import { BackgroundCard, BackgroundCardContent, BackgroundCardDescription, BackgroundCardFooter, BackgroundCardHeader, BackgroundCardTitle } from "@/components/card/BackgroundCard";
+import { BackgroundCard } from "@/components/card/BackgroundCard";
 import { MetricCard } from "@/components/card/MetricCard";
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/dialog/Dialog";
 import { Dropdown, DropdownIconTrigger, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
@@ -177,9 +177,16 @@ export const ShowcaseApplication = (): JSX.Element => {
     <div class="flex h-full min-h-0 flex-col bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
       <Toaster />
 
-      <MainLayout class="flex-1">
-        <HeaderLayout title="Solid Kit showcase" description="Interactive samples for buttons, forms, data surfaces, and overlays.">
-          <IconButton variant="ghost" icon={sidebarCollapsed() ? bars3 : menuOpen} onClick={toggleSidebar} aria-label={sidebarCollapsed() ? "Expand sidebar" : "Collapse sidebar"} />
+      <MainLayout>
+        <HeaderLayout
+          titleElement={
+            <div class="flex min-w-0 items-center gap-3">
+              <IconButton variant="ghost" icon={sidebarCollapsed() ? bars3 : menuOpen} onClick={toggleSidebar} aria-label={sidebarCollapsed() ? "Expand sidebar" : "Collapse sidebar"} />
+              <h2 class="text-xl font-semibold tracking-tight text-gray-900 md:text-2xl dark:text-white">Solid Kit showcase</h2>
+            </div>
+          }
+          description="Interactive samples for buttons, forms, data surfaces, and overlays."
+        >
           <div class="flex shrink-0 items-center gap-1 rounded-full border border-gray-200 bg-gray-100/80 p-1 dark:border-gray-700 dark:bg-gray-900/60">
             <IconButton
               variant={documentColorSchemeName() === "light" ? "solid" : "ghost"}
@@ -211,7 +218,7 @@ export const ShowcaseApplication = (): JSX.Element => {
         />
 
         <PageLayout>
-          <div class="mx-auto max-w-6xl space-y-16 py-4 lg:px-2">
+          <div class="mx-auto max-w-6xl space-y-16">
             <ShowcaseCategory categoryTitle="Primitives">
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-badges" sectionTitle="Badges" sectionDescription="Variants crossed with semantic colors; optional leading icon and removable chip.">
                 <div class="space-y-6">
@@ -281,9 +288,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                   <Spinner class="text-emerald-400" aria-label="Loading content" />
                 </div>
                 <BackgroundCard>
-                  <BackgroundCardContent>
-                    <Loading message="Loading workspace preferences…" />
-                  </BackgroundCardContent>
+                  <Loading message="Loading workspace preferences…" />
                 </BackgroundCard>
               </ShowcaseSection>
             </ShowcaseCategory>
@@ -301,60 +306,62 @@ export const ShowcaseApplication = (): JSX.Element => {
 
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-card-empty" sectionTitle="Card and empty state">
                 <BackgroundCard>
-                  <BackgroundCardHeader>
-                    <BackgroundCardTitle>Workspace usage</BackgroundCardTitle>
-                    <BackgroundCardDescription>Compound card primitives with header, description, content, and footer actions for the Showcase.</BackgroundCardDescription>
-                  </BackgroundCardHeader>
-                  <BackgroundCardContent>
-                    <p class="text-sm leading-relaxed text-gray-700 dark:text-gray-300">Card content uses muted body copy. Pair with Header or Metric for dashboard layouts.</p>
-                  </BackgroundCardContent>
-                  <BackgroundCardFooter class="justify-end gap-2">
-                    <Button variant="ghost">Dismiss</Button>
-                    <Button>Save layout</Button>
-                  </BackgroundCardFooter>
+                  <div class="space-y-6">
+                    <header class="space-y-1">
+                      <div class="text-lg font-semibold text-gray-900">Workspace usage</div>
+                      <p class="text-sm text-gray-600">Simple card shell. Compose your own header/content/footer.</p>
+                    </header>
+                    <p class="text-sm leading-relaxed text-gray-700 dark:text-gray-300">Card content uses muted body copy. Pair with Metric cards for dashboard layouts.</p>
+                    <div class="flex w-full justify-end gap-2">
+                      <Button variant="ghost">Dismiss</Button>
+                      <Button>Save layout</Button>
+                    </div>
+                  </div>
                 </BackgroundCard>
                 <EmptyState icon={inventory} title="No records yet" message="Create your first inventory movement to populate this list." class="rounded-lg border border-dashed border-gray-300 p-12 dark:border-gray-700" />
               </ShowcaseSection>
 
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-table" sectionTitle="Table and pagination">
-                <BackgroundCard class="overflow-hidden p-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Location</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead align="right" monospace>
-                          Amount
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      <For each={tableRows}>
-                        {(row, index) => {
-                          return (
-                            <TableRow clickable active={index() === 0} onClick={() => {}}>
-                              <TableCell>{row.name}</TableCell>
-                              <TableCell>
-                                <Badge variant="solid" color={row.role === "Active" ? "success" : "warning"}>
-                                  {row.role}
-                                </Badge>
-                              </TableCell>
-                              <TableCell align="right" monospace>
-                                {row.amount}
-                              </TableCell>
-                            </TableRow>
-                          );
-                        }}
-                      </For>
-                      <TableRow verticalAlign="top">
-                        <TableCell>Notes row (top aligned)</TableCell>
-                        <TableCell colSpan={2} class="text-gray-600 dark:text-gray-500">
-                          Use verticalAlign=&quot;top&quot; when a row mixes chips with multi-line copy.
-                        </TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                  <TablePagination limit={tablePagination().limit} offset={tablePagination().offset} currentPageCount={tableRows.length} totalCount={120} onChange={setTablePagination} />
+                <BackgroundCard>
+                  <div class="-m-8 overflow-hidden">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Location</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead align="right" monospace>
+                            Amount
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        <For each={tableRows}>
+                          {(row, index) => {
+                            return (
+                              <TableRow clickable active={index() === 0} onClick={() => {}}>
+                                <TableCell>{row.name}</TableCell>
+                                <TableCell>
+                                  <Badge variant="solid" color={row.role === "Active" ? "success" : "warning"}>
+                                    {row.role}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell align="right" monospace>
+                                  {row.amount}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          }}
+                        </For>
+                        <TableRow verticalAlign="top">
+                          <TableCell>Notes row (top aligned)</TableCell>
+                          <TableCell colSpan={2} class="text-gray-600 dark:text-gray-500">
+                            Use verticalAlign=&quot;top&quot; when a row mixes chips with multi-line copy.
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                    <TablePagination limit={tablePagination().limit} offset={tablePagination().offset} currentPageCount={tableRows.length} totalCount={120} onChange={setTablePagination} />
+                  </div>
                 </BackgroundCard>
               </ShowcaseSection>
             </ShowcaseCategory>
@@ -522,9 +529,9 @@ export const ShowcaseApplication = (): JSX.Element => {
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-tabs" sectionTitle="Tabs">
                 <Tabs tabDefinitions={tabDefinitions} activeTabValue={activeShowcaseTab} onTabSelect={setActiveShowcaseTab} />
                 <BackgroundCard>
-                  <BackgroundCardContent class="pt-6">
+                  <div class="pt-6">
                     <p class="text-sm text-gray-700 dark:text-gray-300">{tabPanelCopy()}</p>
-                  </BackgroundCardContent>
+                  </div>
                 </BackgroundCard>
               </ShowcaseSection>
 
@@ -708,14 +715,16 @@ const ShowcaseCategory = (properties: ShowcaseCategoryProperties): JSX.Element =
 
 const ShowcaseSection = (properties: ShowcaseSectionProperties): JSX.Element => {
   return (
-    <BackgroundCard class="scroll-mt-28 space-y-6 rounded-2xl border-gray-200/90 bg-white/90 p-6 sm:p-8 dark:border-gray-800/90 dark:bg-gray-950/35" aria-labelledby={properties.sectionHeadingIdentifier}>
-      <header class="space-y-2 border-b border-gray-200/80 pb-5 dark:border-gray-800/70">
-        <SectionHeading id={properties.sectionHeadingIdentifier}>{properties.sectionTitle}</SectionHeading>
-        <Show when={properties.sectionDescription}>
-          <p class="max-w-3xl text-sm text-gray-600 dark:text-gray-500">{properties.sectionDescription}</p>
-        </Show>
-      </header>
-      <div class="space-y-6">{properties.children}</div>
-    </BackgroundCard>
+    <div class="scroll-mt-28" aria-labelledby={properties.sectionHeadingIdentifier}>
+      <BackgroundCard>
+        <header class="space-y-2 border-b border-gray-200/80 pb-5 dark:border-gray-800/70">
+          <SectionHeading id={properties.sectionHeadingIdentifier}>{properties.sectionTitle}</SectionHeading>
+          <Show when={properties.sectionDescription}>
+            <p class="max-w-3xl text-sm text-gray-600 dark:text-gray-500">{properties.sectionDescription}</p>
+          </Show>
+        </header>
+        <div class="space-y-6 pt-6">{properties.children}</div>
+      </BackgroundCard>
+    </div>
   );
 };

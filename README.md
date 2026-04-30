@@ -90,22 +90,18 @@ import { Button } from "@clickyduck/solid-kit";
 
 ### BackgroundCard
 
-Compound component for content panels.
+Simple fixed-style card shell for content panels.
 
-**Exports:** `BackgroundCard`, `BackgroundCardHeader`, `BackgroundCardTitle`, `BackgroundCardDescription`, `BackgroundCardContent`, `BackgroundCardFooter`
-
-All parts accept standard `<div>` HTML attributes (title/description use `<h3>`/`<p>`) plus an optional `class` prop for extra CSS classes. No custom props beyond what HTML provides.
+**Exports:** `BackgroundCard`
 
 ```tsx
-import { BackgroundCard, BackgroundCardContent, BackgroundCardDescription, BackgroundCardFooter, BackgroundCardHeader, BackgroundCardTitle } from "@clickyduck/solid-kit";
+import { BackgroundCard } from "@clickyduck/solid-kit";
 
 <BackgroundCard>
-  <BackgroundCardHeader>
-    <BackgroundCardTitle>Title</BackgroundCardTitle>
-    <BackgroundCardDescription>Subtitle</BackgroundCardDescription>
-  </BackgroundCardHeader>
-  <BackgroundCardContent>Body content</BackgroundCardContent>
-  <BackgroundCardFooter>Footer</BackgroundCardFooter>
+  <div>
+    <div>Title</div>
+    <div>Body content</div>
+  </div>
 </BackgroundCard>;
 ```
 
@@ -113,33 +109,21 @@ import { BackgroundCard, BackgroundCardContent, BackgroundCardDescription, Backg
 
 ### DataCard
 
-Clickable “ticket style” data surface card with title, optional description, optional top-right slot, and an optional footer row of icon/label/value items.
+Ticket-style data surface card. Can be clickable or static.
 
 **Exports:** `DataCard`
 
-| Prop          | Type                   | Description                                   |
-| ------------- | ---------------------- | --------------------------------------------- |
-| `title`       | `string`               | Card heading (required)                       |
-| `description` | `string`               | Optional secondary text                       |
-| `topRight`    | `JSX.Element`          | Optional element in the top-right corner      |
-| `footerItems` | `DataCardFooterItem[]` | Optional footer row of icon/label/value items |
-| `active`      | `boolean`              | Highlights the card as selected               |
-| `class`       | `string`               | Extra CSS classes                             |
-
-`DataCardFooterItem`: `{ icon: IconComponent; label: string; value: string; valueClass?: string }`
+| Prop        | Type      | Description                                  |
+| ----------- | --------- | -------------------------------------------- |
+| `clickable` | `boolean` | Enables hover/cursor affordance + `<button>` |
+| `active`    | `boolean` | Optional selected style (clickable only)     |
 
 ```tsx
-import { DataCard, calendarDays, groups } from "@clickyduck/solid-kit";
+import { DataCard } from "@clickyduck/solid-kit";
 
-<DataCard
-  title="Fix upload progress indicator"
-  description="Progress indicator gets stuck at 100% when retrying."
-  footerItems={[
-    { icon: groups, label: "Assignee", value: "Unassigned" },
-    { icon: calendarDays, label: "Due", value: "29 Apr 2026", valueClass: "text-gray-300" }
-  ]}
-  onClick={() => {}}
-/>;
+<DataCard clickable onClick={() => {}}>
+  <div>Any content</div>
+</DataCard>;
 ```
 
 ---
@@ -851,16 +835,6 @@ Solid.js signal tracking whether the viewport is ≤767 px.
 import { useIsMobile } from "@clickyduck/solid-kit";
 
 const isMobile = useIsMobile(); // Accessor<boolean>
-```
-
-### `useEffectiveFormControlSize`
-
-Returns `"large"` on mobile (≤767 px) and `"default"` on desktop. Used internally by `Button`, `IconButton`, `Input`, `Textarea`.
-
-```ts
-import { useEffectiveFormControlSize } from "@clickyduck/solid-kit";
-
-const size = useEffectiveFormControlSize(); // Accessor<"default" | "large">
 ```
 
 ### Color scheme helpers
