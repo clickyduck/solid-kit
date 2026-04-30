@@ -22,36 +22,32 @@ export const PageLayout: ParentComponent<PageLayoutProperties> = (properties) =>
 
 type PageHeaderProperties = {
   title?: string;
-  titleElement?: JSX.Element;
   caption?: string;
   back?: JSX.Element;
-  sidebutton?: JSX.Element;
-  class?: string;
+  sidebuttons?: JSX.Element;
 };
 
 /**
  * Page title row with optional back link, subtitle, and actions slot.
  */
 export const PageHeader: Component<PageHeaderProperties> = (properties) => {
-  if (!properties.title && !properties.titleElement) {
+  if (!properties.title) {
     return null;
   }
 
   return (
-    <div class={properties.class ?? "flex flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-6"}>
+    <div class="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-6">
       <div class="min-w-0 flex-1">
         <Show when={properties.back}>
           <div class="mb-2">{properties.back}</div>
         </Show>
-        <Show when={properties.titleElement} fallback={<h2 class="text-foreground min-w-0 text-2xl font-semibold tracking-tight wrap-break-word whitespace-normal md:text-3xl">{properties.title}</h2>}>
-          {properties.titleElement}
-        </Show>
+        <h2 class="text-foreground min-w-0 text-2xl font-semibold tracking-tight wrap-break-word whitespace-normal md:text-3xl">{properties.title}</h2>
         <Show when={properties.caption}>
           <p class="text-muted-foreground mt-1 min-w-0 text-sm wrap-break-word whitespace-normal">{properties.caption}</p>
         </Show>
       </div>
-      <Show when={properties.sidebutton}>
-        <div class="flex w-full min-w-0 flex-wrap gap-3 sm:w-auto sm:justify-end">{properties.sidebutton}</div>
+      <Show when={properties.sidebuttons}>
+        <div class="flex w-full min-w-0 flex-wrap gap-3 sm:w-auto sm:justify-end">{properties.sidebuttons}</div>
       </Show>
     </div>
   );
@@ -60,7 +56,7 @@ export const PageHeader: Component<PageHeaderProperties> = (properties) => {
 type PageSectionProperties = {
   title?: string;
   caption?: string;
-  class?: string;
+  sidebuttons?: JSX.Element;
 };
 
 /**
@@ -68,14 +64,19 @@ type PageSectionProperties = {
  */
 export const PageSection: ParentComponent<PageSectionProperties> = (properties) => {
   return (
-    <section class={mergeClasses("space-y-4", properties.class)}>
-      <Show when={properties.title || properties.caption}>
-        <div>
-          <Show when={properties.title}>
-            <h3 class="text-foreground text-base font-semibold">{properties.title}</h3>
-          </Show>
-          <Show when={properties.caption}>
-            <p class="text-muted-foreground mt-0.5 text-sm">{properties.caption}</p>
+    <section class="space-y-4">
+      <Show when={properties.title || properties.caption || properties.sidebuttons}>
+        <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+          <div class="min-w-0 flex-1">
+            <Show when={properties.title}>
+              <h3 class="text-foreground text-base font-semibold">{properties.title}</h3>
+            </Show>
+            <Show when={properties.caption}>
+              <p class="text-muted-foreground mt-0.5 text-sm">{properties.caption}</p>
+            </Show>
+          </div>
+          <Show when={properties.sidebuttons}>
+            <div class="flex w-full min-w-0 flex-wrap gap-3 sm:w-auto sm:justify-end">{properties.sidebuttons}</div>
           </Show>
         </div>
       </Show>

@@ -283,7 +283,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
       >
         {local.children}
         <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && !properties.usePortal}>
-          <div class={mergeClasses("absolute top-full z-10 mt-1", local.menuFullWidth !== false ? "left-0 w-full" : "", builtInMenuChromeClass())}>
+          <div class={mergeClasses("absolute top-full z-60 mt-1", local.menuFullWidth !== false ? "left-0 w-full" : "", builtInMenuChromeClass())}>
             <Show when={isSearchable()}>
               <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
             </Show>
@@ -293,7 +293,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
         <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && properties.usePortal && portalPosition()}>
           {(position) => (
             <Portal mount={document.body}>
-              <div class={mergeClasses("z-50 min-w-min", builtInMenuChromeClass())} style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, width: `${position().width}px` }}>
+              <div class={mergeClasses("z-60 min-w-min", builtInMenuChromeClass())} style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, width: `${position().width}px` }}>
                 <Show when={isSearchable()}>
                   <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
                 </Show>
@@ -476,7 +476,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
           const rectangle = container.getBoundingClientRect();
           const gapPixels = 4;
           element.style.position = "fixed";
-          element.style.zIndex = "50";
+          element.style.zIndex = "60";
           element.style.left = "auto";
           element.style.bottom = "auto";
           if (documentPortalPlacementResolved() === "top") {
@@ -511,7 +511,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
   return (
     <>
       <Show when={context.dropdownOpen() && !useDocumentPortalResolved()}>
-        <div class={mergeClasses("absolute top-full z-10 mt-1", contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES, local.class)} {...rest}>
+        <div class={mergeClasses("absolute top-full z-60 mt-1", contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES, local.class)} {...rest}>
           {searchField()}
           <Show when={shouldWrapChildrenInList()} fallback={<div class={panelClass()}>{local.children}</div>}>
             <ul class={listClass()}>{local.children}</ul>

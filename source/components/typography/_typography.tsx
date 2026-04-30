@@ -7,8 +7,8 @@ export type TextColor = "default" | "inherit" | "muted" | "primary" | "secondary
 export type TextWeight = "thin" | "normal" | "medium" | "semibold" | "bold";
 
 const COLOR_CLASSES: Record<TextColor, string> = {
-  default: "text-gray-900 dark:text-gray-100",
   inherit: "",
+  default: "text-gray-900 dark:text-gray-100",
   muted: "text-gray-600 dark:text-gray-400",
   primary: "text-blue-700 dark:text-blue-400",
   secondary: "text-gray-700 dark:text-gray-300",
@@ -29,6 +29,8 @@ const WEIGHT_CLASSES: Record<TextWeight, string> = {
 export type TypographyBaseProps = Omit<ComponentProps<"div">, "children"> & {
   /** Plain text only (no rich JSX). */
   children: string;
+  /** Optional margin classes kept separate from other styling. */
+  marginClasses?: string;
   color?: TextColor;
   weight?: TextWeight;
   italic?: boolean;
@@ -53,7 +55,7 @@ const DEFAULT_ICON_CLASSES = "inline-flex shrink-0 items-center justify-center a
 export const createTypography = (options: CreateTypographyOptions): ParentComponent<TypographyBaseProps> => {
   const iconWrapperClasses = () => mergeClasses(DEFAULT_ICON_CLASSES, options.iconClasses);
   return (properties) => {
-    const [local, rest] = splitProps(properties, ["children", "class", "color", "weight", "italic", "underline", "opacity", "icon", "iconPosition"]);
+    const [local, rest] = splitProps(properties, ["children", "class", "marginClasses", "color", "weight", "italic", "underline", "opacity", "icon", "iconPosition"]);
     const iconPosition = () => local.iconPosition ?? "start";
     const color = (): TextColor => local.color ?? options.defaultColor ?? "default";
     const weight = (): TextWeight => local.weight ?? options.defaultWeight ?? "normal";
@@ -74,7 +76,7 @@ export const createTypography = (options: CreateTypographyOptions): ParentCompon
     };
 
     return (
-      <div class={mergeClasses("inline-flex items-center gap-2", options.sizeClasses, COLOR_CLASSES[color()], WEIGHT_CLASSES[weight()], italic() ? "italic" : "", underline() ? "underline" : "", local.class)} {...rest} style={style()}>
+      <div class={mergeClasses("inline-flex items-center gap-2", options.sizeClasses, COLOR_CLASSES[color()], WEIGHT_CLASSES[weight()], italic() ? "italic" : "", underline() ? "underline" : "", local.marginClasses, local.class)} {...rest} style={style()}>
         <Show when={local.icon !== undefined && iconPosition() === "start"}>
           <span class={iconWrapperClasses()} aria-hidden="true">
             {local.icon}

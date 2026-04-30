@@ -267,14 +267,13 @@ Page-level header row with title, description, back link, and actions slot.
 
 **Exports:** `HeaderLayout`
 
-| Prop           | Type          | Description                                    |
-| -------------- | ------------- | ---------------------------------------------- |
-| `title`        | `string`      | Page title; component returns `null` if absent |
-| `titleElement` | `JSX.Element` | Custom title element (replaces `title` string) |
-| `description`  | `string`      | Optional subtitle below the title              |
-| `back`         | `JSX.Element` | Back link or button rendered to the left       |
-| `children`     | `JSX.Element` | Actions rendered on the right side             |
-| `class`        | `string`      | Extra CSS classes                              |
+| Prop          | Type          | Description                                    |
+| ------------- | ------------- | ---------------------------------------------- |
+| `title`       | `string`      | Page title; component returns `null` if absent |
+| `description` | `string`      | Optional subtitle below the title              |
+| `back`        | `JSX.Element` | Back link or button rendered to the left       |
+| `children`    | `JSX.Element` | Actions rendered on the right side             |
+| `class`       | `string`      | Extra CSS classes                              |
 
 ```tsx
 import { Button, HeaderLayout } from "@clickyduck/solid-kit";

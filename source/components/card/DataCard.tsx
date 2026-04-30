@@ -22,7 +22,7 @@ export const DataCard: Component<DataCardProperties> = (properties) => {
   const baseClass = () =>
     mergeClasses(
       "group w-full rounded-xl border border-gray-200 bg-white text-left text-gray-900 transition focus-visible:ring-2 focus-visible:ring-blue-500/70 focus-visible:outline-none",
-      "dark:border-gray-800 dark:bg-gray-950 dark:text-gray-100",
+      "dark:border-gray-800 dark:bg-gray-800/40 dark:text-gray-100",
       isClickable() ? "cursor-pointer hover:border-gray-300 dark:hover:border-gray-700" : "cursor-default",
       isClickable() && isActive() ? "border-blue-500 ring-1 ring-blue-500/10 dark:border-blue-400 dark:ring-blue-500/20" : ""
     );

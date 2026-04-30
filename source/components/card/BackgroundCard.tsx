@@ -11,7 +11,7 @@ type BackgroundCardProperties = {
  * `<BackgroundCard>...content...</BackgroundCard>`
  */
 export const BackgroundCard: ParentComponent<BackgroundCardProperties> = (properties) => {
-  return <div class="rounded-2xl border border-gray-200 bg-white p-8 text-gray-900 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-100">{properties.children}</div>;
+  return <div class="rounded-2xl border border-gray-200 bg-white p-8 text-gray-900 dark:border-gray-800 dark:bg-gray-800/40 dark:text-gray-100">{properties.children}</div>;
 };
 
 export type { BackgroundCardProperties };
