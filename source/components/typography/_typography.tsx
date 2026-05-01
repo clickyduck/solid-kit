@@ -27,8 +27,7 @@ const WEIGHT_CLASSES: Record<TextWeight, string> = {
 };
 
 export type TypographyBaseProps = Omit<ComponentProps<"div">, "children"> & {
-  /** Plain text only (no rich JSX). */
-  children: string;
+  children: JSX.Element;
   color?: TextColor;
   weight?: TextWeight;
   italic?: boolean;
