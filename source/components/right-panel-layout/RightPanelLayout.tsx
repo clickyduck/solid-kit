@@ -174,7 +174,7 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
           </div>
         </header>
         <div class={mergeClasses("min-h-0 min-w-0 flex-1")}>{properties.children}</div>
-        {properties.footer ? <div class="shrink-0 border-t border-gray-200 dark:border-gray-700/80">{properties.footer}</div> : null}
+        {properties.footer ? <div class="shrink-0 border-t border-gray-200 px-4 py-3 dark:border-gray-700/80">{properties.footer}</div> : null}
       </aside>
     </div>
   );

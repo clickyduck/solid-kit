@@ -3,7 +3,7 @@ import { CHROME_MUTED_ICON_CLASSES, FORM_CONTROL_ICON_SIZE, FORM_CONTROL_LEADING
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
-export type InputProperties = ComponentProps<"input"> & {
+export type InputProperties = Omit<ComponentProps<"input">, "class"> & {
   icon?: IconComponent;
   trailingText?: string;
   currency?: boolean;
@@ -78,7 +78,7 @@ const callInputHandler = (handler: InputProperties["onInput"], event: unknown): 
 };
 
 const Input = (properties: InputProperties) => {
-  const [local, rest] = splitProps(properties, ["class", "icon", "trailingText", "currency", "autocomplete", "disabled", "value", "onInput"]);
+  const [local, rest] = splitProps(properties, ["icon", "trailingText", "currency", "autocomplete", "disabled", "value", "onInput"]);
   const baseClasses =
     "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-400 transition-colors duration-150 focus:border-blue-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
   const inputProps = { step: properties.type === "number" ? "0.01" : undefined, ...rest, autocomplete: local.autocomplete ?? "off" };
@@ -94,7 +94,7 @@ const Input = (properties: InputProperties) => {
   };
 
   if (!local.icon && !local.trailingText) {
-    return <input class={mergeClasses(baseClasses, FORM_CONTROL_SIZE_CLASSES, local.class)} disabled={local.disabled} value={local.value} onInput={handleInput} {...resolvedInputProps} />;
+    return <input class={mergeClasses(baseClasses, FORM_CONTROL_SIZE_CLASSES)} disabled={local.disabled} value={local.value} onInput={handleInput} {...resolvedInputProps} />;
   }
 
   return (
@@ -109,7 +109,7 @@ const Input = (properties: InputProperties) => {
         }}
       </Show>
       <input
-        class={mergeClasses(baseClasses, FORM_CONTROL_SIZE_CLASSES, local.icon ? FORM_CONTROL_LEADING_ICON_INPUT_CLASS : "", local.trailingText ? "pr-12" : "", local.class)}
+        class={mergeClasses(baseClasses, FORM_CONTROL_SIZE_CLASSES, local.icon ? FORM_CONTROL_LEADING_ICON_INPUT_CLASS : "", local.trailingText ? "pr-12" : "")}
         disabled={local.disabled}
         value={local.value}
         onInput={handleInput}

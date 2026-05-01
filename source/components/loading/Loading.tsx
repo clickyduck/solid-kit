@@ -12,8 +12,8 @@ type LoadingProperties = {
  */
 export const Loading: Component<LoadingProperties> = (properties) => {
   return (
-    <div class={mergeClasses("flex flex-col items-center justify-center gap-3", properties.class ?? "py-12")}>
-      <Spinner class="text-blue-500" />
+    <div class={mergeClasses("flex flex-col items-center justify-center gap-3 py-12", properties.class)}>
+      <Spinner />
       <div class="text-sm text-gray-500 dark:text-gray-400">{properties.message}</div>
     </div>
   );

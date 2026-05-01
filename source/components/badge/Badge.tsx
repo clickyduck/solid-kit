@@ -55,10 +55,10 @@ const BADGE_REMOVE_BUTTON_CLASSES_BY_VARIANT_AND_COLOR: Record<BadgeVariant, Rec
 export type BadgeProperties = {
   variant?: BadgeVariant;
   color?: Color;
-  class?: string;
   children: JSX.Element;
   icon?: IconComponent;
   onRemove?: () => void;
+  class?: string;
 };
 
 export const Badge = (properties: BadgeProperties): JSX.Element => {

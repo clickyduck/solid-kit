@@ -1,5 +1,6 @@
 import { BackgroundCard } from "@/components/card/BackgroundCard";
 import { Icon, type IconComponent, arrowRight } from "@/components/icons";
+import { mergeClasses } from "@/utilities";
 import { Show } from "solid-js";
 
 type AccentColor = "emerald" | "blue" | "amber" | "violet" | "rose";
@@ -45,6 +46,7 @@ type MetricCardProperties = {
   value: string;
   linkHref?: string;
   linkLabel?: string;
+  class?: string;
 };
 
 /**
@@ -56,11 +58,11 @@ export const MetricCard = (properties: MetricCardProperties) => {
     return properties.loading === true;
   };
   return (
-    <BackgroundCard>
-      <div class={`border-l-4 ${accent().card} -ml-8 pl-8`}>
+    <BackgroundCard class={mergeClasses("overflow-hidden", properties.class)}>
+      <div class={mergeClasses("-ml-6 border-l-4 pl-6", accent().card)}>
         <div class="flex flex-row items-center justify-between">
           <h3 class="text-sm font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-400">{properties.title}</h3>
-          <span class={`flex h-9 w-9 items-center justify-center rounded-lg ${accent().iconBox} ${accent().iconColor}`}>
+          <span class={mergeClasses("flex h-9 w-9 items-center justify-center rounded-lg", accent().iconBox, accent().iconColor)}>
             <Icon icon={properties.icon} width={20} height={20} aria-hidden="true" />
           </span>
         </div>
@@ -77,7 +79,7 @@ export const MetricCard = (properties: MetricCardProperties) => {
           <div class="text-2xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">{properties.value}</div>
         </Show>
         <Show when={properties.linkHref !== undefined && properties.linkLabel !== undefined}>
-          <a href={properties.linkHref!} class={`inline-flex items-center gap-1.5 text-sm font-medium ${accent().link}`}>
+          <a href={properties.linkHref!} class={mergeClasses("inline-flex items-center gap-1.5 text-sm font-medium", accent().link)}>
             {properties.linkLabel}
             <Icon icon={arrowRight} width={16} height={16} aria-hidden="true" />
           </a>

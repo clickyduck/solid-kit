@@ -108,13 +108,13 @@ export const DialogTrigger = (properties: ComponentProps<"button"> & { children?
   return <button type="button" {...properties} />;
 };
 
-type DialogContentPropertiesType = ComponentProps<"div"> & { class?: string; children?: JSX.Element | JSX.Element[] | null | undefined };
+type DialogContentPropertiesType = ComponentProps<"div"> & { children?: JSX.Element | JSX.Element[] | null | undefined };
 
 /**
  * Dialog content wrapper with close button. Use inside Dialog.
  */
 export const DialogContent = (properties: DialogContentPropertiesType) => {
-  const [local, rest] = splitProps(properties, ["class", "children"]);
+  const [local, rest] = splitProps(properties, ["children", "class"]);
 
   return (
     <div class="relative my-auto h-dvh w-full p-0 sm:h-auto sm:max-w-2xl sm:p-4">
@@ -131,7 +131,7 @@ export const DialogContent = (properties: DialogContentPropertiesType) => {
   );
 };
 
-type DialogTitlePropertiesType = ComponentProps<"h3"> & { class?: string };
+type DialogTitlePropertiesType = ComponentProps<"h3">;
 
 /**
  * Dialog title heading.
@@ -141,7 +141,7 @@ export const DialogTitle = (properties: DialogTitlePropertiesType) => {
   return <h3 class={mergeClasses("text-lg font-medium text-gray-900 dark:text-white", local.class)} {...rest} />;
 };
 
-type DialogDescriptionPropertiesType = ComponentProps<"div"> & { class?: string };
+type DialogDescriptionPropertiesType = ComponentProps<"div">;
 
 /**
  * Dialog description text.
@@ -156,7 +156,7 @@ export const DialogDescription = (properties: DialogDescriptionPropertiesType) =
  */
 export const DialogHeader = (properties: ComponentProps<"div"> & { actions?: JSX.Element }) => {
   const context = useContext(DialogContext);
-  const [local, rest] = splitProps(properties, ["class", "children", "actions"]);
+  const [local, rest] = splitProps(properties, ["children", "actions", "class"]);
   const hideModal = context?.hideModal ?? (() => {});
 
   return (
@@ -178,7 +178,7 @@ type DialogBodyPropertiesType = Omit<ComponentProps<"div">, "children"> & { chil
  * Dialog body — scrollable content area.
  */
 export const DialogBody = (properties: DialogBodyPropertiesType) => {
-  const [local, rest] = splitProps(properties, ["class", "children"]);
+  const [local, rest] = splitProps(properties, ["children", "class"]);
   return (
     <div class={mergeClasses("min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5", local.class)} {...rest}>
       {local.children}

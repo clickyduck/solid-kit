@@ -2,8 +2,10 @@ import type { BadgeVariant } from "@/components/badge/Badge";
 import { Badge } from "@/components/badge/Badge";
 import { Button } from "@/components/button/Button";
 import { BackgroundCard } from "@/components/card/BackgroundCard";
+import { DataCard } from "@/components/card/DataCard";
 import { MetricCard } from "@/components/card/MetricCard";
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/dialog/Dialog";
+import { Divider } from "@/components/divider/Divider";
 import { Dropdown, DropdownIconTrigger, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
 import { EmptyState } from "@/components/empty-state/EmptyState";
 import { Field } from "@/components/field/Field";
@@ -24,6 +26,7 @@ import { Textarea } from "@/components/textarea/Textarea";
 import { addToast } from "@/components/toast/Toast";
 import { Toaster } from "@/components/toast/Toaster";
 import { ToggleGroup } from "@/components/toggle-group/ToggleGroup";
+import { Text } from "@/components/typography/Text";
 import { Upload } from "@/components/upload/Upload";
 import { type Color, createDocumentColorSchemePreferenceSignal, useIsMobile } from "@/utilities";
 import type { JSX } from "solid-js";
@@ -116,6 +119,7 @@ export const ShowcaseApplication = (): JSX.Element => {
   const [contactChannelsWithoutDescription, setContactChannelsWithoutDescription] = createSignal<string[]>(["email"]);
   const [documentColorSchemeName, setDocumentColorSchemeName] = createDocumentColorSchemePreferenceSignal();
   const [isRightPanelOpen, setIsRightPanelOpen] = createSignal(false);
+  const [activeDataCard, setActiveDataCard] = createSignal<number | undefined>(0);
   const openRightPanel = (): void => {
     if (isMobileViewport()) {
       setSidebarCollapsed(true);
@@ -284,8 +288,8 @@ export const ShowcaseApplication = (): JSX.Element => {
             <ShowcaseCategory categoryTitle="Progress and loading">
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-spinner-loading" sectionTitle="Spinner and loading">
                 <div class="flex flex-wrap items-center gap-6">
-                  <Spinner class="text-blue-400" />
-                  <Spinner class="text-emerald-400" aria-label="Loading content" />
+                  <Spinner />
+                  <Spinner aria-label="Loading content" />
                 </div>
                 <BackgroundCard>
                   <Loading message="Loading workspace preferences…" />
@@ -318,7 +322,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                     </div>
                   </div>
                 </BackgroundCard>
-                <EmptyState icon={inventory} title="No records yet" message="Create your first inventory movement to populate this list." class="rounded-lg border border-dashed border-gray-300 p-12 dark:border-gray-700" />
+                <EmptyState icon={inventory} title="No records yet" message="Create your first inventory movement to populate this list." />
               </ShowcaseSection>
 
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-table" sectionTitle="Table and pagination">
@@ -354,15 +358,94 @@ export const ShowcaseApplication = (): JSX.Element => {
                         </For>
                         <TableRow verticalAlign="top">
                           <TableCell>Notes row (top aligned)</TableCell>
-                          <TableCell colSpan={2} class="text-gray-600 dark:text-gray-500">
-                            Use verticalAlign=&quot;top&quot; when a row mixes chips with multi-line copy.
-                          </TableCell>
+                          <TableCell colSpan={2}>Use verticalAlign=&quot;top&quot; when a row mixes chips with multi-line copy.</TableCell>
                         </TableRow>
                       </TableBody>
                     </Table>
                     <TablePagination limit={tablePagination().limit} offset={tablePagination().offset} currentPageCount={tableRows.length} totalCount={120} onChange={setTablePagination} />
                   </div>
                 </BackgroundCard>
+              </ShowcaseSection>
+            </ShowcaseCategory>
+
+            <ShowcaseCategory categoryTitle="Cards">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-data-card" sectionTitle="DataCard" sectionDescription="Clickable or static card surface. Active state highlights the selected card.">
+                <div class="grid gap-3 sm:grid-cols-3">
+                  <DataCard
+                    clickable
+                    active={activeDataCard() === 0}
+                    onClick={() => {
+                      setActiveDataCard(0);
+                    }}
+                  >
+                    <div class="space-y-1">
+                      <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">North warehouse</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">Active · ₹12,450</div>
+                    </div>
+                  </DataCard>
+                  <DataCard
+                    clickable
+                    active={activeDataCard() === 1}
+                    onClick={() => {
+                      setActiveDataCard(1);
+                    }}
+                  >
+                    <div class="space-y-1">
+                      <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">South warehouse</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">Paused · ₹8,120</div>
+                    </div>
+                  </DataCard>
+                  <DataCard>
+                    <div class="space-y-1">
+                      <div class="text-sm font-semibold text-gray-900 dark:text-gray-100">Static card</div>
+                      <div class="text-xs text-gray-500 dark:text-gray-400">Non-interactive surface</div>
+                    </div>
+                  </DataCard>
+                </div>
+              </ShowcaseSection>
+            </ShowcaseCategory>
+
+            <ShowcaseCategory categoryTitle="Typography and layout">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-text" sectionTitle="Text" sectionDescription="Five size steps with semantic color and weight options. Text accepts a leading or trailing icon.">
+                <div class="space-y-4">
+                  <Text size="0">Display — size 0 (bold)</Text>
+                  <Text size="1">Heading — size 1 (semibold)</Text>
+                  <Text size="2">Body — size 2, default weight medium</Text>
+                  <Text size="3">Small — size 3</Text>
+                  <Text size="4">Caption — size 4</Text>
+                </div>
+                <div class="flex flex-wrap gap-4">
+                  <Text color="primary">Primary</Text>
+                  <Text color="secondary">Secondary</Text>
+                  <Text color="muted">Muted</Text>
+                  <Text color="success">Success</Text>
+                  <Text color="warning">Warning</Text>
+                  <Text color="danger">Danger</Text>
+                  <Text color="info">Info</Text>
+                </div>
+                <div class="flex flex-wrap gap-4">
+                  <Text weight="thin">Thin</Text>
+                  <Text weight="normal">Normal</Text>
+                  <Text weight="medium">Medium</Text>
+                  <Text weight="semibold">Semibold</Text>
+                  <Text weight="bold">Bold</Text>
+                </div>
+                <div class="flex flex-wrap gap-4">
+                  <Text italic>Italic text</Text>
+                  <Text underline>Underlined text</Text>
+                  <Text opacity={50}>50% opacity</Text>
+                </div>
+              </ShowcaseSection>
+
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-divider" sectionTitle="Divider and SectionHeading" sectionDescription="Use Divider to separate content regions and SectionHeading for labelled subsections.">
+                <div class="space-y-4">
+                  <SectionHeading>Section heading example</SectionHeading>
+                  <Divider />
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Content below the divider. Use multiple SectionHeading + Divider pairs inside a card to create structured forms or detail panels.</p>
+                  <Divider />
+                  <SectionHeading>Another section</SectionHeading>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">Second section body text.</p>
+                </div>
               </ShowcaseSection>
             </ShowcaseCategory>
 
@@ -573,13 +656,6 @@ export const ShowcaseApplication = (): JSX.Element => {
                   <Field label="Icon-only trigger" for="showcase-dropdown-icon">
                     <Dropdown options={numericOptions()} value={iconTriggerDropdownValue()} onChange={setIconTriggerDropdownValue}>
                       <DropdownIconTrigger id="showcase-dropdown-icon" icon={ellipsisVertical} aria-label="Open numeric menu" />
-                    </Dropdown>
-                  </Field>
-                  <Field label="Custom trigger classes" for="showcase-dropdown-custom-classes" hint="Text triggers use outline styling; adjust appearance with class.">
-                    <Dropdown options={dropdownOptions()} value={dropdownValue()} onChange={setDropdownValue}>
-                      <DropdownTrigger id="showcase-dropdown-custom-classes" class="border-transparent bg-transparent text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800/80" icon={tag}>
-                        <DropdownValue>{dropdownValue() ?? "Tagged fruit"}</DropdownValue>
-                      </DropdownTrigger>
                     </Dropdown>
                   </Field>
                   <Field label="Disabled menu" for="showcase-dropdown-disabled">

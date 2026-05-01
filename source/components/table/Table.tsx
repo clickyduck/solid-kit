@@ -12,8 +12,10 @@ const TABLE_MIN_WIDTH = "min-w-[640px]";
 export const Table = (properties: ComponentProps<"table">) => {
   const [local, rest] = splitProps(properties, ["class"]);
   return (
-    <div class="relative w-full overflow-x-auto">
-      <table class={mergeClasses("w-full table-auto text-left text-gray-600 dark:text-gray-400", TABLE_BODY_TEXT_CLASSES, TABLE_MIN_WIDTH, local.class)} {...rest} />
+    <div class="relative w-full overflow-hidden rounded-2xl border border-gray-200 bg-white text-gray-900 dark:border-gray-800 dark:bg-gray-800/40 dark:text-gray-100">
+      <div class="overflow-x-auto">
+        <table class={mergeClasses("w-full table-auto text-left", TABLE_BODY_TEXT_CLASSES, TABLE_MIN_WIDTH, local.class)} {...rest} />
+      </div>
     </div>
   );
 };
@@ -23,7 +25,7 @@ export const Table = (properties: ComponentProps<"table">) => {
  */
 export const TableHeader = (properties: ComponentProps<"thead">) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return <thead class={mergeClasses("border-b border-gray-200 bg-gray-50 font-medium tracking-wide text-gray-500 uppercase dark:border-gray-700 dark:bg-gray-900/60", TABLE_HEADER_LABEL_CLASSES, local.class)} {...rest} />;
+  return <thead class={mergeClasses("border-b border-gray-200 bg-gray-50 font-medium tracking-wide text-gray-500 uppercase dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-400", TABLE_HEADER_LABEL_CLASSES, local.class)} {...rest} />;
 };
 
 /**
@@ -31,7 +33,7 @@ export const TableHeader = (properties: ComponentProps<"thead">) => {
  */
 export const TableBody = (properties: ComponentProps<"tbody">) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return <tbody class={mergeClasses("divide-y divide-gray-100 dark:divide-gray-800/70", local.class)} {...rest} />;
+  return <tbody class={mergeClasses("divide-y divide-gray-100 dark:divide-gray-700/40", local.class)} {...rest} />;
 };
 
 /**
@@ -39,7 +41,7 @@ export const TableBody = (properties: ComponentProps<"tbody">) => {
  */
 export const TableFooter = (properties: ComponentProps<"tfoot">) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return <tfoot class={mergeClasses("border-t border-gray-200 bg-gray-50 font-medium tracking-wide text-gray-500 dark:border-gray-700 dark:bg-gray-900/60", TABLE_HEADER_LABEL_CLASSES, local.class)} {...rest} />;
+  return <tfoot class={mergeClasses("border-t border-gray-200 bg-gray-50 font-medium tracking-wide text-gray-500 dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-400", TABLE_HEADER_LABEL_CLASSES, local.class)} {...rest} />;
 };
 
 type TableRowProperties = ComponentProps<"tr"> & {
@@ -52,7 +54,7 @@ type TableRowProperties = ComponentProps<"tr"> & {
  * Table row. Adds pointer cursor, hover highlight, and keyboard activation when clickable=true.
  */
 export const TableRow = (properties: TableRowProperties) => {
-  const [local, rest] = splitProps(properties, ["class", "clickable", "active", "verticalAlign"]);
+  const [local, rest] = splitProps(properties, ["clickable", "active", "verticalAlign", "class"]);
   const clickable = (): boolean => {
     return local.clickable === true;
   };
@@ -96,10 +98,10 @@ export const TableRow = (properties: TableRowProperties) => {
     <tr
       tabIndex={clickable() && typeof rest.onClick === "function" ? 0 : undefined}
       class={mergeClasses(
-        "bg-transparent transition-colors duration-100 dark:bg-gray-900/30",
+        "bg-transparent transition-colors duration-100",
         resolvedVerticalAlign() === "top" ? "align-top" : "align-middle",
-        clickable() ? "cursor-pointer hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:hover:bg-gray-800/50" : "",
-        isActive() ? "bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-200 dark:hover:bg-blue-500/20" : "",
+        clickable() ? "cursor-pointer hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:hover:bg-gray-700/25" : "",
+        isActive() ? "bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20" : "",
         local.class
       )}
       {...rest}
@@ -112,7 +114,7 @@ export const TableRow = (properties: TableRowProperties) => {
  * Table header cell.
  */
 export const TableHead = (properties: ComponentProps<"th"> & { align?: "left" | "right" | "center"; monospace?: boolean }) => {
-  const [local, rest] = splitProps(properties, ["class", "align", "monospace"]);
+  const [local, rest] = splitProps(properties, ["align", "monospace", "class"]);
   const resolvedAlign = (): "left" | "right" | "center" => {
     return local.align ?? "left";
   };
@@ -132,7 +134,7 @@ export const TableHead = (properties: ComponentProps<"th"> & { align?: "left" | 
  * Table data cell.
  */
 export const TableCell = (properties: ComponentProps<"td"> & { align?: "left" | "right" | "center"; monospace?: boolean }) => {
-  const [local, rest] = splitProps(properties, ["class", "align", "monospace"]);
+  const [local, rest] = splitProps(properties, ["align", "monospace", "class"]);
   const resolvedAlign = (): "left" | "right" | "center" => {
     return local.align ?? "left";
   };
@@ -155,7 +157,6 @@ type TablePaginationProperties = {
   totalCount?: number;
   onChange: (next: { limit: number; offset: number }) => void;
   limitOptions?: number[];
-  class?: string;
 };
 
 const coerceLimitOption = (value: number): number => {
@@ -215,16 +216,9 @@ export const TablePagination = (properties: TablePaginationProperties) => {
   };
 
   return (
-    <div
-      class={mergeClasses(
-        "flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 bg-gray-50 text-gray-600 dark:border-gray-700 dark:bg-gray-900/40 dark:text-gray-400",
-        TABLE_PAGINATION_BAR_CLASSES,
-        TABLE_BODY_TEXT_CLASSES,
-        properties.class
-      )}
-    >
+    <div class={mergeClasses("flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 bg-gray-50 text-gray-600 dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-400", TABLE_PAGINATION_BAR_CLASSES, TABLE_BODY_TEXT_CLASSES)}>
       <div class="flex items-center gap-2">
-        <span class="font-medium text-gray-600 dark:text-gray-500">Rows per page</span>
+        <span class="font-medium text-gray-500 dark:text-gray-400">Rows per page</span>
         <Dropdown
           options={limitOptionValues()}
           value={selectedLimitValue()}
@@ -239,7 +233,7 @@ export const TablePagination = (properties: TablePaginationProperties) => {
           menuFullWidth={false}
           usePortal={false}
         >
-          <DropdownTrigger class="w-24 border-gray-300 bg-white text-gray-900 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-950/50 dark:text-gray-200 dark:hover:bg-gray-800">
+          <DropdownTrigger>
             <DropdownValue>{selectedLimitValue()}</DropdownValue>
           </DropdownTrigger>
         </Dropdown>
@@ -247,13 +241,13 @@ export const TablePagination = (properties: TablePaginationProperties) => {
 
       <div class="flex items-center gap-2 md:gap-3">
         <Show when={properties.currentPageCount > 0}>
-          <span class={mergeClasses("px-1 font-medium tracking-wide text-gray-600 uppercase dark:text-gray-500", TABLE_BODY_TEXT_CLASSES)}>Page {currentPage()}</span>
+          <span class={mergeClasses("px-1 font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400", TABLE_BODY_TEXT_CLASSES)}>Page {currentPage()}</span>
         </Show>
         <div class="flex items-center gap-1.5">
           <IconButton
             icon={arrowLeft}
             variant="outline"
-            class="border-gray-300 bg-white shadow-none dark:border-gray-700 dark:bg-gray-950/40"
+            class="border-gray-300 bg-white shadow-none dark:border-gray-600/60 dark:bg-gray-700/30"
             disabled={isPreviousDisabled()}
             aria-label="Previous page"
             onClick={() => {
@@ -264,7 +258,7 @@ export const TablePagination = (properties: TablePaginationProperties) => {
           <IconButton
             icon={arrowRight}
             variant="outline"
-            class="border-gray-300 bg-white shadow-none dark:border-gray-700 dark:bg-gray-950/40"
+            class="border-gray-300 bg-white shadow-none dark:border-gray-600/60 dark:bg-gray-700/30"
             disabled={isNextDisabled()}
             aria-label="Next page"
             onClick={() => {

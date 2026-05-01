@@ -1,10 +1,10 @@
-import { mergeClasses } from "@/utilities/mergeClasses";
+import { mergeClasses } from "@/utilities";
 import type { Component, JSX, ParentComponent } from "solid-js";
 import { Show } from "solid-js";
 
 type PageLayoutProperties = {
-  class?: string;
   children: JSX.Element;
+  class?: string;
 };
 
 /**
@@ -25,6 +25,7 @@ type PageHeaderProperties = {
   caption?: string;
   back?: JSX.Element;
   sidebuttons?: JSX.Element;
+  class?: string;
 };
 
 /**
@@ -36,7 +37,7 @@ export const PageHeader: Component<PageHeaderProperties> = (properties) => {
   }
 
   return (
-    <div class="flex flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-6">
+    <div class={mergeClasses("flex flex-col gap-4 md:flex-row md:flex-wrap md:items-start md:justify-between md:gap-6", properties.class)}>
       <div class="min-w-0 flex-1">
         <Show when={properties.back}>
           <div class="mb-2">{properties.back}</div>
@@ -57,6 +58,7 @@ type PageSectionProperties = {
   title?: string;
   caption?: string;
   sidebuttons?: JSX.Element;
+  class?: string;
 };
 
 /**
@@ -64,7 +66,7 @@ type PageSectionProperties = {
  */
 export const PageSection: ParentComponent<PageSectionProperties> = (properties) => {
   return (
-    <section class="space-y-4">
+    <section class={mergeClasses("space-y-4", properties.class)}>
       <Show when={properties.title || properties.caption || properties.sidebuttons}>
         <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
           <div class="min-w-0 flex-1">

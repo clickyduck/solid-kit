@@ -13,7 +13,7 @@ type EmptyStateProperties = {
  */
 export const EmptyState = (properties: EmptyStateProperties) => {
   return (
-    <div class={mergeClasses("flex w-full flex-col items-center justify-center text-center", properties.class ?? "p-16")}>
+    <div class={mergeClasses("flex w-full flex-col items-center justify-center p-16 text-center", properties.class)}>
       <Icon icon={properties.icon} width={52} height={52} class="mb-5 shrink-0 text-gray-400 dark:text-gray-500" aria-hidden="true" />
       <p class="mb-2 w-full text-sm font-medium text-gray-700 dark:text-gray-200">{properties.title}</p>
       <p class="w-full text-sm text-gray-500 dark:text-gray-400">{properties.message}</p>

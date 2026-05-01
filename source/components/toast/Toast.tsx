@@ -65,11 +65,11 @@ const getIconContainerClasses = (variant: ToastData["variant"]): string => {
  * Single toast item with icon, title, description and close button.
  */
 export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) => {
-  const [local, rest] = splitProps(properties, ["toast"]);
+  const [local, rest] = splitProps(properties, ["toast", "class"]);
   const toast = () => local.toast;
 
   return (
-    <div class="flex w-full max-w-sm items-center rounded-lg border border-gray-200 bg-white/95 p-4 text-gray-600 shadow-lg backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-300" role="alert" {...rest}>
+    <div class={mergeClasses("flex w-full max-w-sm items-center rounded-lg border border-gray-200 bg-white/95 p-4 text-gray-600 shadow-lg backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-300", local.class)} role="alert" {...rest}>
       <div class={mergeClasses("inline-flex h-7 w-7 shrink-0 items-center justify-center rounded", getIconContainerClasses(toast().variant))}>
         <Switch
           fallback={

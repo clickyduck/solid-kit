@@ -9,6 +9,7 @@ A SolidJS component library built with Tailwind CSS and Flowbite-style patterns,
 - [BackgroundCard](#backgroundcard)
 - [DataCard](#datacard)
 - [Dialog](#dialog)
+- [Divider](#divider)
 - [Dropdown](#dropdown)
 - [EmptyState](#emptystate)
 - [Field](#field)
@@ -26,6 +27,7 @@ A SolidJS component library built with Tailwind CSS and Flowbite-style patterns,
 - [Spinner](#spinner)
 - [Table](#table)
 - [Tabs](#tabs)
+- [Text](#text)
 - [Textarea](#textarea)
 - [Toast](#toast)
 - [ToggleGroup](#togglegroup)
@@ -93,6 +95,10 @@ import { Button } from "@clickyduck/solid-kit";
 Simple fixed-style card shell for content panels.
 
 **Exports:** `BackgroundCard`
+
+| Prop    | Type     | Description       |
+| ------- | -------- | ----------------- |
+| `class` | `string` | Extra CSS classes |
 
 ```tsx
 import { BackgroundCard } from "@clickyduck/solid-kit";
@@ -166,6 +172,22 @@ import { Dialog, DialogBody, DialogContent, DialogFooter, DialogHeader, DialogTi
     </DialogFooter>
   </DialogContent>
 </Dialog>;
+```
+
+---
+
+### Divider
+
+Horizontal rule for separating content regions.
+
+**Exports:** `Divider`
+
+Extends all native `<div>` HTML attributes plus `class`.
+
+```tsx
+import { Divider } from "@clickyduck/solid-kit";
+
+<Divider />;
 ```
 
 ---
@@ -626,16 +648,13 @@ Accessible tab bar with ARIA roles and underline indicator.
 
 **`Tabs` props:**
 
-| Prop             | Type                                 | Description                                              |
-| ---------------- | ------------------------------------ | -------------------------------------------------------- |
-| `tabDefinitions` | `readonly TabDefinition<TabValue>[]` | Tab configuration (required)                             |
-| `activeTabValue` | `Accessor<TabValue>`                 | Currently active tab (required)                          |
-| `onTabSelect`    | `(value: TabValue) => void`          | Called when a tab is clicked (required)                  |
-| `isDisabled`     | `Accessor<boolean>`                  | Disables all tabs                                        |
-| `class`          | `string`                             | Extra classes on the root element                        |
-| `tabListClass`   | `string`                             | Extra classes on the `<ul>` tab list                     |
-| `listItemClass`  | `string`                             | Extra classes on each `<li>` (default: `flex-1 basis-0`) |
-| `tabButtonClass` | `string`                             | Extra classes on each tab `<button>`                     |
+| Prop             | Type                                 | Description                             |
+| ---------------- | ------------------------------------ | --------------------------------------- |
+| `tabDefinitions` | `readonly TabDefinition<TabValue>[]` | Tab configuration (required)            |
+| `activeTabValue` | `Accessor<TabValue>`                 | Currently active tab (required)         |
+| `onTabSelect`    | `(value: TabValue) => void`          | Called when a tab is clicked (required) |
+| `isDisabled`     | `Accessor<boolean>`                  | Disables all tabs                       |
+| `class`          | `string`                             | Extra classes on the root element       |
 
 ```tsx
 import { Tabs } from "@clickyduck/solid-kit";
@@ -651,6 +670,37 @@ const [tab, setTab] = createSignal("overview");
   activeTabValue={tab}
   onTabSelect={setTab}
 />;
+```
+
+---
+
+### Text
+
+Typographic component with five size steps and semantic color, weight, style, and icon options.
+
+**Exports:** `Text`, `TextSize`, `TextProperties`, `TextColor`, `TextWeight`
+
+`Text` wraps `createTypography`. All sizes default to `"default"` color.
+
+**`TextSize` values:** `"0"` (4xl, bold), `"1"` (2xl, semibold), `"2"` (base, medium — default), `"3"` (sm, medium), `"4"` (xs, medium).
+
+| Prop           | Type                                                                                                            | Default      | Description                      |
+| -------------- | --------------------------------------------------------------------------------------------------------------- | ------------ | -------------------------------- |
+| `size`         | `"0" \| "1" \| "2" \| "3" \| "4"`                                                                               | `"2"`        | Size step                        |
+| `color`        | `"default" \| "inherit" \| "muted" \| "primary" \| "secondary" \| "success" \| "warning" \| "danger" \| "info"` | `"default"`  | Semantic color                   |
+| `weight`       | `"thin" \| "normal" \| "medium" \| "semibold" \| "bold"`                                                        | size default | Font weight                      |
+| `italic`       | `boolean`                                                                                                       | `false`      | Italic style                     |
+| `underline`    | `boolean`                                                                                                       | `false`      | Underline decoration             |
+| `opacity`      | `number`                                                                                                        | —            | 0–100 percent opacity            |
+| `icon`         | `JSX.Element`                                                                                                   | —            | Leading or trailing icon element |
+| `iconPosition` | `"start" \| "end"`                                                                                              | `"start"`    | Icon placement                   |
+| `class`        | `string`                                                                                                        | —            | Extra CSS classes                |
+
+```tsx
+import { Text } from "@clickyduck/solid-kit";
+
+<Text size="1" color="primary">Dashboard</Text>
+<Text size="3" color="muted" weight="normal">Last updated 2 hours ago</Text>
 ```
 
 ---
