@@ -452,8 +452,6 @@ const DropdownContent = (properties: DropdownContentProperties) => {
 
   const useDocumentPortalResolved = (): boolean => local.useDocumentPortal === true;
 
-  const documentPortalPlacementResolved = (): "top" | "bottom" => local.documentPortalPlacement ?? "bottom";
-
   const xDirectionResolved = (): "left" | "right" => local.xDirection ?? "right";
 
   const yDirectionResolved = (): "up" | "down" => local.yDirection ?? "down";
