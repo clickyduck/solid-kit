@@ -5,7 +5,7 @@ import { Show, splitProps } from "solid-js";
 
 type ButtonVariant = "solid" | "outline" | "ghost" | "link";
 
-type ButtonProps = ComponentProps<"button"> & {
+type ButtonProps = Omit<ComponentProps<"button">, "class"> & {
   variant?: ButtonVariant;
   class?: string;
   icon?: IconComponent;

@@ -6,6 +6,7 @@ export type TextSize = "0" | "1" | "2" | "3" | "4";
 
 export type TextProperties = TypographyBaseProps & {
   size?: TextSize;
+  maxLength?: number;
 };
 
 const SIZE_CLASSES: Record<TextSize, string> = {
@@ -24,9 +25,20 @@ const Text4Impl = createTypography({ sizeClasses: SIZE_CLASSES["4"], defaultWeig
 
 export const Text: ParentComponent<TextProperties> = (properties) => {
   const size = (): TextSize => properties.size ?? "2";
-  if (size() === "0") return <Text0Impl {...properties} />;
-  if (size() === "1") return <Text1Impl {...properties} />;
-  if (size() === "4") return <Text4Impl {...properties} />;
-  if (size() === "3") return <Text3Impl {...properties} />;
-  return <Text2Impl {...properties} />;
+
+  const resolvedChildren = () => {
+    const { maxLength, children } = properties;
+    if (maxLength !== undefined && typeof children === "string" && children.length > maxLength) {
+      return children.slice(0, maxLength) + "…";
+    }
+    return children;
+  };
+
+  const props = () => ({ ...properties, children: resolvedChildren() });
+
+  if (size() === "0") return <Text0Impl {...props()} />;
+  if (size() === "1") return <Text1Impl {...props()} />;
+  if (size() === "4") return <Text4Impl {...props()} />;
+  if (size() === "3") return <Text3Impl {...props()} />;
+  return <Text2Impl {...props()} />;
 };

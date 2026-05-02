@@ -6,6 +6,7 @@ import { splitProps } from "solid-js";
 let uploadIdCounter = 0;
 
 export type UploadProperties = Omit<JSX.InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "onInput" | "onChange" | "class"> & {
+  class?: string;
   selectedFiles: File[];
   onSelectedFilesChange: (selectedFiles: File[]) => void;
 };
@@ -19,7 +20,7 @@ const getFileCountLabel = (files: File[]): string => {
 };
 
 export const Upload = (properties: UploadProperties) => {
-  const [local, rest] = splitProps(properties, ["selectedFiles", "onSelectedFilesChange", "id", "disabled", "multiple", "accept"]);
+  const [local, rest] = splitProps(properties, ["class", "selectedFiles", "onSelectedFilesChange", "id", "disabled", "multiple", "accept"]);
   const resolvedId = local.id ?? `upload-${uploadIdCounter++}`;
 
   const handleFileSelection: JSX.EventHandler<HTMLInputElement, Event> = (event) => {
@@ -32,7 +33,7 @@ export const Upload = (properties: UploadProperties) => {
   };
 
   return (
-    <div class="w-full has-focus-visible:[&_label]:border-blue-500 dark:has-focus-visible:[&_label]:border-blue-400">
+    <div class={mergeClasses("w-full has-focus-visible:[&_label]:border-blue-500 dark:has-focus-visible:[&_label]:border-blue-400", local.class)}>
       <input id={resolvedId} type="file" class="sr-only" disabled={local.disabled} multiple={local.multiple} accept={local.accept} onChange={handleFileSelection} {...rest} />
       <label
         for={resolvedId}

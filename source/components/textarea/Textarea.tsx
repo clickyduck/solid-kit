@@ -12,6 +12,7 @@ const RESIZE_CLASS: Record<ResizeOption, string> = {
 };
 
 type TextareaProperties = Omit<ComponentProps<"textarea">, "class"> & {
+  class?: string;
   resize?: ResizeOption;
   autoGrow?: boolean;
   minRows?: number;
@@ -32,7 +33,7 @@ const adjustAutoGrowHeight = (element: HTMLTextAreaElement, minRows: number, max
  * Textarea matching Input visual style. Supports resize behaviour and auto-grow height.
  */
 export const Textarea = (properties: TextareaProperties) => {
-  const [local, rest] = splitProps(properties, ["resize", "autoGrow", "minRows", "maxRows", "ref", "onInput", "rows"]);
+  const [local, rest] = splitProps(properties, ["class", "resize", "autoGrow", "minRows", "maxRows", "ref", "onInput", "rows"]);
   const resizeClass = () => (local.resize !== undefined ? RESIZE_CLASS[local.resize] : "");
   const minRows = () => local.minRows ?? 1;
   const maxRows = () => local.maxRows ?? 8;
@@ -71,7 +72,8 @@ export const Textarea = (properties: TextareaProperties) => {
         "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-400 transition-colors duration-150 focus:border-blue-500 focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400",
         FORM_CONTROL_TEXTAREA_SIZE_CLASSES,
         local.autoGrow && "overflow-hidden",
-        resizeClass()
+        resizeClass(),
+        local.class
       )}
       onInput={local.autoGrow ? handleInput : local.onInput}
       {...rest}

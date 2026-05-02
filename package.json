@@ -27,9 +27,12 @@
     "lint": "tsc --noEmit && npx eslint . --max-warnings=0",
     "build": "node --eval \"import('fs').then(({ rmSync }) => { rmSync('public', { recursive: true, force: true }); console.log('Cleaned public/'); })\" && vite build",
     "typecheck": "tsc --noEmit",
+    "patch": "npm version patch",
+    "minor": "npm version minor",
+    "major": "npm version major",
     "prepublishOnly": "npm run typecheck && npm run build",
     "postversion": "git push --follow-tags",
-    "release": "dotenv -e .env -- npm publish"
+    "release": "npm run format && npm run lint && dotenv -e .env -- npm publish"
   },
   "peerDependencies": {
     "solid-js": "^1.9.0",

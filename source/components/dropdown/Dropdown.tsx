@@ -62,6 +62,7 @@ type DropdownRootProperties = {
   searchable?: boolean;
   itemComponent?: (props: { item: { rawValue: string } }) => JSX.Element;
   children: JSX.Element;
+  class?: string;
   menuClass?: string;
   menuFullWidth?: boolean;
   usePortal?: boolean;
@@ -145,7 +146,7 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
  * Dropdown root. Provides options, value, onChange and open state via context.
  */
 const Dropdown = (properties: DropdownRootProperties) => {
-  const [local] = splitProps(properties, ["options", "value", "onChange", "disabled", "searchable", "itemComponent", "children", "menuClass", "menuFullWidth", "usePortal", "initialOpen"]);
+  const [local] = splitProps(properties, ["options", "value", "onChange", "disabled", "searchable", "itemComponent", "children", "class", "menuClass", "menuFullWidth", "usePortal", "initialOpen"]);
   const [selectedValue, setSelectedValue] = createSignal(properties.value);
   const [dropdownOpen, setDropdownOpen] = createSignal(local.initialOpen ?? false);
   const [searchQuery, setSearchQuery] = createSignal("");
@@ -278,7 +279,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
         ref={(element) => {
           dropdownContainerElement = element;
         }}
-        class="relative"
+        class={mergeClasses("relative", local.class)}
       >
         {local.children}
         <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && !properties.usePortal}>
@@ -309,8 +310,9 @@ const Dropdown = (properties: DropdownRootProperties) => {
 /**
  * Displays the selected value. Use inside Dropdown.
  */
-const DropdownValue: ParentComponent<Omit<ComponentProps<"div">, "class">> = (properties) => {
-  return <div class={mergeClasses("min-w-0 flex-1 truncate text-left", FORM_CONTROL_TEXT_CLASS_BY_SIZE)} {...properties} />;
+const DropdownValue: ParentComponent<ComponentProps<"div">> = (properties) => {
+  const [local, rest] = splitProps(properties, ["class"]);
+  return <div class={mergeClasses("min-w-0 flex-1 truncate text-left", FORM_CONTROL_TEXT_CLASS_BY_SIZE, local.class)} {...rest} />;
 };
 
 type DropdownTriggerWithLabel = Omit<ComponentProps<typeof Button>, "variant" | "iconPosition" | "class"> & {
@@ -425,6 +427,7 @@ const DropdownIconTrigger = (properties: DropdownIconTriggerProperties) => {
 };
 
 type DropdownContentProperties = Omit<ComponentProps<"div">, "class"> & {
+  class?: string;
   useDocumentPortal?: boolean;
   documentPortalPlacement?: "top" | "bottom";
   xDirection?: "left" | "right";
@@ -439,7 +442,7 @@ type DropdownContentProperties = Omit<ComponentProps<"div">, "class"> & {
 const DropdownContent = (properties: DropdownContentProperties) => {
   const context = useDropdownContext();
 
-  const [local, rest] = splitProps(properties, ["children", "useDocumentPortal", "documentPortalPlacement", "xDirection", "yDirection", "wrapChildrenInList"]);
+  const [local, rest] = splitProps(properties, ["class", "children", "useDocumentPortal", "documentPortalPlacement", "xDirection", "yDirection", "wrapChildrenInList"]);
   const [portalMenuElement, setPortalMenuElement] = createSignal<HTMLDivElement | undefined>();
 
   const shouldWrapChildrenInList = (): boolean => local.wrapChildrenInList !== false;
@@ -527,7 +530,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
   return (
     <>
       <Show when={context.dropdownOpen() && !useDocumentPortalResolved()}>
-        <div class={mergeClasses(nonPortalPositioningClass(), contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES)} {...rest}>
+        <div class={mergeClasses(nonPortalPositioningClass(), contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES, local.class)} {...rest}>
           {searchField()}
           <Show when={shouldWrapChildrenInList()} fallback={<div class={panelClass()}>{local.children}</div>}>
             <ul class={listClass()}>{local.children}</ul>
@@ -540,7 +543,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
             ref={(element) => {
               setPortalMenuElement(element === null ? undefined : element);
             }}
-            class={mergeClasses(contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES)}
+            class={mergeClasses(contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES, local.class)}
             {...rest}
           >
             {searchField()}
@@ -555,6 +558,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
 };
 
 type DropdownItemProperties = Omit<ComponentProps<"a">, "class"> & {
+  class?: string;
   item?: { rawValue: string };
   disabled?: boolean;
   selected?: boolean;
@@ -567,7 +571,7 @@ type DropdownItemProperties = Omit<ComponentProps<"a">, "class"> & {
 const DropdownItem = (properties: DropdownItemProperties) => {
   const context = useDropdownContext();
 
-  const [local, rest] = splitProps(properties, ["item", "children", "onClick", "disabled", "selected", "closeOnSelect"]);
+  const [local, rest] = splitProps(properties, ["class", "item", "children", "onClick", "disabled", "selected", "closeOnSelect"]);
 
   const isSelected = () => {
     if (typeof local.selected === "boolean") {
@@ -596,7 +600,7 @@ const DropdownItem = (properties: DropdownItemProperties) => {
       <li>
         <a
           href="#"
-          class={mergeClasses(itemClass(), local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : "", isSelected() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "")}
+          class={mergeClasses(itemClass(), local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : "", isSelected() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "", local.class)}
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
