@@ -444,23 +444,24 @@ Collapsible sidebar navigation panel.
 
 **`LeftPanelLayout` props:**
 
-| Prop                  | Type                                    | Default     | Description                                                                                           |
-| --------------------- | --------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
-| `collapsed`           | `boolean`                               | —           | When `true`, shows icon-only mode (required)                                                          |
-| `navigationDocument`  | `LeftPanelLayoutNavigationDocumentJson` | —           | Navigation tree configuration (required)                                                              |
-| `onOpenChange`        | `(isPanelOpen: boolean) => void`        | —           | Fires when open state changes; use `false` to react to close (nav link, swipe, or parent `collapsed`) |
-| `scrim`               | `boolean`                               | `true`      | Show backdrop scrim on mobile when panel is open                                                      |
-| `scrimZIndexClass`    | `string`                                | —           | Tailwind `z-*` class for the scrim                                                                    |
-| `panelZIndexClass`    | `string`                                | —           | Tailwind `z-*` class for the panel                                                                    |
-| `expandedWidthClass`  | `string`                                | `"md:w-64"` | Tailwind width class for the expanded panel                                                           |
-| `collapsedWidthClass` | `string`                                | `"md:w-16"` | Tailwind width class for the icon-only panel                                                          |
-| `anchorComponent`     | `Component<Record<string, unknown>>`    | —           | Custom link/anchor component replacing the default `<a>`                                              |
+| Prop                  | Type                                    | Default                                 | Description                                                                                           |
+| --------------------- | --------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `collapsed`           | `boolean`                               | `navigationDocument.collapsed ?? false` | When `true`, shows icon-only mode; omit to defer to the JSON document's `collapsed` field             |
+| `navigationDocument`  | `LeftPanelLayoutNavigationDocumentJson` | —                                       | Navigation tree configuration (required)                                                              |
+| `onOpenChange`        | `(isPanelOpen: boolean) => void`        | —                                       | Fires when open state changes; use `false` to react to close (nav link, swipe, or parent `collapsed`) |
+| `scrim`               | `boolean`                               | `true`                                  | Show backdrop scrim on mobile when panel is open                                                      |
+| `scrimZIndexClass`    | `string`                                | —                                       | Tailwind `z-*` class for the scrim                                                                    |
+| `panelZIndexClass`    | `string`                                | —                                       | Tailwind `z-*` class for the panel                                                                    |
+| `expandedWidthClass`  | `string`                                | `"md:w-64"`                             | Tailwind width class for the expanded panel                                                           |
+| `collapsedWidthClass` | `string`                                | `"md:w-16"`                             | Tailwind width class for the icon-only panel                                                          |
+| `anchorComponent`     | `Component<Record<string, unknown>>`    | —                                       | Custom link/anchor component replacing the default `<a>`                                              |
 
 **`LeftPanelLayoutNavigationDocumentJson`** — root navigation config:
 
 ```ts
 {
-  groups: LeftPanelLayoutNavigationGroupJson[]
+  groups: LeftPanelLayoutNavigationGroupJson[];
+  collapsed?: boolean; // default: false
 }
 ```
 

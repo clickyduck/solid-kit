@@ -58,6 +58,8 @@ export type LeftPanelLayoutNavigationGroupJson = LeftPanelNavigationGroupJson;
 /** Full navigation tree consumed by the left panel. */
 export type LeftPanelNavigationDocumentJson = {
   groups: LeftPanelNavigationGroupJson[];
+  /** When true the panel starts in icon-only (collapsed) mode. Defaults to false. */
+  collapsed?: boolean;
 };
 
 export type LeftPanelLayoutNavigationDocumentJson = LeftPanelNavigationDocumentJson;
@@ -257,7 +259,8 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
 };
 
 type LeftPanelLayoutProperties = {
-  collapsed: boolean;
+  /** When true the panel is in icon-only mode. Defaults to `navigationDocument.collapsed ?? false`. */
+  collapsed?: boolean;
   /**
    * Fires when the panel becomes open or closed. Use `false` from link tap or swipe to request closing; the parent should set `collapsed` to match.
    */
@@ -286,6 +289,7 @@ type LeftPanelLayoutProperties = {
  * On small viewports the panel is full width, fixed under the header, and stacks above the scrim so links stay usable.
  */
 export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties) => {
+  const resolvedCollapsed = (): boolean => properties.collapsed ?? properties.navigationDocument.collapsed ?? false;
   const isMobileViewport = useIsMobile();
   const [sidebarElement, setSidebarElement] = createSignal<HTMLElement | undefined>(undefined);
   const [swipeStartClientX, setSwipeStartClientX] = createSignal<number | null>(null);
@@ -303,7 +307,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
 
   return (
     <>
-      <Show when={(properties.scrim ?? true) && !properties.collapsed && isMobileViewport()}>
+      <Show when={(properties.scrim ?? true) && !resolvedCollapsed() && isMobileViewport()}>
         <div
           role="presentation"
           aria-hidden="true"
@@ -321,11 +325,11 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
         class={mergeClasses(
           "layout-left-panel flex min-h-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700/60 dark:bg-gray-950",
           isMobileViewport()
-            ? [properties.panelZIndexClass ?? "z-50", "fixed inset-x-0 bottom-0 w-full transition-transform duration-200 ease-in-out", "top-(--solid-kit-header-height,4rem)", properties.collapsed ? "-translate-x-full" : "translate-x-0"]
-            : ["static h-full transition-[width] duration-200 ease-in-out", properties.collapsed ? (properties.collapsedWidthClass ?? "w-16") : (properties.expandedWidthClass ?? "w-64")]
+            ? [properties.panelZIndexClass ?? "z-50", "fixed inset-x-0 bottom-0 w-full transition-transform duration-200 ease-in-out", "top-(--solid-kit-header-height,4rem)", resolvedCollapsed() ? "-translate-x-full" : "translate-x-0"]
+            : ["static h-full transition-[width] duration-200 ease-in-out", resolvedCollapsed() ? (properties.collapsedWidthClass ?? "w-16") : (properties.expandedWidthClass ?? "w-64")]
         )}
         style={
-          !properties.collapsed && isMobileViewport()
+          !resolvedCollapsed() && isMobileViewport()
             ? {
                 "grid-area": "left",
                 transform: `translateX(${swipeTranslationX()}px)`,
@@ -335,7 +339,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
             : { "grid-area": "left", "touch-action": "auto" }
         }
         onPointerDown={(event: PointerEvent) => {
-          if (properties.collapsed) {
+          if (resolvedCollapsed()) {
             return;
           }
           if (!isMobileViewport()) {
@@ -352,7 +356,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setIsSwipeDragging(false);
         }}
         onPointerMove={(event: PointerEvent) => {
-          if (properties.collapsed) {
+          if (resolvedCollapsed()) {
             return;
           }
           if (!isMobileViewport()) {
@@ -386,7 +390,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setSwipeTranslationX(Math.min(0, deltaX));
         }}
         onPointerUp={(event: PointerEvent) => {
-          if (properties.collapsed) {
+          if (resolvedCollapsed()) {
             return;
           }
           if (!isMobileViewport()) {
@@ -408,7 +412,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setSwipeTranslationX(0);
         }}
         onPointerCancel={(event: PointerEvent) => {
-          if (properties.collapsed) {
+          if (resolvedCollapsed()) {
             return;
           }
           if (!isMobileViewport()) {
@@ -423,7 +427,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
       >
         <div class={mergeClasses("flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-y-scroll px-3 py-4", themedScrollControlClassName)}>
           <LeftPanelNavigationBody
-            collapsed={properties.collapsed}
+            collapsed={resolvedCollapsed()}
             navigationDocument={properties.navigationDocument}
             anchorComponent={properties.anchorComponent}
             onItemClick={() => {
