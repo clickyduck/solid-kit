@@ -218,13 +218,13 @@ Accessible select-style dropdown with optional search.
 
 **`DropdownContent` extra props:**
 
-| Prop                      | Type                        | Default    | Description              |
-| ------------------------- | --------------------------- | ---------- | ------------------------ |
-| `useDocumentPortal`       | `boolean`                   | —          | Portal to document body  |
-| `documentPortalPlacement` | `"top" \| "bottom"`         | `"bottom"` | Menu opening direction   |
-| `xDirection`              | `"left" \| "right"`         | —          | Horizontal opening side  |
-| `yDirection`              | `"up" \| "down"`            | —          | Vertical opening side    |
-| `wrapChildrenInList`      | `boolean`                   | `true`     | Wrap items in `<ul>`     |
+| Prop                      | Type                | Default    | Description             |
+| ------------------------- | ------------------- | ---------- | ----------------------- |
+| `useDocumentPortal`       | `boolean`           | —          | Portal to document body |
+| `documentPortalPlacement` | `"top" \| "bottom"` | `"bottom"` | Menu opening direction  |
+| `xDirection`              | `"left" \| "right"` | —          | Horizontal opening side |
+| `yDirection`              | `"up" \| "down"`    | —          | Vertical opening side   |
+| `wrapChildrenInList`      | `boolean`           | `true`     | Wrap items in `<ul>`    |
 
 **`DropdownItem` extra props:**
 
@@ -444,17 +444,17 @@ Collapsible sidebar navigation panel.
 
 **`LeftPanelLayout` props:**
 
-| Prop                   | Type                                    | Default      | Description                                                                                           |
-| ---------------------- | --------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------- |
-| `collapsed`            | `boolean`                               | —            | When `true`, shows icon-only mode (required)                                                          |
-| `navigationDocument`   | `LeftPanelLayoutNavigationDocumentJson` | —            | Navigation tree configuration (required)                                                              |
-| `onOpenChange`         | `(isPanelOpen: boolean) => void`        | —            | Fires when open state changes; use `false` to react to close (nav link, swipe, or parent `collapsed`) |
-| `scrim`                | `boolean`                               | `true`       | Show backdrop scrim on mobile when panel is open                                                      |
-| `scrimZIndexClass`     | `string`                                | —            | Tailwind `z-*` class for the scrim                                                                    |
-| `panelZIndexClass`     | `string`                                | —            | Tailwind `z-*` class for the panel                                                                    |
-| `expandedWidthClass`   | `string`                                | `"md:w-64"`  | Tailwind width class for the expanded panel                                                           |
-| `collapsedWidthClass`  | `string`                                | `"md:w-16"`  | Tailwind width class for the icon-only panel                                                          |
-| `anchorComponent`      | `Component<Record<string, unknown>>`    | —            | Custom link/anchor component replacing the default `<a>`                                              |
+| Prop                  | Type                                    | Default     | Description                                                                                           |
+| --------------------- | --------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------- |
+| `collapsed`           | `boolean`                               | —           | When `true`, shows icon-only mode (required)                                                          |
+| `navigationDocument`  | `LeftPanelLayoutNavigationDocumentJson` | —           | Navigation tree configuration (required)                                                              |
+| `onOpenChange`        | `(isPanelOpen: boolean) => void`        | —           | Fires when open state changes; use `false` to react to close (nav link, swipe, or parent `collapsed`) |
+| `scrim`               | `boolean`                               | `true`      | Show backdrop scrim on mobile when panel is open                                                      |
+| `scrimZIndexClass`    | `string`                                | —           | Tailwind `z-*` class for the scrim                                                                    |
+| `panelZIndexClass`    | `string`                                | —           | Tailwind `z-*` class for the panel                                                                    |
+| `expandedWidthClass`  | `string`                                | `"md:w-64"` | Tailwind width class for the expanded panel                                                           |
+| `collapsedWidthClass` | `string`                                | `"md:w-16"` | Tailwind width class for the icon-only panel                                                          |
+| `anchorComponent`     | `Component<Record<string, unknown>>`    | —           | Custom link/anchor component replacing the default `<a>`                                              |
 
 **`LeftPanelLayoutNavigationDocumentJson`** — root navigation config:
 
@@ -546,23 +546,23 @@ Main application page column content wrapper.
 
 **`PageHeader` props:**
 
-| Prop          | Type          | Description                              |
-| ------------- | ------------- | ---------------------------------------- |
+| Prop          | Type          | Description                                      |
+| ------------- | ------------- | ------------------------------------------------ |
 | `title`       | `string`      | Page heading; component returns `null` if absent |
-| `caption`     | `string`      | Optional subtitle below the title       |
-| `back`        | `JSX.Element` | Back link or button rendered above the title |
-| `sidebuttons` | `JSX.Element` | Actions rendered on the right side      |
-| `class`       | `string`      | Extra CSS classes                        |
+| `caption`     | `string`      | Optional subtitle below the title                |
+| `back`        | `JSX.Element` | Back link or button rendered above the title     |
+| `sidebuttons` | `JSX.Element` | Actions rendered on the right side               |
+| `class`       | `string`      | Extra CSS classes                                |
 
 **`PageSection` props:**
 
-| Prop          | Type          | Description                             |
-| ------------- | ------------- | --------------------------------------- |
-| `title`       | `string`      | Section heading                         |
-| `caption`     | `string`      | Optional subtitle below the title      |
-| `sidebuttons` | `JSX.Element` | Actions rendered on the right side     |
-| `children`    | `JSX.Element` | Section content                        |
-| `class`       | `string`      | Extra CSS classes                       |
+| Prop          | Type          | Description                        |
+| ------------- | ------------- | ---------------------------------- |
+| `title`       | `string`      | Section heading                    |
+| `caption`     | `string`      | Optional subtitle below the title  |
+| `sidebuttons` | `JSX.Element` | Actions rendered on the right side |
+| `children`    | `JSX.Element` | Section content                    |
+| `class`       | `string`      | Extra CSS classes                  |
 
 ---
 
@@ -574,20 +574,20 @@ Responsive detail/drawer panel that slides in from the right.
 
 **`RightPanelLayout` props:**
 
-| Prop             | Type                                  | Default                                    | Description                                                                                                          |
-| ---------------- | ------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| `open`           | `boolean`                             | opens on mount                             | Controlled open state; when omitted the panel opens on mount (backwards compatible)                                  |
-| `title`          | `JSX.Element`                         | —                                          | Panel heading content (required)                                                                                     |
-| `subtitle`       | `JSX.Element`                         | —                                          | Optional secondary header line                                                                                       |
-| `headerActions`  | `JSX.Element`                         | —                                          | Extra elements in the header row                                                                                     |
-| `children`       | `JSX.Element`                         | —                                          | Scrollable body content (required)                                                                                   |
-| `footer`         | `JSX.Element`                         | —                                          | Sticky footer slot                                                                                                   |
-| `onBeginClose`   | `() => void`                          | —                                          | Called immediately when close transition begins, before `onOpenChange(false)`                                        |
-| `onOpenChange`   | `(isPanelOpen: boolean) => void`      | —                                          | `true` when the open transition runs; `false` after the close animation finishes (200ms), for unmounting with `Show` |
-| `closeAriaLabel` | `string`                              | —                                          | Accessible label for the close button (required)                                                                     |
-| `topOffset`      | `string`                              | `"var(--solid-kit-header-height, 4rem)"`   | Top offset for the mobile overlay variant                                                                            |
-| `panelProps`     | `JSX.HTMLAttributes<HTMLElement>`     | —                                          | Extra props applied to the `<aside>` element (e.g. drag/drop handlers); `class` is merged                           |
-| `variant`        | `"grid" \| "overlay"`                 | `"grid"`                                   | `grid`: sibling inside `MainLayout`; `overlay`: fixed right-panel overlay                                           |
+| Prop             | Type                              | Default                                  | Description                                                                                                          |
+| ---------------- | --------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `open`           | `boolean`                         | opens on mount                           | Controlled open state; when omitted the panel opens on mount (backwards compatible)                                  |
+| `title`          | `JSX.Element`                     | —                                        | Panel heading content (required)                                                                                     |
+| `subtitle`       | `JSX.Element`                     | —                                        | Optional secondary header line                                                                                       |
+| `headerActions`  | `JSX.Element`                     | —                                        | Extra elements in the header row                                                                                     |
+| `children`       | `JSX.Element`                     | —                                        | Scrollable body content (required)                                                                                   |
+| `footer`         | `JSX.Element`                     | —                                        | Sticky footer slot                                                                                                   |
+| `onBeginClose`   | `() => void`                      | —                                        | Called immediately when close transition begins, before `onOpenChange(false)`                                        |
+| `onOpenChange`   | `(isPanelOpen: boolean) => void`  | —                                        | `true` when the open transition runs; `false` after the close animation finishes (200ms), for unmounting with `Show` |
+| `closeAriaLabel` | `string`                          | —                                        | Accessible label for the close button (required)                                                                     |
+| `topOffset`      | `string`                          | `"var(--solid-kit-header-height, 4rem)"` | Top offset for the mobile overlay variant                                                                            |
+| `panelProps`     | `JSX.HTMLAttributes<HTMLElement>` | —                                        | Extra props applied to the `<aside>` element (e.g. drag/drop handlers); `class` is merged                            |
+| `variant`        | `"grid" \| "overlay"`             | `"grid"`                                 | `grid`: sibling inside `MainLayout`; `overlay`: fixed right-panel overlay                                            |
 
 On desktop the panel pushes the main area. On mobile it overlays full-screen with smooth entrance/exit transitions.
 
@@ -728,17 +728,17 @@ Typographic component with five size steps and semantic color, weight, style, an
 
 **`TextSize` values:** `"0"` (4xl, bold), `"1"` (2xl, semibold), `"2"` (base, medium — default), `"3"` (sm, medium), `"4"` (xs, medium).
 
-| Prop           | Type                                                                                                            | Default      | Description                      |
-| -------------- | --------------------------------------------------------------------------------------------------------------- | ------------ | -------------------------------- |
-| `size`         | `"0" \| "1" \| "2" \| "3" \| "4"`                                                                               | `"2"`        | Size step                        |
-| `color`        | `"default" \| "inherit" \| "muted" \| "primary" \| "secondary" \| "success" \| "warning" \| "danger" \| "info"` | `"default"`  | Semantic color                   |
-| `weight`       | `"thin" \| "normal" \| "medium" \| "semibold" \| "bold"`                                                        | size default | Font weight                      |
-| `italic`       | `boolean`                                                                                                       | `false`      | Italic style                     |
-| `underline`    | `boolean`                                                                                                       | `false`      | Underline decoration             |
-| `opacity`      | `number`                                                                                                        | —            | 0–100 percent opacity            |
-| `iconComponent` | `JSX.Element`                                                                                                  | —            | Leading or trailing icon element |
-| `iconPosition`  | `"start" \| "end"`                                                                                             | `"start"`    | Icon placement                   |
-| `class`        | `string`                                                                                                        | —            | Extra CSS classes                |
+| Prop            | Type                                                                                                            | Default      | Description                      |
+| --------------- | --------------------------------------------------------------------------------------------------------------- | ------------ | -------------------------------- |
+| `size`          | `"0" \| "1" \| "2" \| "3" \| "4"`                                                                               | `"2"`        | Size step                        |
+| `color`         | `"default" \| "inherit" \| "muted" \| "primary" \| "secondary" \| "success" \| "warning" \| "danger" \| "info"` | `"default"`  | Semantic color                   |
+| `weight`        | `"thin" \| "normal" \| "medium" \| "semibold" \| "bold"`                                                        | size default | Font weight                      |
+| `italic`        | `boolean`                                                                                                       | `false`      | Italic style                     |
+| `underline`     | `boolean`                                                                                                       | `false`      | Underline decoration             |
+| `opacity`       | `number`                                                                                                        | —            | 0–100 percent opacity            |
+| `iconComponent` | `JSX.Element`                                                                                                   | —            | Leading or trailing icon element |
+| `iconPosition`  | `"start" \| "end"`                                                                                              | `"start"`    | Icon placement                   |
+| `class`         | `string`                                                                                                        | —            | Extra CSS classes                |
 
 ```tsx
 import { Text } from "@clickyduck/solid-kit";
