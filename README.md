@@ -123,6 +123,9 @@ Ticket-style data surface card. Can be clickable or static.
 | ----------- | --------- | -------------------------------------------- |
 | `clickable` | `boolean` | Enables hover/cursor affordance + `<button>` |
 | `active`    | `boolean` | Optional selected style (clickable only)     |
+| `class`     | `string`  | Extra CSS classes                            |
+
+Extends all native `<div>` (static) or `<button>` (clickable) HTML attributes.
 
 ```tsx
 import { DataCard } from "@clickyduck/solid-kit";
@@ -215,11 +218,13 @@ Accessible select-style dropdown with optional search.
 
 **`DropdownContent` extra props:**
 
-| Prop                      | Type                | Default    | Description             |
-| ------------------------- | ------------------- | ---------- | ----------------------- |
-| `useDocumentPortal`       | `boolean`           | —          | Portal to document body |
-| `documentPortalPlacement` | `"top" \| "bottom"` | `"bottom"` | Menu opening direction  |
-| `wrapChildrenInList`      | `boolean`           | `true`     | Wrap items in `<ul>`    |
+| Prop                      | Type                        | Default    | Description              |
+| ------------------------- | --------------------------- | ---------- | ------------------------ |
+| `useDocumentPortal`       | `boolean`                   | —          | Portal to document body  |
+| `documentPortalPlacement` | `"top" \| "bottom"`         | `"bottom"` | Menu opening direction   |
+| `xDirection`              | `"left" \| "right"`         | —          | Horizontal opening side  |
+| `yDirection`              | `"up" \| "down"`            | —          | Vertical opening side    |
+| `wrapChildrenInList`      | `boolean`                   | `true`     | Wrap items in `<ul>`     |
 
 **`DropdownItem` extra props:**
 
@@ -289,13 +294,14 @@ Page-level header row with title, description, back link, and actions slot.
 
 **Exports:** `HeaderLayout`
 
-| Prop          | Type          | Description                                    |
-| ------------- | ------------- | ---------------------------------------------- |
-| `title`       | `string`      | Page title; component returns `null` if absent |
-| `description` | `string`      | Optional subtitle below the title              |
-| `back`        | `JSX.Element` | Back link or button rendered to the left       |
-| `children`    | `JSX.Element` | Actions rendered on the right side             |
-| `class`       | `string`      | Extra CSS classes                              |
+| Prop           | Type          | Description                                    |
+| -------------- | ------------- | ---------------------------------------------- |
+| `title`        | `string`      | Page title; component returns `null` if absent |
+| `titleElement` | `JSX.Element` | Replaces the default `<h2>` title element      |
+| `description`  | `string`      | Optional subtitle below the title              |
+| `back`         | `JSX.Element` | Back link or button rendered to the left       |
+| `children`     | `JSX.Element` | Actions rendered on the right side             |
+| `class`        | `string`      | Extra CSS classes                              |
 
 ```tsx
 import { Button, HeaderLayout } from "@clickyduck/solid-kit";
@@ -407,7 +413,7 @@ Application shell layout that positions a header at the top, a left navigation p
 #### Guide (recommended composition)
 
 ```tsx
-import { HeaderLayout, LeftPanelLayout, MainLayout, PageContent, PageHeader, PageLayout, RightPanelLayout } from "@clickyduck/solid-kit";
+import { HeaderLayout, LeftPanelLayout, MainLayout, PageHeader, PageLayout, PageSection, RightPanelLayout } from "@clickyduck/solid-kit";
 
 <MainLayout>
   <HeaderLayout title="Workspace" description="Overview">
@@ -418,7 +424,7 @@ import { HeaderLayout, LeftPanelLayout, MainLayout, PageContent, PageHeader, Pag
 
   <PageLayout>
     <PageHeader title="Dashboard" />
-    <PageContent>{/* page content */}</PageContent>
+    <PageSection>{/* page content */}</PageSection>
   </PageLayout>
 
   {/* Optional: show/hide with <Show when={...}> */}
@@ -438,11 +444,17 @@ Collapsible sidebar navigation panel.
 
 **`LeftPanelLayout` props:**
 
-| Prop                 | Type                                    | Description                                                                                           |
-| -------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `collapsed`          | `boolean`                               | When `true`, shows icon-only mode (required)                                                          |
-| `navigationDocument` | `LeftPanelLayoutNavigationDocumentJson` | Navigation tree configuration (required)                                                              |
-| `onOpenChange`       | `(isPanelOpen: boolean) => void`        | Fires when open state changes; use `false` to react to close (nav link, swipe, or parent `collapsed`) |
+| Prop                   | Type                                    | Default      | Description                                                                                           |
+| ---------------------- | --------------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------- |
+| `collapsed`            | `boolean`                               | —            | When `true`, shows icon-only mode (required)                                                          |
+| `navigationDocument`   | `LeftPanelLayoutNavigationDocumentJson` | —            | Navigation tree configuration (required)                                                              |
+| `onOpenChange`         | `(isPanelOpen: boolean) => void`        | —            | Fires when open state changes; use `false` to react to close (nav link, swipe, or parent `collapsed`) |
+| `scrim`                | `boolean`                               | `true`       | Show backdrop scrim on mobile when panel is open                                                      |
+| `scrimZIndexClass`     | `string`                                | —            | Tailwind `z-*` class for the scrim                                                                    |
+| `panelZIndexClass`     | `string`                                | —            | Tailwind `z-*` class for the panel                                                                    |
+| `expandedWidthClass`   | `string`                                | `"md:w-64"`  | Tailwind width class for the expanded panel                                                           |
+| `collapsedWidthClass`  | `string`                                | `"md:w-16"`  | Tailwind width class for the icon-only panel                                                          |
+| `anchorComponent`      | `Component<Record<string, unknown>>`    | —            | Custom link/anchor component replacing the default `<a>`                                              |
 
 **`LeftPanelLayoutNavigationDocumentJson`** — root navigation config:
 
@@ -523,7 +535,34 @@ import { MetricCard } from "@clickyduck/solid-kit";
 
 Main application page column content wrapper.
 
-**Exports:** `PageLayout`, `PageHeader`, `PageContent`
+**Exports:** `PageLayout`, `PageHeader`, `PageSection`
+
+**`PageLayout` props:**
+
+| Prop       | Type          | Description       |
+| ---------- | ------------- | ----------------- |
+| `children` | `JSX.Element` | Page content      |
+| `class`    | `string`      | Extra CSS classes |
+
+**`PageHeader` props:**
+
+| Prop          | Type          | Description                              |
+| ------------- | ------------- | ---------------------------------------- |
+| `title`       | `string`      | Page heading; component returns `null` if absent |
+| `caption`     | `string`      | Optional subtitle below the title       |
+| `back`        | `JSX.Element` | Back link or button rendered above the title |
+| `sidebuttons` | `JSX.Element` | Actions rendered on the right side      |
+| `class`       | `string`      | Extra CSS classes                        |
+
+**`PageSection` props:**
+
+| Prop          | Type          | Description                             |
+| ------------- | ------------- | --------------------------------------- |
+| `title`       | `string`      | Section heading                         |
+| `caption`     | `string`      | Optional subtitle below the title      |
+| `sidebuttons` | `JSX.Element` | Actions rendered on the right side     |
+| `children`    | `JSX.Element` | Section content                        |
+| `class`       | `string`      | Extra CSS classes                       |
 
 ---
 
@@ -535,15 +574,20 @@ Responsive detail/drawer panel that slides in from the right.
 
 **`RightPanelLayout` props:**
 
-| Prop             | Type                             | Description                                                                                                          |
-| ---------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `title`          | `string`                         | Panel heading (required)                                                                                             |
-| `subtitle`       | `string`                         | Optional subtitle                                                                                                    |
-| `headerActions`  | `JSX.Element`                    | Extra elements in the header row                                                                                     |
-| `children`       | `JSX.Element`                    | Scrollable body content (required)                                                                                   |
-| `footer`         | `JSX.Element`                    | Sticky footer slot                                                                                                   |
-| `onOpenChange`   | `(isPanelOpen: boolean) => void` | `true` when the open transition runs; `false` after the close animation finishes (200ms), for unmounting with `Show` |
-| `closeAriaLabel` | `string`                         | Accessible label for the close button (required)                                                                     |
+| Prop             | Type                                  | Default                                    | Description                                                                                                          |
+| ---------------- | ------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `open`           | `boolean`                             | opens on mount                             | Controlled open state; when omitted the panel opens on mount (backwards compatible)                                  |
+| `title`          | `JSX.Element`                         | —                                          | Panel heading content (required)                                                                                     |
+| `subtitle`       | `JSX.Element`                         | —                                          | Optional secondary header line                                                                                       |
+| `headerActions`  | `JSX.Element`                         | —                                          | Extra elements in the header row                                                                                     |
+| `children`       | `JSX.Element`                         | —                                          | Scrollable body content (required)                                                                                   |
+| `footer`         | `JSX.Element`                         | —                                          | Sticky footer slot                                                                                                   |
+| `onBeginClose`   | `() => void`                          | —                                          | Called immediately when close transition begins, before `onOpenChange(false)`                                        |
+| `onOpenChange`   | `(isPanelOpen: boolean) => void`      | —                                          | `true` when the open transition runs; `false` after the close animation finishes (200ms), for unmounting with `Show` |
+| `closeAriaLabel` | `string`                              | —                                          | Accessible label for the close button (required)                                                                     |
+| `topOffset`      | `string`                              | `"var(--solid-kit-header-height, 4rem)"`   | Top offset for the mobile overlay variant                                                                            |
+| `panelProps`     | `JSX.HTMLAttributes<HTMLElement>`     | —                                          | Extra props applied to the `<aside>` element (e.g. drag/drop handlers); `class` is merged                           |
+| `variant`        | `"grid" \| "overlay"`                 | `"grid"`                                   | `grid`: sibling inside `MainLayout`; `overlay`: fixed right-panel overlay                                           |
 
 On desktop the panel pushes the main area. On mobile it overlays full-screen with smooth entrance/exit transitions.
 
@@ -692,8 +736,8 @@ Typographic component with five size steps and semantic color, weight, style, an
 | `italic`       | `boolean`                                                                                                       | `false`      | Italic style                     |
 | `underline`    | `boolean`                                                                                                       | `false`      | Underline decoration             |
 | `opacity`      | `number`                                                                                                        | —            | 0–100 percent opacity            |
-| `icon`         | `JSX.Element`                                                                                                   | —            | Leading or trailing icon element |
-| `iconPosition` | `"start" \| "end"`                                                                                              | `"start"`    | Icon placement                   |
+| `iconComponent` | `JSX.Element`                                                                                                  | —            | Leading or trailing icon element |
+| `iconPosition`  | `"start" \| "end"`                                                                                             | `"start"`    | Icon placement                   |
 | `class`        | `string`                                                                                                        | —            | Extra CSS classes                |
 
 ```tsx
@@ -758,7 +802,13 @@ Toasts auto-dismiss after 5 seconds. `variant` controls the icon:
 | `"warning"` | Exclamation triangle |
 | `"default"` | Check circle         |
 
-**`Toaster`** — no props; renders a fixed bottom-right region.
+**`Toaster` props:**
+
+| Prop    | Type     | Description       |
+| ------- | -------- | ----------------- |
+| `class` | `string` | Extra CSS classes |
+
+Renders a fixed bottom-center region (bottom-right on `sm` and wider).
 
 ```tsx
 // App root

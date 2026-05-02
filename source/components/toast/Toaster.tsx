@@ -1,5 +1,5 @@
-import { For } from "solid-js";
 import { mergeClasses } from "@/utilities";
+import { For } from "solid-js";
 
 import { Toast, toastStore } from "./Toast";
 

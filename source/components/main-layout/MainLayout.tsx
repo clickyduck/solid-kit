@@ -1,6 +1,6 @@
 import type { ParentComponent } from "solid-js";
 
-type MainLayoutProperties = {};
+type MainLayoutProperties = object;
 
 /**
  * Application shell layout.

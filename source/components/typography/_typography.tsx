@@ -34,25 +34,24 @@ export type TypographyBaseProps = Omit<ComponentProps<"div">, "children"> & {
   underline?: boolean;
   /** 0..100 (percent). Applied to the whole text row (including icon). */
   opacity?: number;
-  icon?: JSX.Element;
+  iconComponent?: JSX.Element;
   iconPosition?: IconPosition;
 };
 
 type CreateTypographyOptions = {
   sizeClasses: string;
+  gapClass: string;
   defaultColor?: TextColor;
   defaultWeight?: TextWeight;
   defaultItalic?: boolean;
   defaultUnderline?: boolean;
-  iconClasses?: string;
 };
 
 const DEFAULT_ICON_CLASSES = "inline-flex shrink-0 items-center justify-center align-middle text-current opacity-70 [&_svg]:h-[1em] [&_svg]:w-[1em] [&_svg]:fill-current";
 
 export const createTypography = (options: CreateTypographyOptions): ParentComponent<TypographyBaseProps> => {
-  const iconWrapperClasses = () => mergeClasses(DEFAULT_ICON_CLASSES, options.iconClasses);
   return (properties) => {
-    const [local, rest] = splitProps(properties, ["children", "class", "color", "weight", "italic", "underline", "opacity", "icon", "iconPosition"]);
+    const [local, rest] = splitProps(properties, ["children", "class", "color", "weight", "italic", "underline", "opacity", "iconComponent", "iconPosition"]);
     const iconPosition = () => local.iconPosition ?? "start";
     const color = (): TextColor => local.color ?? options.defaultColor ?? "default";
     const weight = (): TextWeight => local.weight ?? options.defaultWeight ?? "normal";
@@ -73,16 +72,16 @@ export const createTypography = (options: CreateTypographyOptions): ParentCompon
     };
 
     return (
-      <div class={mergeClasses("inline-flex items-center gap-2", options.sizeClasses, COLOR_CLASSES[color()], WEIGHT_CLASSES[weight()], italic() ? "italic" : "", underline() ? "underline" : "", local.class)} {...rest} style={style()}>
-        <Show when={local.icon !== undefined && iconPosition() === "start"}>
-          <span class={iconWrapperClasses()} aria-hidden="true">
-            {local.icon}
+      <div class={mergeClasses("inline-flex items-center", options.gapClass, options.sizeClasses, COLOR_CLASSES[color()], WEIGHT_CLASSES[weight()], italic() ? "italic" : "", underline() ? "underline" : "", local.class)} {...rest} style={style()}>
+        <Show when={local.iconComponent !== undefined && iconPosition() === "start"}>
+          <span class={DEFAULT_ICON_CLASSES} aria-hidden="true">
+            {local.iconComponent}
           </span>
         </Show>
         <div class="min-w-0">{local.children}</div>
-        <Show when={local.icon !== undefined && iconPosition() === "end"}>
-          <span class={iconWrapperClasses()} aria-hidden="true">
-            {local.icon}
+        <Show when={local.iconComponent !== undefined && iconPosition() === "end"}>
+          <span class={DEFAULT_ICON_CLASSES} aria-hidden="true">
+            {local.iconComponent}
           </span>
         </Show>
       </div>
