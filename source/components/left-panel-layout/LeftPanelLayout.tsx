@@ -188,7 +188,14 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                     window.history.pushState(null, "", item.href);
                     setHash(item.href);
                   }
-                  targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                  const scrollContainer = targetElement.closest(".layout-page") as HTMLElement | null;
+                  if (scrollContainer) {
+                    const scrollMargin = Number.parseInt(window.getComputedStyle(targetElement).scrollMarginTop, 10) || 0;
+                    const targetTop = targetElement.getBoundingClientRect().top - scrollContainer.getBoundingClientRect().top + scrollContainer.scrollTop - scrollMargin;
+                    scrollContainer.scrollTo({ top: targetTop, behavior: "smooth" });
+                  } else {
+                    targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }
                 } else {
                   // SolidJS Router's A uses history.pushState which doesn't fire popstate,
                   // so sync pathname after the router has committed the navigation.

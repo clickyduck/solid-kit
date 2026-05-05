@@ -4,7 +4,10 @@
       "Bash(npm install *)",
       "Bash(npm run *)",
       "Bash(Get-ChildItem *)",
-      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\skainine\\\\Projects\\\\genesis\\\\solid-kit\\\\source\\\\components\\\\icons\\\\\" -File | Where-Object {$_.Extension -eq '.tsx'})"
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\skainine\\\\Projects\\\\genesis\\\\solid-kit\\\\source\\\\components\\\\icons\\\\\" -File | Where-Object {$_.Extension -eq '.tsx'})",
+      "Bash(findstr /i \"scripts\" -A 10)",
+      "Bash(npx tsc *)",
+      "Bash(npx vite *)"
     ]
   }
 }
