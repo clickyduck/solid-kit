@@ -296,7 +296,7 @@ Page-level header row with title, description, back link, and actions slot.
 
 | Prop           | Type          | Description                                    |
 | -------------- | ------------- | ---------------------------------------------- |
-| `title`        | `string`      | Page title; component returns `null` if absent |
+| `title`        | `string`      | Page title; component renders when `title`, `titleElement`, or `children` is present |
 | `titleElement` | `JSX.Element` | Replaces the default `<h2>` title element      |
 | `description`  | `string`      | Optional subtitle below the title              |
 | `back`         | `JSX.Element` | Back link or button rendered to the left       |
@@ -440,7 +440,7 @@ import { HeaderLayout, LeftPanelLayout, MainLayout, PageHeader, PageLayout, Page
 
 Collapsible sidebar navigation panel.
 
-**Exports:** `LeftPanelLayout`, `leftPanelLayoutNavigationIconByExportName`, `LeftPanelLayoutNavigationDocumentJson`, `LeftPanelLayoutNavigationGroupJson`, `LeftPanelLayoutNavigationItemJson`, `LeftPanelLayoutNavigationIconExportName`
+**Exports:** `LeftPanelLayout`, `leftPanelLayoutNavigationIconByExportName`, `leftPanelNavigationIconByExportName` (alias), `LeftPanelLayoutNavigationDocumentJson`, `LeftPanelLayoutNavigationGroupJson`, `LeftPanelLayoutNavigationItemJson`, `LeftPanelLayoutNavigationIconExportName`
 
 **`LeftPanelLayout` props:**
 
@@ -471,7 +471,7 @@ Collapsible sidebar navigation panel.
 | ----------------------------------- | ------------------------------------- | -------------------------------- |
 | `groupLabel`                        | `string`                              | Group heading                    |
 | `navigationGroupIdentifier`         | `string`                              | Unique key (optional)            |
-| `collapsibleNavigationGroup`        | `boolean`                             | Whether the group can be toggled |
+| `collapsibleNavigationGroup`        | `boolean`                             | Whether the group can be toggled; defaults to `true` (opt out with `false`) |
 | `navigationGroupInitiallyCollapsed` | `boolean`                             | Start collapsed                  |
 | `items`                             | `LeftPanelLayoutNavigationItemJson[]` | Nav items in this group          |
 
@@ -584,7 +584,7 @@ Responsive detail/drawer panel that slides in from the right.
 | `children`       | `JSX.Element`                     | —                                        | Scrollable body content (required)                                                                                   |
 | `footer`         | `JSX.Element`                     | —                                        | Sticky footer slot                                                                                                   |
 | `onBeginClose`   | `() => void`                      | —                                        | Called immediately when close transition begins, before `onOpenChange(false)`                                        |
-| `onOpenChange`   | `(isPanelOpen: boolean) => void`  | —                                        | `true` when the open transition runs; `false` after the close animation finishes (200ms), for unmounting with `Show` |
+| `onOpenChange`   | `(isPanelOpen: boolean) => void`  | —                                        | Required. `true` when the open transition runs; `false` after the close animation finishes (200ms), for unmounting with `Show` |
 | `closeAriaLabel` | `string`                          | —                                        | Accessible label for the close button (required)                                                                     |
 | `topOffset`      | `string`                          | `"var(--solid-kit-header-height, 4rem)"` | Top offset for the mobile overlay variant                                                                            |
 | `panelProps`     | `JSX.HTMLAttributes<HTMLElement>` | —                                        | Extra props applied to the `<aside>` element (e.g. drag/drop handlers); `class` is merged                            |
@@ -832,13 +832,12 @@ Radio or checkbox toggle card group.
 
 **`ToggleGroupOption` shape:**
 
-| Field         | Type      | Description                      |
-| ------------- | --------- | -------------------------------- |
-| `value`       | `string`  | Option value (required)          |
-| `label`       | `string`  | Display label (required)         |
-| `description` | `string`  | Optional secondary text          |
-| `disabled`    | `boolean` | Disables this option             |
-| `class`       | `string`  | Extra CSS classes on this option |
+| Field         | Type      | Description             |
+| ------------- | --------- | ----------------------- |
+| `value`       | `string`  | Option value (required) |
+| `label`       | `string`  | Display label (required)|
+| `description` | `string`  | Optional secondary text |
+| `disabled`    | `boolean` | Disables this option    |
 
 **`ToggleGroup` props** (union discriminated by `selectionMode`):
 
@@ -980,6 +979,14 @@ npm run typecheck && npm run build
 
 # Format sources
 npm run format
+
+# Lint (TypeScript + ESLint, zero warnings)
+npm run lint
+
+# Bump version (shorthand scripts — equivalent to npm version patch/minor/major)
+npm run patch
+npm run minor
+npm run major
 ```
 
 ## Structure
@@ -999,7 +1006,7 @@ This section is the full checklist for publishing **`@clickyduck/solid-kit`** to
 | Command               | What it does                                                                                                                                                                                                                                   |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`npm run build`**   | Deletes the **`public/`** output folder, then runs the Vite library build. Produces the files that ship inside the package (see **`files`** in **`package.json`**). Use this when you only want a local build (for example to inspect output). |
-| **`npm run release`** | Runs **`prepublishOnly`** (**`npm run typecheck`** then **`npm run build`**), then **`npm publish`** with **`GITHUB_TOKEN`** loaded from **`.env`** via **`dotenv-cli`**.                                                                      |
+| **`npm run release`** | Runs **`npm run format`**, **`npm run lint`**, then **`prepublishOnly`** (**`npm run typecheck`** then **`npm run build`**), then **`npm publish`** with **`GITHUB_TOKEN`** loaded from **`.env`** via **`dotenv-cli`**.                      |
 
 You **do not** need to run **`npm run build`** manually immediately before **`npm run release`**: **`prepublishOnly`** already runs typecheck and build. Before **`npm version`**, run **`npm run typecheck && npm run build`** so you do not tag a commit that fails typecheck or build (**`npm version`** does not run those steps). Run **`npm run typecheck`**, **`npm run build`**, or both in sequence any time you want to confirm output locally.
 
@@ -1027,10 +1034,12 @@ Alternatively, export it in the shell: `export GITHUB_TOKEN=your_token_here` (Un
 Pick one of **`patch`**, **`minor`**, or **`major`** depending on semver:
 
 ```bash
-npm version patch   # 0.1.0 → 0.1.1  (bug fixes, compatible changes)
-npm version minor   # 0.1.0 → 0.2.0  (new features, backward compatible)
-npm version major   # 0.1.0 → 1.0.0  (breaking changes)
+npm run patch   # 0.1.0 → 0.1.1  (bug fixes, compatible changes)
+npm run minor   # 0.1.0 → 0.2.0  (new features, backward compatible)
+npm run major   # 0.1.0 → 1.0.0  (breaking changes)
 ```
+
+These are shorthand scripts defined in **`package.json`** and are equivalent to `npm version patch`, `npm version minor`, and `npm version major` respectively.
 
 What **`npm version`** does in this repository:
 
@@ -1050,8 +1059,9 @@ npm run release
 
 What **`npm run release`** does:
 
-1. **`prepublishOnly`**: runs **`npm run typecheck`** then **`npm run build`** so the tarball matches current sources.
-2. **`npm publish`** to the registry configured in **`publishConfig`** (GitHub Packages for this package), using **`GITHUB_TOKEN`** from **`.env`** when you use **`dotenv-cli`** as in the script.
+1. Runs **`npm run format`** (Prettier) then **`npm run lint`** (TypeScript + ESLint with zero warnings).
+2. **`prepublishOnly`**: runs **`npm run typecheck`** then **`npm run build`** so the tarball matches current sources.
+3. **`npm publish`** to the registry configured in **`publishConfig`** (GitHub Packages for this package), using **`GITHUB_TOKEN`** from **`.env`** when you use **`dotenv-cli`** as in the script.
 
 First-time publish from a machine: same commands; ensure the package name and registry scope match your GitHub organization and **`.npmrc`**.
 
