@@ -311,7 +311,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
         <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && portalPosition()}>
           {(position) => (
             <Portal mount={getPortalMount(dropdownContainerElement)}>
-              <div class={mergeClasses("z-[9999] min-w-min", builtInMenuChromeClass())} style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, width: `${position().width}px` }}>
+              <div class={mergeClasses("z-9999 min-w-min", builtInMenuChromeClass())} style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, width: `${position().width}px` }}>
                 <Show when={isSearchable()}>
                   <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
                 </Show>
@@ -335,7 +335,7 @@ const DropdownValue: ParentComponent<ComponentProps<"div">> = (properties) => {
 
 type DropdownTriggerWithLabel = Omit<ComponentProps<typeof Button>, "variant" | "iconPosition" | "class"> & {
   children: JSX.Element;
-  icon?: string;
+  icon?: string | JSX.Element;
   variant?: "ghost";
 };
 
@@ -401,8 +401,14 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
       {...rest}
     >
       <span class="flex min-w-0 flex-1 items-center gap-2">
-        <Show when={local.icon} keyed>
-          {(name) => <Icon name={name} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />}
+        <Show when={local.icon != null}>
+          {typeof local.icon === "string" ? (
+            <Icon name={local.icon} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
+          ) : (
+            <span class="pointer-events-none inline-flex shrink-0 items-center justify-center text-current" style={{ width: `${FORM_CONTROL_ICON_SIZE}px`, height: `${FORM_CONTROL_ICON_SIZE}px` }} aria-hidden="true">
+              {local.icon}
+            </span>
+          )}
         </Show>
         <span class="min-w-0 flex-1 truncate">{local.children}</span>
       </span>

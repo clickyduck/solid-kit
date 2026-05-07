@@ -1,6 +1,6 @@
 import { Icon } from "@/components/icons";
 import { FORM_CONTROL_ICON_SIZE, FORM_CONTROL_SIZE_CLASSES, type IconPosition, mergeClasses } from "@/utilities";
-import type { ComponentProps } from "solid-js";
+import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
 type ButtonVariant = "solid" | "outline" | "ghost" | "link";
@@ -8,7 +8,7 @@ type ButtonVariant = "solid" | "outline" | "ghost" | "link";
 type ButtonProps = Omit<ComponentProps<"button">, "class"> & {
   variant?: ButtonVariant;
   class?: string;
-  icon?: string;
+  icon?: string | JSX.Element;
   iconPosition?: IconPosition;
 };
 
@@ -39,18 +39,28 @@ export const Button = (properties: ButtonProps) => {
       )}
       {...rest}
     >
-      <Show when={local.icon} keyed fallback={local.children}>
-        {(name) => (
-          <>
-            <Show when={local.iconPosition !== "end"}>
-              <Icon name={name} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
-            </Show>
-            {local.children}
-            <Show when={local.iconPosition === "end"}>
-              <Icon name={name} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none ml-auto shrink-0 text-current" aria-hidden="true" />
-            </Show>
-          </>
-        )}
+      <Show when={local.icon != null} fallback={local.children}>
+        <>
+          <Show when={local.iconPosition !== "end"}>
+            {typeof local.icon === "string" ? (
+              <Icon name={local.icon} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
+            ) : (
+              <span class="pointer-events-none inline-flex shrink-0 items-center justify-center" style={{ width: `${FORM_CONTROL_ICON_SIZE}px`, height: `${FORM_CONTROL_ICON_SIZE}px` }} aria-hidden="true">
+                {local.icon}
+              </span>
+            )}
+          </Show>
+          {local.children}
+          <Show when={local.iconPosition === "end"}>
+            {typeof local.icon === "string" ? (
+              <Icon name={local.icon} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none ml-auto shrink-0 text-current" aria-hidden="true" />
+            ) : (
+              <span class="pointer-events-none ml-auto inline-flex shrink-0 items-center justify-center" style={{ width: `${FORM_CONTROL_ICON_SIZE}px`, height: `${FORM_CONTROL_ICON_SIZE}px` }} aria-hidden="true">
+                {local.icon}
+              </span>
+            )}
+          </Show>
+        </>
       </Show>
     </button>
   );

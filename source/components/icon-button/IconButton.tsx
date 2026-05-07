@@ -1,6 +1,6 @@
 import { Icon } from "@/components/icons";
 import { FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
-import type { ComponentProps } from "solid-js";
+import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
 type IconButtonVariant = "solid" | "outline" | "ghost" | "link";
@@ -8,7 +8,7 @@ type IconButtonVariant = "solid" | "outline" | "ghost" | "link";
 type IconButtonProperties = Omit<ComponentProps<"button">, "class"> & {
   variant?: IconButtonVariant;
   class?: string;
-  icon?: string;
+  icon?: string | JSX.Element;
 };
 
 const getVariantClasses = (variant: IconButtonVariant = "solid"): string => {
@@ -41,8 +41,14 @@ export const IconButton = (properties: IconButtonProperties) => {
       )}
       {...rest}
     >
-      <Show when={local.icon} keyed>
-        {(name) => <Icon name={name} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />}
+      <Show when={local.icon != null}>
+        {typeof local.icon === "string" ? (
+          <Icon name={local.icon} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
+        ) : (
+          <span class="pointer-events-none inline-flex shrink-0 items-center justify-center" style={{ width: `${FORM_CONTROL_ICON_SIZE}px`, height: `${FORM_CONTROL_ICON_SIZE}px` }} aria-hidden="true">
+            {local.icon}
+          </span>
+        )}
       </Show>
       {local.children}
     </button>

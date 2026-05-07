@@ -8,7 +8,7 @@ export type TabDefinition<TabValue extends string> = {
   label: string;
   tabElementIdentifier: string;
   panelElementIdentifier: string;
-  icon?: string;
+  icon?: string | JSX.Element;
 };
 
 export type TabsProperties<TabValue extends string> = {

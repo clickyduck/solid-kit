@@ -51,7 +51,7 @@ export type BadgeProperties = {
   variant?: BadgeVariant;
   color?: Color;
   children: JSX.Element;
-  icon?: string;
+  icon?: string | JSX.Element;
   onRemove?: () => void;
   class?: string;
 };
@@ -63,8 +63,14 @@ export const Badge = (properties: BadgeProperties): JSX.Element => {
   return (
     <span class={mergeClasses("inline-flex items-stretch gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium", BADGE_CONTAINER_CLASSES_BY_VARIANT_AND_COLOR[variant()][color()], properties.class)}>
       <span class="inline-flex min-w-0 items-center gap-1.5 self-center">
-        <Show when={properties.icon} keyed>
-          {(name) => <Icon name={name} size={14} class={BADGE_ICON_CLASSES} aria-hidden="true" />}
+        <Show when={properties.icon != null}>
+          {typeof properties.icon === "string" ? (
+            <Icon name={properties.icon} size={14} class={BADGE_ICON_CLASSES} aria-hidden="true" />
+          ) : (
+            <span class={mergeClasses("inline-flex shrink-0 items-center justify-center", BADGE_ICON_CLASSES)} style={{ width: "14px", height: "14px" }} aria-hidden="true">
+              {properties.icon}
+            </span>
+          )}
         </Show>
         {properties.children}
       </span>

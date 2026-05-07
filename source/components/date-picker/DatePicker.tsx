@@ -483,7 +483,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
               ref={(el) => {
                 popoverElement = el;
               }}
-              class="z-[9999]"
+              class="z-9999"
               style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px` }}
             >
               {calendarElement()}
