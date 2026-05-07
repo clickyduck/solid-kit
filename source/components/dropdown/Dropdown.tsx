@@ -561,6 +561,7 @@ type DropdownItemProperties = Omit<ComponentProps<"a">, "class"> & {
   disabled?: boolean;
   selected?: boolean;
   closeOnSelect?: boolean;
+  clickable?: boolean;
 };
 
 /**
@@ -569,7 +570,7 @@ type DropdownItemProperties = Omit<ComponentProps<"a">, "class"> & {
 const DropdownItem = (properties: DropdownItemProperties) => {
   const context = useDropdownContext();
 
-  const [local, rest] = splitProps(properties, ["class", "item", "children", "onClick", "disabled", "selected", "closeOnSelect"]);
+  const [local, rest] = splitProps(properties, ["class", "item", "children", "onClick", "disabled", "selected", "closeOnSelect", "clickable"]);
 
   const isSelected = () => {
     if (typeof local.selected === "boolean") {
@@ -592,17 +593,23 @@ const DropdownItem = (properties: DropdownItemProperties) => {
   const itemClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE;
 
   const shouldCloseOnSelect = (): boolean => local.closeOnSelect !== false;
+  const isClickable = (): boolean => local.clickable !== false;
 
   return (
     <Show when={!isHiddenBySearch()}>
       <li>
         <a
           href="#"
-          class={mergeClasses(itemClass(), local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : "", isSelected() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "", local.class)}
+          class={mergeClasses(
+            itemClass(),
+            local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : !isClickable() ? "pointer-events-none cursor-default" : "",
+            isSelected() && isClickable() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "",
+            local.class
+          )}
           onClick={(event) => {
             event.preventDefault();
             event.stopPropagation();
-            if (local.disabled || context.disabled()) {
+            if (local.disabled || context.disabled() || !isClickable()) {
               return;
             }
             if (local.item) {
