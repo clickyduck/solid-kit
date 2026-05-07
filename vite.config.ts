@@ -8,6 +8,7 @@ const componentEntries: Record<string, string> = {
   badge: resolve(__dirname, "source/components/badge/index.ts"),
   button: resolve(__dirname, "source/components/button/index.ts"),
   card: resolve(__dirname, "source/components/card/index.ts"),
+  "date-picker": resolve(__dirname, "source/components/date-picker/index.ts"),
   dialog: resolve(__dirname, "source/components/dialog/index.ts"),
   divider: resolve(__dirname, "source/components/divider/index.ts"),
   dropdown: resolve(__dirname, "source/components/dropdown/index.ts"),

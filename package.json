@@ -47,6 +47,16 @@
         "default": "./public/card.cjs"
       }
     },
+    "./date-picker": {
+      "import": {
+        "types": "./public/date-picker.d.ts",
+        "default": "./public/date-picker.js"
+      },
+      "require": {
+        "types": "./public/date-picker.d.ts",
+        "default": "./public/date-picker.cjs"
+      }
+    },
     "./dialog": {
       "import": {
         "types": "./public/dialog.d.ts",

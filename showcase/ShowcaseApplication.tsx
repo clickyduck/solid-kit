@@ -4,6 +4,7 @@ import { Button } from "@/components/button/Button";
 import { BackgroundCard } from "@/components/card/BackgroundCard";
 import { DataCard } from "@/components/card/DataCard";
 import { MetricCard } from "@/components/card/MetricCard";
+import { DatePicker, type DatePickerValue } from "@/components/date-picker/DatePicker";
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/dialog/Dialog";
 import { Divider } from "@/components/divider/Divider";
 import { Dropdown, DropdownIconTrigger, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
@@ -119,6 +120,9 @@ export const ShowcaseApplication = (): JSX.Element => {
   const [shippingMethod, setShippingMethod] = createSignal<string | undefined>("standard");
   const [contactChannelsWithoutDescription, setContactChannelsWithoutDescription] = createSignal<string[]>(["email"]);
   const [documentColorSchemeName, setDocumentColorSchemeName] = createDocumentColorSchemePreferenceSignal();
+  const [singleDateValue, setSingleDateValue] = createSignal<DatePickerValue>({ mode: "single", date: undefined });
+  const [rangeDateValue, setRangeDateValue] = createSignal<DatePickerValue>({ mode: "range", from: undefined, to: undefined });
+  const [portalDateValue, setPortalDateValue] = createSignal<DatePickerValue>({ mode: "single", date: undefined });
   const [isRightPanelOpen, setIsRightPanelOpen] = createSignal(false);
   const [activeDataCard, setActiveDataCard] = createSignal<number | undefined>(0);
   const openRightPanel = (): void => {
@@ -584,6 +588,51 @@ export const ShowcaseApplication = (): JSX.Element => {
                     ]}
                   />
                 </Field>
+              </ShowcaseSection>
+            </ShowcaseCategory>
+
+            <ShowcaseCategory categoryTitle="Date picker">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-date-picker" sectionTitle="Date picker" sectionDescription="Single date or date range selection. Range mode sets the start to 12:00 AM and end to 11:59:59 PM automatically.">
+                <div class="grid gap-8 lg:grid-cols-2">
+                  <Field label="Single date" for="showcase-date-picker-single" hint="Pick one calendar day.">
+                    <DatePicker id="showcase-date-picker-single" mode="single" value={singleDateValue()} onChange={setSingleDateValue} placeholder="Select a date" />
+                  </Field>
+                  <Field label="Date range" for="showcase-date-picker-range" hint="First click sets start (12:00 AM), second click sets end (11:59:59 PM).">
+                    <DatePicker id="showcase-date-picker-range" mode="range" value={rangeDateValue()} onChange={setRangeDateValue} placeholder="Select date range" />
+                  </Field>
+                  <Field label="Portal (single)" for="showcase-date-picker-portal" hint="Calendar mounts on the document body to avoid clipping.">
+                    <DatePicker id="showcase-date-picker-portal" mode="single" value={portalDateValue()} onChange={setPortalDateValue} usePortal placeholder="Select a date" />
+                  </Field>
+                  <Field label="Disabled" for="showcase-date-picker-disabled">
+                    <DatePicker id="showcase-date-picker-disabled" mode="single" disabled placeholder="Unavailable" />
+                  </Field>
+                </div>
+                <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-800 dark:bg-gray-900/50">
+                  <p class="text-xs font-semibold text-gray-600 dark:text-gray-400">Selected values</p>
+                  <div class="mt-2 space-y-1 font-mono text-xs text-gray-700 dark:text-gray-300">
+                    <p>
+                      Single:{" "}
+                      {createMemo(() => {
+                        const v = singleDateValue();
+                        return v.mode === "single" && v.date ? v.date.toISOString() : "—";
+                      })()}
+                    </p>
+                    <p>
+                      Range from:{" "}
+                      {createMemo(() => {
+                        const v = rangeDateValue();
+                        return v.mode === "range" && v.from ? v.from.toISOString() : "—";
+                      })()}
+                    </p>
+                    <p>
+                      Range to:{" "}
+                      {createMemo(() => {
+                        const v = rangeDateValue();
+                        return v.mode === "range" && v.to ? v.to.toISOString() : "—";
+                      })()}
+                    </p>
+                  </div>
+                </div>
               </ShowcaseSection>
             </ShowcaseCategory>
 

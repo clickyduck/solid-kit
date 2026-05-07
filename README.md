@@ -27,6 +27,7 @@ npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge @mate
 - [Button](#button)
 - [BackgroundCard](#backgroundcard)
 - [DataCard](#datacard)
+- [DatePicker](#datepicker)
 - [Dialog](#dialog)
 - [Divider](#divider)
 - [Dropdown](#dropdown)
@@ -152,6 +153,59 @@ import { DataCard } from "@clickyduck/solid-kit";
 <DataCard clickable onClick={() => {}}>
   <div>Any content</div>
 </DataCard>;
+```
+
+---
+
+### DatePicker
+
+Calendar popover for picking a single date or a date range.
+
+**Exports:** `DatePicker`, `DatePickerMode`, `DatePickerValue`
+
+| Prop          | Type                               | Default                                 | Description                                                                   |
+| ------------- | ---------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------- |
+| `mode`        | `"single" \| "range"`              | `"single"`                              | Selection mode                                                                |
+| `value`       | `DatePickerValue`                  | —                                       | Controlled value (see below)                                                  |
+| `onChange`    | `(value: DatePickerValue) => void` | —                                       | Called when the selection changes                                             |
+| `placeholder` | `string`                           | `"Select date"` / `"Select date range"` | Trigger placeholder text                                                      |
+| `disabled`    | `boolean`                          | —                                       | Disables the trigger                                                          |
+| `id`          | `string`                           | —                                       | Native `id` on the trigger button; pair with `<Field for="…">`                |
+| `class`       | `string`                           | —                                       | Extra CSS classes on the root wrapper                                         |
+| `usePortal`   | `boolean`                          | —                                       | Render the calendar on `document.body` to escape `overflow: hidden` ancestors |
+
+**`DatePickerValue`** is a discriminated union:
+
+```ts
+// Single mode
+{
+  mode: "single";
+  date: Date | undefined;
+}
+
+// Range mode — from is 12:00 AM, to is 11:59:59 PM
+{
+  mode: "range";
+  from: Date | undefined;
+  to: Date | undefined;
+}
+```
+
+In range mode the first click sets the start date (midnight, 12:00 AM) and the second click sets the end date (end of day, 11:59:59.999 PM). Hovering after the first click previews the range. Clicking on a new date when a range is already set restarts selection from scratch.
+
+```tsx
+import { DatePicker, type DatePickerValue } from "@clickyduck/solid-kit";
+import { createSignal } from "solid-js";
+
+// Single date
+const [date, setDate] = createSignal<DatePickerValue>({ mode: "single", date: undefined });
+
+<DatePicker mode="single" value={date()} onChange={setDate} />;
+
+// Date range
+const [range, setRange] = createSignal<DatePickerValue>({ mode: "range", from: undefined, to: undefined });
+
+<DatePicker mode="range" value={range()} onChange={setRange} />;
 ```
 
 ---
@@ -1167,7 +1221,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFoo
 import { Icon } from "@clickyduck/solid-kit/icons";
 ```
 
-Available sub-paths: `badge`, `button`, `card`, `dialog`, `divider`, `dropdown`, `empty-state`, `field`, `header-layout`, `icon-button`, `icons`, `input`, `left-panel-layout`, `loading`, `main-layout`, `page-layout`, `right-panel-layout`, `section-heading`, `spinner`, `table`, `tabs`, `textarea`, `toast`, `toggle-group`, `typography`, `upload`, `utilities`.
+Available sub-paths: `badge`, `button`, `card`, `date-picker`, `dialog`, `divider`, `dropdown`, `empty-state`, `field`, `header-layout`, `icon-button`, `icons`, `input`, `left-panel-layout`, `loading`, `main-layout`, `page-layout`, `right-panel-layout`, `section-heading`, `spinner`, `table`, `tabs`, `textarea`, `toast`, `toggle-group`, `typography`, `upload`, `utilities`.
 
 ```tsx
 import { Button } from "@clickyduck/solid-kit/button";

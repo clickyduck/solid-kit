@@ -43,6 +43,11 @@
           "icon": "list"
         },
         {
+          "href": "#showcase-heading-date-picker",
+          "label": "Date picker",
+          "icon": "calendar_today"
+        },
+        {
           "href": "#showcase-heading-tabs",
           "label": "Tabs",
           "icon": "calendar_today"
