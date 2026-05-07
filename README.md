@@ -59,7 +59,7 @@ npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge mater
 
 Chip/tag with optional icon and remove button.
 
-**Exports:** `Badge`
+**Exports:** `Badge`, `BadgeVariant` (type), `BadgeProperties` (type)
 
 | Prop       | Type                                                                          | Default     | Description                         |
 | ---------- | ----------------------------------------------------------------------------- | ----------- | ----------------------------------- |
@@ -381,13 +381,12 @@ import { Field, Input } from "@clickyduck/solid-kit";
 
 Page-level header row with title, description, back link, and actions slot.
 
-**Exports:** `HeaderLayout`
+**Exports:** `HeaderLayout`, `HeaderLayoutProperties` (type)
 
 | Prop           | Type          | Description                                                                          |
 | -------------- | ------------- | ------------------------------------------------------------------------------------ |
 | `title`        | `string`      | Page title; component renders when `title`, `titleElement`, or `children` is present |
 | `titleElement` | `JSX.Element` | Replaces the default `<h2>` title element                                            |
-| `description`  | `string`      | Optional subtitle below the title                                                    |
 | `back`         | `JSX.Element` | Back link or button rendered to the left                                             |
 | `children`     | `JSX.Element` | Actions rendered on the right side                                                   |
 | `class`        | `string`      | Extra CSS classes                                                                    |
@@ -446,7 +445,7 @@ import { IconButton } from "@clickyduck/solid-kit";
 
 Material Symbols renderer powered by the [Material Symbols](https://fonts.google.com/icons) rounded set (filled is enabled via `FILL` variation).
 
-**Exports:** `Icon`, `IconGlyphProperties` (type)
+**Exports:** `Icon`, `IconGlyphProperties` (type), `IconComponent` (type)
 
 The `material-symbols/rounded.css` stylesheet is requested lazily on first use. Icons render by ligature name (the text content), so you pass the icon name string directly.
 
@@ -473,7 +472,7 @@ import { Icon } from "@clickyduck/solid-kit";
 
 Styled text input with optional leading icon and trailing text.
 
-**Exports:** `Input`
+**Exports:** `Input`, `InputProperties` (type)
 
 Extends all native `<input>` HTML attributes.
 
@@ -528,7 +527,7 @@ import { HeaderLayout, LeftPanelLayout, MainLayout, PageHeader, PageLayout, Page
 
 Collapsible sidebar navigation panel.
 
-**Exports:** `LeftPanelLayout`, `leftPanelLayoutNavigationIconByExportName`, `leftPanelNavigationIconByExportName` (alias), `LeftPanelLayoutNavigationDocumentJson`, `LeftPanelLayoutNavigationGroupJson`, `LeftPanelLayoutNavigationItemJson`, `LeftPanelLayoutNavigationIconExportName`
+**Exports:** `LeftPanelLayout`, `LeftPanelLayoutNavigationDocumentJson`, `LeftPanelLayoutNavigationGroupJson`, `LeftPanelLayoutNavigationItemJson`, `LeftPanelLayoutProperties` (type)
 
 **`LeftPanelLayout` props:**
 
@@ -565,12 +564,12 @@ Collapsible sidebar navigation panel.
 
 **`LeftPanelLayoutNavigationItemJson`** — a single nav link:
 
-| Field               | Type                                      | Description                                               |
-| ------------------- | ----------------------------------------- | --------------------------------------------------------- |
-| `href`              | `string`                                  | Link URL                                                  |
-| `label`             | `string`                                  | Nav item text                                             |
-| `iconExportName`    | `LeftPanelLayoutNavigationIconExportName` | Icon key from `leftPanelLayoutNavigationIconByExportName` |
-| `matchRouteExactly` | `boolean`                                 | Use exact path match for active highlight                 |
+| Field               | Type      | Description                               |
+| ------------------- | --------- | ----------------------------------------- |
+| `href`              | `string`  | Link URL                                  |
+| `label`             | `string`  | Nav item text                             |
+| `icon`              | `string`  | Material Symbols name, e.g. `"dashboard"` |
+| `matchRouteExactly` | `boolean` | Use exact path match for active highlight |
 
 On mobile the panel is full-width with a swipe-to-close gesture. On desktop it switches between full labels and icon-only mode via `collapsed`.
 
@@ -599,7 +598,7 @@ import { Loading } from "@clickyduck/solid-kit";
 
 Stat card with accent color, icon, value, and optional link.
 
-**Exports:** `MetricCard`
+**Exports:** `MetricCard`, `MetricCardProperties` (type)
 
 | Prop        | Type                                                   | Description                                             |
 | ----------- | ------------------------------------------------------ | ------------------------------------------------------- |
@@ -817,17 +816,18 @@ Typographic component with five size steps and semantic color, weight, style, an
 
 **`TextSize` values:** `"0"` (4xl, bold), `"1"` (2xl, semibold), `"2"` (base, medium — default), `"3"` (sm, medium), `"4"` (xs, medium).
 
-| Prop            | Type                                                                                                            | Default      | Description                      |
-| --------------- | --------------------------------------------------------------------------------------------------------------- | ------------ | -------------------------------- |
-| `size`          | `"0" \| "1" \| "2" \| "3" \| "4"`                                                                               | `"2"`        | Size step                        |
-| `color`         | `"default" \| "inherit" \| "muted" \| "primary" \| "secondary" \| "success" \| "warning" \| "danger" \| "info"` | `"default"`  | Semantic color                   |
-| `weight`        | `"thin" \| "normal" \| "medium" \| "semibold" \| "bold"`                                                        | size default | Font weight                      |
-| `italic`        | `boolean`                                                                                                       | `false`      | Italic style                     |
-| `underline`     | `boolean`                                                                                                       | `false`      | Underline decoration             |
-| `opacity`       | `number`                                                                                                        | —            | 0–100 percent opacity            |
-| `iconComponent` | `JSX.Element`                                                                                                   | —            | Leading or trailing icon element |
-| `iconPosition`  | `"start" \| "end"`                                                                                              | `"start"`    | Icon placement                   |
-| `class`         | `string`                                                                                                        | —            | Extra CSS classes                |
+| Prop            | Type                                                                                                            | Default      | Description                                       |
+| --------------- | --------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------- |
+| `size`          | `"0" \| "1" \| "2" \| "3" \| "4"`                                                                               | `"2"`        | Size step                                         |
+| `color`         | `"default" \| "inherit" \| "muted" \| "primary" \| "secondary" \| "success" \| "warning" \| "danger" \| "info"` | `"default"`  | Semantic color                                    |
+| `weight`        | `"thin" \| "normal" \| "medium" \| "semibold" \| "bold"`                                                        | size default | Font weight                                       |
+| `italic`        | `boolean`                                                                                                       | `false`      | Italic style                                      |
+| `underline`     | `boolean`                                                                                                       | `false`      | Underline decoration                              |
+| `opacity`       | `number`                                                                                                        | —            | 0–100 percent opacity                             |
+| `iconComponent` | `JSX.Element`                                                                                                   | —            | Leading or trailing icon element                  |
+| `iconPosition`  | `"start" \| "end"`                                                                                              | `"start"`    | Icon placement                                    |
+| `maxLength`     | `number`                                                                                                        | —            | Truncates string children with `…` at this length |
+| `class`         | `string`                                                                                                        | —            | Extra CSS classes                                 |
 
 ```tsx
 import { Text } from "@clickyduck/solid-kit";
@@ -866,7 +866,7 @@ import { Textarea } from "@clickyduck/solid-kit";
 
 Auto-dismissing notification toasts.
 
-**Exports:** `Toast`, `Toaster`, `addToast`, `removeToast`, `toastStore`
+**Exports:** `Toast`, `Toaster`, `addToast`, `removeToast`, `toastStore`, `ToastData` (type)
 
 Place `<Toaster />` once in your app root. Call `addToast` from anywhere to show a notification.
 
@@ -916,7 +916,7 @@ addToast({ title: "Saved", description: "Your changes were saved.", variant: "su
 
 Radio or checkbox toggle card group. Selected options show a blue border, background fill, primary-colored label, and a check icon. Unselected options respond to hover with a subtle background change.
 
-**Exports:** `ToggleGroup`, `ToggleGroupOption`
+**Exports:** `ToggleGroup`, `ToggleGroupOption`, `ToggleGroupProperties` (type)
 
 **`ToggleGroupOption` shape:**
 
@@ -976,7 +976,7 @@ const [plan, setPlan] = createSignal<string>();
 
 Styled file input with file-count display.
 
-**Exports:** `Upload`
+**Exports:** `Upload`, `UploadProperties` (type)
 
 Extends all native `<input type="file">` HTML attributes.
 
@@ -1022,6 +1022,16 @@ Solid.js signal tracking whether the viewport is ≤767 px.
 import { useIsMobile } from "@clickyduck/solid-kit";
 
 const isMobile = useIsMobile(); // Accessor<boolean>
+```
+
+### `themedScrollControlClassName`
+
+Pre-built Tailwind class string for themed scrollbars (thin, light/dark aware) in WebKit, Chromium, and Firefox. Use alongside `overflow-auto` and `min-h-0` inside flex layouts.
+
+```ts
+import { themedScrollControlClassName } from "@clickyduck/solid-kit";
+
+<div class={`overflow-auto min-h-0 ${themedScrollControlClassName}`}>…</div>
 ```
 
 ### Color scheme helpers

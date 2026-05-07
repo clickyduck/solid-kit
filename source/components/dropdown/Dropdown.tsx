@@ -309,7 +309,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
       >
         {local.children}
         <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && !properties.usePortal}>
-          <div class={mergeClasses("absolute top-full z-60 mt-1", local.menuFullWidth !== false ? "left-0 w-full" : "", builtInMenuChromeClass())}>
+          <div class={mergeClasses("absolute top-full z-[9999] mt-1", local.menuFullWidth !== false ? "left-0 w-full" : "", builtInMenuChromeClass())}>
             <Show when={isSearchable()}>
               <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
             </Show>
@@ -319,7 +319,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
         <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && properties.usePortal && portalPosition()}>
           {(position) => (
             <Portal mount={document.body}>
-              <div class={mergeClasses("z-60 min-w-min", builtInMenuChromeClass())} style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, width: `${position().width}px` }}>
+              <div class={mergeClasses("z-[9999] min-w-min", builtInMenuChromeClass())} style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, width: `${position().width}px` }}>
                 <Show when={isSearchable()}>
                   <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
                 </Show>
@@ -486,7 +486,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
   const nonPortalPositioningClass = (): string => {
     const yClass = yDirectionResolved() === "up" ? "bottom-full mb-1" : "top-full mt-1";
     const xClass = xDirectionResolved() === "left" ? "right-0" : "left-0";
-    return mergeClasses("absolute z-60", yClass, xClass);
+    return mergeClasses("absolute z-[9999]", yClass, xClass);
   };
 
   createEffect(
@@ -508,7 +508,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
           const rectangle = container.getBoundingClientRect();
           const gapPixels = 4;
           element.style.position = "fixed";
-          element.style.zIndex = "60";
+          element.style.zIndex = "9999";
           element.style.left = "auto";
           element.style.right = "auto";
           element.style.top = "auto";

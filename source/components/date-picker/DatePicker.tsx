@@ -473,13 +473,13 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
         }}
       >
         <span class="flex min-w-0 flex-1 items-center gap-2">
-          <Icon name="calendar_today" size={FORM_CONTROL_ICON_SIZE} class={mergeClasses("pointer-events-none shrink-0", hasValue() ? "text-blue-600 dark:text-blue-400" : CHROME_MUTED_ICON_CLASSES)} aria-hidden="true" />
+          <Icon name="calendar_today" size={FORM_CONTROL_ICON_SIZE} class={mergeClasses("pointer-events-none shrink-0", CHROME_MUTED_ICON_CLASSES)} aria-hidden="true" />
           <span class={mergeClasses("min-w-0 flex-1 truncate", hasValue() ? "text-gray-900 dark:text-white" : "text-gray-400 dark:text-gray-500")}>{triggerLabel()}</span>
         </span>
       </Button>
 
       <Show when={open() && !properties.usePortal}>
-        <div class="absolute top-full left-0 z-60 mt-1">{calendarElement()}</div>
+        <div class="absolute top-full left-0 z-[9999] mt-1">{calendarElement()}</div>
       </Show>
 
       <Show when={open() && properties.usePortal && portalPosition()}>
@@ -489,7 +489,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
               ref={(el) => {
                 popoverElement = el;
               }}
-              class="z-60"
+              class="z-[9999]"
               style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px` }}
             >
               {calendarElement()}

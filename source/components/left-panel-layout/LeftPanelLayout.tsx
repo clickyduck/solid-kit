@@ -281,7 +281,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
         <div
           role="presentation"
           aria-hidden="true"
-          class={mergeClasses(properties.scrimZIndexClass ?? "z-40", "fixed inset-0 bg-black/50", "top-(--solid-kit-header-height,4rem)", "transition-opacity duration-200")}
+          class={mergeClasses(properties.scrimZIndexClass ?? "z-20", "fixed inset-0 bg-black/50", "top-(--solid-kit-header-height,4rem)", "transition-opacity duration-200")}
           onClick={() => {
             properties.onOpenChange?.(false);
           }}
@@ -295,7 +295,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
         class={mergeClasses(
           "layout-left-panel flex min-h-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700/60 dark:bg-gray-950",
           isMobileViewport()
-            ? [properties.panelZIndexClass ?? "z-50", "fixed inset-x-0 bottom-0 w-full transition-transform duration-200 ease-in-out", "top-(--solid-kit-header-height,4rem)", resolvedCollapsed() ? "-translate-x-full" : "translate-x-0"]
+            ? [properties.panelZIndexClass ?? "z-30", "fixed inset-x-0 bottom-0 w-full transition-transform duration-200 ease-in-out", "top-(--solid-kit-header-height,4rem)", resolvedCollapsed() ? "-translate-x-full" : "translate-x-0"]
             : ["static h-full transition-[width] duration-200 ease-in-out", resolvedCollapsed() ? (properties.collapsedWidthClass ?? "w-16") : (properties.expandedWidthClass ?? "w-64")]
         )}
         style={
