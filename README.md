@@ -11,12 +11,12 @@ Before installing, ensure your project has the following:
 - **Tailwind CSS**
 - **clsx**
 - **tailwind-merge**
-- **@material-symbols/svg-500**
+- **material-symbols**
 
 Install them alongside the library:
 
 ```bash
-npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge @material-symbols/svg-500
+npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge material-symbols
 ```
 
 ---
@@ -444,21 +444,22 @@ import { IconButton } from "@clickyduck/solid-kit";
 
 ### Icons
 
-SVG icon renderer powered by the [Material Symbols](https://fonts.google.com/icons) rounded-filled set.
+Material Symbols renderer powered by the [Material Symbols](https://fonts.google.com/icons) rounded set (filled is enabled via `FILL` variation).
 
 **Exports:** `Icon`, `IconGlyphProperties` (type)
 
-Icons are loaded lazily on first use. While loading, a placeholder is shown. If the name does not exist in the library the placeholder remains.
+The `material-symbols/rounded.css` stylesheet is requested lazily on first use. Icons render by ligature name (the text content), so you pass the icon name string directly.
 
 **`Icon` props:**
 
-| Prop    | Type     | Default | Description                                                       |
-| ------- | -------- | ------- | ----------------------------------------------------------------- |
-| `name`  | `string` | —       | Material Symbols slug, e.g. `"account_balance_wallet"` (required) |
-| `size`  | `number` | —       | Sets both `width` and `height`                                    |
-| `class` | `string` | —       | Extra CSS classes                                                 |
+| Prop     | Type      | Default | Description                                                       |
+| -------- | --------- | ------- | ----------------------------------------------------------------- |
+| `name`   | `string`  | —       | Material Symbols slug, e.g. `"account_balance_wallet"` (required) |
+| `size`   | `number`  | —       | Sets both `width` and `height`                                    |
+| `filled` | `boolean` | `true`  | When `false`, uses the rounded outline variant (`FILL` = 0)       |
+| `class`  | `string`  | —       | Extra CSS classes                                                 |
 
-All standard SVG props are also forwarded.
+All standard `<span>` props are also forwarded.
 
 ```tsx
 import { Icon } from "@clickyduck/solid-kit";
@@ -1194,18 +1195,18 @@ export GITHUB_TOKEN=your_token_here
 Install the library and all peer dependencies:
 
 ```bash
-npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge @material-symbols/svg-500
+npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge material-symbols
 ```
 
 **Peer dependencies and why you need them:**
 
-| Package                     | Why                                                          |
-| --------------------------- | ------------------------------------------------------------ |
-| `solid-js`                  | SolidJS runtime                                              |
-| `tailwindcss`               | CSS utility framework                                        |
-| `clsx`                      | Class name helper (used by `mergeClasses`)                   |
-| `tailwind-merge`            | Tailwind class conflict resolution (used by `mergeClasses`)  |
-| `@material-symbols/svg-500` | Icon SVGs — loaded on demand by `<Icon>` and any `icon` prop |
+| Package            | Why                                                                               |
+| ------------------ | --------------------------------------------------------------------------------- |
+| `solid-js`         | SolidJS runtime                                                                   |
+| `tailwindcss`      | CSS utility framework                                                             |
+| `clsx`             | Class name helper (used by `mergeClasses`)                                        |
+| `tailwind-merge`   | Tailwind class conflict resolution (used by `mergeClasses`)                       |
+| `material-symbols` | Material Symbols variable font — loaded on demand by `<Icon>` and any `icon` prop |
 
 ### 4. Usage
 

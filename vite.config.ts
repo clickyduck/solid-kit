@@ -75,7 +75,7 @@ export default defineConfig(({ command }) => {
         fileName: (format, entryName) => `${entryName}.${format === "es" ? "js" : "cjs"}`
       },
       rollupOptions: {
-        external: [/^solid-js/, "@solidjs/router", /^@material-symbols\//, "clsx", "tailwind-merge"],
+        external: [/^solid-js/, "@solidjs/router", /^@material-symbols\//, /^material-symbols(\/.*)?$/, "clsx", "tailwind-merge"],
         output: {
           globals: {
             "solid-js": "SolidJS",

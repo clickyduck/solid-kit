@@ -315,7 +315,7 @@
     "release": "npm run format && npm run lint && dotenv -e .env -- npm publish"
   },
   "peerDependencies": {
-    "@material-symbols/svg-500": ">=0.44.4",
+    "material-symbols": ">=0.32.0",
     "clsx": ">=2.0.0",
     "solid-js": "^1.9.0",
     "tailwind-merge": ">=3.0.0",
@@ -331,6 +331,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "material-symbols": "^0.44.5",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.5.0",
     "@tailwindcss/postcss": "^4.2.4",
@@ -346,7 +347,7 @@
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.2.4",
     "typescript": "^6.0.3",
-    "vite": "^8.0.10",
+    "vite": "^8.0.11",
     "vite-plugin-dts": "^5.0.0",
     "vite-plugin-solid": "^2.11.12",
     "vite-plugin-solid-svg": "^0.8.1"
