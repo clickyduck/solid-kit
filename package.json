@@ -1,6 +1,6 @@
 {
   "name": "@clickyduck/solid-kit",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "description": "solid-kit — SolidJS component library with Tailwind CSS and Flowbite",
   "type": "module",
   "main": "./public/index.cjs",
