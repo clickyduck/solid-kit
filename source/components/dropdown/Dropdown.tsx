@@ -27,10 +27,13 @@ type DropdownContextType = {
   disabled: () => boolean | undefined;
   selectedValue: () => string | undefined;
   setSelectedValue: (value: string | undefined) => void;
+  selectedValues: () => string[];
+  setSelectedValues: (values: string[]) => void;
   dropdownOpen: () => boolean;
   setDropdownOpen: (open: boolean) => void;
   filteredOptions: () => string[];
   isSearchable: () => boolean;
+  isMultiSelect: () => boolean;
   searchQuery: () => string;
   setSearchQuery: (value: string) => void;
   registerSearchInput: (element: HTMLInputElement) => void;
@@ -57,9 +60,12 @@ type DropdownMenuPosition = {
 type DropdownRootProperties = {
   options: string[];
   value?: string;
+  multiSelectValue?: string[];
   onChange?: (value: string | undefined) => void;
+  onMultiSelectChange?: (values: string[]) => void;
   disabled?: boolean;
   searchable?: boolean;
+  multiSelect?: boolean;
   itemComponent?: (props: { item: { rawValue: string } }) => JSX.Element;
   children: JSX.Element;
   class?: string;
@@ -108,6 +114,8 @@ const DropdownBuiltInSearchField: Component<DropdownBuiltInSearchFieldProperties
 type DropdownBuiltInOptionsListProperties = {
   filteredOptions: () => string[];
   selectedValue: () => string | undefined;
+  selectedValues: () => string[];
+  isMultiSelect: () => boolean;
   itemComponent: DropdownRootProperties["itemComponent"];
   onSelectOption: (option: string) => void;
 };
@@ -118,7 +126,8 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
       <Show when={properties.filteredOptions().length > 0} fallback={<li class="py-4 text-center text-gray-500 dark:text-gray-400">No matches found</li>}>
         <For each={properties.filteredOptions()}>
           {(option: string) => {
-            const selectedClasses = (): string => (properties.selectedValue() === option ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "");
+            const isSelected = (): boolean => (properties.isMultiSelect() ? properties.selectedValues().includes(option) : properties.selectedValue() === option);
+            const selectedClasses = (): string => (isSelected() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "");
             const itemClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE;
             return (
               <li>
@@ -131,7 +140,10 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
                     properties.onSelectOption(option);
                   }}
                 >
-                  {properties.itemComponent ? properties.itemComponent({ item: { rawValue: option } }) : option}
+                  <span class="flex min-w-0 flex-1 items-center">{properties.itemComponent ? properties.itemComponent({ item: { rawValue: option } }) : option}</span>
+                  <Show when={isSelected()}>
+                    <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-blue-700 dark:text-blue-300" aria-hidden="true" />
+                  </Show>
                 </a>
               </li>
             );
@@ -146,8 +158,9 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
  * Dropdown root. Provides options, value, onChange and open state via context.
  */
 const Dropdown = (properties: DropdownRootProperties) => {
-  const [local] = splitProps(properties, ["options", "value", "onChange", "disabled", "searchable", "itemComponent", "children", "class", "menuClass", "menuFullWidth", "usePortal", "initialOpen"]);
+  const [local] = splitProps(properties, ["options", "value", "multiSelectValue", "onChange", "onMultiSelectChange", "disabled", "searchable", "multiSelect", "itemComponent", "children", "class", "menuClass", "menuFullWidth", "usePortal", "initialOpen"]);
   const [selectedValue, setSelectedValue] = createSignal(properties.value);
+  const [selectedValues, setSelectedValues] = createSignal<string[]>(properties.multiSelectValue ?? []);
   const [dropdownOpen, setDropdownOpen] = createSignal(local.initialOpen ?? false);
   const [searchQuery, setSearchQuery] = createSignal("");
   const [portalPosition, setPortalPosition] = createSignal<DropdownMenuPosition | null>(null);
@@ -157,6 +170,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
 
   const disabledState = createMemo(() => properties.disabled);
   const isSearchable = () => properties.searchable === true;
+  const isMultiSelect = () => properties.multiSelect === true;
   const filteredOptions = createMemo(() => {
     const query = searchQuery().trim().toLowerCase();
     if (!isSearchable() || query === "") {
@@ -236,11 +250,20 @@ const Dropdown = (properties: DropdownRootProperties) => {
   });
 
   const handleSelect = (value: string) => {
-    setSelectedValue(value);
-    if (properties.onChange) {
-      properties.onChange(value);
+    if (isMultiSelect()) {
+      const current = selectedValues();
+      const next = current.includes(value) ? current.filter((v) => v !== value) : [...current, value];
+      setSelectedValues(next);
+      if (properties.onMultiSelectChange) {
+        properties.onMultiSelectChange(next);
+      }
+    } else {
+      setSelectedValue(value);
+      if (properties.onChange) {
+        properties.onChange(value);
+      }
+      setDropdownOpen(false);
     }
-    setDropdownOpen(false);
   };
 
   const contextValue: DropdownContextType = {
@@ -252,10 +275,13 @@ const Dropdown = (properties: DropdownRootProperties) => {
     disabled: disabledState,
     selectedValue,
     setSelectedValue,
+    selectedValues,
+    setSelectedValues,
     dropdownOpen,
     setDropdownOpen,
     filteredOptions,
     isSearchable,
+    isMultiSelect,
     searchQuery,
     setSearchQuery,
     registerSearchInput: (element: HTMLInputElement) => {
@@ -287,7 +313,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
             <Show when={isSearchable()}>
               <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
             </Show>
-            <DropdownBuiltInOptionsList filteredOptions={filteredOptions} selectedValue={selectedValue} itemComponent={properties.itemComponent} onSelectOption={handleSelect} />
+            <DropdownBuiltInOptionsList filteredOptions={filteredOptions} selectedValue={selectedValue} selectedValues={selectedValues} isMultiSelect={isMultiSelect} itemComponent={properties.itemComponent} onSelectOption={handleSelect} />
           </div>
         </Show>
         <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && properties.usePortal && portalPosition()}>
@@ -297,7 +323,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
                 <Show when={isSearchable()}>
                   <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
                 </Show>
-                <DropdownBuiltInOptionsList filteredOptions={filteredOptions} selectedValue={selectedValue} itemComponent={properties.itemComponent} onSelectOption={handleSelect} />
+                <DropdownBuiltInOptionsList filteredOptions={filteredOptions} selectedValue={selectedValue} selectedValues={selectedValues} isMultiSelect={isMultiSelect} itemComponent={properties.itemComponent} onSelectOption={handleSelect} />
               </div>
             </Portal>
           )}
@@ -576,6 +602,9 @@ const DropdownItem = (properties: DropdownItemProperties) => {
     if (typeof local.selected === "boolean") {
       return local.selected;
     }
+    if (context.isMultiSelect() && local.item) {
+      return context.selectedValues().includes(local.item.rawValue);
+    }
     return Boolean(local.item && context.selectedValue() === local.item.rawValue);
   };
 
@@ -613,10 +642,17 @@ const DropdownItem = (properties: DropdownItemProperties) => {
               return;
             }
             if (local.item) {
-              context.setSelectedValue(local.item.rawValue);
-              context.onChange(local.item.rawValue);
+              if (context.isMultiSelect()) {
+                const current = context.selectedValues();
+                const next = current.includes(local.item.rawValue) ? current.filter((v) => v !== local.item!.rawValue) : [...current, local.item.rawValue];
+                context.setSelectedValues(next);
+                context.onChange(undefined);
+              } else {
+                context.setSelectedValue(local.item.rawValue);
+                context.onChange(local.item.rawValue);
+              }
             }
-            if (shouldCloseOnSelect()) {
+            if (shouldCloseOnSelect() && !context.isMultiSelect()) {
               context.setDropdownOpen(false);
             }
             if (typeof local.onClick === "function") {
@@ -625,7 +661,10 @@ const DropdownItem = (properties: DropdownItemProperties) => {
           }}
           {...rest}
         >
-          {local.children}
+          <span class="flex min-w-0 flex-1 items-center">{local.children}</span>
+          <Show when={isSelected() && isClickable()}>
+            <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-blue-700 dark:text-blue-300" aria-hidden="true" />
+          </Show>
         </a>
       </li>
     </Show>

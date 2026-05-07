@@ -108,6 +108,8 @@ export const ShowcaseApplication = (): JSX.Element => {
   const [searchableDropdownValue, setSearchableDropdownValue] = createSignal<string | undefined>("Mumbai");
   const [portalDropdownValue, setPortalDropdownValue] = createSignal<string | undefined>("Alpha");
   const [iconTriggerDropdownValue, setIconTriggerDropdownValue] = createSignal<string | undefined>("Two");
+  const [multiSelectDropdownValues, setMultiSelectDropdownValues] = createSignal<string[]>(["Banana", "Date"]);
+  const [multiSelectCityValues, setMultiSelectCityValues] = createSignal<string[]>([]);
   const [currencyInputValue, setCurrencyInputValue] = createSignal("1234567.50");
   const [plainInputValue, setPlainInputValue] = createSignal("Solid Kit");
   const [textareaAutoGrowValue, setTextareaAutoGrowValue] = createSignal("Type multiple lines to watch auto-grow clamp between min and max rows.");
@@ -617,51 +619,73 @@ export const ShowcaseApplication = (): JSX.Element => {
                 </BackgroundCard>
               </ShowcaseSection>
 
-              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-dropdowns" sectionTitle="Dropdowns">
-                <div class="grid gap-6 md:grid-cols-2">
-                  <Field label="Basic menu" for="showcase-dropdown-basic">
-                    <Dropdown options={dropdownOptions()} value={dropdownValue()} onChange={setDropdownValue}>
-                      <DropdownTrigger id="showcase-dropdown-basic">{dropdownValue() ?? "Select a fruit"}</DropdownTrigger>
-                    </Dropdown>
-                  </Field>
-                  <Field label="Searchable" for="showcase-dropdown-search">
-                    <Dropdown options={cityOptions()} value={searchableDropdownValue()} onChange={setSearchableDropdownValue} searchable>
-                      <DropdownTrigger id="showcase-dropdown-search">
-                        <DropdownValue>{searchableDropdownValue() ?? "Pick a city"}</DropdownValue>
-                      </DropdownTrigger>
-                    </Dropdown>
-                  </Field>
-                  <Field label="Document portal" for="showcase-dropdown-portal" hint="Menu anchors to the viewport to avoid clipping.">
-                    <Dropdown options={portalOptions()} value={portalDropdownValue()} onChange={setPortalDropdownValue} usePortal>
-                      <DropdownTrigger id="showcase-dropdown-portal">
-                        <DropdownValue>{portalDropdownValue() ?? "Choose letter"}</DropdownValue>
-                      </DropdownTrigger>
-                    </Dropdown>
-                  </Field>
-                  <Field label="Custom row renderer" for="showcase-dropdown-custom">
-                    <Dropdown
-                      options={dropdownOptions()}
-                      value={itemizedDropdownValue()}
-                      onChange={setItemizedDropdownValue}
-                      itemComponent={({ item }) => {
-                        return <span class="font-semibold text-blue-700 dark:text-blue-200">{item.rawValue}</span>;
-                      }}
-                    >
-                      <DropdownTrigger id="showcase-dropdown-custom">
-                        <DropdownValue>{itemizedDropdownValue() ?? "Styled options"}</DropdownValue>
-                      </DropdownTrigger>
-                    </Dropdown>
-                  </Field>
-                  <Field label="Icon-only trigger" for="showcase-dropdown-icon">
-                    <Dropdown options={numericOptions()} value={iconTriggerDropdownValue()} onChange={setIconTriggerDropdownValue}>
-                      <DropdownIconTrigger id="showcase-dropdown-icon" icon="more_vert" aria-label="Open numeric menu" />
-                    </Dropdown>
-                  </Field>
-                  <Field label="Disabled menu" for="showcase-dropdown-disabled">
-                    <Dropdown options={dropdownOptions()} value="Apple" onChange={() => {}} disabled>
-                      <DropdownTrigger id="showcase-dropdown-disabled">Disabled</DropdownTrigger>
-                    </Dropdown>
-                  </Field>
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-dropdowns" sectionTitle="Dropdowns" sectionDescription="Single-select options close on pick; multi-select keeps the menu open and marks each chosen item with a checkmark.">
+                <div class="space-y-2">
+                  <p class="text-xs font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-500">Single select</p>
+                  <div class="grid gap-6 md:grid-cols-2">
+                    <Field label="Basic menu" for="showcase-dropdown-basic">
+                      <Dropdown options={dropdownOptions()} value={dropdownValue()} onChange={setDropdownValue}>
+                        <DropdownTrigger id="showcase-dropdown-basic">{dropdownValue() ?? "Select a fruit"}</DropdownTrigger>
+                      </Dropdown>
+                    </Field>
+                    <Field label="Searchable" for="showcase-dropdown-search">
+                      <Dropdown options={cityOptions()} value={searchableDropdownValue()} onChange={setSearchableDropdownValue} searchable>
+                        <DropdownTrigger id="showcase-dropdown-search">
+                          <DropdownValue>{searchableDropdownValue() ?? "Pick a city"}</DropdownValue>
+                        </DropdownTrigger>
+                      </Dropdown>
+                    </Field>
+                    <Field label="Document portal" for="showcase-dropdown-portal" hint="Menu anchors to the viewport to avoid clipping.">
+                      <Dropdown options={portalOptions()} value={portalDropdownValue()} onChange={setPortalDropdownValue} usePortal>
+                        <DropdownTrigger id="showcase-dropdown-portal">
+                          <DropdownValue>{portalDropdownValue() ?? "Choose letter"}</DropdownValue>
+                        </DropdownTrigger>
+                      </Dropdown>
+                    </Field>
+                    <Field label="Custom row renderer" for="showcase-dropdown-custom">
+                      <Dropdown
+                        options={dropdownOptions()}
+                        value={itemizedDropdownValue()}
+                        onChange={setItemizedDropdownValue}
+                        itemComponent={({ item }) => {
+                          return <span class="font-semibold text-blue-700 dark:text-blue-200">{item.rawValue}</span>;
+                        }}
+                      >
+                        <DropdownTrigger id="showcase-dropdown-custom">
+                          <DropdownValue>{itemizedDropdownValue() ?? "Styled options"}</DropdownValue>
+                        </DropdownTrigger>
+                      </Dropdown>
+                    </Field>
+                    <Field label="Icon-only trigger" for="showcase-dropdown-icon">
+                      <Dropdown options={numericOptions()} value={iconTriggerDropdownValue()} onChange={setIconTriggerDropdownValue}>
+                        <DropdownIconTrigger id="showcase-dropdown-icon" icon="more_vert" aria-label="Open numeric menu" />
+                      </Dropdown>
+                    </Field>
+                    <Field label="Disabled menu" for="showcase-dropdown-disabled">
+                      <Dropdown options={dropdownOptions()} value="Apple" onChange={() => {}} disabled>
+                        <DropdownTrigger id="showcase-dropdown-disabled">Disabled</DropdownTrigger>
+                      </Dropdown>
+                    </Field>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <p class="text-xs font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-500">Multi select</p>
+                  <div class="grid gap-6 md:grid-cols-2">
+                    <Field label="Multi-select fruits" for="showcase-dropdown-multi" hint="Menu stays open; selected items are checked.">
+                      <Dropdown options={dropdownOptions()} multiSelect multiSelectValue={multiSelectDropdownValues()} onMultiSelectChange={setMultiSelectDropdownValues}>
+                        <DropdownTrigger id="showcase-dropdown-multi">
+                          <DropdownValue>{multiSelectDropdownValues().length > 0 ? multiSelectDropdownValues().join(", ") : "Select fruits"}</DropdownValue>
+                        </DropdownTrigger>
+                      </Dropdown>
+                    </Field>
+                    <Field label="Multi-select cities (searchable)" for="showcase-dropdown-multi-search">
+                      <Dropdown options={cityOptions()} multiSelect searchable multiSelectValue={multiSelectCityValues()} onMultiSelectChange={setMultiSelectCityValues}>
+                        <DropdownTrigger id="showcase-dropdown-multi-search">
+                          <DropdownValue>{multiSelectCityValues().length > 0 ? multiSelectCityValues().join(", ") : "Select cities"}</DropdownValue>
+                        </DropdownTrigger>
+                      </Dropdown>
+                    </Field>
+                  </div>
                 </div>
               </ShowcaseSection>
             </ShowcaseCategory>

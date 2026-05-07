@@ -222,18 +222,21 @@ Accessible select-style dropdown with optional search.
 
 **`Dropdown` (root) props:**
 
-| Prop            | Type                                                     | Default | Description                                       |
-| --------------- | -------------------------------------------------------- | ------- | ------------------------------------------------- |
-| `options`       | `string[]`                                               | —       | List of option values (required)                  |
-| `value`         | `string`                                                 | —       | Controlled selected value                         |
-| `onChange`      | `(value: string \| undefined) => void`                   | —       | Called on selection change                        |
-| `disabled`      | `boolean`                                                | —       | Disables the trigger                              |
-| `searchable`    | `boolean`                                                | —       | Adds a filter input inside the menu               |
-| `itemComponent` | `(props: { item: { rawValue: string } }) => JSX.Element` | —       | Custom item renderer                              |
-| `menuClass`     | `string`                                                 | —       | Extra classes on the menu surface                 |
-| `menuFullWidth` | `boolean`                                                | `true`  | Menu width matches trigger width                  |
-| `usePortal`     | `boolean`                                                | —       | Render menu on `document.body` to escape overflow |
-| `initialOpen`   | `boolean`                                                | —       | Open on first render                              |
+| Prop                  | Type                                                     | Default | Description                                                                 |
+| --------------------- | -------------------------------------------------------- | ------- | --------------------------------------------------------------------------- |
+| `options`             | `string[]`                                               | —       | List of option values (required)                                            |
+| `value`               | `string`                                                 | —       | Controlled selected value (single-select)                                   |
+| `onChange`            | `(value: string \| undefined) => void`                   | —       | Called on selection change (single-select); menu closes after each pick     |
+| `multiSelect`         | `boolean`                                                | —       | Enables multi-select mode; menu stays open, selected items show a checkmark |
+| `multiSelectValue`    | `string[]`                                               | —       | Initial selected values (multi-select); treated as uncontrolled after mount |
+| `onMultiSelectChange` | `(values: string[]) => void`                             | —       | Called when the selection array changes (multi-select)                      |
+| `disabled`            | `boolean`                                                | —       | Disables the trigger                                                        |
+| `searchable`          | `boolean`                                                | —       | Adds a filter input inside the menu                                         |
+| `itemComponent`       | `(props: { item: { rawValue: string } }) => JSX.Element` | —       | Custom item renderer                                                        |
+| `menuClass`           | `string`                                                 | —       | Extra classes on the menu surface                                           |
+| `menuFullWidth`       | `boolean`                                                | `true`  | Menu width matches trigger width                                            |
+| `usePortal`           | `boolean`                                                | —       | Render menu on `document.body` to escape overflow                           |
+| `initialOpen`         | `boolean`                                                | —       | Open on first render                                                        |
 
 **`DropdownContent` extra props:**
 
@@ -255,9 +258,22 @@ Accessible select-style dropdown with optional search.
 | `closeOnSelect` | `boolean`              | `true`  | Close menu when item is clicked |
 
 ```tsx
-import { Dropdown } from "@clickyduck/solid-kit";
+import { Dropdown, DropdownTrigger, DropdownValue } from "@clickyduck/solid-kit";
+import { createSignal } from "solid-js";
 
-<Dropdown options={["Option A", "Option B", "Option C"]} value={selected()} onChange={setSelected} searchable />;
+// Single-select — menu closes after each pick
+const [selected, setSelected] = createSignal<string>();
+<Dropdown options={["Option A", "Option B", "Option C"]} value={selected()} onChange={setSelected} searchable>
+  <DropdownTrigger>{selected() ?? "Choose…"}</DropdownTrigger>
+</Dropdown>;
+
+// Multi-select — menu stays open; selected items are checked
+const [tags, setTags] = createSignal<string[]>([]);
+<Dropdown options={["A", "B", "C"]} multiSelect multiSelectValue={tags()} onMultiSelectChange={setTags}>
+  <DropdownTrigger>
+    <DropdownValue>{tags().length > 0 ? tags().join(", ") : "Select tags"}</DropdownValue>
+  </DropdownTrigger>
+</Dropdown>;
 ```
 
 ---
@@ -843,7 +859,7 @@ addToast({ title: "Saved", description: "Your changes were saved.", variant: "su
 
 ### ToggleGroup
 
-Radio or checkbox toggle card group.
+Radio or checkbox toggle card group. Selected options show a blue border, background fill, primary-colored label, and a check icon. Unselected options respond to hover with a subtle background change.
 
 **Exports:** `ToggleGroup`, `ToggleGroupOption`
 
