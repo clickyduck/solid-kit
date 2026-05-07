@@ -514,6 +514,9 @@ const DropdownContent = (properties: DropdownContentProperties) => {
           element.style.top = "auto";
           element.style.bottom = "auto";
 
+          // Ensure popup is at least as wide as the trigger
+          element.style.minWidth = `${rectangle.width}px`;
+
           // Horizontal direction
           if (xDirectionResolved() === "left") {
             // Anchor to trigger's right edge, so the menu grows leftwards.
