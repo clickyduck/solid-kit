@@ -1,7 +1,7 @@
 import { Button } from "@/components/button/Button";
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon } from "@/components/icons";
-import { CHROME_MUTED_ICON_CLASSES, DROPDOWN_MENU_SURFACE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
+import { DROPDOWN_MENU_SURFACE_CLASSES, FORM_CONTROL_ICON_SIZE, FORM_CONTROL_TEXT_CLASS_BY_SIZE, mergeClasses } from "@/utilities";
 import { getPortalMount } from "@/utilities/getPortalMount";
 import type { JSX } from "solid-js";
 import { For, Show, createEffect, createMemo, createSignal, on, onCleanup, onMount } from "solid-js";
@@ -114,7 +114,7 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
     const isToday = isSameDay(day.date, new Date());
     const isCurrentMonth = day.currentMonth;
     const mutedText = isCurrentMonth ? "text-gray-900 dark:text-gray-100" : "text-gray-400 dark:text-gray-600";
-    const base = "relative z-10 flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-colors duration-100 focus:outline-none";
+    const base = "relative z-10 flex h-8 w-8 items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 focus:outline-none";
     const todayRing = isToday ? "ring-1 ring-inset ring-blue-500" : "";
 
     const isFrom = createMemo(() => properties.mode === "range" && !!properties.rangeFrom && isSameDay(day.date, properties.rangeFrom));
@@ -147,7 +147,7 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
   const chipActive = "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300";
   const chipIdle = "text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-700";
 
-  const itemBase = "flex items-center justify-center rounded-lg text-sm font-medium transition-colors duration-100 focus:outline-none";
+  const itemBase = "flex items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 focus:outline-none";
   const itemDefault = "text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700";
   const itemSelected = "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600";
 
@@ -460,7 +460,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
         variant="outline"
         icon="keyboard_arrow_down"
         iconPosition="end"
-        class="w-full min-w-0 justify-between text-left font-medium aria-expanded:bg-gray-100 dark:aria-expanded:bg-gray-700"
+        class="w-full min-w-0 justify-between text-left font-normal aria-expanded:bg-gray-100 dark:aria-expanded:bg-gray-700"
         disabled={properties.disabled}
         aria-expanded={open()}
         aria-haspopup="dialog"
@@ -471,8 +471,8 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
         }}
       >
         <span class="flex min-w-0 flex-1 items-center gap-2">
-          <Icon name="calendar_today" size={FORM_CONTROL_ICON_SIZE} class={mergeClasses("pointer-events-none shrink-0", CHROME_MUTED_ICON_CLASSES)} aria-hidden="true" />
-          <span class={mergeClasses("min-w-0 flex-1 truncate", hasValue() ? "text-gray-900 dark:text-white" : "text-gray-400 dark:text-gray-500")}>{triggerLabel()}</span>
+          <Icon name="calendar_today" size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
+          <span class={mergeClasses("min-w-0 flex-1 truncate", FORM_CONTROL_TEXT_CLASS_BY_SIZE, "text-gray-900 dark:text-white")}>{triggerLabel()}</span>
         </span>
       </Button>
 

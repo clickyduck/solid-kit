@@ -47,9 +47,9 @@ export const FORM_CONTROL_STATUS_BADGE_SIZE_CLASSES = "px-2.5 py-0.5 text-xs";
 
 export const FORM_CONTROL_STATUS_BADGE_DOT_SIZE_CLASSES = "h-1.5 w-1.5";
 
-export const FORM_CONTROL_DROP_DOWN_MENU_PANEL_CLASS_BY_SIZE = "max-h-60 overflow-auto p-1.5 text-sm font-medium text-gray-700 dark:text-white";
+export const FORM_CONTROL_DROP_DOWN_MENU_PANEL_CLASS_BY_SIZE = "max-h-60 overflow-auto p-1.5 text-sm text-gray-700 dark:text-white";
 
-export const FORM_CONTROL_DROP_DOWN_MENU_LIST_CLASS_BY_SIZE = "max-h-60 space-y-1 overflow-auto p-1.5 text-sm font-medium text-gray-700 dark:text-white";
+export const FORM_CONTROL_DROP_DOWN_MENU_LIST_CLASS_BY_SIZE = "max-h-60 space-y-1 overflow-auto p-1.5 text-sm text-gray-700 dark:text-white";
 
 export const FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE =
   "inline-flex w-full items-center rounded-lg px-2.5 py-1.5 text-left transition-colors duration-100 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700/60 dark:hover:text-white focus:outline-none";

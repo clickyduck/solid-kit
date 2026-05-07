@@ -197,10 +197,14 @@ const Dropdown = (properties: DropdownRootProperties) => {
   );
 
   createEffect(
-    on([dropdownOpen, isSearchable], ([open, searchable]) => {
-      if (open && searchable) {
+    on(dropdownOpen, (open) => {
+      if (open && isSearchable()) {
+        // Double rAF ensures the Portal re-mounts its DOM before we focus,
+        // since Show tears down and recreates the search input each open cycle.
         requestAnimationFrame(() => {
-          searchInputElement?.focus();
+          requestAnimationFrame(() => {
+            searchInputElement?.focus();
+          });
         });
       }
     })
@@ -311,7 +315,13 @@ const Dropdown = (properties: DropdownRootProperties) => {
         <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && portalPosition()}>
           {(position) => (
             <Portal mount={getPortalMount(dropdownContainerElement)}>
-              <div class={mergeClasses("z-9999 min-w-min", builtInMenuChromeClass())} style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, width: `${position().width}px` }}>
+              <div
+                ref={(el) => {
+                  contentPortalMenuElement = el;
+                }}
+                class={mergeClasses("z-9999 min-w-min", builtInMenuChromeClass())}
+                style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, width: `${position().width}px` }}
+              >
                 <Show when={isSearchable()}>
                   <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
                 </Show>
@@ -384,7 +394,7 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
       variant={local.variant ?? "outline"}
       icon="keyboard_arrow_down"
       iconPosition="end"
-      class="w-full min-w-0 justify-between text-left font-medium aria-expanded:bg-gray-100 dark:aria-expanded:bg-gray-700"
+      class="w-full min-w-0 justify-between text-left font-normal aria-expanded:bg-gray-100 dark:aria-expanded:bg-gray-700"
       onClick={(event) => {
         if (context.disabled()) {
           return;
@@ -410,7 +420,7 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
             </span>
           )}
         </Show>
-        <span class="min-w-0 flex-1 truncate">{local.children}</span>
+        <span class={mergeClasses("min-w-0 flex-1 truncate", FORM_CONTROL_TEXT_CLASS_BY_SIZE, "text-gray-900 dark:text-white")}>{local.children}</span>
       </span>
     </Button>
   );
