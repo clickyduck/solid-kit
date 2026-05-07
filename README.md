@@ -1,6 +1,25 @@
 # @clickyduck/solid-kit
 
-A SolidJS component library built with Tailwind CSS and Flowbite-style patterns, published privately via GitHub Packages. Import UI pieces from a single package entry point.
+A SolidJS component library built with Tailwind CSS, published privately via GitHub Packages. Import UI pieces from the main entry or per-component sub-paths for better tree-shaking.
+
+## Requirements
+
+Before installing, ensure your project has the following:
+
+- **Node.js**
+- **SolidJS**
+- **Tailwind CSS**
+- **clsx**
+- **tailwind-merge**
+- **@material-symbols/svg-500**
+
+Install them alongside the library:
+
+```bash
+npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge @material-symbols/svg-500
+```
+
+---
 
 ## Components
 
@@ -1102,16 +1121,40 @@ export GITHUB_TOKEN=your_token_here
 
 ### 3. Install packages
 
+Install the library and all peer dependencies:
+
 ```bash
-npm install @clickyduck/solid-kit solid-js tailwindcss
+npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge @material-symbols/svg-500
 ```
 
-Icons are bundled inside **`@clickyduck/solid-kit`** — you do **not** need to install **`@material-symbols/svg-500`**. Pass any [Material Symbols](https://fonts.google.com/icons) slug (e.g. `"search"`, `"account_balance_wallet"`) to any `icon` prop or to `<Icon name="..." />`.
+**Peer dependencies and why you need them:**
+
+| Package                     | Why                                                          |
+| --------------------------- | ------------------------------------------------------------ |
+| `solid-js`                  | SolidJS runtime                                              |
+| `tailwindcss`               | CSS utility framework                                        |
+| `clsx`                      | Class name helper (used by `mergeClasses`)                   |
+| `tailwind-merge`            | Tailwind class conflict resolution (used by `mergeClasses`)  |
+| `@material-symbols/svg-500` | Icon SVGs — loaded on demand by `<Icon>` and any `icon` prop |
 
 ### 4. Usage
 
+Import from the main entry or directly from a component path (better tree-shaking):
+
 ```tsx
-import { Button } from "@clickyduck/solid-kit";
+// Main entry — includes everything
+import { Button, Icon } from "@clickyduck/solid-kit";
+
+// Per-component entry — only bundles what you import
+import { Button } from "@clickyduck/solid-kit/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFooter } from "@clickyduck/solid-kit/dialog";
+import { Icon } from "@clickyduck/solid-kit/icons";
+```
+
+Available sub-paths: `badge`, `button`, `card`, `dialog`, `divider`, `dropdown`, `empty-state`, `field`, `header-layout`, `icon-button`, `icons`, `input`, `left-panel-layout`, `loading`, `main-layout`, `page-layout`, `right-panel-layout`, `section-heading`, `spinner`, `table`, `tabs`, `textarea`, `toast`, `toggle-group`, `typography`, `upload`, `utilities`.
+
+```tsx
+import { Button } from "@clickyduck/solid-kit/button";
 
 function App() {
   return <Button>Click me</Button>;

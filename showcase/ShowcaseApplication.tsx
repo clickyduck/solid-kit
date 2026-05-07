@@ -716,7 +716,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                       <DialogTitle>Confirm destructive action</DialogTitle>
                     </DialogHeader>
                     <DialogBody>
-                      <DialogDescription>Dialogs use Flowbite modal behaviour: focus management, backdrop blur, and scroll locking. Footer actions keep equal minimum widths on wide breakpoints.</DialogDescription>
+                      <DialogDescription>Dialogs use the native &lt;dialog&gt; element: focus management, backdrop blur, and scroll locking built in. Footer actions keep equal minimum widths on wide breakpoints.</DialogDescription>
                     </DialogBody>
                     <DialogFooter>
                       <Button

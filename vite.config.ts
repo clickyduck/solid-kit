@@ -4,6 +4,36 @@ import dtsPlugin from "vite-plugin-dts";
 import solidPlugin from "vite-plugin-solid";
 import solidSvg from "vite-plugin-solid-svg";
 
+const componentEntries: Record<string, string> = {
+  badge: resolve(__dirname, "source/components/badge/index.ts"),
+  button: resolve(__dirname, "source/components/button/index.ts"),
+  card: resolve(__dirname, "source/components/card/index.ts"),
+  dialog: resolve(__dirname, "source/components/dialog/index.ts"),
+  divider: resolve(__dirname, "source/components/divider/index.ts"),
+  dropdown: resolve(__dirname, "source/components/dropdown/index.ts"),
+  "empty-state": resolve(__dirname, "source/components/empty-state/index.ts"),
+  field: resolve(__dirname, "source/components/field/index.ts"),
+  "header-layout": resolve(__dirname, "source/components/header-layout/index.ts"),
+  "icon-button": resolve(__dirname, "source/components/icon-button/index.ts"),
+  icons: resolve(__dirname, "source/components/icons/index.ts"),
+  input: resolve(__dirname, "source/components/input/index.ts"),
+  "left-panel-layout": resolve(__dirname, "source/components/left-panel-layout/index.ts"),
+  loading: resolve(__dirname, "source/components/loading/index.ts"),
+  "main-layout": resolve(__dirname, "source/components/main-layout/index.ts"),
+  "page-layout": resolve(__dirname, "source/components/page-layout/index.ts"),
+  "right-panel-layout": resolve(__dirname, "source/components/right-panel-layout/index.ts"),
+  "section-heading": resolve(__dirname, "source/components/section-heading/index.ts"),
+  spinner: resolve(__dirname, "source/components/spinner/index.ts"),
+  table: resolve(__dirname, "source/components/table/index.ts"),
+  tabs: resolve(__dirname, "source/components/tabs/index.ts"),
+  textarea: resolve(__dirname, "source/components/textarea/index.ts"),
+  toast: resolve(__dirname, "source/components/toast/index.ts"),
+  "toggle-group": resolve(__dirname, "source/components/toggle-group/index.ts"),
+  typography: resolve(__dirname, "source/components/typography/index.ts"),
+  upload: resolve(__dirname, "source/components/upload/index.ts"),
+  utilities: resolve(__dirname, "source/utilities/index.ts")
+};
+
 export default defineConfig(({ command }) => {
   const sharedResolve = {
     alias: {
@@ -36,15 +66,15 @@ export default defineConfig(({ command }) => {
     build: {
       outDir: "public",
       lib: {
-        entry: resolve(__dirname, "source/index.ts"),
-        name: "ClickyDuckDesignSystem",
+        entry: {
+          index: resolve(__dirname, "source/index.ts"),
+          ...componentEntries
+        },
         formats: ["es", "cjs"],
-        fileName: (format) => {
-          return `index.${format === "es" ? "js" : "cjs"}`;
-        }
+        fileName: (format, entryName) => `${entryName}.${format === "es" ? "js" : "cjs"}`
       },
       rollupOptions: {
-        external: ["solid-js", "solid-js/web", "solid-js/store", "@solidjs/router"],
+        external: [/^solid-js/, "@solidjs/router", /^@material-symbols\//, "clsx", "tailwind-merge"],
         output: {
           globals: {
             "solid-js": "SolidJS",

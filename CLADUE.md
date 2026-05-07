@@ -15,4 +15,4 @@
 - Always use functional patterns.
 - Always use curly braces for if statements and functions and everywhere where fat arrow is used.
 - This is soldijs design system project. Always use solidjs tags when possible.
-- For CSS use Tailwind CSS with Flowbite UI components.
+- For CSS use Tailwind CSS.

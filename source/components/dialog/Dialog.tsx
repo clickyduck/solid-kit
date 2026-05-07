@@ -1,7 +1,5 @@
 import { IconButton } from "@/components/icon-button/IconButton";
 import { mergeClasses } from "@/utilities";
-import { Modal } from "flowbite";
-import type { ModalInterface, ModalOptions } from "flowbite";
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, createContext, createEffect, on, onCleanup, onMount, splitProps, useContext } from "solid-js";
 
@@ -12,90 +10,82 @@ type DialogRootProperties = {
   children?: JSX.Element;
 };
 
-const DialogContext = createContext<{ modalId: string; closeable: () => boolean; hideModal: () => void }>();
-
-let modalIdCounter = 0;
+const DialogContext = createContext<{ closeable: () => boolean; close: () => void }>();
 
 /**
- * Dialog root using Flowbite Modal. Controls open state and provides context for sub-components.
+ * Dialog root using native <dialog> element. Controls open state and provides context for sub-components.
  */
 export const Dialog = (properties: DialogRootProperties) => {
-  const closeable = () => {
-    return properties.closeable !== false;
-  };
-  const modalId = `modal-${modalIdCounter++}`;
-  let modalElement: HTMLElement | null = null;
-  let modalInstance: ModalInterface | null = null;
+  const closeable = () => properties.closeable !== false;
+  let dialogElement: HTMLDialogElement | undefined;
 
-  const hideModal = () => {
-    if (modalInstance) {
-      modalInstance.hide();
-    }
+  const close = () => {
+    dialogElement?.close();
   };
 
   onMount(() => {
-    if (modalElement) {
-      const modalOptions: ModalOptions = {
-        placement: "center",
-        backdrop: "dynamic",
-        backdropClasses: "fixed inset-0 z-40 bg-black/30 backdrop-blur-xl dark:bg-gray-900/50",
-        closable: false,
-        onHide: () => {
-          if (properties.onOpenChange) {
-            properties.onOpenChange(false);
-          }
-        },
-        onShow: () => {
-          if (properties.onOpenChange) {
-            properties.onOpenChange(true);
-          }
-        }
-      };
-      modalInstance = new Modal(modalElement, modalOptions);
-      if (properties.open) {
-        modalInstance.show();
-      }
+    if (!dialogElement) return;
+    if (properties.open) {
+      dialogElement.showModal();
     }
   });
 
   createEffect(
     on(
-      () => {
-        return properties.open;
-      },
+      () => properties.open,
       (open) => {
-        if (modalInstance && modalElement) {
-          if (open) {
-            modalInstance.show();
-          } else {
-            modalInstance.hide();
-          }
+        if (!dialogElement) return;
+        if (open) {
+          if (!dialogElement.open) dialogElement.showModal();
+        } else {
+          if (dialogElement.open) dialogElement.close();
         }
       },
       { defer: true }
     )
   );
 
-  onCleanup(() => {
-    if (modalInstance) {
-      modalInstance.hide();
-    }
+  onMount(() => {
+    const handleCancel = (event: Event) => {
+      event.preventDefault();
+      properties.onOpenChange?.(false);
+    };
+    const handleClose = () => {
+      properties.onOpenChange?.(false);
+    };
+    dialogElement?.addEventListener("cancel", handleCancel);
+    dialogElement?.addEventListener("close", handleClose);
+    onCleanup(() => {
+      dialogElement?.removeEventListener("cancel", handleCancel);
+      dialogElement?.removeEventListener("close", handleClose);
+    });
+  });
+
+  onMount(() => {
+    const handleBackdropClick = (event: MouseEvent) => {
+      if (!dialogElement) return;
+      const rect = dialogElement.getBoundingClientRect();
+      const clickedOutside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
+      if (clickedOutside) {
+        properties.onOpenChange?.(false);
+      }
+    };
+    dialogElement?.addEventListener("click", handleBackdropClick);
+    onCleanup(() => {
+      dialogElement?.removeEventListener("click", handleBackdropClick);
+    });
   });
 
   return (
-    <DialogContext.Provider value={{ modalId, closeable, hideModal }}>
-      <div
-        ref={(element) => {
-          modalElement = element as HTMLElement;
+    <DialogContext.Provider value={{ closeable, close }}>
+      <dialog
+        ref={(el) => {
+          dialogElement = el;
         }}
-        id={modalId}
-        tabindex="-1"
-        aria-hidden={properties.open === true ? "false" : "true"}
-        inert={properties.open === true ? undefined : true}
-        class="fixed inset-0 z-50 hidden h-dvh w-full items-stretch justify-center overflow-hidden sm:items-center md:inset-0"
+        class="m-0 h-dvh w-full max-w-full border-0 bg-transparent p-0 backdrop:bg-black/30 backdrop:backdrop-blur-xl open:flex open:items-stretch open:justify-center sm:m-auto sm:h-auto sm:max-w-2xl sm:p-4 sm:open:items-center dark:backdrop:bg-gray-900/50"
       >
         {properties.children}
-      </div>
+      </dialog>
     </DialogContext.Provider>
   );
 };
@@ -116,7 +106,7 @@ export const DialogContent = (properties: DialogContentPropertiesType) => {
   const [local, rest] = splitProps(properties, ["children", "class"]);
 
   return (
-    <div class="relative my-auto h-dvh w-full p-0 sm:h-auto sm:max-w-2xl sm:p-4">
+    <div class="relative my-auto h-dvh w-full p-0 sm:h-auto sm:w-full">
       <div
         class={mergeClasses(
           "relative flex h-full flex-col bg-white sm:max-h-[calc(100dvh-0.75rem)] sm:rounded-lg sm:border sm:border-gray-200 sm:shadow-lg md:max-h-[calc(100dvh-4rem)] dark:bg-gray-900 dark:sm:border-gray-700 dark:sm:shadow-sm [&>form]:flex [&>form]:min-h-0 [&>form]:flex-1 [&>form]:flex-col",
@@ -156,7 +146,7 @@ export const DialogDescription = (properties: DialogDescriptionPropertiesType) =
 export const DialogHeader = (properties: ComponentProps<"div"> & { actions?: JSX.Element }) => {
   const context = useContext(DialogContext);
   const [local, rest] = splitProps(properties, ["children", "actions", "class"]);
-  const hideModal = context?.hideModal ?? (() => {});
+  const close = context?.close ?? (() => {});
 
   return (
     <div class={mergeClasses("flex shrink-0 items-center justify-between border-b border-gray-200 px-6 py-5 dark:border-gray-700", local.class)} {...rest}>
@@ -164,7 +154,7 @@ export const DialogHeader = (properties: ComponentProps<"div"> & { actions?: JSX
       <div class="flex items-center gap-2">
         <Show when={local.actions}>{local.actions}</Show>
         <Show when={context?.closeable?.()}>
-          <IconButton variant="ghost" icon="cancel" onClick={hideModal} aria-label="Close modal" />
+          <IconButton variant="ghost" icon="cancel" onClick={close} aria-label="Close modal" />
         </Show>
       </div>
     </div>

@@ -1,7 +1,7 @@
 {
   "name": "@clickyduck/solid-kit",
   "version": "0.1.21",
-  "description": "solid-kit — SolidJS component library with Tailwind CSS and Flowbite",
+  "description": "solid-kit — SolidJS component library with Tailwind CSS.",
   "type": "module",
   "main": "./public/index.cjs",
   "module": "./public/index.js",
@@ -15,6 +15,276 @@
       "require": {
         "types": "./public/index.d.ts",
         "default": "./public/index.cjs"
+      }
+    },
+    "./badge": {
+      "import": {
+        "types": "./public/badge.d.ts",
+        "default": "./public/badge.js"
+      },
+      "require": {
+        "types": "./public/badge.d.ts",
+        "default": "./public/badge.cjs"
+      }
+    },
+    "./button": {
+      "import": {
+        "types": "./public/button.d.ts",
+        "default": "./public/button.js"
+      },
+      "require": {
+        "types": "./public/button.d.ts",
+        "default": "./public/button.cjs"
+      }
+    },
+    "./card": {
+      "import": {
+        "types": "./public/card.d.ts",
+        "default": "./public/card.js"
+      },
+      "require": {
+        "types": "./public/card.d.ts",
+        "default": "./public/card.cjs"
+      }
+    },
+    "./dialog": {
+      "import": {
+        "types": "./public/dialog.d.ts",
+        "default": "./public/dialog.js"
+      },
+      "require": {
+        "types": "./public/dialog.d.ts",
+        "default": "./public/dialog.cjs"
+      }
+    },
+    "./divider": {
+      "import": {
+        "types": "./public/divider.d.ts",
+        "default": "./public/divider.js"
+      },
+      "require": {
+        "types": "./public/divider.d.ts",
+        "default": "./public/divider.cjs"
+      }
+    },
+    "./dropdown": {
+      "import": {
+        "types": "./public/dropdown.d.ts",
+        "default": "./public/dropdown.js"
+      },
+      "require": {
+        "types": "./public/dropdown.d.ts",
+        "default": "./public/dropdown.cjs"
+      }
+    },
+    "./empty-state": {
+      "import": {
+        "types": "./public/empty-state.d.ts",
+        "default": "./public/empty-state.js"
+      },
+      "require": {
+        "types": "./public/empty-state.d.ts",
+        "default": "./public/empty-state.cjs"
+      }
+    },
+    "./field": {
+      "import": {
+        "types": "./public/field.d.ts",
+        "default": "./public/field.js"
+      },
+      "require": {
+        "types": "./public/field.d.ts",
+        "default": "./public/field.cjs"
+      }
+    },
+    "./header-layout": {
+      "import": {
+        "types": "./public/header-layout.d.ts",
+        "default": "./public/header-layout.js"
+      },
+      "require": {
+        "types": "./public/header-layout.d.ts",
+        "default": "./public/header-layout.cjs"
+      }
+    },
+    "./icon-button": {
+      "import": {
+        "types": "./public/icon-button.d.ts",
+        "default": "./public/icon-button.js"
+      },
+      "require": {
+        "types": "./public/icon-button.d.ts",
+        "default": "./public/icon-button.cjs"
+      }
+    },
+    "./icons": {
+      "import": {
+        "types": "./public/icons.d.ts",
+        "default": "./public/icons.js"
+      },
+      "require": {
+        "types": "./public/icons.d.ts",
+        "default": "./public/icons.cjs"
+      }
+    },
+    "./input": {
+      "import": {
+        "types": "./public/input.d.ts",
+        "default": "./public/input.js"
+      },
+      "require": {
+        "types": "./public/input.d.ts",
+        "default": "./public/input.cjs"
+      }
+    },
+    "./left-panel-layout": {
+      "import": {
+        "types": "./public/left-panel-layout.d.ts",
+        "default": "./public/left-panel-layout.js"
+      },
+      "require": {
+        "types": "./public/left-panel-layout.d.ts",
+        "default": "./public/left-panel-layout.cjs"
+      }
+    },
+    "./loading": {
+      "import": {
+        "types": "./public/loading.d.ts",
+        "default": "./public/loading.js"
+      },
+      "require": {
+        "types": "./public/loading.d.ts",
+        "default": "./public/loading.cjs"
+      }
+    },
+    "./main-layout": {
+      "import": {
+        "types": "./public/main-layout.d.ts",
+        "default": "./public/main-layout.js"
+      },
+      "require": {
+        "types": "./public/main-layout.d.ts",
+        "default": "./public/main-layout.cjs"
+      }
+    },
+    "./page-layout": {
+      "import": {
+        "types": "./public/page-layout.d.ts",
+        "default": "./public/page-layout.js"
+      },
+      "require": {
+        "types": "./public/page-layout.d.ts",
+        "default": "./public/page-layout.cjs"
+      }
+    },
+    "./right-panel-layout": {
+      "import": {
+        "types": "./public/right-panel-layout.d.ts",
+        "default": "./public/right-panel-layout.js"
+      },
+      "require": {
+        "types": "./public/right-panel-layout.d.ts",
+        "default": "./public/right-panel-layout.cjs"
+      }
+    },
+    "./section-heading": {
+      "import": {
+        "types": "./public/section-heading.d.ts",
+        "default": "./public/section-heading.js"
+      },
+      "require": {
+        "types": "./public/section-heading.d.ts",
+        "default": "./public/section-heading.cjs"
+      }
+    },
+    "./spinner": {
+      "import": {
+        "types": "./public/spinner.d.ts",
+        "default": "./public/spinner.js"
+      },
+      "require": {
+        "types": "./public/spinner.d.ts",
+        "default": "./public/spinner.cjs"
+      }
+    },
+    "./table": {
+      "import": {
+        "types": "./public/table.d.ts",
+        "default": "./public/table.js"
+      },
+      "require": {
+        "types": "./public/table.d.ts",
+        "default": "./public/table.cjs"
+      }
+    },
+    "./tabs": {
+      "import": {
+        "types": "./public/tabs.d.ts",
+        "default": "./public/tabs.js"
+      },
+      "require": {
+        "types": "./public/tabs.d.ts",
+        "default": "./public/tabs.cjs"
+      }
+    },
+    "./textarea": {
+      "import": {
+        "types": "./public/textarea.d.ts",
+        "default": "./public/textarea.js"
+      },
+      "require": {
+        "types": "./public/textarea.d.ts",
+        "default": "./public/textarea.cjs"
+      }
+    },
+    "./toast": {
+      "import": {
+        "types": "./public/toast.d.ts",
+        "default": "./public/toast.js"
+      },
+      "require": {
+        "types": "./public/toast.d.ts",
+        "default": "./public/toast.cjs"
+      }
+    },
+    "./toggle-group": {
+      "import": {
+        "types": "./public/toggle-group.d.ts",
+        "default": "./public/toggle-group.js"
+      },
+      "require": {
+        "types": "./public/toggle-group.d.ts",
+        "default": "./public/toggle-group.cjs"
+      }
+    },
+    "./typography": {
+      "import": {
+        "types": "./public/typography.d.ts",
+        "default": "./public/typography.js"
+      },
+      "require": {
+        "types": "./public/typography.d.ts",
+        "default": "./public/typography.cjs"
+      }
+    },
+    "./upload": {
+      "import": {
+        "types": "./public/upload.d.ts",
+        "default": "./public/upload.js"
+      },
+      "require": {
+        "types": "./public/upload.d.ts",
+        "default": "./public/upload.cjs"
+      }
+    },
+    "./utilities": {
+      "import": {
+        "types": "./public/utilities.d.ts",
+        "default": "./public/utilities.js"
+      },
+      "require": {
+        "types": "./public/utilities.d.ts",
+        "default": "./public/utilities.cjs"
       }
     }
   },
@@ -35,14 +305,13 @@
     "release": "npm run format && npm run lint && dotenv -e .env -- npm publish"
   },
   "peerDependencies": {
+    "@material-symbols/svg-500": ">=0.44.4",
+    "clsx": ">=2.0.0",
     "solid-js": "^1.9.0",
+    "tailwind-merge": ">=3.0.0",
     "tailwindcss": "^4.2.4"
   },
-  "dependencies": {
-    "clsx": "^2.1.1",
-    "flowbite": "^4.0.1",
-    "tailwind-merge": "^3.5.0"
-  },
+  "dependencies": {},
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
@@ -52,7 +321,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@material-symbols/svg-500": "^0.44.4",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.5.0",
     "@tailwindcss/postcss": "^4.2.4",
     "@trivago/prettier-plugin-sort-imports": "^6.0.2",
     "@types/node": "^25.6.0",
