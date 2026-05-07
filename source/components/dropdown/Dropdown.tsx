@@ -133,7 +133,7 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
               <li>
                 <a
                   href="#"
-                  class={mergeClasses(itemClass(), selectedClasses())}
+                  class={mergeClasses(itemClass(), selectedClasses(), "transition-opacity duration-150 active:opacity-75")}
                   onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
@@ -634,7 +634,7 @@ const DropdownItem = (properties: DropdownItemProperties) => {
           href="#"
           class={mergeClasses(
             itemClass(),
-            local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : !isClickable() ? "pointer-events-none cursor-default" : "",
+            local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : !isClickable() ? "pointer-events-none cursor-default" : "transition-opacity duration-150 active:opacity-75",
             isSelected() && isClickable() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "",
             local.class
           )}

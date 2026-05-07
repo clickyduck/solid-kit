@@ -77,6 +77,10 @@ const formatTriggerLabel = (value: DatePickerValue | undefined, placeholder: str
   return `${value.from ? formatDate(value.from) : "…"} – ${value.to ? formatDate(value.to) : "…"}`;
 };
 
+const YEAR_RANGE = 12;
+
+type CalendarView = "days" | "months" | "years";
+
 type CalendarProperties = {
   year: number;
   month: number;
@@ -89,9 +93,14 @@ type CalendarProperties = {
   onDayHover: (date: Date | undefined) => void;
   onPrevMonth: () => void;
   onNextMonth: () => void;
+  onYearChange: (year: number) => void;
+  onMonthChange: (month: number) => void;
 };
 
 const Calendar = (properties: CalendarProperties): JSX.Element => {
+  const [view, setView] = createSignal<CalendarView>("days");
+  const [yearPageStart, setYearPageStart] = createSignal(Math.floor(properties.year / YEAR_RANGE) * YEAR_RANGE);
+
   const days = createMemo(() => buildCalendarDays(properties.year, properties.month));
 
   const effectiveTo = createMemo((): Date | undefined => {
@@ -101,8 +110,6 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
     return properties.rangeTo;
   });
 
-  // One memo per day, stable across re-renders since <For> keys by identity.
-  // Reads effectiveTo(), rangeFrom, singleDate — reruns only when those change.
   const makeDayState = (day: CalendarDay) => {
     const isToday = isSameDay(day.date, new Date());
     const isCurrentMonth = day.currentMonth;
@@ -136,35 +143,104 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
     return { buttonClass, bandClass };
   };
 
+  const chipBase = "rounded-md px-2 py-0.5 text-sm font-semibold transition-colors duration-100 focus:outline-none";
+  const chipActive = "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300";
+  const chipIdle = "text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-700";
+
+  const itemBase = "flex items-center justify-center rounded-lg text-sm font-medium transition-colors duration-100 focus:outline-none";
+  const itemDefault = "text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700";
+  const itemSelected = "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600";
+
+  const toggleMonth = (): void => {
+    setView((v) => (v === "months" ? "days" : "months"));
+  };
+
+  const toggleYear = (): void => {
+    setYearPageStart(Math.floor(properties.year / YEAR_RANGE) * YEAR_RANGE);
+    setView((v) => (v === "years" ? "days" : "years"));
+  };
+
+  const handleMonthSelect = (month: number): void => {
+    properties.onMonthChange(month);
+    setView("days");
+  };
+
+  const handleYearSelect = (year: number): void => {
+    properties.onYearChange(year);
+    setView("days");
+  };
+
+  const handlePrev = (): void => {
+    if (view() === "years") setYearPageStart((s) => s - YEAR_RANGE);
+    else if (view() === "months") properties.onYearChange(properties.year - 1);
+    else properties.onPrevMonth();
+  };
+
+  const handleNext = (): void => {
+    if (view() === "years") setYearPageStart((s) => s + YEAR_RANGE);
+    else if (view() === "months") properties.onYearChange(properties.year + 1);
+    else properties.onNextMonth();
+  };
+
   return (
     <div class="p-3 select-none">
-      <div class="mb-3 flex items-center justify-between gap-2">
-        <IconButton variant="ghost" icon="chevron_left" aria-label="Previous month" onClick={properties.onPrevMonth} />
-        <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">
-          {MONTHS[properties.month]} {properties.year}
-        </span>
-        <IconButton variant="ghost" icon="chevron_right" aria-label="Next month" onClick={properties.onNextMonth} />
+      <div class="mb-3 flex items-center justify-between gap-1">
+        <IconButton variant="ghost" icon="chevron_left" aria-label="Previous" onClick={handlePrev} />
+        <div class="flex items-center gap-1">
+          <button type="button" class={mergeClasses(chipBase, view() === "months" ? chipActive : chipIdle)} onClick={() => toggleMonth()}>
+            {MONTHS[properties.month]}
+          </button>
+          <button type="button" class={mergeClasses(chipBase, view() === "years" ? chipActive : chipIdle)} onClick={() => toggleYear()}>
+            {properties.year}
+          </button>
+        </div>
+        <IconButton variant="ghost" icon="chevron_right" aria-label="Next" onClick={handleNext} />
       </div>
 
-      <div class="mb-1 grid grid-cols-7">
-        <For each={DAYS_OF_WEEK}>{(dow) => <div class="flex h-8 items-center justify-center text-xs font-semibold text-gray-500 dark:text-gray-400">{dow}</div>}</For>
-      </div>
+      <Show when={view() === "days"}>
+        <div class="mb-1 grid grid-cols-7">
+          <For each={DAYS_OF_WEEK}>{(dow) => <div class="flex h-8 items-center justify-center text-xs font-semibold text-gray-500 dark:text-gray-400">{dow}</div>}</For>
+        </div>
+        <div class="grid grid-cols-7" onMouseLeave={() => properties.onDayHover(undefined)}>
+          <For each={days()}>
+            {(day) => {
+              const { buttonClass, bandClass } = makeDayState(day);
+              return (
+                <div class="relative flex h-9 w-full items-center justify-center">
+                  <div class={bandClass()} />
+                  <button type="button" class={buttonClass()} onClick={() => properties.onDayClick(day.date)} onMouseEnter={() => properties.onDayHover(day.date)}>
+                    {day.date.getDate()}
+                  </button>
+                </div>
+              );
+            }}
+          </For>
+        </div>
+      </Show>
 
-      <div class="grid grid-cols-7" onMouseLeave={() => properties.onDayHover(undefined)}>
-        <For each={days()}>
-          {(day) => {
-            const { buttonClass, bandClass } = makeDayState(day);
-            return (
-              <div class="relative flex h-9 w-full items-center justify-center">
-                <div class={bandClass()} />
-                <button type="button" class={buttonClass()} onClick={() => properties.onDayClick(day.date)} onMouseEnter={() => properties.onDayHover(day.date)}>
-                  {day.date.getDate()}
-                </button>
-              </div>
-            );
-          }}
-        </For>
-      </div>
+      <Show when={view() === "months"}>
+        <div class="grid grid-cols-3 gap-1">
+          <For each={MONTHS}>
+            {(name, i) => (
+              <button type="button" class={mergeClasses(itemBase, "h-9 px-1", i() === properties.month ? itemSelected : itemDefault)} onClick={() => handleMonthSelect(i())}>
+                {name.slice(0, 3)}
+              </button>
+            )}
+          </For>
+        </div>
+      </Show>
+
+      <Show when={view() === "years"}>
+        <div class="grid grid-cols-3 gap-1">
+          <For each={Array.from({ length: YEAR_RANGE }, (_, i) => yearPageStart() + i)}>
+            {(yr) => (
+              <button type="button" class={mergeClasses(itemBase, "h-9 px-1", yr === properties.year ? itemSelected : itemDefault)} onClick={() => handleYearSelect(yr)}>
+                {yr}
+              </button>
+            )}
+          </For>
+        </div>
+      </Show>
     </div>
   );
 };
@@ -301,8 +377,10 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
 
   onMount(() => {
     const handleDocumentClick = (event: MouseEvent): void => {
-      if (containerElement?.contains(event.target as Node)) return;
-      if (popoverElement?.contains(event.target as Node)) return;
+      const target = event.target as Node;
+      if (!document.contains(target)) return;
+      if (containerElement?.contains(target)) return;
+      if (popoverElement?.contains(target)) return;
       setOpen(false);
     };
     document.addEventListener("click", handleDocumentClick);
@@ -327,6 +405,13 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
     }
   };
 
+  const handleYearChange = (year: number): void => {
+    setViewYear(year);
+  };
+  const handleMonthChange = (month: number): void => {
+    setViewMonth(month);
+  };
+
   const rangeStatusLabel = (): string | undefined => {
     if (mode() !== "range" || !open()) return undefined;
     if (pickingStart()) return "Select start date";
@@ -334,7 +419,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
   };
 
   const calendarElement = (): JSX.Element => (
-    <div class={mergeClasses(DROPDOWN_MENU_SURFACE_CLASSES, "w-[280px]")}>
+    <div class={mergeClasses(DROPDOWN_MENU_SURFACE_CLASSES, "w-[280px]")} onClick={(e) => e.stopPropagation()}>
       <Calendar
         year={viewYear()}
         month={viewMonth()}
@@ -347,6 +432,8 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
         onDayHover={setHoverDate}
         onPrevMonth={handlePrevMonth}
         onNextMonth={handleNextMonth}
+        onYearChange={handleYearChange}
+        onMonthChange={handleMonthChange}
       />
       <Show when={rangeStatusLabel()}>{(label) => <div class="border-t border-gray-200 px-3 py-2 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">{label()}</div>}</Show>
       <Show when={hasValue()}>

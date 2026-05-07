@@ -32,7 +32,7 @@ export const Button = (properties: ButtonProps) => {
     <button
       type="button"
       class={mergeClasses(
-        "flex cursor-pointer items-center justify-center gap-2 rounded-lg text-center font-medium transition-colors duration-150 focus:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex cursor-pointer items-center justify-center gap-2 rounded-lg text-center font-medium transition-[colors,opacity] duration-150 focus:outline-none focus-visible:ring-0 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:opacity-50",
         getVariantClasses(local.variant),
         FORM_CONTROL_SIZE_CLASSES,
         local.class

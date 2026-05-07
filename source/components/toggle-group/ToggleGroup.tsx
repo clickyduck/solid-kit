@@ -105,7 +105,7 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
           const isDisabled = () => properties.disabled || (option.disabled ?? false);
           const selected = () => isSelected(option.value);
           return (
-            <label class={mergeClasses(CHOICE_CONTROL_LABEL_CLASS, CHOICE_CONTROL_LABEL_HAS_INTERACTION_CLASSES, CHOICE_CONTROL_FACE_DISABLED_CLASS, isDisabled() ? "cursor-not-allowed" : "cursor-pointer")}>
+            <label class={mergeClasses(CHOICE_CONTROL_LABEL_CLASS, CHOICE_CONTROL_LABEL_HAS_INTERACTION_CLASSES, CHOICE_CONTROL_FACE_DISABLED_CLASS, isDisabled() ? "cursor-not-allowed" : "cursor-pointer transition-opacity duration-150 active:opacity-75")}>
               <Show
                 when={properties.selectionMode === "multiple"}
                 fallback={

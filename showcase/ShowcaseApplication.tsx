@@ -194,7 +194,6 @@ export const ShowcaseApplication = (): JSX.Element => {
               <h2 class="text-xl font-semibold tracking-tight text-gray-900 md:text-2xl dark:text-white">Solid Kit showcase</h2>
             </div>
           }
-          description="Interactive samples for buttons, forms, data surfaces, and overlays."
         >
           <div class="flex shrink-0 items-center gap-1 rounded-full border border-gray-200 bg-gray-100/80 p-1 dark:border-gray-700 dark:bg-gray-900/60">
             <IconButton

@@ -181,7 +181,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
               };
               const linkChildren = (
                 <>
-                  <Icon name={item.icon} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
+                  <Icon name={item.icon} size={14} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
                   <Show when={!properties.collapsed}>
                     <span class={NAVIGATION_LINK_LABEL_CLASS}>{item.label}</span>
                   </Show>
@@ -221,7 +221,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                     >
                       <span class="min-w-0 flex-1 truncate">{group.groupLabel}</span>
                       <span class={mergeClasses("inline-flex shrink-0 items-center justify-center text-gray-500 transition-transform duration-200 ease-out", isNavigationGroupBodyExpandedMemo() ? "rotate-180" : "rotate-0")} aria-hidden>
-                        <Icon name="keyboard_arrow_down" class="size-4" />
+                        <Icon name="keyboard_arrow_down" size={16} class="size-4" />
                       </span>
                     </Button>
                   </Show>

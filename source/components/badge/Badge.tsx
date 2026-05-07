@@ -1,4 +1,3 @@
-import { Button } from "@/components/button/Button";
 import { Icon } from "@/components/icons";
 import { BADGE_ICON_CLASSES, type Color, mergeClasses } from "@/utilities";
 import type { JSX } from "solid-js";
@@ -8,7 +7,7 @@ export type BadgeVariant = "solid" | "outline";
 
 export type { Color };
 
-const BADGE_EMBEDDED_REMOVE_ICON_BUTTON_BOX_CLASS = "-mr-0.5 -ml-0.5 self-stretch aspect-square h-auto min-h-0 w-auto min-w-0 rounded-full p-0";
+const BADGE_REMOVE_BUTTON_BASE_CLASS = "-mr-1 -ml-0.5 inline-flex shrink-0 cursor-pointer items-center justify-center self-center rounded-full p-0.5 transition-[colors,opacity] duration-150 active:opacity-75";
 
 const BADGE_CONTAINER_CLASSES_BY_VARIANT_AND_COLOR: Record<BadgeVariant, Record<Color, string>> = {
   solid: {
@@ -31,20 +30,20 @@ const BADGE_CONTAINER_CLASSES_BY_VARIANT_AND_COLOR: Record<BadgeVariant, Record<
 
 const BADGE_REMOVE_BUTTON_CLASSES_BY_VARIANT_AND_COLOR: Record<BadgeVariant, Record<Color, string>> = {
   solid: {
-    primary: "text-white/80 hover:text-white enabled:hover:bg-white/15",
-    secondary: "text-white/80 hover:text-white enabled:hover:bg-white/15",
-    neutral: "text-white/80 hover:text-white enabled:hover:bg-white/15",
-    success: "text-white/80 hover:text-white enabled:hover:bg-white/15",
-    warning: "text-white/80 hover:text-white enabled:hover:bg-white/15",
-    danger: "text-white/80 hover:text-white enabled:hover:bg-white/15"
+    primary: "text-white/80 hover:text-white",
+    secondary: "text-white/80 hover:text-white",
+    neutral: "text-white/80 hover:text-white",
+    success: "text-white/80 hover:text-white",
+    warning: "text-white/80 hover:text-white",
+    danger: "text-white/80 hover:text-white"
   },
   outline: {
-    primary: "text-blue-600 hover:text-blue-700 enabled:hover:bg-blue-500/15 dark:text-blue-500 dark:hover:text-blue-400 dark:enabled:hover:bg-blue-500/20",
-    secondary: "text-gray-600 hover:text-gray-700 enabled:hover:bg-gray-500/15 dark:text-gray-400 dark:hover:text-gray-300 dark:enabled:hover:bg-gray-500/20",
-    neutral: "text-slate-600 hover:text-slate-700 enabled:hover:bg-slate-500/15 dark:text-slate-500 dark:hover:text-slate-400 dark:enabled:hover:bg-slate-500/20",
-    success: "text-emerald-600 hover:text-emerald-700 enabled:hover:bg-emerald-500/15 dark:text-emerald-500 dark:hover:text-emerald-400 dark:enabled:hover:bg-emerald-500/20",
-    warning: "text-amber-600 hover:text-amber-700 enabled:hover:bg-amber-500/15 dark:text-amber-500 dark:hover:text-amber-400 dark:enabled:hover:bg-amber-500/20",
-    danger: "text-red-600 hover:text-red-700 enabled:hover:bg-red-500/15 dark:text-red-500 dark:hover:text-red-400 dark:enabled:hover:bg-red-500/20"
+    primary: "text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-400",
+    secondary: "text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300",
+    neutral: "text-slate-600 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-400",
+    success: "text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400",
+    warning: "text-amber-600 hover:text-amber-700 dark:text-amber-500 dark:hover:text-amber-400",
+    danger: "text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-400"
   }
 };
 
@@ -65,20 +64,21 @@ export const Badge = (properties: BadgeProperties): JSX.Element => {
     <span class={mergeClasses("inline-flex items-stretch gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium", BADGE_CONTAINER_CLASSES_BY_VARIANT_AND_COLOR[variant()][color()], properties.class)}>
       <span class="inline-flex min-w-0 items-center gap-1.5 self-center">
         <Show when={properties.icon} keyed>
-          {(name) => <Icon name={name} class={BADGE_ICON_CLASSES} aria-hidden="true" />}
+          {(name) => <Icon name={name} size={14} class={BADGE_ICON_CLASSES} aria-hidden="true" />}
         </Show>
         {properties.children}
       </span>
       <Show when={typeof properties.onRemove === "function"}>
-        <Button
-          variant="ghost"
-          class={mergeClasses(BADGE_EMBEDDED_REMOVE_ICON_BUTTON_BOX_CLASS, BADGE_REMOVE_BUTTON_CLASSES_BY_VARIANT_AND_COLOR[variant()][color()])}
+        <button
+          type="button"
+          class={mergeClasses(BADGE_REMOVE_BUTTON_BASE_CLASS, BADGE_REMOVE_BUTTON_CLASSES_BY_VARIANT_AND_COLOR[variant()][color()])}
           aria-label="Remove"
-          icon="cancel"
           onClick={() => {
             properties.onRemove?.();
           }}
-        />
+        >
+          <Icon name="cancel" size={14} aria-hidden="true" />
+        </button>
       </Show>
     </span>
   );

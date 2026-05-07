@@ -34,7 +34,7 @@ export const IconButton = (properties: IconButtonProperties) => {
     <button
       type="button"
       class={mergeClasses(
-        "inline-flex cursor-pointer items-center justify-center rounded-lg transition-colors duration-150 focus:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50",
+        "inline-flex cursor-pointer items-center justify-center rounded-lg transition-[colors,opacity] duration-150 focus:outline-none focus-visible:ring-0 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:opacity-50",
         getVariantClasses(local.variant),
         FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES,
         local.class

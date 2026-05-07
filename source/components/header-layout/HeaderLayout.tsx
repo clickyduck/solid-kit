@@ -5,7 +5,6 @@ import { Show } from "solid-js";
 type HeaderLayoutProperties = {
   title?: string;
   titleElement?: JSX.Element;
-  description?: string;
   back?: JSX.Element;
   class?: string;
 };
@@ -28,9 +27,6 @@ export const HeaderLayout: ParentComponent<HeaderLayoutProperties> = (properties
           </Show>
           <Show when={properties.titleElement} fallback={<h2 class="text-xl font-semibold tracking-tight text-gray-900 md:text-2xl dark:text-white">{properties.title}</h2>}>
             {properties.titleElement}
-          </Show>
-          <Show when={properties.description}>
-            <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">{properties.description}</p>
           </Show>
         </div>
 
