@@ -103,6 +103,9 @@ export const ShowcaseApplication = (): JSX.Element => {
     }
   };
   const [dialogOpen, setDialogOpen] = createSignal(false);
+  const [dropdownDialogOpen, setDropdownDialogOpen] = createSignal(false);
+  const [dropdownDialogValue, setDropdownDialogValue] = createSignal<string | undefined>("Cherry");
+  const [datePickerDialogValue, setDatePickerDialogValue] = createSignal<DatePickerValue>({ mode: "single", date: undefined });
   const [digestSelection, setDigestSelection] = createSignal<string[]>(["weekly"]);
   const [dropdownValue, setDropdownValue] = createSignal<string | undefined>("Cherry");
   const [itemizedDropdownValue, setItemizedDropdownValue] = createSignal<string | undefined>("Banana");
@@ -790,6 +793,48 @@ export const ShowcaseApplication = (): JSX.Element => {
                         }}
                       >
                         Confirm
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setDropdownDialogOpen(true);
+                  }}
+                >
+                  Dialog with dropdowns
+                </Button>
+
+                <Dialog open={dropdownDialogOpen()} onOpenChange={setDropdownDialogOpen}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Dialog with dropdowns</DialogTitle>
+                    </DialogHeader>
+                    <DialogBody>
+                      <DialogDescription>Dropdown and DatePicker popups should appear above this dialog, not behind it.</DialogDescription>
+                      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                        <Field label="Fruit" for="dialog-dropdown">
+                          <Dropdown options={["Apple", "Banana", "Cherry", "Date", "Elderberry"]} value={dropdownDialogValue()} onChange={setDropdownDialogValue}>
+                            <DropdownTrigger id="dialog-dropdown">
+                              <DropdownValue>{dropdownDialogValue() ?? "Pick a fruit"}</DropdownValue>
+                            </DropdownTrigger>
+                          </Dropdown>
+                        </Field>
+                        <Field label="Date" for="dialog-datepicker">
+                          <DatePicker id="dialog-datepicker" mode="single" value={datePickerDialogValue()} onChange={setDatePickerDialogValue} placeholder="Select a date" />
+                        </Field>
+                      </div>
+                    </DialogBody>
+                    <DialogFooter>
+                      <Button
+                        variant="ghost"
+                        onClick={() => {
+                          setDropdownDialogOpen(false);
+                        }}
+                      >
+                        Close
                       </Button>
                     </DialogFooter>
                   </DialogContent>

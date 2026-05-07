@@ -2,6 +2,7 @@ import { Button } from "@/components/button/Button";
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon } from "@/components/icons";
 import { CHROME_MUTED_ICON_CLASSES, DROPDOWN_MENU_SURFACE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
+import { getPortalMount } from "@/utilities/getPortalMount";
 import type { JSX } from "solid-js";
 import { For, Show, createEffect, createMemo, createSignal, on, onCleanup, onMount } from "solid-js";
 import { Portal } from "solid-js/web";
@@ -477,7 +478,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
 
       <Show when={open() && portalPosition()}>
         {(position) => (
-          <Portal mount={document.body}>
+          <Portal mount={getPortalMount(containerElement)}>
             <div
               ref={(el) => {
                 popoverElement = el;

@@ -192,6 +192,8 @@ Calendar popover for picking a single date or a date range.
 
 In range mode the first click sets the start date (midnight, 12:00 AM) and the second click sets the end date (end of day, 11:59:59.999 PM). Hovering after the first click previews the range. Clicking on a new date when a range is already set restarts selection from scratch.
 
+The calendar popover always renders via a portal. When used inside a `<Dialog>` it portals into the dialog element itself so it appears above the backdrop.
+
 ```tsx
 import { DatePicker, type DatePickerValue } from "@clickyduck/solid-kit";
 import { createSignal } from "solid-js";
@@ -289,6 +291,8 @@ Accessible select-style dropdown with optional search.
 | `menuClass`           | `string`                                                 | —       | Extra classes on the menu surface                                           |
 | `menuFullWidth`       | `boolean`                                                | `true`  | Menu width matches trigger width                                            |
 | `initialOpen`         | `boolean`                                                | —       | Open on first render                                                        |
+
+All menus render via a portal. When used inside a `<Dialog>` the menu portals into the dialog element itself so it appears above the backdrop.
 
 **`DropdownContent` extra props:**
 

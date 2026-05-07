@@ -16,6 +16,7 @@ import {
   FORM_CONTROL_TEXT_CLASS_BY_SIZE,
   mergeClasses
 } from "@/utilities";
+import { getPortalMount } from "@/utilities/getPortalMount";
 import type { Component, ComponentProps, JSX } from "solid-js";
 import { For, ParentComponent, Show, createContext, createEffect, createMemo, createSignal, on, onCleanup, onMount, splitProps, useContext } from "solid-js";
 import { Portal } from "solid-js/web";
@@ -309,7 +310,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
         {local.children}
         <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && portalPosition()}>
           {(position) => (
-            <Portal mount={document.body}>
+            <Portal mount={getPortalMount(dropdownContainerElement)}>
               <div class={mergeClasses("z-[9999] min-w-min", builtInMenuChromeClass())} style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, width: `${position().width}px` }}>
                 <Show when={isSearchable()}>
                   <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
@@ -531,7 +532,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
 
   return (
     <Show when={context.dropdownOpen()}>
-      <Portal mount={document.body}>
+      <Portal mount={getPortalMount(context.getDropdownContainerElement())}>
         <div
           ref={(element) => {
             setPortalMenuElement(element === null ? undefined : element);
