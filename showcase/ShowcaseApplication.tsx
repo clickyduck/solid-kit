@@ -107,7 +107,6 @@ export const ShowcaseApplication = (): JSX.Element => {
   const [dropdownValue, setDropdownValue] = createSignal<string | undefined>("Cherry");
   const [itemizedDropdownValue, setItemizedDropdownValue] = createSignal<string | undefined>("Banana");
   const [searchableDropdownValue, setSearchableDropdownValue] = createSignal<string | undefined>("Mumbai");
-  const [portalDropdownValue, setPortalDropdownValue] = createSignal<string | undefined>("Alpha");
   const [iconTriggerDropdownValue, setIconTriggerDropdownValue] = createSignal<string | undefined>("Two");
   const [multiSelectDropdownValues, setMultiSelectDropdownValues] = createSignal<string[]>(["Banana", "Date"]);
   const [multiSelectCityValues, setMultiSelectCityValues] = createSignal<string[]>([]);
@@ -122,7 +121,6 @@ export const ShowcaseApplication = (): JSX.Element => {
   const [documentColorSchemeName, setDocumentColorSchemeName] = createDocumentColorSchemePreferenceSignal();
   const [singleDateValue, setSingleDateValue] = createSignal<DatePickerValue>({ mode: "single", date: undefined });
   const [rangeDateValue, setRangeDateValue] = createSignal<DatePickerValue>({ mode: "range", from: undefined, to: undefined });
-  const [portalDateValue, setPortalDateValue] = createSignal<DatePickerValue>({ mode: "single", date: undefined });
   const [isRightPanelOpen, setIsRightPanelOpen] = createSignal(false);
   const [activeDataCard, setActiveDataCard] = createSignal<number | undefined>(0);
   const openRightPanel = (): void => {
@@ -138,10 +136,6 @@ export const ShowcaseApplication = (): JSX.Element => {
 
   const cityOptions = (): string[] => {
     return ["Mumbai", "Delhi", "Bengaluru", "Chennai", "Hyderabad", "Pune", "Kolkata"];
-  };
-
-  const portalOptions = (): string[] => {
-    return ["Alpha", "Beta", "Gamma", "Delta"];
   };
 
   const numericOptions = (): string[] => {
@@ -599,9 +593,6 @@ export const ShowcaseApplication = (): JSX.Element => {
                   <Field label="Date range" for="showcase-date-picker-range" hint="First click sets start (12:00 AM), second click sets end (11:59:59 PM).">
                     <DatePicker id="showcase-date-picker-range" mode="range" value={rangeDateValue()} onChange={setRangeDateValue} placeholder="Select date range" />
                   </Field>
-                  <Field label="Portal (single)" for="showcase-date-picker-portal" hint="Calendar mounts on the document body to avoid clipping.">
-                    <DatePicker id="showcase-date-picker-portal" mode="single" value={portalDateValue()} onChange={setPortalDateValue} usePortal placeholder="Select a date" />
-                  </Field>
                   <Field label="Disabled" for="showcase-date-picker-disabled">
                     <DatePicker id="showcase-date-picker-disabled" mode="single" disabled placeholder="Unavailable" />
                   </Field>
@@ -680,13 +671,6 @@ export const ShowcaseApplication = (): JSX.Element => {
                       <Dropdown options={cityOptions()} value={searchableDropdownValue()} onChange={setSearchableDropdownValue} searchable>
                         <DropdownTrigger id="showcase-dropdown-search">
                           <DropdownValue>{searchableDropdownValue() ?? "Pick a city"}</DropdownValue>
-                        </DropdownTrigger>
-                      </Dropdown>
-                    </Field>
-                    <Field label="Document portal" for="showcase-dropdown-portal" hint="Menu anchors to the viewport to avoid clipping.">
-                      <Dropdown options={portalOptions()} value={portalDropdownValue()} onChange={setPortalDropdownValue} usePortal>
-                        <DropdownTrigger id="showcase-dropdown-portal">
-                          <DropdownValue>{portalDropdownValue() ?? "Choose letter"}</DropdownValue>
                         </DropdownTrigger>
                       </Dropdown>
                     </Field>

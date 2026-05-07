@@ -236,9 +236,7 @@ export const TablePagination = (properties: TablePaginationProperties) => {
             const nextLimit = coerceLimitOption(Number(value));
             properties.onChange({ limit: nextLimit, offset: 0 });
           }}
-          menuClass="w-24 top-auto bottom-full mb-1 mt-0"
           menuFullWidth={false}
-          usePortal={false}
         >
           <DropdownTrigger>
             <DropdownValue>{selectedLimitValue()}</DropdownValue>

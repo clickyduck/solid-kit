@@ -163,16 +163,15 @@ Calendar popover for picking a single date or a date range.
 
 **Exports:** `DatePicker`, `DatePickerMode`, `DatePickerValue`
 
-| Prop          | Type                               | Default                                 | Description                                                                   |
-| ------------- | ---------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------- |
-| `mode`        | `"single" \| "range"`              | `"single"`                              | Selection mode                                                                |
-| `value`       | `DatePickerValue`                  | —                                       | Controlled value (see below)                                                  |
-| `onChange`    | `(value: DatePickerValue) => void` | —                                       | Called when the selection changes                                             |
-| `placeholder` | `string`                           | `"Select date"` / `"Select date range"` | Trigger placeholder text                                                      |
-| `disabled`    | `boolean`                          | —                                       | Disables the trigger                                                          |
-| `id`          | `string`                           | —                                       | Native `id` on the trigger button; pair with `<Field for="…">`                |
-| `class`       | `string`                           | —                                       | Extra CSS classes on the root wrapper                                         |
-| `usePortal`   | `boolean`                          | —                                       | Render the calendar on `document.body` to escape `overflow: hidden` ancestors |
+| Prop          | Type                               | Default                                 | Description                                                    |
+| ------------- | ---------------------------------- | --------------------------------------- | -------------------------------------------------------------- |
+| `mode`        | `"single" \| "range"`              | `"single"`                              | Selection mode                                                 |
+| `value`       | `DatePickerValue`                  | —                                       | Controlled value (see below)                                   |
+| `onChange`    | `(value: DatePickerValue) => void` | —                                       | Called when the selection changes                              |
+| `placeholder` | `string`                           | `"Select date"` / `"Select date range"` | Trigger placeholder text                                       |
+| `disabled`    | `boolean`                          | —                                       | Disables the trigger                                           |
+| `id`          | `string`                           | —                                       | Native `id` on the trigger button; pair with `<Field for="…">` |
+| `class`       | `string`                           | —                                       | Extra CSS classes on the root wrapper                          |
 
 **`DatePickerValue`** is a discriminated union:
 
@@ -289,18 +288,15 @@ Accessible select-style dropdown with optional search.
 | `itemComponent`       | `(props: { item: { rawValue: string } }) => JSX.Element` | —       | Custom item renderer                                                        |
 | `menuClass`           | `string`                                                 | —       | Extra classes on the menu surface                                           |
 | `menuFullWidth`       | `boolean`                                                | `true`  | Menu width matches trigger width                                            |
-| `usePortal`           | `boolean`                                                | —       | Render menu on `document.body` to escape overflow                           |
 | `initialOpen`         | `boolean`                                                | —       | Open on first render                                                        |
 
 **`DropdownContent` extra props:**
 
-| Prop                      | Type                | Default    | Description             |
-| ------------------------- | ------------------- | ---------- | ----------------------- |
-| `useDocumentPortal`       | `boolean`           | —          | Portal to document body |
-| `documentPortalPlacement` | `"top" \| "bottom"` | `"bottom"` | Menu opening direction  |
-| `xDirection`              | `"left" \| "right"` | —          | Horizontal opening side |
-| `yDirection`              | `"up" \| "down"`    | —          | Vertical opening side   |
-| `wrapChildrenInList`      | `boolean`           | `true`     | Wrap items in `<ul>`    |
+| Prop                 | Type                | Default | Description             |
+| -------------------- | ------------------- | ------- | ----------------------- |
+| `xDirection`         | `"left" \| "right"` | —       | Horizontal opening side |
+| `yDirection`         | `"up" \| "down"`    | —       | Vertical opening side   |
+| `wrapChildrenInList` | `boolean`           | `true`  | Wrap items in `<ul>`    |
 
 **`DropdownItem` extra props:**
 

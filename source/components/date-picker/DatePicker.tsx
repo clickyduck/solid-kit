@@ -18,7 +18,6 @@ export type DatePickerProperties = {
   disabled?: boolean;
   id?: string;
   class?: string;
-  usePortal?: boolean;
 };
 
 type CalendarDay = {
@@ -363,15 +362,13 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
       if (mode() === "range" && rangeFrom() && rangeTo()) {
         setPickingStart(true);
       }
-      if (properties.usePortal) {
-        requestAnimationFrame(updatePortalPosition);
-        window.addEventListener("scroll", updatePortalPosition, true);
-        window.addEventListener("resize", updatePortalPosition);
-        onCleanup(() => {
-          window.removeEventListener("scroll", updatePortalPosition, true);
-          window.removeEventListener("resize", updatePortalPosition);
-        });
-      }
+      requestAnimationFrame(updatePortalPosition);
+      window.addEventListener("scroll", updatePortalPosition, true);
+      window.addEventListener("resize", updatePortalPosition);
+      onCleanup(() => {
+        window.removeEventListener("scroll", updatePortalPosition, true);
+        window.removeEventListener("resize", updatePortalPosition);
+      });
     })
   );
 
@@ -478,11 +475,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
         </span>
       </Button>
 
-      <Show when={open() && !properties.usePortal}>
-        <div class="absolute top-full left-0 z-[9999] mt-1">{calendarElement()}</div>
-      </Show>
-
-      <Show when={open() && properties.usePortal && portalPosition()}>
+      <Show when={open() && portalPosition()}>
         {(position) => (
           <Portal mount={document.body}>
             <div

@@ -71,7 +71,6 @@ type DropdownRootProperties = {
   class?: string;
   menuClass?: string;
   menuFullWidth?: boolean;
-  usePortal?: boolean;
   initialOpen?: boolean;
 };
 
@@ -158,7 +157,7 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
  * Dropdown root. Provides options, value, onChange and open state via context.
  */
 const Dropdown = (properties: DropdownRootProperties) => {
-  const [local] = splitProps(properties, ["options", "value", "multiSelectValue", "onChange", "onMultiSelectChange", "disabled", "searchable", "multiSelect", "itemComponent", "children", "class", "menuClass", "menuFullWidth", "usePortal", "initialOpen"]);
+  const [local] = splitProps(properties, ["options", "value", "multiSelectValue", "onChange", "onMultiSelectChange", "disabled", "searchable", "multiSelect", "itemComponent", "children", "class", "menuClass", "menuFullWidth", "initialOpen"]);
   const [selectedValue, setSelectedValue] = createSignal(properties.value);
   const [selectedValues, setSelectedValues] = createSignal<string[]>(properties.multiSelectValue ?? []);
   const [dropdownOpen, setDropdownOpen] = createSignal(local.initialOpen ?? false);
@@ -207,8 +206,8 @@ const Dropdown = (properties: DropdownRootProperties) => {
   );
 
   createEffect(
-    on([dropdownOpen, () => properties.usePortal], ([open, usePortal]) => {
-      if (!open || !usePortal) {
+    on(dropdownOpen, (open) => {
+      if (!open) {
         setPortalPosition(null);
         return;
       }
@@ -308,15 +307,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
         class={mergeClasses("relative", local.class)}
       >
         {local.children}
-        <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && !properties.usePortal}>
-          <div class={mergeClasses("absolute top-full z-[9999] mt-1", local.menuFullWidth !== false ? "left-0 w-full" : "", builtInMenuChromeClass())}>
-            <Show when={isSearchable()}>
-              <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
-            </Show>
-            <DropdownBuiltInOptionsList filteredOptions={filteredOptions} selectedValue={selectedValue} selectedValues={selectedValues} isMultiSelect={isMultiSelect} itemComponent={properties.itemComponent} onSelectOption={handleSelect} />
-          </div>
-        </Show>
-        <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && properties.usePortal && portalPosition()}>
+        <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && portalPosition()}>
           {(position) => (
             <Portal mount={document.body}>
               <div class={mergeClasses("z-[9999] min-w-min", builtInMenuChromeClass())} style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, width: `${position().width}px` }}>
@@ -452,21 +443,19 @@ const DropdownIconTrigger = (properties: DropdownIconTriggerProperties) => {
 
 type DropdownContentProperties = Omit<ComponentProps<"div">, "class"> & {
   class?: string;
-  useDocumentPortal?: boolean;
-  documentPortalPlacement?: "top" | "bottom";
   xDirection?: "left" | "right";
   yDirection?: "up" | "down";
   wrapChildrenInList?: boolean;
 };
 
 /**
- * Dropdown content placeholder. When useDocumentPortal is true the menu mounts on
- * document.body so it is not clipped by ancestor overflow:hidden.
+ * Dropdown content placeholder. Always mounts on document.body via portal so it
+ * is never clipped by ancestor overflow:hidden.
  */
 const DropdownContent = (properties: DropdownContentProperties) => {
   const context = useDropdownContext();
 
-  const [local, rest] = splitProps(properties, ["class", "children", "useDocumentPortal", "documentPortalPlacement", "xDirection", "yDirection", "wrapChildrenInList"]);
+  const [local, rest] = splitProps(properties, ["class", "children", "xDirection", "yDirection", "wrapChildrenInList"]);
   const [portalMenuElement, setPortalMenuElement] = createSignal<HTMLDivElement | undefined>();
 
   const shouldWrapChildrenInList = (): boolean => local.wrapChildrenInList !== false;
@@ -477,23 +466,15 @@ const DropdownContent = (properties: DropdownContentProperties) => {
 
   const contentMinimumWidthClass = (): string => FORM_CONTROL_DROP_DOWN_CONTENT_MIN_WIDTH_CLASS_BY_SIZE;
 
-  const useDocumentPortalResolved = (): boolean => local.useDocumentPortal === true;
-
   const xDirectionResolved = (): "left" | "right" => local.xDirection ?? "right";
 
   const yDirectionResolved = (): "up" | "down" => local.yDirection ?? "down";
 
-  const nonPortalPositioningClass = (): string => {
-    const yClass = yDirectionResolved() === "up" ? "bottom-full mb-1" : "top-full mt-1";
-    const xClass = xDirectionResolved() === "left" ? "right-0" : "left-0";
-    return mergeClasses("absolute z-[9999]", yClass, xClass);
-  };
-
   createEffect(
     on(
-      (): [HTMLDivElement | undefined, boolean, boolean] => [portalMenuElement(), context.dropdownOpen(), useDocumentPortalResolved()],
-      ([element, open, useDocumentPortal]) => {
-        if (!open || !useDocumentPortal) {
+      (): [HTMLDivElement | undefined, boolean] => [portalMenuElement(), context.dropdownOpen()],
+      ([element, open]) => {
+        if (!open) {
           context.setContentPortalMenuElement(null);
           return;
         }
@@ -513,20 +494,14 @@ const DropdownContent = (properties: DropdownContentProperties) => {
           element.style.right = "auto";
           element.style.top = "auto";
           element.style.bottom = "auto";
-
-          // Ensure popup is at least as wide as the trigger
           element.style.minWidth = `${rectangle.width}px`;
 
-          // Horizontal direction
           if (xDirectionResolved() === "left") {
-            // Anchor to trigger's right edge, so the menu grows leftwards.
             element.style.right = `${window.innerWidth - rectangle.right}px`;
           } else {
-            // Anchor to trigger's left edge, so the menu grows rightwards.
             element.style.left = `${rectangle.left}px`;
           }
 
-          // Vertical direction
           if (yDirectionResolved() === "up") {
             element.style.top = `${rectangle.top}px`;
             element.style.transform = `translateY(calc(-100% - ${gapPixels}px))`;
@@ -555,32 +530,22 @@ const DropdownContent = (properties: DropdownContentProperties) => {
   );
 
   return (
-    <>
-      <Show when={context.dropdownOpen() && !useDocumentPortalResolved()}>
-        <div class={mergeClasses(nonPortalPositioningClass(), contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES, local.class)} {...rest}>
+    <Show when={context.dropdownOpen()}>
+      <Portal mount={document.body}>
+        <div
+          ref={(element) => {
+            setPortalMenuElement(element === null ? undefined : element);
+          }}
+          class={mergeClasses(contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES, local.class)}
+          {...rest}
+        >
           {searchField()}
           <Show when={shouldWrapChildrenInList()} fallback={<div class={panelClass()}>{local.children}</div>}>
             <ul class={listClass()}>{local.children}</ul>
           </Show>
         </div>
-      </Show>
-      <Show when={context.dropdownOpen() && useDocumentPortalResolved()}>
-        <Portal mount={document.body}>
-          <div
-            ref={(element) => {
-              setPortalMenuElement(element === null ? undefined : element);
-            }}
-            class={mergeClasses(contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES, local.class)}
-            {...rest}
-          >
-            {searchField()}
-            <Show when={shouldWrapChildrenInList()} fallback={<div class={panelClass()}>{local.children}</div>}>
-              <ul class={listClass()}>{local.children}</ul>
-            </Show>
-          </div>
-        </Portal>
-      </Show>
-    </>
+      </Portal>
+    </Show>
   );
 };
 
