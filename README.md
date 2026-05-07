@@ -61,14 +61,14 @@ Chip/tag with optional icon and remove button.
 
 **Exports:** `Badge`, `BadgeVariant` (type), `BadgeProperties` (type)
 
-| Prop       | Type                                                                          | Default     | Description                         |
-| ---------- | ----------------------------------------------------------------------------- | ----------- | ----------------------------------- |
-| `children` | `JSX.Element`                                                                 | —           | Badge label (required)              |
-| `variant`  | `"solid" \| "outline"`                                                        | `"solid"`   | Visual style                        |
-| `color`    | `"primary" \| "secondary" \| "neutral" \| "success" \| "warning" \| "danger"` | `"neutral"` | Color scheme                        |
-| `icon`     | `string`                                                                      | —           | Material Symbols name, e.g. `"tag"` |
-| `onRemove` | `() => void`                                                                  | —           | Shows × button; called on click     |
-| `class`    | `string`                                                                      | —           | Extra CSS classes                   |
+| Prop       | Type                                                                          | Default     | Description                             |
+| ---------- | ----------------------------------------------------------------------------- | ----------- | --------------------------------------- |
+| `children` | `JSX.Element`                                                                 | —           | Badge label (required)                  |
+| `variant`  | `"solid" \| "outline"`                                                        | `"solid"`   | Visual style                            |
+| `color`    | `"primary" \| "secondary" \| "neutral" \| "success" \| "warning" \| "danger"` | `"neutral"` | Color scheme                            |
+| `icon`     | `string \| JSX.Element`                                                       | —           | Material Symbols name or an img/element |
+| `onRemove` | `() => void`                                                                  | —           | Shows × button; called on click         |
+| `class`    | `string`                                                                      | —           | Extra CSS classes                       |
 
 ```tsx
 import { Badge } from "@clickyduck/solid-kit";
@@ -88,15 +88,15 @@ Standard action button with optional icon.
 
 Extends all native `<button>` HTML attributes.
 
-| Prop           | Type                                        | Default   | Description                            |
-| -------------- | ------------------------------------------- | --------- | -------------------------------------- |
-| `children`     | `JSX.Element`                               | —         | Button label                           |
-| `variant`      | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style                           |
-| `icon`         | `string`                                    | —         | Material Symbols name, e.g. `"search"` |
-| `iconPosition` | `"start" \| "end"`                          | `"start"` | Icon placement relative to label       |
-| `class`        | `string`                                    | —         | Extra CSS classes                      |
-| `disabled`     | `boolean`                                   | —         | Native disabled attribute              |
-| `type`         | `"button" \| "submit" \| "reset"`           | —         | Native type attribute                  |
+| Prop           | Type                                        | Default   | Description                             |
+| -------------- | ------------------------------------------- | --------- | --------------------------------------- |
+| `children`     | `JSX.Element`                               | —         | Button label                            |
+| `variant`      | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style                            |
+| `icon`         | `string \| JSX.Element`                     | —         | Material Symbols name or an img/element |
+| `iconPosition` | `"start" \| "end"`                          | `"start"` | Icon placement relative to label        |
+| `class`        | `string`                                    | —         | Extra CSS classes                       |
+| `disabled`     | `boolean`                                   | —         | Native disabled attribute               |
+| `type`         | `"button" \| "submit" \| "reset"`           | —         | Native type attribute                   |
 
 Size is responsive: `large` on mobile (≤767 px), `default` on desktop.
 
@@ -338,12 +338,12 @@ Centered placeholder for empty lists or zero-data views.
 
 **Exports:** `EmptyState`
 
-| Prop      | Type     | Description                      |
-| --------- | -------- | -------------------------------- |
-| `icon`    | `string` | Material Symbols name (required) |
-| `title`   | `string` | Heading text (required)          |
-| `message` | `string` | Body text (required)             |
-| `class`   | `string` | Extra CSS classes                |
+| Prop      | Type                    | Description                                        |
+| --------- | ----------------------- | -------------------------------------------------- |
+| `icon`    | `string \| JSX.Element` | Material Symbols name or an img/element (required) |
+| `title`   | `string`                | Heading text (required)                            |
+| `message` | `string`                | Body text (required)                               |
+| `class`   | `string`                | Extra CSS classes                                  |
 
 ```tsx
 import { EmptyState } from "@clickyduck/solid-kit";
@@ -425,11 +425,11 @@ Square icon-only button sized to match form controls.
 
 Extends all native `<button>` HTML attributes.
 
-| Prop      | Type                                        | Default   | Description                      |
-| --------- | ------------------------------------------- | --------- | -------------------------------- |
-| `icon`    | `string`                                    | —         | Material Symbols name (required) |
-| `variant` | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style                     |
-| `class`   | `string`                                    | —         | Extra CSS classes                |
+| Prop      | Type                                        | Default   | Description                             |
+| --------- | ------------------------------------------- | --------- | --------------------------------------- |
+| `icon`    | `string \| JSX.Element`                     | —         | Material Symbols name or an img/element |
+| `variant` | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style                            |
+| `class`   | `string`                                    | —         | Extra CSS classes                       |
 
 Size is responsive: `large` on mobile (≤767 px), `default` on desktop.
 
@@ -476,12 +476,12 @@ Styled text input with optional leading icon and trailing text.
 
 Extends all native `<input>` HTML attributes.
 
-| Prop           | Type      | Description                                                |
-| -------------- | --------- | ---------------------------------------------------------- |
-| `icon`         | `string`  | Material Symbols name for a leading icon                   |
-| `trailingText` | `string`  | Right-side label (e.g. a unit or currency symbol)          |
-| `currency`     | `boolean` | Indian currency formatting: comma grouping, max 2 decimals |
-| `class`        | `string`  | Extra CSS classes                                          |
+| Prop           | Type                    | Description                                                |
+| -------------- | ----------------------- | ---------------------------------------------------------- |
+| `icon`         | `string \| JSX.Element` | Material Symbols name or an img/element for a leading icon |
+| `trailingText` | `string`                | Right-side label (e.g. a unit or currency symbol)          |
+| `currency`     | `boolean`               | Indian currency formatting: comma grouping, max 2 decimals |
+| `class`        | `string`                | Extra CSS classes                                          |
 
 ```tsx
 import { Input } from "@clickyduck/solid-kit";
@@ -600,16 +600,16 @@ Stat card with accent color, icon, value, and optional link.
 
 **Exports:** `MetricCard`, `MetricCardProperties` (type)
 
-| Prop        | Type                                                   | Description                                             |
-| ----------- | ------------------------------------------------------ | ------------------------------------------------------- |
-| `title`     | `string`                                               | Metric label (rendered uppercase, required)             |
-| `accent`    | `"emerald" \| "blue" \| "amber" \| "violet" \| "rose"` | Left-border and icon box color (required)               |
-| `icon`      | `string`                                               | Material Symbols name for the top-right icon (required) |
-| `value`     | `string`                                               | Large primary value (required)                          |
-| `loading`   | `boolean`                                              | Shows an em dash instead of `value`                     |
-| `linkHref`  | `string`                                               | Makes the footer a link                                 |
-| `linkLabel` | `string`                                               | Link text                                               |
-| `class`     | `string`                                               | Extra CSS classes                                       |
+| Prop        | Type                                                   | Description                                                               |
+| ----------- | ------------------------------------------------------ | ------------------------------------------------------------------------- |
+| `title`     | `string`                                               | Metric label (rendered uppercase, required)                               |
+| `accent`    | `"emerald" \| "blue" \| "amber" \| "violet" \| "rose"` | Left-border and icon box color (required)                                 |
+| `icon`      | `string \| JSX.Element`                                | Material Symbols name or an img/element for the top-right icon (required) |
+| `value`     | `string`                                               | Large primary value (required)                                            |
+| `loading`   | `boolean`                                              | Shows an em dash instead of `value`                                       |
+| `linkHref`  | `string`                                               | Makes the footer a link                                                   |
+| `linkLabel` | `string`                                               | Link text                                                                 |
+| `class`     | `string`                                               | Extra CSS classes                                                         |
 
 ```tsx
 import { MetricCard } from "@clickyduck/solid-kit";
@@ -770,13 +770,13 @@ Accessible tab bar with ARIA roles and underline indicator.
 
 **`TabDefinition<TabValue>` shape:**
 
-| Field                    | Type       | Description                    |
-| ------------------------ | ---------- | ------------------------------ |
-| `tabValue`               | `TabValue` | Unique tab identifier          |
-| `label`                  | `string`   | Display label                  |
-| `tabElementIdentifier`   | `string`   | DOM id for the tab button      |
-| `panelElementIdentifier` | `string`   | DOM id for the tab panel       |
-| `icon`                   | `string`   | Optional Material Symbols name |
+| Field                    | Type                    | Description                                      |
+| ------------------------ | ----------------------- | ------------------------------------------------ |
+| `tabValue`               | `TabValue`              | Unique tab identifier                            |
+| `label`                  | `string`                | Display label                                    |
+| `tabElementIdentifier`   | `string`                | DOM id for the tab button                        |
+| `panelElementIdentifier` | `string`                | DOM id for the tab panel                         |
+| `icon`                   | `string \| JSX.Element` | Optional Material Symbols name or an img/element |
 
 **`Tabs` props:**
 
@@ -816,18 +816,18 @@ Typographic component with five size steps and semantic color, weight, style, an
 
 **`TextSize` values:** `"0"` (4xl, bold), `"1"` (2xl, semibold), `"2"` (base, medium — default), `"3"` (sm, medium), `"4"` (xs, medium).
 
-| Prop            | Type                                                                                                            | Default      | Description                                       |
-| --------------- | --------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------- |
-| `size`          | `"0" \| "1" \| "2" \| "3" \| "4"`                                                                               | `"2"`        | Size step                                         |
-| `color`         | `"default" \| "inherit" \| "muted" \| "primary" \| "secondary" \| "success" \| "warning" \| "danger" \| "info"` | `"default"`  | Semantic color                                    |
-| `weight`        | `"thin" \| "normal" \| "medium" \| "semibold" \| "bold"`                                                        | size default | Font weight                                       |
-| `italic`        | `boolean`                                                                                                       | `false`      | Italic style                                      |
-| `underline`     | `boolean`                                                                                                       | `false`      | Underline decoration                              |
-| `opacity`       | `number`                                                                                                        | —            | 0–100 percent opacity                             |
-| `iconComponent` | `JSX.Element`                                                                                                   | —            | Leading or trailing icon element                  |
-| `iconPosition`  | `"start" \| "end"`                                                                                              | `"start"`    | Icon placement                                    |
-| `maxLength`     | `number`                                                                                                        | —            | Truncates string children with `…` at this length |
-| `class`         | `string`                                                                                                        | —            | Extra CSS classes                                 |
+| Prop           | Type                                                                                                            | Default      | Description                                       |
+| -------------- | --------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------- |
+| `size`         | `"0" \| "1" \| "2" \| "3" \| "4"`                                                                               | `"2"`        | Size step                                         |
+| `color`        | `"default" \| "inherit" \| "muted" \| "primary" \| "secondary" \| "success" \| "warning" \| "danger" \| "info"` | `"default"`  | Semantic color                                    |
+| `weight`       | `"thin" \| "normal" \| "medium" \| "semibold" \| "bold"`                                                        | size default | Font weight                                       |
+| `italic`       | `boolean`                                                                                                       | `false`      | Italic style                                      |
+| `underline`    | `boolean`                                                                                                       | `false`      | Underline decoration                              |
+| `opacity`      | `number`                                                                                                        | —            | 0–100 percent opacity                             |
+| `icon`         | `string \| JSX.Element`                                                                                         | —            | Material Symbols name or an img/element           |
+| `iconPosition` | `"start" \| "end"`                                                                                              | `"start"`    | Icon placement                                    |
+| `maxLength`    | `number`                                                                                                        | —            | Truncates string children with `…` at this length |
+| `class`        | `string`                                                                                                        | —            | Extra CSS classes                                 |
 
 ```tsx
 import { Text } from "@clickyduck/solid-kit";

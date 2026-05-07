@@ -1,6 +1,7 @@
 import { BackgroundCard } from "@/components/card/BackgroundCard";
 import { Icon } from "@/components/icons";
 import { mergeClasses } from "@/utilities";
+import type { JSX } from "solid-js";
 import { Show } from "solid-js";
 
 type AccentColor = "emerald" | "blue" | "amber" | "violet" | "rose";
@@ -41,7 +42,7 @@ const ACCENT_CLASSES: Record<AccentColor, { card: string; iconBox: string; iconC
 type MetricCardProperties = {
   title: string;
   accent: AccentColor;
-  icon: string;
+  icon: string | JSX.Element;
   loading?: boolean;
   value: string;
   linkHref?: string;
@@ -61,7 +62,13 @@ export const MetricCard = (properties: MetricCardProperties) => {
         <div class="flex flex-row items-center justify-between">
           <h3 class="text-sm font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-400">{properties.title}</h3>
           <span class={mergeClasses("flex h-9 w-9 items-center justify-center rounded-lg", accent().iconBox, accent().iconColor)}>
-            <Icon name={properties.icon} size={20} aria-hidden="true" />
+            {typeof properties.icon === "string" ? (
+              <Icon name={properties.icon} size={20} aria-hidden="true" />
+            ) : (
+              <span class="inline-flex items-center justify-center" style={{ width: "20px", height: "20px" }} aria-hidden="true">
+                {properties.icon}
+              </span>
+            )}
           </span>
         </div>
       </div>
