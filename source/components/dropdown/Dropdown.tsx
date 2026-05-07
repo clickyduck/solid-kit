@@ -1,6 +1,6 @@
 import { Button } from "@/components/button/Button";
 import { IconButton } from "@/components/icon-button/IconButton";
-import { Icon, type IconComponent, chevronDown, search } from "@/components/icons";
+import { Icon } from "@/components/icons";
 import {
   CHROME_MUTED_ICON_CLASSES,
   DROPDOWN_MENU_SURFACE_CLASSES,
@@ -80,7 +80,7 @@ const DropdownBuiltInSearchField: Component<DropdownBuiltInSearchFieldProperties
     <div class={FORM_CONTROL_DROP_DOWN_MENU_SEARCH_WRAPPER_CLASS_BY_SIZE}>
       <div class="relative">
         <div class={mergeClasses("pointer-events-none absolute inset-y-0 left-0 flex items-center", FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS)}>
-          <Icon icon={search} width={FORM_CONTROL_ICON_SIZE} height={FORM_CONTROL_ICON_SIZE} class={mergeClasses("pointer-events-none shrink-0", CHROME_MUTED_ICON_CLASSES)} aria-hidden="true" />
+          <Icon name="search" size={FORM_CONTROL_ICON_SIZE} class={mergeClasses("pointer-events-none shrink-0", CHROME_MUTED_ICON_CLASSES)} aria-hidden="true" />
         </div>
         <input
           ref={properties.searchInputReference}
@@ -317,7 +317,7 @@ const DropdownValue: ParentComponent<ComponentProps<"div">> = (properties) => {
 
 type DropdownTriggerWithLabel = Omit<ComponentProps<typeof Button>, "variant" | "iconPosition" | "class"> & {
   children: JSX.Element;
-  icon?: IconComponent;
+  icon?: string;
   variant?: "ghost";
 };
 
@@ -341,7 +341,7 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
       <IconButton
         id={local.id}
         variant={local.variant ?? "outline"}
-        icon={local.icon ?? chevronDown}
+        icon={local.icon ?? "keyboard_arrow_down"}
         onClick={(event) => {
           if (context.disabled()) {
             return;
@@ -364,7 +364,7 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
     <Button
       id={local.id}
       variant={local.variant ?? "outline"}
-      icon={chevronDown}
+      icon="keyboard_arrow_down"
       iconPosition="end"
       class="w-full min-w-0 justify-between text-left font-medium aria-expanded:bg-gray-100 dark:aria-expanded:bg-gray-700"
       onClick={(event) => {
@@ -383,10 +383,8 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
       {...rest}
     >
       <span class="flex min-w-0 flex-1 items-center gap-2">
-        <Show when={local.icon}>
-          {(iconComponentAccessor) => {
-            return <Icon icon={iconComponentAccessor()} width={FORM_CONTROL_ICON_SIZE} height={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />;
-          }}
+        <Show when={local.icon} keyed>
+          {(name) => <Icon name={name} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />}
         </Show>
         <span class="min-w-0 flex-1 truncate">{local.children}</span>
       </span>

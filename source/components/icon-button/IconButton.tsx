@@ -1,4 +1,4 @@
-import { Icon, type IconComponent } from "@/components/icons";
+import { Icon } from "@/components/icons";
 import { FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { Show, splitProps } from "solid-js";
@@ -8,7 +8,7 @@ type IconButtonVariant = "solid" | "outline" | "ghost" | "link";
 type IconButtonProperties = Omit<ComponentProps<"button">, "class"> & {
   variant?: IconButtonVariant;
   class?: string;
-  icon?: IconComponent;
+  icon?: string;
 };
 
 const getVariantClasses = (variant: IconButtonVariant = "solid"): string => {
@@ -42,9 +42,7 @@ export const IconButton = (properties: IconButtonProperties) => {
       {...rest}
     >
       <Show when={local.icon} keyed>
-        {(resolvedIconComponent) => {
-          return <Icon icon={resolvedIconComponent} width={FORM_CONTROL_ICON_SIZE} height={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />;
-        }}
+        {(name) => <Icon name={name} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />}
       </Show>
       {local.children}
     </button>

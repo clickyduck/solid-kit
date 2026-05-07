@@ -41,14 +41,14 @@ Chip/tag with optional icon and remove button.
 
 **Exports:** `Badge`
 
-| Prop       | Type                                                                          | Default     | Description                     |
-| ---------- | ----------------------------------------------------------------------------- | ----------- | ------------------------------- |
-| `children` | `JSX.Element`                                                                 | —           | Badge label (required)          |
-| `variant`  | `"solid" \| "outline"`                                                        | `"solid"`   | Visual style                    |
-| `color`    | `"primary" \| "secondary" \| "neutral" \| "success" \| "warning" \| "danger"` | `"neutral"` | Color scheme                    |
-| `icon`     | `IconComponent`                                                               | —           | Leading icon                    |
-| `onRemove` | `() => void`                                                                  | —           | Shows × button; called on click |
-| `class`    | `string`                                                                      | —           | Extra CSS classes               |
+| Prop       | Type                                                                          | Default     | Description                         |
+| ---------- | ----------------------------------------------------------------------------- | ----------- | ----------------------------------- |
+| `children` | `JSX.Element`                                                                 | —           | Badge label (required)              |
+| `variant`  | `"solid" \| "outline"`                                                        | `"solid"`   | Visual style                        |
+| `color`    | `"primary" \| "secondary" \| "neutral" \| "success" \| "warning" \| "danger"` | `"neutral"` | Color scheme                        |
+| `icon`     | `string`                                                                      | —           | Material Symbols name, e.g. `"tag"` |
+| `onRemove` | `() => void`                                                                  | —           | Shows × button; called on click     |
+| `class`    | `string`                                                                      | —           | Extra CSS classes                   |
 
 ```tsx
 import { Badge } from "@clickyduck/solid-kit";
@@ -68,22 +68,22 @@ Standard action button with optional icon.
 
 Extends all native `<button>` HTML attributes.
 
-| Prop           | Type                                        | Default   | Description                      |
-| -------------- | ------------------------------------------- | --------- | -------------------------------- |
-| `children`     | `JSX.Element`                               | —         | Button label                     |
-| `variant`      | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style                     |
-| `icon`         | `IconComponent`                             | —         | Icon displayed alongside label   |
-| `iconPosition` | `"start" \| "end"`                          | `"start"` | Icon placement relative to label |
-| `class`        | `string`                                    | —         | Extra CSS classes                |
-| `disabled`     | `boolean`                                   | —         | Native disabled attribute        |
-| `type`         | `"button" \| "submit" \| "reset"`           | —         | Native type attribute            |
+| Prop           | Type                                        | Default   | Description                            |
+| -------------- | ------------------------------------------- | --------- | -------------------------------------- |
+| `children`     | `JSX.Element`                               | —         | Button label                           |
+| `variant`      | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style                           |
+| `icon`         | `string`                                    | —         | Material Symbols name, e.g. `"search"` |
+| `iconPosition` | `"start" \| "end"`                          | `"start"` | Icon placement relative to label       |
+| `class`        | `string`                                    | —         | Extra CSS classes                      |
+| `disabled`     | `boolean`                                   | —         | Native disabled attribute              |
+| `type`         | `"button" \| "submit" \| "reset"`           | —         | Native type attribute                  |
 
 Size is responsive: `large` on mobile (≤767 px), `default` on desktop.
 
 ```tsx
 import { Button } from "@clickyduck/solid-kit";
 
-<Button variant="outline" icon={SearchIcon}>
+<Button variant="outline" icon="search">
   Search
 </Button>;
 ```
@@ -249,17 +249,17 @@ Centered placeholder for empty lists or zero-data views.
 
 **Exports:** `EmptyState`
 
-| Prop      | Type            | Description                |
-| --------- | --------------- | -------------------------- |
-| `icon`    | `IconComponent` | Icon to display (required) |
-| `title`   | `string`        | Heading text (required)    |
-| `message` | `string`        | Body text (required)       |
-| `class`   | `string`        | Extra CSS classes          |
+| Prop      | Type     | Description                      |
+| --------- | -------- | -------------------------------- |
+| `icon`    | `string` | Material Symbols name (required) |
+| `title`   | `string` | Heading text (required)          |
+| `message` | `string` | Body text (required)             |
+| `class`   | `string` | Extra CSS classes                |
 
 ```tsx
 import { EmptyState } from "@clickyduck/solid-kit";
 
-<EmptyState icon={InboxIcon} title="No results" message="Try a different search." />;
+<EmptyState icon="inbox" title="No results" message="Try a different search." />;
 ```
 
 ---
@@ -294,14 +294,14 @@ Page-level header row with title, description, back link, and actions slot.
 
 **Exports:** `HeaderLayout`
 
-| Prop           | Type          | Description                                    |
-| -------------- | ------------- | ---------------------------------------------- |
+| Prop           | Type          | Description                                                                          |
+| -------------- | ------------- | ------------------------------------------------------------------------------------ |
 | `title`        | `string`      | Page title; component renders when `title`, `titleElement`, or `children` is present |
-| `titleElement` | `JSX.Element` | Replaces the default `<h2>` title element      |
-| `description`  | `string`      | Optional subtitle below the title              |
-| `back`         | `JSX.Element` | Back link or button rendered to the left       |
-| `children`     | `JSX.Element` | Actions rendered on the right side             |
-| `class`        | `string`      | Extra CSS classes                              |
+| `titleElement` | `JSX.Element` | Replaces the default `<h2>` title element                                            |
+| `description`  | `string`      | Optional subtitle below the title                                                    |
+| `back`         | `JSX.Element` | Back link or button rendered to the left                                             |
+| `children`     | `JSX.Element` | Actions rendered on the right side                                                   |
+| `class`        | `string`      | Extra CSS classes                                                                    |
 
 ```tsx
 import { Button, HeaderLayout } from "@clickyduck/solid-kit";
@@ -337,46 +337,44 @@ Square icon-only button sized to match form controls.
 
 Extends all native `<button>` HTML attributes.
 
-| Prop      | Type                                        | Default   | Description               |
-| --------- | ------------------------------------------- | --------- | ------------------------- |
-| `icon`    | `IconComponent`                             | —         | Icon to render (required) |
-| `variant` | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style              |
-| `class`   | `string`                                    | —         | Extra CSS classes         |
+| Prop      | Type                                        | Default   | Description                      |
+| --------- | ------------------------------------------- | --------- | -------------------------------- |
+| `icon`    | `string`                                    | —         | Material Symbols name (required) |
+| `variant` | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style                     |
+| `class`   | `string`                                    | —         | Extra CSS classes                |
 
 Size is responsive: `large` on mobile (≤767 px), `default` on desktop.
 
 ```tsx
 import { IconButton } from "@clickyduck/solid-kit";
 
-<IconButton icon={CloseIcon} variant="ghost" aria-label="Close" />;
+<IconButton icon="close" variant="ghost" aria-label="Close" />;
 ```
 
 ---
 
 ### Icons
 
-SVG icon renderer and bundled icon symbols.
+SVG icon renderer powered by the [Material Symbols](https://fonts.google.com/icons) rounded-filled set.
 
-**Exports:** `Icon`, `IconComponent` (type), named icon SVG components
+**Exports:** `Icon`, `IconGlyphProperties` (type)
+
+Icons are loaded lazily on first use. While loading, a placeholder is shown. If the name does not exist in the library the placeholder remains.
 
 **`Icon` props:**
 
-| Prop     | Type            | Default          | Description                        |
-| -------- | --------------- | ---------------- | ---------------------------------- |
-| `icon`   | `IconComponent` | —                | SVG component to render (required) |
-| `width`  | `number`        | —                | Override width                     |
-| `height` | `number`        | —                | Override height                    |
-| `fill`   | `string`        | `"currentColor"` | SVG fill color                     |
-| `class`  | `string`        | —                | Extra CSS classes                  |
+| Prop    | Type     | Default | Description                                                       |
+| ------- | -------- | ------- | ----------------------------------------------------------------- |
+| `name`  | `string` | —       | Material Symbols slug, e.g. `"account_balance_wallet"` (required) |
+| `size`  | `number` | —       | Sets both `width` and `height`                                    |
+| `class` | `string` | —       | Extra CSS classes                                                 |
 
-**Bundled named icons** (used by built-in components such as `LeftPanelLayout` navigation and `Toast`; for your own buttons, metrics, tabs etc. pass icons from your own module):
-
-`arrowLeft`, `arrowRight`, `arrowTrendingUp`, `calendarDays`, `chat`, `checkCircle`, `chevronDown`, `closeCircle`, `confirmationNumber`, `currencyRupee`, `dashboard`, `forum`, `groups`, `inventory`, `list`, `pieChart`, `search`, `settings`, `tag`, `upload`, `wallet`, `work`, `exclamationTriangle`
+All standard SVG props are also forwarded.
 
 ```tsx
-import { Icon, search } from "@clickyduck/solid-kit";
+import { Icon } from "@clickyduck/solid-kit";
 
-<Icon icon={search} width={20} />;
+<Icon name="account_balance_wallet" size={20} />;
 ```
 
 ---
@@ -389,12 +387,12 @@ Styled text input with optional leading icon and trailing text.
 
 Extends all native `<input>` HTML attributes.
 
-| Prop           | Type            | Description                                                |
-| -------------- | --------------- | ---------------------------------------------------------- |
-| `icon`         | `IconComponent` | Leading icon inside the input                              |
-| `trailingText` | `string`        | Right-side label (e.g. a unit or currency symbol)          |
-| `currency`     | `boolean`       | Indian currency formatting: comma grouping, max 2 decimals |
-| `class`        | `string`        | Extra CSS classes                                          |
+| Prop           | Type      | Description                                                |
+| -------------- | --------- | ---------------------------------------------------------- |
+| `icon`         | `string`  | Material Symbols name for a leading icon                   |
+| `trailingText` | `string`  | Right-side label (e.g. a unit or currency symbol)          |
+| `currency`     | `boolean` | Indian currency formatting: comma grouping, max 2 decimals |
+| `class`        | `string`  | Extra CSS classes                                          |
 
 ```tsx
 import { Input } from "@clickyduck/solid-kit";
@@ -467,13 +465,13 @@ Collapsible sidebar navigation panel.
 
 **`LeftPanelLayoutNavigationGroupJson`** — a collapsible nav group:
 
-| Field                               | Type                                  | Description                      |
-| ----------------------------------- | ------------------------------------- | -------------------------------- |
-| `groupLabel`                        | `string`                              | Group heading                    |
-| `navigationGroupIdentifier`         | `string`                              | Unique key (optional)            |
+| Field                               | Type                                  | Description                                                                 |
+| ----------------------------------- | ------------------------------------- | --------------------------------------------------------------------------- |
+| `groupLabel`                        | `string`                              | Group heading                                                               |
+| `navigationGroupIdentifier`         | `string`                              | Unique key (optional)                                                       |
 | `collapsibleNavigationGroup`        | `boolean`                             | Whether the group can be toggled; defaults to `true` (opt out with `false`) |
-| `navigationGroupInitiallyCollapsed` | `boolean`                             | Start collapsed                  |
-| `items`                             | `LeftPanelLayoutNavigationItemJson[]` | Nav items in this group          |
+| `navigationGroupInitiallyCollapsed` | `boolean`                             | Start collapsed                                                             |
+| `items`                             | `LeftPanelLayoutNavigationItemJson[]` | Nav items in this group                                                     |
 
 **`LeftPanelLayoutNavigationItemJson`** — a single nav link:
 
@@ -513,21 +511,21 @@ Stat card with accent color, icon, value, and optional link.
 
 **Exports:** `MetricCard`
 
-| Prop        | Type                                                   | Description                                 |
-| ----------- | ------------------------------------------------------ | ------------------------------------------- |
-| `title`     | `string`                                               | Metric label (rendered uppercase, required) |
-| `accent`    | `"emerald" \| "blue" \| "amber" \| "violet" \| "rose"` | Left-border and icon box color (required)   |
-| `icon`      | `IconComponent`                                        | Icon in the top-right (required)            |
-| `value`     | `string`                                               | Large primary value (required)              |
-| `loading`   | `boolean`                                              | Shows an em dash instead of `value`         |
-| `linkHref`  | `string`                                               | Makes the footer a link                     |
-| `linkLabel` | `string`                                               | Link text                                   |
-| `class`     | `string`                                               | Extra CSS classes                           |
+| Prop        | Type                                                   | Description                                             |
+| ----------- | ------------------------------------------------------ | ------------------------------------------------------- |
+| `title`     | `string`                                               | Metric label (rendered uppercase, required)             |
+| `accent`    | `"emerald" \| "blue" \| "amber" \| "violet" \| "rose"` | Left-border and icon box color (required)               |
+| `icon`      | `string`                                               | Material Symbols name for the top-right icon (required) |
+| `value`     | `string`                                               | Large primary value (required)                          |
+| `loading`   | `boolean`                                              | Shows an em dash instead of `value`                     |
+| `linkHref`  | `string`                                               | Makes the footer a link                                 |
+| `linkLabel` | `string`                                               | Link text                                               |
+| `class`     | `string`                                               | Extra CSS classes                                       |
 
 ```tsx
 import { MetricCard } from "@clickyduck/solid-kit";
 
-<MetricCard title="Revenue" accent="emerald" icon={CurrencyIcon} value="₹1,24,000" linkHref="/revenue" linkLabel="View report" />;
+<MetricCard title="Revenue" accent="emerald" icon="currency_rupee" value="₹1,24,000" linkHref="/revenue" linkLabel="View report" />;
 ```
 
 ---
@@ -575,20 +573,20 @@ Responsive detail/drawer panel that slides in from the right.
 
 **`RightPanelLayout` props:**
 
-| Prop             | Type                              | Default                                  | Description                                                                                                          |
-| ---------------- | --------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `open`           | `boolean`                         | opens on mount                           | Controlled open state; when omitted the panel opens on mount (backwards compatible)                                  |
-| `title`          | `JSX.Element`                     | —                                        | Panel heading content (required)                                                                                     |
-| `subtitle`       | `JSX.Element`                     | —                                        | Optional secondary header line                                                                                       |
-| `headerActions`  | `JSX.Element`                     | —                                        | Extra elements in the header row                                                                                     |
-| `children`       | `JSX.Element`                     | —                                        | Scrollable body content (required)                                                                                   |
-| `footer`         | `JSX.Element`                     | —                                        | Sticky footer slot                                                                                                   |
-| `onBeginClose`   | `() => void`                      | —                                        | Called immediately when close transition begins, before `onOpenChange(false)`                                        |
+| Prop             | Type                              | Default                                  | Description                                                                                                                    |
+| ---------------- | --------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `open`           | `boolean`                         | opens on mount                           | Controlled open state; when omitted the panel opens on mount (backwards compatible)                                            |
+| `title`          | `JSX.Element`                     | —                                        | Panel heading content (required)                                                                                               |
+| `subtitle`       | `JSX.Element`                     | —                                        | Optional secondary header line                                                                                                 |
+| `headerActions`  | `JSX.Element`                     | —                                        | Extra elements in the header row                                                                                               |
+| `children`       | `JSX.Element`                     | —                                        | Scrollable body content (required)                                                                                             |
+| `footer`         | `JSX.Element`                     | —                                        | Sticky footer slot                                                                                                             |
+| `onBeginClose`   | `() => void`                      | —                                        | Called immediately when close transition begins, before `onOpenChange(false)`                                                  |
 | `onOpenChange`   | `(isPanelOpen: boolean) => void`  | —                                        | Required. `true` when the open transition runs; `false` after the close animation finishes (200ms), for unmounting with `Show` |
-| `closeAriaLabel` | `string`                          | —                                        | Accessible label for the close button (required)                                                                     |
-| `topOffset`      | `string`                          | `"var(--solid-kit-header-height, 4rem)"` | Top offset for the mobile overlay variant                                                                            |
-| `panelProps`     | `JSX.HTMLAttributes<HTMLElement>` | —                                        | Extra props applied to the `<aside>` element (e.g. drag/drop handlers); `class` is merged                            |
-| `variant`        | `"grid" \| "overlay"`             | `"grid"`                                 | `grid`: sibling inside `MainLayout`; `overlay`: fixed right-panel overlay                                            |
+| `closeAriaLabel` | `string`                          | —                                        | Accessible label for the close button (required)                                                                               |
+| `topOffset`      | `string`                          | `"var(--solid-kit-header-height, 4rem)"` | Top offset for the mobile overlay variant                                                                                      |
+| `panelProps`     | `JSX.HTMLAttributes<HTMLElement>` | —                                        | Extra props applied to the `<aside>` element (e.g. drag/drop handlers); `class` is merged                                      |
+| `variant`        | `"grid" \| "overlay"`             | `"grid"`                                 | `grid`: sibling inside `MainLayout`; `overlay`: fixed right-panel overlay                                                      |
 
 On desktop the panel pushes the main area. On mobile it overlays full-screen with smooth entrance/exit transitions.
 
@@ -683,13 +681,13 @@ Accessible tab bar with ARIA roles and underline indicator.
 
 **`TabDefinition<TabValue>` shape:**
 
-| Field                    | Type            | Description               |
-| ------------------------ | --------------- | ------------------------- |
-| `tabValue`               | `TabValue`      | Unique tab identifier     |
-| `label`                  | `string`        | Display label             |
-| `tabElementIdentifier`   | `string`        | DOM id for the tab button |
-| `panelElementIdentifier` | `string`        | DOM id for the tab panel  |
-| `icon`                   | `IconComponent` | Optional leading icon     |
+| Field                    | Type       | Description                    |
+| ------------------------ | ---------- | ------------------------------ |
+| `tabValue`               | `TabValue` | Unique tab identifier          |
+| `label`                  | `string`   | Display label                  |
+| `tabElementIdentifier`   | `string`   | DOM id for the tab button      |
+| `panelElementIdentifier` | `string`   | DOM id for the tab panel       |
+| `icon`                   | `string`   | Optional Material Symbols name |
 
 **`Tabs` props:**
 
@@ -832,12 +830,12 @@ Radio or checkbox toggle card group.
 
 **`ToggleGroupOption` shape:**
 
-| Field         | Type      | Description             |
-| ------------- | --------- | ----------------------- |
-| `value`       | `string`  | Option value (required) |
-| `label`       | `string`  | Display label (required)|
-| `description` | `string`  | Optional secondary text |
-| `disabled`    | `boolean` | Disables this option    |
+| Field         | Type      | Description              |
+| ------------- | --------- | ------------------------ |
+| `value`       | `string`  | Option value (required)  |
+| `label`       | `string`  | Display label (required) |
+| `description` | `string`  | Optional secondary text  |
+| `disabled`    | `boolean` | Disables this option     |
 
 **`ToggleGroup` props** (union discriminated by `selectionMode`):
 
@@ -1006,7 +1004,7 @@ This section is the full checklist for publishing **`@clickyduck/solid-kit`** to
 | Command               | What it does                                                                                                                                                                                                                                   |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`npm run build`**   | Deletes the **`public/`** output folder, then runs the Vite library build. Produces the files that ship inside the package (see **`files`** in **`package.json`**). Use this when you only want a local build (for example to inspect output). |
-| **`npm run release`** | Runs **`npm run format`**, **`npm run lint`**, then **`prepublishOnly`** (**`npm run typecheck`** then **`npm run build`**), then **`npm publish`** with **`GITHUB_TOKEN`** loaded from **`.env`** via **`dotenv-cli`**.                      |
+| **`npm run release`** | Runs **`npm run format`**, **`npm run lint`**, then **`prepublishOnly`** (**`npm run typecheck`** then **`npm run build`**), then **`npm publish`** with **`GITHUB_TOKEN`** loaded from **`.env`** via **`dotenv-cli`**.                       |
 
 You **do not** need to run **`npm run build`** manually immediately before **`npm run release`**: **`prepublishOnly`** already runs typecheck and build. Before **`npm version`**, run **`npm run typecheck && npm run build`** so you do not tag a commit that fails typecheck or build (**`npm version`** does not run those steps). Run **`npm run typecheck`**, **`npm run build`**, or both in sequence any time you want to confirm output locally.
 
@@ -1108,7 +1106,7 @@ export GITHUB_TOKEN=your_token_here
 npm install @clickyduck/solid-kit solid-js tailwindcss
 ```
 
-Built-in components that need a fixed glyph bundle only the Material Symbols they use; you do **not** install **`@material-symbols/svg-500`** for those. When you want custom icons (same pattern as **`showcase/showcaseIcons.tsx`** in this repository), add **`@material-symbols/svg-500`** (or another SVG source), **`vite-plugin-solid-svg`** if you use Vite, and export **`IconComponent`** values from your application. Pass those into **`Button`**, **`IconButton`**, **`MetricCard`**, **`EmptyState`**, **`Tabs`**, **`Input`**, **`Dropdown`**, **`Badge`**, and any other prop typed as **`IconComponent`**.
+Icons are bundled inside **`@clickyduck/solid-kit`** — you do **not** need to install **`@material-symbols/svg-500`**. Pass any [Material Symbols](https://fonts.google.com/icons) slug (e.g. `"search"`, `"account_balance_wallet"`) to any `icon` prop or to `<Icon name="..." />`.
 
 ### 4. Usage
 

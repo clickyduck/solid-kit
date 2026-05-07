@@ -1,5 +1,4 @@
 import { Button } from "@/components/button/Button";
-import type { IconComponent } from "@/components/icons";
 import { mergeClasses } from "@/utilities";
 import type { Accessor, JSX } from "solid-js";
 import { For } from "solid-js";
@@ -9,7 +8,7 @@ export type TabDefinition<TabValue extends string> = {
   label: string;
   tabElementIdentifier: string;
   panelElementIdentifier: string;
-  icon?: IconComponent;
+  icon?: string;
 };
 
 export type TabsProperties<TabValue extends string> = {

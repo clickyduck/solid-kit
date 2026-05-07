@@ -1,40 +1,17 @@
 import { Button } from "@/components/button/Button";
-import { Icon, type IconComponent, arrowTrendingUp, calendarDays, chat, checkCircle, chevronDown, confirmationNumber, currencyRupee, dashboard, forum, groups, inventory, list, pieChart, settings, tag, wallet, work } from "@/components/icons";
+import { Icon } from "@/components/icons";
 import { mergeClasses } from "@/utilities/mergeClasses";
 import { themedScrollControlClassName } from "@/utilities/themedScrollControlClassName";
 import { useIsMobile } from "@/utilities/useIsMobile";
 import type { Component, JSX } from "solid-js";
 import { For, Show, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 
-/** Maps JSON `iconExportName` values to icon components; extend this object when supporting new icon names in navigation JSON. */
-export const leftPanelNavigationIconByExportName = {
-  arrowTrendingUp,
-  calendarDays,
-  chat,
-  checkCircle,
-  confirmationNumber,
-  currencyRupee,
-  dashboard,
-  forum,
-  groups,
-  inventory,
-  list,
-  pieChart,
-  settings,
-  tag,
-  wallet,
-  work
-} as const satisfies Record<string, IconComponent>;
-
-export const leftPanelLayoutNavigationIconByExportName = leftPanelNavigationIconByExportName;
-
-export type LeftPanelLayoutNavigationIconExportName = keyof typeof leftPanelLayoutNavigationIconByExportName;
-
 /** One navigation row rendered inside a group. */
 export type LeftPanelNavigationItemJson = {
   href: string;
   label: string;
-  iconExportName: LeftPanelLayoutNavigationIconExportName;
+  /** Material Symbols icon name, e.g. "dashboard", "settings", "account_balance_wallet" */
+  icon: string;
   /** When true, only the exact pathname matches (Solid Router `end` on root). */
   matchRouteExactly?: boolean;
 };
@@ -164,8 +141,6 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
               return group.navigationGroupInitiallyCollapsed === true;
             });
             const useCollapsibleNavigationGroupMemo = createMemo(() => {
-              // Collapsible-by-default so consumers get the "group header button" UX without extra flags.
-              // Opt out explicitly with `collapsibleNavigationGroup: false`.
               return group.collapsibleNavigationGroup !== false && !properties.collapsed;
             });
             const isNavigationGroupBodyExpandedMemo = createMemo(() => {
@@ -197,8 +172,6 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                     targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
                   }
                 } else {
-                  // SolidJS Router's A uses history.pushState which doesn't fire popstate,
-                  // so sync pathname after the router has committed the navigation.
                   setTimeout(() => {
                     setPathname(window.location.pathname);
                     setHash(window.location.hash);
@@ -208,7 +181,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
               };
               const linkChildren = (
                 <>
-                  <Icon icon={leftPanelLayoutNavigationIconByExportName[item.iconExportName]} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
+                  <Icon name={item.icon} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
                   <Show when={!properties.collapsed}>
                     <span class={NAVIGATION_LINK_LABEL_CLASS}>{item.label}</span>
                   </Show>
@@ -248,7 +221,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                     >
                       <span class="min-w-0 flex-1 truncate">{group.groupLabel}</span>
                       <span class={mergeClasses("inline-flex shrink-0 items-center justify-center text-gray-500 transition-transform duration-200 ease-out", isNavigationGroupBodyExpandedMemo() ? "rotate-180" : "rotate-0")} aria-hidden>
-                        <Icon icon={chevronDown} class="size-4" />
+                        <Icon name="keyboard_arrow_down" class="size-4" />
                       </span>
                     </Button>
                   </Show>
@@ -268,17 +241,8 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
 type LeftPanelLayoutProperties = {
   /** When true the panel is in icon-only mode. Defaults to `navigationDocument.collapsed ?? false`. */
   collapsed?: boolean;
-  /**
-   * Fires when the panel becomes open or closed. Use `false` from link tap or swipe to request closing; the parent should set `collapsed` to match.
-   */
   onOpenChange?: (isPanelOpen: boolean) => void;
   navigationDocument: LeftPanelLayoutNavigationDocumentJson;
-  /**
-   * When true, renders a mobile scrim behind the panel when it is open.
-   * Clicking the scrim triggers `onOpenChange(false)`.
-   *
-   * Defaults to `true` so consumers don't need to re-implement overlay behavior.
-   */
   scrim?: boolean;
   /** Tailwind z-index for the scrim layer (panel stays above). */
   scrimZIndexClass?: string;
@@ -293,7 +257,6 @@ type LeftPanelLayoutProperties = {
 
 /**
  * Collapsible application sidebar with touch swipe-to-close on small viewports; navigation content comes from JSON.
- * On small viewports the panel is full width, fixed under the header, and stacks above the scrim so links stay usable.
  */
 export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties) => {
   const resolvedCollapsed = (): boolean => properties.collapsed ?? properties.navigationDocument.collapsed ?? false;
@@ -346,15 +309,9 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
             : { "grid-area": "left", "touch-action": "auto" }
         }
         onPointerDown={(event: PointerEvent) => {
-          if (resolvedCollapsed()) {
-            return;
-          }
-          if (!isMobileViewport()) {
-            return;
-          }
-          if (event.pointerType !== "touch") {
-            return;
-          }
+          if (resolvedCollapsed()) return;
+          if (!isMobileViewport()) return;
+          if (event.pointerType !== "touch") return;
           (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
           setSwipeStartClientX(event.clientX);
           setSwipeStartClientY(event.clientY);
@@ -363,27 +320,17 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setIsSwipeDragging(false);
         }}
         onPointerMove={(event: PointerEvent) => {
-          if (resolvedCollapsed()) {
-            return;
-          }
-          if (!isMobileViewport()) {
-            return;
-          }
-          if (event.pointerType !== "touch") {
-            return;
-          }
+          if (resolvedCollapsed()) return;
+          if (!isMobileViewport()) return;
+          if (event.pointerType !== "touch") return;
           const initialClientX = swipeStartClientX();
           const initialClientY = swipeStartClientY();
-          if (initialClientX == null || initialClientY == null) {
-            return;
-          }
+          if (initialClientX == null || initialClientY == null) return;
           const deltaX = event.clientX - initialClientX;
           const deltaY = event.clientY - initialClientY;
 
           if (!isSwipeGestureActive()) {
-            if (Math.abs(deltaX) < 8) {
-              return;
-            }
+            if (Math.abs(deltaX) < 8) return;
             if (Math.abs(deltaY) > 12 && Math.abs(deltaY) > Math.abs(deltaX) * 1.5) {
               resetSwipeGesture();
               setSwipeTranslationX(0);
@@ -397,15 +344,9 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setSwipeTranslationX(Math.min(0, deltaX));
         }}
         onPointerUp={(event: PointerEvent) => {
-          if (resolvedCollapsed()) {
-            return;
-          }
-          if (!isMobileViewport()) {
-            return;
-          }
-          if (event.pointerType !== "touch") {
-            return;
-          }
+          if (resolvedCollapsed()) return;
+          if (!isMobileViewport()) return;
+          if (event.pointerType !== "touch") return;
           const translationX = swipeTranslationX();
           const width = sidebarElement()?.offsetWidth ?? 0;
           const closeThreshold = Math.max(60, Math.floor(width / 2));
@@ -419,15 +360,9 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setSwipeTranslationX(0);
         }}
         onPointerCancel={(event: PointerEvent) => {
-          if (resolvedCollapsed()) {
-            return;
-          }
-          if (!isMobileViewport()) {
-            return;
-          }
-          if (event.pointerType !== "touch") {
-            return;
-          }
+          if (resolvedCollapsed()) return;
+          if (!isMobileViewport()) return;
+          if (event.pointerType !== "touch") return;
           resetSwipeGesture();
           setSwipeTranslationX(0);
         }}

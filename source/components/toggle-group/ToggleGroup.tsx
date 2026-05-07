@@ -1,4 +1,4 @@
-import { Icon, checkCircle } from "@/components/icons";
+import { Icon } from "@/components/icons";
 import {
   CHOICE_CONTROL_CHECK_CLASS,
   CHOICE_CONTROL_DESCRIPTION_CLASS,
@@ -138,7 +138,7 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
                     <span class={CHOICE_CONTROL_DESCRIPTION_CLASS}>{option.description}</span>
                   </Show>
                 </span>
-                <Icon icon={checkCircle} width={FORM_CONTROL_ICON_SIZE} height={FORM_CONTROL_ICON_SIZE} class={mergeClasses(CHOICE_CONTROL_CHECK_CLASS)} aria-hidden="true" />
+                <Icon name="check_circle" size={FORM_CONTROL_ICON_SIZE} class={mergeClasses(CHOICE_CONTROL_CHECK_CLASS)} aria-hidden="true" />
               </span>
             </label>
           );

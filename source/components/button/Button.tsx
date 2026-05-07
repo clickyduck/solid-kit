@@ -1,4 +1,4 @@
-import { Icon, type IconComponent } from "@/components/icons";
+import { Icon } from "@/components/icons";
 import { FORM_CONTROL_ICON_SIZE, FORM_CONTROL_SIZE_CLASSES, type IconPosition, mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { Show, splitProps } from "solid-js";
@@ -8,7 +8,7 @@ type ButtonVariant = "solid" | "outline" | "ghost" | "link";
 type ButtonProps = Omit<ComponentProps<"button">, "class"> & {
   variant?: ButtonVariant;
   class?: string;
-  icon?: IconComponent;
+  icon?: string;
   iconPosition?: IconPosition;
 };
 
@@ -40,19 +40,17 @@ export const Button = (properties: ButtonProps) => {
       {...rest}
     >
       <Show when={local.icon} keyed fallback={local.children}>
-        {(resolvedIconComponent) => {
-          return (
-            <>
-              <Show when={local.iconPosition !== "end"}>
-                <Icon icon={resolvedIconComponent} width={FORM_CONTROL_ICON_SIZE} height={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
-              </Show>
-              {local.children}
-              <Show when={local.iconPosition === "end"}>
-                <Icon icon={resolvedIconComponent} width={FORM_CONTROL_ICON_SIZE} height={FORM_CONTROL_ICON_SIZE} class="pointer-events-none ml-auto shrink-0 text-current" aria-hidden="true" />
-              </Show>
-            </>
-          );
-        }}
+        {(name) => (
+          <>
+            <Show when={local.iconPosition !== "end"}>
+              <Icon name={name} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
+            </Show>
+            {local.children}
+            <Show when={local.iconPosition === "end"}>
+              <Icon name={name} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none ml-auto shrink-0 text-current" aria-hidden="true" />
+            </Show>
+          </>
+        )}
       </Show>
     </button>
   );

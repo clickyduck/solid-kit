@@ -1,2 +1,2 @@
-export { LeftPanelLayout, leftPanelLayoutNavigationIconByExportName } from "./LeftPanelLayout";
-export type { LeftPanelLayoutNavigationDocumentJson, LeftPanelLayoutNavigationGroupJson, LeftPanelLayoutNavigationIconExportName, LeftPanelLayoutNavigationItemJson, LeftPanelLayoutProperties } from "./LeftPanelLayout";
+export { LeftPanelLayout } from "./LeftPanelLayout";
+export type { LeftPanelLayoutNavigationDocumentJson, LeftPanelLayoutNavigationGroupJson, LeftPanelLayoutNavigationItemJson, LeftPanelLayoutProperties } from "./LeftPanelLayout";

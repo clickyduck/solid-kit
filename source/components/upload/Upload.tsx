@@ -1,4 +1,4 @@
-import { Icon, upload } from "@/components/icons";
+import { Icon } from "@/components/icons";
 import { FORM_CONTROL_AUXILIARY_TEXT_CLASS, FORM_CONTROL_ICON_SIZE, FORM_CONTROL_LINK_ACCENT_TEXT_CLASS, FORM_CONTROL_SIZE_CLASSES, FORM_CONTROL_TEXT_CLASS_BY_SIZE, mergeClasses } from "@/utilities";
 import type { JSX } from "solid-js";
 import { splitProps } from "solid-js";
@@ -59,7 +59,7 @@ export const Upload = (properties: UploadProperties) => {
         }}
       >
         <span class="flex min-w-0 items-center gap-2">
-          <Icon icon={upload} width={FORM_CONTROL_ICON_SIZE} height={FORM_CONTROL_ICON_SIZE} aria-hidden="true" />
+          <Icon name="upload" size={FORM_CONTROL_ICON_SIZE} aria-hidden="true" />
           <span class="flex min-w-0 items-center gap-2">
             <span class={mergeClasses("truncate font-medium text-gray-900 dark:text-white", FORM_CONTROL_TEXT_CLASS_BY_SIZE)}>Select files</span>
             <span class={mergeClasses("truncate", FORM_CONTROL_AUXILIARY_TEXT_CLASS)}>{getFileCountLabel(local.selectedFiles)}</span>

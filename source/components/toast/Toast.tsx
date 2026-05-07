@@ -1,5 +1,5 @@
 import { IconButton } from "@/components/icon-button/IconButton";
-import { Icon, checkCircle, closeCircle, exclamationTriangle } from "@/components/icons";
+import { Icon } from "@/components/icons";
 import { mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { Match, Show, Switch, createSignal, splitProps } from "solid-js";
@@ -74,21 +74,21 @@ export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) 
         <Switch
           fallback={
             <>
-              <Icon icon={checkCircle} width={20} height={20} aria-hidden="true" />
+              <Icon name="check_circle" size={20} aria-hidden="true" />
               <span class="sr-only">Notification icon</span>
             </>
           }
         >
           <Match when={toast().variant === "success"}>
-            <Icon icon={checkCircle} width={20} height={20} aria-hidden="true" />
+            <Icon name="check_circle" size={20} aria-hidden="true" />
             <span class="sr-only">Check icon</span>
           </Match>
           <Match when={toast().variant === "danger"}>
-            <Icon icon={closeCircle} width={20} height={20} aria-hidden="true" />
+            <Icon name="cancel" size={20} aria-hidden="true" />
             <span class="sr-only">Error icon</span>
           </Match>
           <Match when={toast().variant === "warning"}>
-            <Icon icon={exclamationTriangle} width={20} height={20} aria-hidden="true" />
+            <Icon name="warning" size={20} aria-hidden="true" />
             <span class="sr-only">Warning icon</span>
           </Match>
         </Switch>
@@ -102,7 +102,7 @@ export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) 
         </Show>
       </div>
       <IconButton
-        icon={closeCircle}
+        icon="cancel"
         variant="ghost"
         class="ms-auto"
         onClick={() => {

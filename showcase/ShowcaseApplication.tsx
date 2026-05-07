@@ -32,7 +32,6 @@ import { type Color, createDocumentColorSchemePreferenceSignal, useIsMobile } fr
 import type { JSX } from "solid-js";
 import { For, Show, createMemo, createSignal } from "solid-js";
 
-import { bars3, calendarDays, checkCircle, darkMode, dashboard, ellipsisVertical, inventory, lightMode, menuOpen, pencil, search, settings, tag, wallet } from "./showcaseIcons";
 import showcaseLeftPanelNavigationDocumentJson from "./showcaseLeftPanelNavigationDocument.json";
 
 const showcaseLeftPanelNavigationDocument = showcaseLeftPanelNavigationDocumentJson as LeftPanelLayoutNavigationDocumentJson;
@@ -67,21 +66,21 @@ const tabDefinitions: readonly TabDefinition<ShowcaseTabValue>[] = [
     label: "Overview",
     tabElementIdentifier: "showcase-tab-overview",
     panelElementIdentifier: "showcase-panel-overview",
-    icon: dashboard
+    icon: "dashboard"
   },
   {
     tabValue: "reports",
     label: "Reports",
     tabElementIdentifier: "showcase-tab-reports",
     panelElementIdentifier: "showcase-panel-reports",
-    icon: calendarDays
+    icon: "calendar_today"
   },
   {
     tabValue: "settings",
     label: "Settings",
     tabElementIdentifier: "showcase-tab-settings",
     panelElementIdentifier: "showcase-panel-settings",
-    icon: settings
+    icon: "settings"
   }
 ];
 
@@ -185,7 +184,7 @@ export const ShowcaseApplication = (): JSX.Element => {
         <HeaderLayout
           titleElement={
             <div class="flex min-w-0 items-center gap-3">
-              <IconButton variant="ghost" icon={sidebarCollapsed() ? bars3 : menuOpen} onClick={toggleSidebar} aria-label={sidebarCollapsed() ? "Expand sidebar" : "Collapse sidebar"} />
+              <IconButton variant="ghost" icon={sidebarCollapsed() ? "menu" : "menu_open"} onClick={toggleSidebar} aria-label={sidebarCollapsed() ? "Expand sidebar" : "Collapse sidebar"} />
               <h2 class="text-xl font-semibold tracking-tight text-gray-900 md:text-2xl dark:text-white">Solid Kit showcase</h2>
             </div>
           }
@@ -194,7 +193,7 @@ export const ShowcaseApplication = (): JSX.Element => {
           <div class="flex shrink-0 items-center gap-1 rounded-full border border-gray-200 bg-gray-100/80 p-1 dark:border-gray-700 dark:bg-gray-900/60">
             <IconButton
               variant={documentColorSchemeName() === "light" ? "solid" : "ghost"}
-              icon={lightMode}
+              icon="light_mode"
               aria-label="Use light color scheme"
               onClick={() => {
                 setDocumentColorSchemeName("light");
@@ -202,7 +201,7 @@ export const ShowcaseApplication = (): JSX.Element => {
             />
             <IconButton
               variant={documentColorSchemeName() === "dark" ? "solid" : "ghost"}
-              icon={darkMode}
+              icon="dark_mode"
               aria-label="Use dark color scheme"
               onClick={() => {
                 setDocumentColorSchemeName("dark");
@@ -248,7 +247,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                   </For>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                  <Badge variant="outline" color="primary" icon={tag}>
+                  <Badge variant="outline" color="primary" icon="tag">
                     With icon
                   </Badge>
                   <Badge variant="solid" color="warning" onRemove={() => {}}>
@@ -268,19 +267,19 @@ export const ShowcaseApplication = (): JSX.Element => {
                   </Button>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                  <Button variant="solid" icon={pencil}>
+                  <Button variant="solid" icon="edit">
                     Leading icon
                   </Button>
-                  <Button variant="outline" icon={checkCircle} iconPosition="end">
+                  <Button variant="outline" icon="check_circle" iconPosition="end">
                     Trailing icon
                   </Button>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                  <IconButton variant="solid" icon={checkCircle} aria-label="Default icon button" />
-                  <IconButton variant="outline" icon={settings} aria-label="Outline icon button" />
-                  <IconButton variant="ghost" icon={ellipsisVertical} aria-label="Ghost icon button" />
-                  <IconButton variant="link" icon={search} aria-label="Link icon button" />
-                  <IconButton variant="solid" icon={settings} aria-label="Disabled icon button" disabled />
+                  <IconButton variant="solid" icon="check_circle" aria-label="Default icon button" />
+                  <IconButton variant="outline" icon="settings" aria-label="Outline icon button" />
+                  <IconButton variant="ghost" icon="more_vert" aria-label="Ghost icon button" />
+                  <IconButton variant="link" icon="search" aria-label="Link icon button" />
+                  <IconButton variant="solid" icon="settings" aria-label="Disabled icon button" disabled />
                 </div>
               </ShowcaseSection>
             </ShowcaseCategory>
@@ -300,11 +299,11 @@ export const ShowcaseApplication = (): JSX.Element => {
             <ShowcaseCategory categoryTitle="Data surfaces">
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-metrics" sectionTitle="Metric cards">
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <MetricCard title="Gross volume" accent="emerald" icon={wallet} value="₹4.2M" linkHref="#" linkLabel="View settlements" />
-                  <MetricCard title="Active users" accent="blue" icon={dashboard} value="1,284" />
-                  <MetricCard title="Risk score" accent="amber" icon={tag} value="Medium" />
-                  <MetricCard title="Automation" accent="violet" icon={settings} value="Running" />
-                  <MetricCard title="Incidents" accent="rose" icon={checkCircle} value="0 open" />
+                  <MetricCard title="Gross volume" accent="emerald" icon="account_balance_wallet" value="₹4.2M" linkHref="#" linkLabel="View settlements" />
+                  <MetricCard title="Active users" accent="blue" icon="dashboard" value="1,284" />
+                  <MetricCard title="Risk score" accent="amber" icon="tag" value="Medium" />
+                  <MetricCard title="Automation" accent="violet" icon="settings" value="Running" />
+                  <MetricCard title="Incidents" accent="rose" icon="check_circle" value="0 open" />
                 </div>
               </ShowcaseSection>
 
@@ -322,7 +321,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                     </div>
                   </div>
                 </BackgroundCard>
-                <EmptyState icon={inventory} title="No records yet" message="Create your first inventory movement to populate this list." />
+                <EmptyState icon="inventory_2" title="No records yet" message="Create your first inventory movement to populate this list." />
               </ShowcaseSection>
 
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-table" sectionTitle="Table and pagination">
@@ -465,7 +464,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                   <Field label="With leading icon" for="showcase-input-icon" hint="Search fields reuse the same padding balance as production screens.">
                     <Input
                       id="showcase-input-icon"
-                      icon={search}
+                      icon="search"
                       placeholder="Search SKUs"
                       value={plainInputValue()}
                       onInput={(event) => {
@@ -655,7 +654,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                   </Field>
                   <Field label="Icon-only trigger" for="showcase-dropdown-icon">
                     <Dropdown options={numericOptions()} value={iconTriggerDropdownValue()} onChange={setIconTriggerDropdownValue}>
-                      <DropdownIconTrigger id="showcase-dropdown-icon" icon={ellipsisVertical} aria-label="Open numeric menu" />
+                      <DropdownIconTrigger id="showcase-dropdown-icon" icon="more_vert" aria-label="Open numeric menu" />
                     </Dropdown>
                   </Field>
                   <Field label="Disabled menu" for="showcase-dropdown-disabled">

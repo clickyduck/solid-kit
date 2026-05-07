@@ -1,5 +1,4 @@
 import { IconButton } from "@/components/icon-button/IconButton";
-import { closeCircle } from "@/components/icons";
 import { mergeClasses } from "@/utilities";
 import { Modal } from "flowbite";
 import type { ModalInterface, ModalOptions } from "flowbite";
@@ -165,7 +164,7 @@ export const DialogHeader = (properties: ComponentProps<"div"> & { actions?: JSX
       <div class="flex items-center gap-2">
         <Show when={local.actions}>{local.actions}</Show>
         <Show when={context?.closeable?.()}>
-          <IconButton variant="ghost" icon={closeCircle} onClick={hideModal} aria-label="Close modal" />
+          <IconButton variant="ghost" icon="cancel" onClick={hideModal} aria-label="Close modal" />
         </Show>
       </div>
     </div>

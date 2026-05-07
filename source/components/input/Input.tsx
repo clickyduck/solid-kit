@@ -1,11 +1,11 @@
-import { Icon, type IconComponent } from "@/components/icons";
+import { Icon } from "@/components/icons";
 import { CHROME_MUTED_ICON_CLASSES, FORM_CONTROL_ICON_SIZE, FORM_CONTROL_LEADING_ICON_INPUT_CLASS, FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS, FORM_CONTROL_SIZE_CLASSES, FORM_CONTROL_TEXT_CLASS_BY_SIZE, mergeClasses } from "@/utilities";
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
 export type InputProperties = Omit<ComponentProps<"input">, "class"> & {
   class?: string;
-  icon?: IconComponent;
+  icon?: string;
   trailingText?: string;
   currency?: boolean;
 };
@@ -100,14 +100,12 @@ const Input = (properties: InputProperties) => {
 
   return (
     <div class={mergeClasses("relative", local.class)}>
-      <Show when={local.icon}>
-        {(iconAccessor) => {
-          return (
-            <div class={mergeClasses("pointer-events-none absolute inset-y-0 left-0 flex items-center", FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS)}>
-              <Icon icon={iconAccessor()} width={FORM_CONTROL_ICON_SIZE} height={FORM_CONTROL_ICON_SIZE} class={mergeClasses("pointer-events-none shrink-0", CHROME_MUTED_ICON_CLASSES)} aria-hidden="true" />
-            </div>
-          );
-        }}
+      <Show when={local.icon} keyed>
+        {(name) => (
+          <div class={mergeClasses("pointer-events-none absolute inset-y-0 left-0 flex items-center", FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS)}>
+            <Icon name={name} size={FORM_CONTROL_ICON_SIZE} class={mergeClasses("pointer-events-none shrink-0", CHROME_MUTED_ICON_CLASSES)} aria-hidden="true" />
+          </div>
+        )}
       </Show>
       <input
         class={mergeClasses(baseClasses, FORM_CONTROL_SIZE_CLASSES, local.icon ? FORM_CONTROL_LEADING_ICON_INPUT_CLASS : "", local.trailingText ? "pr-12" : "")}

@@ -1,6 +1,5 @@
 import { Dropdown, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
 import { IconButton } from "@/components/icon-button/IconButton";
-import { arrowLeft, arrowRight } from "@/components/icons";
 import { TABLE_BODY_TEXT_CLASSES, TABLE_DATA_CELL_CLASSES, TABLE_HEADER_LABEL_CLASSES, TABLE_HEAD_CELL_CLASSES, TABLE_PAGINATION_BAR_CLASSES, mergeClasses } from "@/utilities";
 import { type ComponentProps, type JSX, Show, splitProps } from "solid-js";
 
@@ -253,7 +252,7 @@ export const TablePagination = (properties: TablePaginationProperties) => {
         </Show>
         <div class="flex items-center gap-1.5">
           <IconButton
-            icon={arrowLeft}
+            icon="arrow_back"
             variant="outline"
             class="border-gray-300 bg-white shadow-none dark:border-gray-600/60 dark:bg-gray-700/30"
             disabled={isPreviousDisabled()}
@@ -264,7 +263,7 @@ export const TablePagination = (properties: TablePaginationProperties) => {
             }}
           />
           <IconButton
-            icon={arrowRight}
+            icon="arrow_forward"
             variant="outline"
             class="border-gray-300 bg-white shadow-none dark:border-gray-600/60 dark:bg-gray-700/30"
             disabled={isNextDisabled()}

@@ -8,17 +8,17 @@
         {
           "href": "#showcase-heading-badges",
           "label": "Badges",
-          "iconExportName": "tag"
+          "icon": "tag"
         },
         {
           "href": "#showcase-heading-buttons",
           "label": "Buttons",
-          "iconExportName": "checkCircle"
+          "icon": "check_circle"
         },
         {
           "href": "#showcase-heading-spinner-loading",
           "label": "Spinner and loading",
-          "iconExportName": "settings"
+          "icon": "settings"
         }
       ]
     },
@@ -30,37 +30,37 @@
         {
           "href": "#showcase-heading-metrics",
           "label": "Metric cards",
-          "iconExportName": "wallet"
+          "icon": "account_balance_wallet"
         },
         {
           "href": "#showcase-heading-card-empty",
           "label": "Card and empty state",
-          "iconExportName": "inventory"
+          "icon": "inventory_2"
         },
         {
           "href": "#showcase-heading-forms",
           "label": "Fields and inputs",
-          "iconExportName": "list"
+          "icon": "list"
         },
         {
           "href": "#showcase-heading-tabs",
           "label": "Tabs",
-          "iconExportName": "calendarDays"
+          "icon": "calendar_today"
         },
         {
           "href": "#showcase-heading-dropdowns",
           "label": "Dropdowns",
-          "iconExportName": "arrowTrendingUp"
+          "icon": "trending_up"
         },
         {
           "href": "#showcase-heading-table",
           "label": "Table",
-          "iconExportName": "groups"
+          "icon": "groups"
         },
         {
           "href": "#showcase-heading-dialog-toast",
           "label": "Dialog and toasts",
-          "iconExportName": "chat"
+          "icon": "chat"
         }
       ]
     }

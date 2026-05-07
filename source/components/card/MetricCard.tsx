@@ -1,5 +1,5 @@
 import { BackgroundCard } from "@/components/card/BackgroundCard";
-import { Icon, type IconComponent, arrowRight } from "@/components/icons";
+import { Icon } from "@/components/icons";
 import { mergeClasses } from "@/utilities";
 import { Show } from "solid-js";
 
@@ -41,7 +41,7 @@ const ACCENT_CLASSES: Record<AccentColor, { card: string; iconBox: string; iconC
 type MetricCardProperties = {
   title: string;
   accent: AccentColor;
-  icon: IconComponent;
+  icon: string;
   loading?: boolean;
   value: string;
   linkHref?: string;
@@ -54,16 +54,14 @@ type MetricCardProperties = {
  */
 export const MetricCard = (properties: MetricCardProperties) => {
   const accent = () => ACCENT_CLASSES[properties.accent];
-  const isLoading = (): boolean => {
-    return properties.loading === true;
-  };
+  const isLoading = (): boolean => properties.loading === true;
   return (
     <BackgroundCard class={mergeClasses("overflow-hidden", properties.class)}>
       <div class={mergeClasses("-ml-6 border-l-4 pl-6", accent().card)}>
         <div class="flex flex-row items-center justify-between">
           <h3 class="text-sm font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-400">{properties.title}</h3>
           <span class={mergeClasses("flex h-9 w-9 items-center justify-center rounded-lg", accent().iconBox, accent().iconColor)}>
-            <Icon icon={properties.icon} width={20} height={20} aria-hidden="true" />
+            <Icon name={properties.icon} size={20} aria-hidden="true" />
           </span>
         </div>
       </div>
@@ -81,7 +79,7 @@ export const MetricCard = (properties: MetricCardProperties) => {
         <Show when={properties.linkHref !== undefined && properties.linkLabel !== undefined}>
           <a href={properties.linkHref!} class={mergeClasses("inline-flex items-center gap-1.5 text-sm font-medium", accent().link)}>
             {properties.linkLabel}
-            <Icon icon={arrowRight} width={16} height={16} aria-hidden="true" />
+            <Icon name="arrow_forward" size={16} aria-hidden="true" />
           </a>
         </Show>
       </div>

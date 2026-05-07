@@ -1,5 +1,4 @@
 import { IconButton } from "@/components/icon-button/IconButton";
-import { closeCircle } from "@/components/icons";
 import { mergeClasses } from "@/utilities/mergeClasses";
 import type { Component, JSX } from "solid-js";
 import { Show, createEffect, createSignal, onCleanup, onMount } from "solid-js";
@@ -162,7 +161,7 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
             <div class="flex shrink-0 items-center gap-1">
               {properties.headerActions ?? null}
               <IconButton
-                icon={closeCircle}
+                icon="cancel"
                 class="shrink-0"
                 variant="ghost"
                 aria-label={properties.closeAriaLabel}

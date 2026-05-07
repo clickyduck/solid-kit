@@ -1,5 +1,5 @@
 import { Button } from "@/components/button/Button";
-import { Icon, type IconComponent, closeCircle } from "@/components/icons";
+import { Icon } from "@/components/icons";
 import { BADGE_ICON_CLASSES, type Color, mergeClasses } from "@/utilities";
 import type { JSX } from "solid-js";
 import { Show } from "solid-js";
@@ -8,10 +8,6 @@ export type BadgeVariant = "solid" | "outline";
 
 export type { Color };
 
-/**
- * Removable chip: clear form-control fixed `h-*` so `self-stretch` can fill the pill cross-axis; use
- * `aspect-square` so width tracks stretched height (fixed `h-5` would leave ghost hover vertically centered).
- */
 const BADGE_EMBEDDED_REMOVE_ICON_BUTTON_BOX_CLASS = "-mr-0.5 -ml-0.5 self-stretch aspect-square h-auto min-h-0 w-auto min-w-0 rounded-full p-0";
 
 const BADGE_CONTAINER_CLASSES_BY_VARIANT_AND_COLOR: Record<BadgeVariant, Record<Color, string>> = {
@@ -56,27 +52,20 @@ export type BadgeProperties = {
   variant?: BadgeVariant;
   color?: Color;
   children: JSX.Element;
-  icon?: IconComponent;
+  icon?: string;
   onRemove?: () => void;
   class?: string;
 };
 
 export const Badge = (properties: BadgeProperties): JSX.Element => {
-  const variant = (): BadgeVariant => {
-    return properties.variant ?? "solid";
-  };
-
-  const color = (): Color => {
-    return properties.color ?? "neutral";
-  };
+  const variant = (): BadgeVariant => properties.variant ?? "solid";
+  const color = (): Color => properties.color ?? "neutral";
 
   return (
     <span class={mergeClasses("inline-flex items-stretch gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium", BADGE_CONTAINER_CLASSES_BY_VARIANT_AND_COLOR[variant()][color()], properties.class)}>
       <span class="inline-flex min-w-0 items-center gap-1.5 self-center">
         <Show when={properties.icon} keyed>
-          {(resolvedIcon) => {
-            return <Icon icon={resolvedIcon} class={BADGE_ICON_CLASSES} aria-hidden="true" />;
-          }}
+          {(name) => <Icon name={name} class={BADGE_ICON_CLASSES} aria-hidden="true" />}
         </Show>
         {properties.children}
       </span>
@@ -85,7 +74,7 @@ export const Badge = (properties: BadgeProperties): JSX.Element => {
           variant="ghost"
           class={mergeClasses(BADGE_EMBEDDED_REMOVE_ICON_BUTTON_BOX_CLASS, BADGE_REMOVE_BUTTON_CLASSES_BY_VARIANT_AND_COLOR[variant()][color()])}
           aria-label="Remove"
-          icon={closeCircle}
+          icon="cancel"
           onClick={() => {
             properties.onRemove?.();
           }}
