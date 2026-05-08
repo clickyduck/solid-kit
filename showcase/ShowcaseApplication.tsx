@@ -7,7 +7,7 @@ import { MetricCard } from "@/components/card/MetricCard";
 import { DatePicker, type DatePickerValue } from "@/components/date-picker/DatePicker";
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/dialog/Dialog";
 import { Divider } from "@/components/divider/Divider";
-import { Dropdown, DropdownIconTrigger, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
+import { Dropdown, DropdownContent, DropdownIconTrigger, DropdownItem, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
 import { EmptyState } from "@/components/empty-state/EmptyState";
 import { Field } from "@/components/field/Field";
 import { HeaderLayout } from "@/components/header-layout";
@@ -105,6 +105,8 @@ export const ShowcaseApplication = (): JSX.Element => {
   const [dialogOpen, setDialogOpen] = createSignal(false);
   const [dropdownDialogOpen, setDropdownDialogOpen] = createSignal(false);
   const [dropdownDialogValue, setDropdownDialogValue] = createSignal<string | undefined>("Cherry");
+  const [headerDropdownDialogOpen, setHeaderDropdownDialogOpen] = createSignal(false);
+  const [headerDropdownDialogView, setHeaderDropdownDialogView] = createSignal("Details");
   const [datePickerDialogValue, setDatePickerDialogValue] = createSignal<DatePickerValue>({ mode: "single", date: undefined });
   const [digestSelection, setDigestSelection] = createSignal<string[]>(["weekly"]);
   const [dropdownValue, setDropdownValue] = createSignal<string | undefined>("Cherry");
@@ -806,6 +808,48 @@ export const ShowcaseApplication = (): JSX.Element => {
                 >
                   Dialog with dropdowns
                 </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setHeaderDropdownDialogOpen(true);
+                  }}
+                >
+                  Dialog with header dropdown
+                </Button>
+
+                <Dialog open={headerDropdownDialogOpen()} onOpenChange={setHeaderDropdownDialogOpen}>
+                  <DialogContent>
+                    <DialogHeader
+                      actions={
+                        <Dropdown options={[]} value={headerDropdownDialogView()} onChange={() => {}}>
+                          <DropdownTrigger variant="ghost">{headerDropdownDialogView()}</DropdownTrigger>
+                          <DropdownContent>
+                            <DropdownItem item={{ rawValue: "Details" }} selected={headerDropdownDialogView() === "Details"} onClick={() => setHeaderDropdownDialogView("Details")}>
+                              Details
+                            </DropdownItem>
+                            <DropdownItem item={{ rawValue: "Activity" }} selected={headerDropdownDialogView() === "Activity"} onClick={() => setHeaderDropdownDialogView("Activity")}>
+                              Activity
+                            </DropdownItem>
+                            <DropdownItem item={{ rawValue: "Settings" }} selected={headerDropdownDialogView() === "Settings"} onClick={() => setHeaderDropdownDialogView("Settings")}>
+                              Settings
+                            </DropdownItem>
+                          </DropdownContent>
+                        </Dropdown>
+                      }
+                    >
+                      <DialogTitle>{headerDropdownDialogView()}</DialogTitle>
+                    </DialogHeader>
+                    <DialogBody>
+                      <DialogDescription>The header dropdown should open left-aligned below the trigger, not in the middle of the screen.</DialogDescription>
+                    </DialogBody>
+                    <DialogFooter>
+                      <Button variant="ghost" onClick={() => setHeaderDropdownDialogOpen(false)}>
+                        Close
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
 
                 <Dialog open={dropdownDialogOpen()} onOpenChange={setDropdownDialogOpen}>
                   <DialogContent>

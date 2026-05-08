@@ -1,7 +1,7 @@
 /**
- * Returns the nearest ancestor <dialog> element if one exists and is open (top-layer),
- * otherwise returns document.body. Portaling into the dialog keeps the popup inside
- * the native top-layer stacking context so it renders above the backdrop.
+ * Returns the nearest open <dialog> ancestor so dropdown portals render inside
+ * the top layer and appear above the modal backdrop. Falls back to document.body.
+ * Must be called at open-time (not at component render time) so the dialog is open.
  */
 export const getPortalMount = (element: Element | null | undefined): HTMLElement => {
   const dialog = element?.closest("dialog");

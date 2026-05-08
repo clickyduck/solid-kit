@@ -466,103 +466,79 @@ type DropdownContentProperties = Omit<ComponentProps<"div">, "class"> & {
 };
 
 /**
- * Dropdown content placeholder. Always mounts on document.body via portal so it
- * is never clipped by ancestor overflow:hidden.
+ * Dropdown content. Always mounts to document.body via Portal so SolidJS manages
+ * the element lifecycle, but on open it is manually moved into the nearest open
+ * <dialog> ancestor (via getPortalMount) so it enters the top layer and renders
+ * above the modal backdrop. getPortalMount must run at open-time, not render-time.
  */
 const DropdownContent = (properties: DropdownContentProperties) => {
   const context = useDropdownContext();
 
   const [local, rest] = splitProps(properties, ["class", "children", "xDirection", "yDirection", "wrapChildrenInList"]);
-  const [portalMenuElement, setPortalMenuElement] = createSignal<HTMLDivElement | undefined>();
+  let menuEl: HTMLDivElement | undefined;
 
-  const shouldWrapChildrenInList = (): boolean => local.wrapChildrenInList !== false;
+  const applyPosition = (): void => {
+    const container = context.getDropdownContainerElement();
+    if (!container || !menuEl) return;
 
-  const listClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_LIST_CLASS_BY_SIZE;
+    const rectangle = container.getBoundingClientRect();
+    const gapPixels = 4;
+    const xDir = local.xDirection ?? "right";
+    const yDir = local.yDirection ?? "down";
 
-  const panelClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_PANEL_CLASS_BY_SIZE;
-
-  const contentMinimumWidthClass = (): string => FORM_CONTROL_DROP_DOWN_CONTENT_MIN_WIDTH_CLASS_BY_SIZE;
-
-  const xDirectionResolved = (): "left" | "right" => local.xDirection ?? "right";
-
-  const yDirectionResolved = (): "up" | "down" => local.yDirection ?? "down";
+    const translateX = xDir === "left" ? "translateX(-100%)" : "";
+    const translateY = yDir === "up" ? `translateY(calc(-100% - ${gapPixels}px))` : "";
+    menuEl.style.transform = [translateX, translateY].filter(Boolean).join(" ") || "";
+    menuEl.style.minWidth = `${rectangle.width}px`;
+    menuEl.style.left = xDir === "left" ? `${rectangle.right}px` : `${rectangle.left}px`;
+    menuEl.style.top = yDir === "up" ? `${rectangle.top}px` : `${rectangle.bottom + gapPixels}px`;
+  };
 
   createEffect(
-    on(
-      (): [HTMLDivElement | undefined, boolean] => [portalMenuElement(), context.dropdownOpen()],
-      ([element, open]) => {
-        if (!open) {
-          context.setContentPortalMenuElement(null);
-          return;
-        }
-        if (!element) {
-          return;
-        }
-        const applyPosition = (): void => {
-          const container = context.getDropdownContainerElement();
-          if (!container) {
-            return;
-          }
-          const rectangle = container.getBoundingClientRect();
-          const gapPixels = 4;
-          element.style.position = "fixed";
-          element.style.zIndex = "9999";
-          element.style.left = "auto";
-          element.style.right = "auto";
-          element.style.top = "auto";
-          element.style.bottom = "auto";
-          element.style.minWidth = `${rectangle.width}px`;
-
-          if (xDirectionResolved() === "left") {
-            element.style.right = `${window.innerWidth - rectangle.right}px`;
-          } else {
-            element.style.left = `${rectangle.left}px`;
-          }
-
-          if (yDirectionResolved() === "up") {
-            element.style.top = `${rectangle.top}px`;
-            element.style.transform = `translateY(calc(-100% - ${gapPixels}px))`;
-          } else {
-            element.style.top = `${rectangle.bottom + gapPixels}px`;
-            element.style.transform = "";
-          }
-        };
-        context.setContentPortalMenuElement(element);
+    on(context.dropdownOpen, (open) => {
+      if (!menuEl) return;
+      if (open) {
+        const mount = getPortalMount(context.getDropdownContainerElement());
+        mount.appendChild(menuEl);
         applyPosition();
+        menuEl.style.display = "";
+        context.setContentPortalMenuElement(menuEl);
         window.addEventListener("scroll", applyPosition, true);
         window.addEventListener("resize", applyPosition);
-        onCleanup(() => {
-          window.removeEventListener("scroll", applyPosition, true);
-          window.removeEventListener("resize", applyPosition);
-          context.setContentPortalMenuElement(null);
-        });
+      } else {
+        menuEl.style.display = "none";
+        menuEl.remove();
+        context.setContentPortalMenuElement(null);
+        window.removeEventListener("scroll", applyPosition, true);
+        window.removeEventListener("resize", applyPosition);
       }
-    )
+    })
   );
 
-  const searchField = () => (
-    <Show when={context.isSearchable()}>
-      <DropdownBuiltInSearchField searchQuery={context.searchQuery} setSearchQuery={context.setSearchQuery} searchInputReference={context.registerSearchInput} />
-    </Show>
-  );
+  onCleanup(() => {
+    menuEl?.remove();
+    window.removeEventListener("scroll", applyPosition, true);
+    window.removeEventListener("resize", applyPosition);
+  });
 
   return (
-    <Show when={context.dropdownOpen()}>
-      <Portal mount={document.body}>
-        <div
-          ref={(element) => {
-            setPortalMenuElement(element === null ? undefined : element);
-          }}
-          class={mergeClasses(contentMinimumWidthClass(), DROPDOWN_MENU_SURFACE_CLASSES, local.class)}
-          {...rest}
-        >
-          {searchField()}
-          <Show when={shouldWrapChildrenInList()} fallback={<div class={panelClass()}>{local.children}</div>}>
-            <ul class={listClass()}>{local.children}</ul>
-          </Show>
-        </div>
-      </Portal>
-    </Show>
+    <Portal mount={document.body}>
+      <div
+        ref={(el) => {
+          menuEl = el;
+        }}
+        style={{ display: "none", position: "fixed", "z-index": "9999" }}
+        class={mergeClasses(FORM_CONTROL_DROP_DOWN_CONTENT_MIN_WIDTH_CLASS_BY_SIZE, DROPDOWN_MENU_SURFACE_CLASSES, local.class)}
+        {...rest}
+      >
+        <Show when={context.isSearchable()}>
+          <DropdownBuiltInSearchField searchQuery={context.searchQuery} setSearchQuery={context.setSearchQuery} searchInputReference={context.registerSearchInput} />
+        </Show>
+        <Show when={local.wrapChildrenInList !== false} fallback={<div class={FORM_CONTROL_DROP_DOWN_MENU_PANEL_CLASS_BY_SIZE}>{local.children}</div>}>
+          <ul class={FORM_CONTROL_DROP_DOWN_MENU_LIST_CLASS_BY_SIZE}>{local.children}</ul>
+        </Show>
+      </div>
+    </Portal>
   );
 };
 
