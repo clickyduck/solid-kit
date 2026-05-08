@@ -142,7 +142,7 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
                 >
                   <span class="flex min-w-0 flex-1 items-center">{properties.itemComponent ? properties.itemComponent({ item: { rawValue: option } }) : option}</span>
                   <Show when={isSelected()}>
-                    <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-blue-700 dark:text-blue-300" aria-hidden="true" />
+                    <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-current" aria-hidden="true" />
                   </Show>
                 </a>
               </li>
@@ -624,7 +624,7 @@ const DropdownItem = (properties: DropdownItemProperties) => {
         >
           <span class="flex min-w-0 flex-1 items-center">{local.children}</span>
           <Show when={isSelected() && isClickable()}>
-            <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-blue-700 dark:text-blue-300" aria-hidden="true" />
+            <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-current" aria-hidden="true" />
           </Show>
         </a>
       </li>
