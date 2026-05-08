@@ -548,7 +548,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
 
   return (
     <Show when={context.dropdownOpen()}>
-      <Portal mount={getPortalMount(context.getDropdownContainerElement())}>
+      <Portal mount={document.body}>
         <div
           ref={(element) => {
             setPortalMenuElement(element === null ? undefined : element);
