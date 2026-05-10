@@ -703,6 +703,17 @@ export const ShowcaseApplication = (): JSX.Element => {
                         <DropdownTrigger id="showcase-dropdown-disabled">Disabled</DropdownTrigger>
                       </Dropdown>
                     </Field>
+                    <Field label="Non-clickable user row" for="showcase-dropdown-user-row">
+                      <Dropdown options={[]} onChange={() => {}}>
+                        <DropdownIconTrigger id="showcase-dropdown-user-row" icon="more_vert" aria-label="User menu" />
+                        <DropdownContent>
+                          <DropdownItem clickable={false} class="flex-col items-start gap-0.5">
+                            <span class="font-medium text-gray-900 dark:text-white">Jane Smith</span>
+                            <span class="text-xs text-gray-500 dark:text-gray-400">jane@example.com</span>
+                          </DropdownItem>
+                        </DropdownContent>
+                      </Dropdown>
+                    </Field>
                   </div>
                 </div>
                 <div class="space-y-2">

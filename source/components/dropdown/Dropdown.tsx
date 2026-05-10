@@ -589,10 +589,9 @@ const DropdownItem = (properties: DropdownItemProperties) => {
         <a
           href="#"
           class={mergeClasses(
-            "inline-flex w-full rounded-lg px-2.5 py-1.5 text-left transition-colors duration-100 hover:bg-gray-100 hover:text-gray-900 focus:outline-none dark:hover:bg-gray-700/60 dark:hover:text-white",
+            "inline-flex w-full items-start rounded-lg px-2.5 py-1.5 text-left transition-colors duration-100 hover:bg-gray-100 hover:text-gray-900 focus:outline-none dark:hover:bg-gray-700/60 dark:hover:text-white",
             local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : !isClickable() ? "pointer-events-none cursor-default" : "transition-opacity duration-150 active:opacity-75",
-            isSelected() && isClickable() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "",
-            local.class ?? "items-center"
+            isSelected() && isClickable() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : ""
           )}
           onClick={(event) => {
             event.preventDefault();
@@ -620,7 +619,7 @@ const DropdownItem = (properties: DropdownItemProperties) => {
           }}
           {...rest}
         >
-          <span class="flex min-w-0 flex-1">{local.children}</span>
+          <span class={mergeClasses("flex min-w-0 flex-1 items-center", local.class)}>{local.children}</span>
           <Show when={isSelected() && isClickable()}>
             <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-current" aria-hidden="true" />
           </Show>
