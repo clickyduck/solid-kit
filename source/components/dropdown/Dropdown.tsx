@@ -580,8 +580,6 @@ const DropdownItem = (properties: DropdownItemProperties) => {
     return !local.item.rawValue.toLowerCase().includes(query);
   };
 
-  const itemClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE;
-
   const shouldCloseOnSelect = (): boolean => local.closeOnSelect !== false;
   const isClickable = (): boolean => local.clickable !== false;
 
@@ -591,10 +589,10 @@ const DropdownItem = (properties: DropdownItemProperties) => {
         <a
           href="#"
           class={mergeClasses(
-            itemClass(),
+            "inline-flex w-full rounded-lg px-2.5 py-1.5 text-left transition-colors duration-100 hover:bg-gray-100 hover:text-gray-900 focus:outline-none dark:hover:bg-gray-700/60 dark:hover:text-white",
             local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : !isClickable() ? "pointer-events-none cursor-default" : "transition-opacity duration-150 active:opacity-75",
             isSelected() && isClickable() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "",
-            local.class
+            local.class ?? "items-center"
           )}
           onClick={(event) => {
             event.preventDefault();
@@ -622,7 +620,7 @@ const DropdownItem = (properties: DropdownItemProperties) => {
           }}
           {...rest}
         >
-          <span class="flex min-w-0 flex-1 items-center">{local.children}</span>
+          <span class="flex min-w-0 flex-1">{local.children}</span>
           <Show when={isSelected() && isClickable()}>
             <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-current" aria-hidden="true" />
           </Show>
