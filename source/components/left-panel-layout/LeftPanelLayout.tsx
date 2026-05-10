@@ -41,15 +41,15 @@ export type LeftPanelNavigationDocumentJson = {
 
 export type LeftPanelLayoutNavigationDocumentJson = LeftPanelNavigationDocumentJson;
 
-const NAVIGATION_LINK_ICON_CLASS = "nav-link-icon shrink-0 opacity-80 w-4 h-4 md:w-3.5 md:h-3.5";
-const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-11 min-h-11 text-sm font-medium transition-all duration-150 text-gray-800 dark:text-white md:h-9 md:min-h-9 md:max-h-9 md:text-xs";
+const NAVIGATION_LINK_ICON_CLASS = "nav-link-icon shrink-0 opacity-80 w-3.5 h-3.5";
+const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-9 min-h-9 max-h-9 text-xs font-medium transition-all duration-150 text-gray-800 dark:text-white";
 const NAVIGATION_LINK_LABEL_CLASS = "min-w-0 truncate";
-const NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS = "px-4 space-x-3.5 md:px-3 md:space-x-3";
+const NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS = "px-3 space-x-3";
 const NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS = "size-9 mx-auto justify-center";
 const NAVIGATION_LINK_ACTIVE_CLASS = "border-l-2 border-blue-500 bg-blue-500/10 text-blue-700 dark:text-blue-300 [&_.nav-link-icon]:opacity-100 [&_.nav-link-icon]:text-blue-600 dark:[&_.nav-link-icon]:text-blue-400";
 const NAVIGATION_LINK_INACTIVE_CLASS = "border-l-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700/50";
 /** Same vertical rhythm as navigation link rows on desktop so toggling icon-only mode does not move links. */
-const NAVIGATION_GROUP_HEADING_SLOT_CLASS = "mb-2 flex min-h-11 w-full shrink-0 items-stretch md:mb-2 md:h-9 md:min-h-9 md:max-h-9";
+const NAVIGATION_GROUP_HEADING_SLOT_CLASS = "mb-2 flex h-9 min-h-9 max-h-9 w-full shrink-0 items-stretch";
 const GROUP_LABEL_TEXT_CLASS = "flex w-full min-w-0 items-center text-xs leading-none font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase md:px-2";
 
 const computeIsNavigationItemActive = (item: LeftPanelNavigationItemJson, pathname: string, hash: string): boolean => {

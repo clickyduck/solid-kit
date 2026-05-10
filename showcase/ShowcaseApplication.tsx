@@ -777,7 +777,21 @@ export const ShowcaseApplication = (): JSX.Element => {
                       <DialogTitle>Confirm destructive action</DialogTitle>
                     </DialogHeader>
                     <DialogBody>
-                      <DialogDescription>Dialogs use the native &lt;dialog&gt; element: focus management, backdrop blur, and scroll locking built in. Footer actions keep equal minimum widths on wide breakpoints.</DialogDescription>
+                      <DialogDescription>
+                        Dialogs use the native &lt;dialog&gt; element: focus management, backdrop blur, and scroll locking built in. Footer actions keep equal minimum widths on wide breakpoints. On mobile, the dialog should fill the full viewport — no
+                        strip at the bottom — with only this body area scrolling.
+                      </DialogDescription>
+                      <DialogDescription>This dialog intentionally has extra content to verify scroll behavior on mobile. The header and footer should remain fixed while this body scrolls independently.</DialogDescription>
+                      <Field label="Workspace name" for="dialog-workspace-name">
+                        <Input id="dialog-workspace-name" placeholder="e.g. my-workspace" />
+                      </Field>
+                      <Field label="Reason for deletion" for="dialog-reason">
+                        <Textarea id="dialog-reason" placeholder="Briefly describe why this workspace is being deleted..." />
+                      </Field>
+                      <DialogDescription>
+                        Once deleted, all data associated with this workspace will be permanently removed and cannot be recovered. This includes all projects, pipelines, datasets, and access configurations tied to this workspace.
+                      </DialogDescription>
+                      <DialogDescription>Make sure you have exported any data you need before proceeding. Billing will stop immediately upon deletion, and any active integrations will be disconnected.</DialogDescription>
                     </DialogBody>
                     <DialogFooter>
                       <Button

@@ -82,7 +82,7 @@ export const Dialog = (properties: DialogRootProperties) => {
         ref={(el) => {
           dialogElement = el;
         }}
-        class="m-0 h-dvh w-full max-w-full border-0 bg-transparent p-0 backdrop:bg-black/30 backdrop:backdrop-blur-xl open:flex open:items-stretch open:justify-center sm:m-auto sm:h-auto sm:max-w-2xl sm:p-4 sm:open:items-center dark:backdrop:bg-gray-900/50"
+        class="m-0 h-dvh max-h-dvh w-full max-w-full border-0 bg-transparent p-0 backdrop:bg-black/30 backdrop:backdrop-blur-xl open:flex open:items-stretch open:justify-center sm:m-auto sm:h-auto sm:max-h-none sm:max-w-2xl sm:p-4 sm:open:items-center dark:backdrop:bg-gray-900/50"
       >
         {properties.children}
       </dialog>
@@ -106,7 +106,7 @@ export const DialogContent = (properties: DialogContentPropertiesType) => {
   const [local, rest] = splitProps(properties, ["children", "class"]);
 
   return (
-    <div class="relative my-auto h-dvh w-full p-0 sm:h-auto sm:w-full">
+    <div class="relative h-dvh w-full p-0 sm:my-auto sm:h-auto sm:w-full">
       <div
         class={mergeClasses(
           "relative flex h-full flex-col bg-white sm:max-h-[calc(100dvh-0.75rem)] sm:rounded-lg sm:border sm:border-gray-200 sm:shadow-lg md:max-h-[calc(100dvh-4rem)] dark:bg-gray-900 dark:sm:border-gray-700 dark:sm:shadow-sm [&>form]:flex [&>form]:min-h-0 [&>form]:flex-1 [&>form]:flex-col",
