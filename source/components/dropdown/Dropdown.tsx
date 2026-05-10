@@ -549,6 +549,7 @@ type DropdownItemProperties = Omit<ComponentProps<"a">, "class"> & {
   selected?: boolean;
   closeOnSelect?: boolean;
   clickable?: boolean;
+  icon?: string | JSX.Element;
 };
 
 /**
@@ -557,7 +558,7 @@ type DropdownItemProperties = Omit<ComponentProps<"a">, "class"> & {
 const DropdownItem = (properties: DropdownItemProperties) => {
   const context = useDropdownContext();
 
-  const [local, rest] = splitProps(properties, ["class", "item", "children", "onClick", "disabled", "selected", "closeOnSelect", "clickable"]);
+  const [local, rest] = splitProps(properties, ["class", "item", "children", "onClick", "disabled", "selected", "closeOnSelect", "clickable", "icon"]);
 
   const isSelected = () => {
     if (typeof local.selected === "boolean") {
@@ -619,7 +620,18 @@ const DropdownItem = (properties: DropdownItemProperties) => {
           }}
           {...rest}
         >
-          <span class={mergeClasses("flex min-w-0 flex-1 items-center", local.class)}>{local.children}</span>
+          <span class="flex min-w-0 flex-1 items-center gap-2">
+            <Show when={local.icon != null}>
+              {typeof local.icon === "string" ? (
+                <Icon name={local.icon!} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
+              ) : (
+                <span class="pointer-events-none inline-flex shrink-0 items-center justify-center text-current" style={{ width: `${FORM_CONTROL_ICON_SIZE}px`, height: `${FORM_CONTROL_ICON_SIZE}px` }} aria-hidden="true">
+                  {local.icon}
+                </span>
+              )}
+            </Show>
+            <span class={mergeClasses("min-w-0 flex-1 truncate", local.class)}>{local.children}</span>
+          </span>
           <Show when={isSelected() && isClickable()}>
             <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-current" aria-hidden="true" />
           </Show>

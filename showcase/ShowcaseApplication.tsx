@@ -7,7 +7,7 @@ import { MetricCard } from "@/components/card/MetricCard";
 import { DatePicker, type DatePickerValue } from "@/components/date-picker/DatePicker";
 import { Dialog, DialogBody, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/dialog/Dialog";
 import { Divider } from "@/components/divider/Divider";
-import { Dropdown, DropdownContent, DropdownIconTrigger, DropdownItem, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
+import { Dropdown, DropdownContent, DropdownIconTrigger, DropdownItem, DropdownSeparator, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
 import { EmptyState } from "@/components/empty-state/EmptyState";
 import { Field } from "@/components/field/Field";
 import { HeaderLayout } from "@/components/header-layout";
@@ -707,10 +707,62 @@ export const ShowcaseApplication = (): JSX.Element => {
                       <Dropdown options={[]} onChange={() => {}}>
                         <DropdownIconTrigger id="showcase-dropdown-user-row" icon="more_vert" aria-label="User menu" />
                         <DropdownContent>
-                          <DropdownItem clickable={false} class="flex-col items-start gap-0.5">
+                          <DropdownItem clickable={false} class="flex flex-col items-start gap-0.5 whitespace-normal">
                             <span class="font-medium text-gray-900 dark:text-white">Jane Smith</span>
                             <span class="text-xs text-gray-500 dark:text-gray-400">jane@example.com</span>
                           </DropdownItem>
+                        </DropdownContent>
+                      </Dropdown>
+                    </Field>
+                  </div>
+                </div>
+                <div class="space-y-2">
+                  <p class="text-xs font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-500">DropdownItem icons</p>
+                  <div class="grid gap-6 md:grid-cols-2">
+                    <Field label="Leading icon (string)" for="showcase-dropdown-item-icon-start">
+                      <Dropdown options={[]} onChange={() => {}}>
+                        <DropdownIconTrigger id="showcase-dropdown-item-icon-start" icon="more_vert" aria-label="Actions menu" />
+                        <DropdownContent>
+                          <DropdownItem icon="edit">Edit</DropdownItem>
+                          <DropdownItem icon="content_copy">Duplicate</DropdownItem>
+                          <DropdownSeparator />
+                          <DropdownItem icon="delete">Delete</DropdownItem>
+                        </DropdownContent>
+                      </Dropdown>
+                    </Field>
+                    <Field label="Disabled items" for="showcase-dropdown-item-icon-disabled">
+                      <Dropdown options={[]} onChange={() => {}}>
+                        <DropdownIconTrigger id="showcase-dropdown-item-icon-disabled" icon="more_vert" aria-label="Actions menu disabled" />
+                        <DropdownContent>
+                          <DropdownItem icon="edit">Edit</DropdownItem>
+                          <DropdownItem icon="content_copy" disabled>
+                            Duplicate (disabled)
+                          </DropdownItem>
+                          <DropdownSeparator />
+                          <DropdownItem icon="delete" disabled>
+                            Delete (disabled)
+                          </DropdownItem>
+                        </DropdownContent>
+                      </Dropdown>
+                    </Field>
+                    <Field label="Selected items inherit icon color" for="showcase-dropdown-item-icon-selected">
+                      <Dropdown options={[]} onChange={() => {}}>
+                        <DropdownIconTrigger id="showcase-dropdown-item-icon-selected" icon="more_vert" aria-label="View menu" />
+                        <DropdownContent>
+                          <DropdownItem icon="check_circle" selected>
+                            Active (selected)
+                          </DropdownItem>
+                          <DropdownItem icon="pause_circle">Paused</DropdownItem>
+                          <DropdownItem icon="cancel">Archived</DropdownItem>
+                        </DropdownContent>
+                      </Dropdown>
+                    </Field>
+                    <Field label="img element as icon" for="showcase-dropdown-item-icon-img">
+                      <Dropdown options={[]} onChange={() => {}}>
+                        <DropdownIconTrigger id="showcase-dropdown-item-icon-img" icon="more_vert" aria-label="Profile menu" />
+                        <DropdownContent>
+                          <DropdownItem icon={<img src="https://api.dicebear.com/7.x/thumbs/svg?seed=alice" alt="" />}>Alice</DropdownItem>
+                          <DropdownItem icon={<img src="https://api.dicebear.com/7.x/thumbs/svg?seed=bob" alt="" />}>Bob</DropdownItem>
                         </DropdownContent>
                       </Dropdown>
                     </Field>

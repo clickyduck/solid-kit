@@ -304,12 +304,13 @@ All menus render via a portal above any modal dialog backdrop.
 
 **`DropdownItem` extra props:**
 
-| Prop            | Type                   | Default | Description                     |
-| --------------- | ---------------------- | ------- | ------------------------------- |
-| `item`          | `{ rawValue: string }` | —       | Item data                       |
-| `disabled`      | `boolean`              | —       | Disables this item              |
-| `selected`      | `boolean`              | —       | Marks item as selected          |
-| `closeOnSelect` | `boolean`              | `true`  | Close menu when item is clicked |
+| Prop            | Type                    | Default | Description                                                            |
+| --------------- | ----------------------- | ------- | ---------------------------------------------------------------------- |
+| `item`          | `{ rawValue: string }`  | —       | Item data                                                              |
+| `disabled`      | `boolean`               | —       | Disables this item                                                     |
+| `selected`      | `boolean`               | —       | Marks item as selected                                                 |
+| `closeOnSelect` | `boolean`               | `true`  | Close menu when item is clicked                                        |
+| `icon`          | `string \| JSX.Element` | —       | Material Symbols name, img, or element; always placed before the label |
 
 ```tsx
 import { Dropdown, DropdownTrigger, DropdownValue } from "@clickyduck/solid-kit";
