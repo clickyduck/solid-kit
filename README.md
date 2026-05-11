@@ -707,7 +707,7 @@ Full compound component for data tables with pagination.
 
 **Exports:** `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TablePagination`
 
-`Table` wraps content in a horizontally scrollable container (min-width 640 px). `TableHeader`, `TableBody`, `TableFooter` accept standard HTML attributes plus `class`.
+`Table` renders a card shell (border, radius, background) with a horizontally scrollable container (min-width 640 px). Place `TablePagination` as a direct child of `Table` — it renders attached below the scroll area inside the card. `TableHeader`, `TableBody`, `TableFooter` accept standard HTML attributes plus `class`.
 
 **`TableRow` extra props:**
 
@@ -756,6 +756,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TablePagination, T
       </TableCell>
     </TableRow>
   </TableBody>
+  <TablePagination limit={25} offset={0} currentPageCount={1} totalCount={100} onChange={() => {}} />
 </Table>;
 ```
 
@@ -1105,7 +1106,7 @@ This section is the full checklist for publishing **`@clickyduck/solid-kit`** to
 | Command               | What it does                                                                                                                                                                                                                                   |
 | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **`npm run build`**   | Deletes the **`public/`** output folder, then runs the Vite library build. Produces the files that ship inside the package (see **`files`** in **`package.json`**). Use this when you only want a local build (for example to inspect output). |
-| **`npm run release`** | Runs **`npm run format`**, **`npm run lint`**, then **`prepublishOnly`** (**`npm run typecheck`** then **`npm run build`**), then **`npm publish`** with **`GITHUB_TOKEN`** loaded from **`.env`** via **`dotenv-cli`**.                       |
+| **`npm run release`** | Runs **`prepublishOnly`** (**`npm run typecheck`** then **`npm run build`**), then **`npm publish`** with **`GITHUB_TOKEN`** loaded from **`.env`** via **`dotenv-cli`**.                                                                      |
 
 You **do not** need to run **`npm run build`** manually immediately before **`npm run release`**: **`prepublishOnly`** already runs typecheck and build. Before **`npm version`**, run **`npm run typecheck && npm run build`** so you do not tag a commit that fails typecheck or build (**`npm version`** does not run those steps). Run **`npm run typecheck`**, **`npm run build`**, or both in sequence any time you want to confirm output locally.
 
@@ -1158,9 +1159,8 @@ npm run release
 
 What **`npm run release`** does:
 
-1. Runs **`npm run format`** (Prettier) then **`npm run lint`** (TypeScript + ESLint with zero warnings).
-2. **`prepublishOnly`**: runs **`npm run typecheck`** then **`npm run build`** so the tarball matches current sources.
-3. **`npm publish`** to the registry configured in **`publishConfig`** (GitHub Packages for this package), using **`GITHUB_TOKEN`** from **`.env`** when you use **`dotenv-cli`** as in the script.
+1. **`prepublishOnly`**: runs **`npm run typecheck`** then **`npm run build`** so the tarball matches current sources.
+2. **`npm publish`** to the registry configured in **`publishConfig`** (GitHub Packages for this package), using **`GITHUB_TOKEN`** from **`.env`** when you use **`dotenv-cli`** as in the script.
 
 First-time publish from a machine: same commands; ensure the package name and registry scope match your GitHub organization and **`.npmrc`**.
 

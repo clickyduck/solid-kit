@@ -1,7 +1,7 @@
 {
   "groups": [
     {
-      "groupLabel": "Primitives and progress",
+      "groupLabel": "Primitives",
       "navigationGroupIdentifier": "showcase-navigation-primitives",
       "collapsibleNavigationGroup": true,
       "items": [
@@ -16,15 +16,37 @@
           "icon": "check_circle"
         },
         {
+          "href": "#showcase-heading-icons",
+          "label": "Icons",
+          "icon": "interests"
+        },
+        {
           "href": "#showcase-heading-spinner-loading",
           "label": "Spinner and loading",
-          "icon": "settings"
+          "icon": "progress_activity"
         }
       ]
     },
     {
-      "groupLabel": "Data, forms, and overlays",
-      "navigationGroupIdentifier": "showcase-navigation-surfaces",
+      "groupLabel": "Typography and layout",
+      "navigationGroupIdentifier": "showcase-navigation-typography",
+      "collapsibleNavigationGroup": true,
+      "items": [
+        {
+          "href": "#showcase-heading-text",
+          "label": "Text",
+          "icon": "text_fields"
+        },
+        {
+          "href": "#showcase-heading-divider",
+          "label": "Divider and section heading",
+          "icon": "horizontal_rule"
+        }
+      ]
+    },
+    {
+      "groupLabel": "Data surfaces",
+      "navigationGroupIdentifier": "showcase-navigation-data",
       "collapsibleNavigationGroup": true,
       "items": [
         {
@@ -33,14 +55,36 @@
           "icon": "account_balance_wallet"
         },
         {
-          "href": "#showcase-heading-card-empty",
-          "label": "Card and empty state",
+          "href": "#showcase-heading-background-card",
+          "label": "BackgroundCard",
+          "icon": "crop_square"
+        },
+        {
+          "href": "#showcase-heading-data-card",
+          "label": "DataCard",
+          "icon": "article"
+        },
+        {
+          "href": "#showcase-heading-empty-state",
+          "label": "Empty state",
           "icon": "inventory_2"
         },
         {
+          "href": "#showcase-heading-table",
+          "label": "Table",
+          "icon": "table_rows"
+        }
+      ]
+    },
+    {
+      "groupLabel": "Forms and selection",
+      "navigationGroupIdentifier": "showcase-navigation-forms",
+      "collapsibleNavigationGroup": true,
+      "items": [
+        {
           "href": "#showcase-heading-forms",
           "label": "Fields and inputs",
-          "icon": "list"
+          "icon": "edit"
         },
         {
           "href": "#showcase-heading-date-picker",
@@ -48,24 +92,48 @@
           "icon": "calendar_today"
         },
         {
+          "href": "#showcase-heading-toggle-group",
+          "label": "Toggle group",
+          "icon": "toggle_on"
+        }
+      ]
+    },
+    {
+      "groupLabel": "Navigation",
+      "navigationGroupIdentifier": "showcase-navigation-nav",
+      "collapsibleNavigationGroup": true,
+      "items": [
+        {
           "href": "#showcase-heading-tabs",
           "label": "Tabs",
-          "icon": "calendar_today"
+          "icon": "tab"
         },
         {
           "href": "#showcase-heading-dropdowns",
           "label": "Dropdowns",
-          "icon": "trending_up"
+          "icon": "arrow_drop_down_circle"
         },
         {
-          "href": "#showcase-heading-table",
-          "label": "Table",
-          "icon": "groups"
+          "href": "#showcase-heading-right-panel",
+          "label": "Right panel",
+          "icon": "right_panel_open"
+        }
+      ]
+    },
+    {
+      "groupLabel": "Overlays and feedback",
+      "navigationGroupIdentifier": "showcase-navigation-overlays",
+      "collapsibleNavigationGroup": true,
+      "items": [
+        {
+          "href": "#showcase-heading-dialog",
+          "label": "Dialog",
+          "icon": "open_in_new"
         },
         {
-          "href": "#showcase-heading-dialog-toast",
-          "label": "Dialog and toasts",
-          "icon": "chat"
+          "href": "#showcase-heading-toast",
+          "label": "Toasts",
+          "icon": "notifications"
         }
       ]
     }

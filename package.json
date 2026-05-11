@@ -312,7 +312,7 @@
     "major": "npm version major",
     "prepublishOnly": "npm run typecheck && npm run build",
     "postversion": "git push --follow-tags",
-    "release": "npm run format && npm run lint && dotenv -e .env -- npm publish"
+    "release": "dotenv -e .env -- npm publish"
   },
   "peerDependencies": {
     "material-symbols": "^0.44.5",

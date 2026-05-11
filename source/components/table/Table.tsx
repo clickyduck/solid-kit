@@ -1,21 +1,34 @@
 import { Dropdown, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
 import { IconButton } from "@/components/icon-button/IconButton";
 import { TABLE_BODY_TEXT_CLASSES, TABLE_DATA_CELL_CLASSES, TABLE_HEADER_LABEL_CLASSES, TABLE_HEAD_CELL_CLASSES, TABLE_PAGINATION_BAR_CLASSES, mergeClasses } from "@/utilities";
-import { type ComponentProps, type JSX, Show, splitProps } from "solid-js";
+import { type ComponentProps, type JSX, Show, createContext, createSignal, splitProps, useContext } from "solid-js";
 
 const TABLE_MIN_WIDTH = "min-w-[640px]";
 
+type TableContextValue = {
+  setPaginationSlot: (element: JSX.Element) => void;
+};
+
+const TableContext = createContext<TableContextValue>();
+
 /**
- * Table wrapper with horizontal scroll for narrow viewports. Minimum width 640px.
+ * Table wrapper with card chrome (border, radius, background) and horizontal scroll.
+ * Place TablePagination as a direct child alongside TableHeader/TableBody — it will
+ * automatically render attached below the scroll area, inside the card.
  */
 export const Table = (properties: ComponentProps<"table">) => {
   const [local, rest] = splitProps(properties, ["class"]);
+  const [paginationSlot, setPaginationSlot] = createSignal<JSX.Element>(null);
+
   return (
-    <div class="relative w-full overflow-hidden rounded-2xl border border-gray-200 bg-white text-gray-900 dark:border-gray-800 dark:bg-gray-800/40 dark:text-gray-100">
-      <div class="overflow-x-auto">
-        <table class={mergeClasses("w-full table-auto text-left", TABLE_BODY_TEXT_CLASSES, TABLE_MIN_WIDTH, local.class)} {...rest} />
+    <TableContext.Provider value={{ setPaginationSlot }}>
+      <div class="relative w-full overflow-hidden rounded-2xl border border-gray-200 bg-white text-gray-900 dark:border-gray-800 dark:bg-gray-800/40 dark:text-gray-100">
+        <div class="overflow-x-auto">
+          <table class={mergeClasses("w-full table-auto text-left", TABLE_BODY_TEXT_CLASSES, TABLE_MIN_WIDTH, local.class)} {...rest} />
+        </div>
+        <Show when={paginationSlot() !== null}>{paginationSlot()}</Show>
       </div>
-    </div>
+    </TableContext.Provider>
   );
 };
 
@@ -167,9 +180,12 @@ const coerceLimitOption = (value: number): number => {
 };
 
 /**
- * Pagination controls for server-side limit/offset tables.
+ * Pagination controls. Place as a direct child of Table — it renders attached below
+ * the scroll area inside the card via context, not in the DOM position it appears.
  */
 export const TablePagination = (properties: TablePaginationProperties) => {
+  const context = useContext(TableContext);
+
   const resolvedLimitOptions = (): number[] => {
     const configured = properties.limitOptions ?? [25, 50, 100, 200];
     const uniqueOptions = Array.from(new Set(configured.map(coerceLimitOption))).sort((first, second) => {
@@ -215,7 +231,7 @@ export const TablePagination = (properties: TablePaginationProperties) => {
     return Math.floor(resolvedOffset() / resolvedLimit()) + 1;
   };
 
-  return (
+  const paginationElement = (
     <div
       class={mergeClasses(
         "flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 bg-gray-50 text-gray-600 dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-400",
@@ -274,4 +290,11 @@ export const TablePagination = (properties: TablePaginationProperties) => {
       </div>
     </div>
   );
+
+  if (context !== undefined) {
+    context.setPaginationSlot(paginationElement);
+    return null;
+  }
+
+  return paginationElement;
 };
