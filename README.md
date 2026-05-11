@@ -663,20 +663,20 @@ Responsive detail/drawer panel that slides in from the right.
 
 **`RightPanelLayout` props:**
 
-| Prop             | Type                              | Default                                  | Description                                                                                                                    |
-| ---------------- | --------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `open`           | `boolean`                         | opens on mount                           | Controlled open state; when omitted the panel opens on mount (backwards compatible)                                            |
-| `title`          | `JSX.Element`                     | —                                        | Panel heading content (required)                                                                                               |
-| `subtitle`       | `JSX.Element`                     | —                                        | Optional secondary header line                                                                                                 |
-| `headerActions`  | `JSX.Element`                     | —                                        | Extra elements in the header row                                                                                               |
-| `children`       | `JSX.Element`                     | —                                        | Scrollable body content (required)                                                                                             |
-| `footer`         | `JSX.Element`                     | —                                        | Sticky footer slot                                                                                                             |
-| `onBeginClose`   | `() => void`                      | —                                        | Called immediately when close transition begins, before `onOpenChange(false)`                                                  |
-| `onOpenChange`   | `(isPanelOpen: boolean) => void`  | —                                        | Required. `true` when the open transition runs; `false` after the close animation finishes (200ms), for unmounting with `Show` |
-| `closeAriaLabel` | `string`                          | —                                        | Accessible label for the close button (required)                                                                               |
-| `topOffset`      | `string`                          | `"var(--solid-kit-header-height, 4rem)"` | Top offset for the mobile overlay variant                                                                                      |
-| `panelProps`     | `JSX.HTMLAttributes<HTMLElement>` | —                                        | Extra props applied to the `<aside>` element (e.g. drag/drop handlers); `class` is merged                                      |
-| `variant`        | `"grid" \| "overlay"`             | `"grid"`                                 | `grid`: sibling inside `MainLayout`; `overlay`: fixed right-panel overlay                                                      |
+| Prop             | Type                              | Default                                  | Description                                                                                                                        |
+| ---------------- | --------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `open`           | `boolean`                         | opens on mount                           | Controlled open state; when omitted the panel opens on mount (backwards compatible)                                                |
+| `title`          | `JSX.Element`                     | —                                        | Panel heading content (required)                                                                                                   |
+| `subtitle`       | `JSX.Element`                     | —                                        | Optional secondary header line                                                                                                     |
+| `headerActions`  | `JSX.Element`                     | —                                        | Extra elements in the header row                                                                                                   |
+| `children`       | `JSX.Element`                     | —                                        | Scrollable body content (required). The body scrolls independently and has built-in `px-4 py-3` padding — no extra wrapper needed. |
+| `footer`         | `JSX.Element`                     | —                                        | Sticky footer slot                                                                                                                 |
+| `onBeginClose`   | `() => void`                      | —                                        | Called immediately when close transition begins, before `onOpenChange(false)`                                                      |
+| `onOpenChange`   | `(isPanelOpen: boolean) => void`  | —                                        | Required. `true` when the open transition runs; `false` after the close animation finishes (200ms), for unmounting with `Show`     |
+| `closeAriaLabel` | `string`                          | —                                        | Accessible label for the close button (required)                                                                                   |
+| `topOffset`      | `string`                          | `"var(--solid-kit-header-height, 4rem)"` | Top offset for the mobile overlay variant                                                                                          |
+| `panelProps`     | `JSX.HTMLAttributes<HTMLElement>` | —                                        | Extra props applied to the `<aside>` element (e.g. drag/drop handlers); `class` is merged                                          |
+| `variant`        | `"grid" \| "overlay"`             | `"grid"`                                 | `grid`: sibling inside `MainLayout`; `overlay`: fixed right-panel overlay                                                          |
 
 On desktop the panel pushes the main area. On mobile it overlays full-screen with smooth entrance/exit transitions.
 
