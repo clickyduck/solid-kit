@@ -25,6 +25,6 @@ export const CHOICE_CONTROL_CHECK_CLASS = "choice-control-check shrink-0 text-bl
 // Table
 export const TABLE_BODY_TEXT_CLASSES = "text-sm";
 export const TABLE_HEADER_LABEL_CLASSES = "text-xs";
-export const TABLE_HEAD_CELL_CLASSES = "align-middle px-6 py-5";
-export const TABLE_DATA_CELL_CLASSES = "align-middle px-6 py-4";
+export const TABLE_HEAD_CELL_CLASSES = "align-middle px-6 py-3.5";
+export const TABLE_DATA_CELL_CLASSES = "align-middle px-6 py-1.5";
 export const TABLE_PAGINATION_BAR_CLASSES = "px-6 py-2";

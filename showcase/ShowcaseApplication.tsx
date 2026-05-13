@@ -423,10 +423,20 @@ export const ShowcaseApplication = (): JSX.Element => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Location</TableHead>
-                      <TableHead>Status</TableHead>
+                      <TableHead>
+                        <Text size="4" weight="semibold">
+                          Location
+                        </Text>
+                      </TableHead>
+                      <TableHead>
+                        <Text size="4" weight="semibold">
+                          Status
+                        </Text>
+                      </TableHead>
                       <TableHead align="right" monospace>
-                        Amount
+                        <Text size="4" weight="semibold">
+                          Amount
+                        </Text>
                       </TableHead>
                     </TableRow>
                   </TableHeader>
@@ -434,21 +444,35 @@ export const ShowcaseApplication = (): JSX.Element => {
                     <For each={tableRows}>
                       {(row, index) => (
                         <TableRow clickable active={index() === 0} onClick={() => {}}>
-                          <TableCell>{row.name}</TableCell>
+                          <TableCell>
+                            <Text size="3" weight="normal">
+                              {row.name}
+                            </Text>
+                          </TableCell>
                           <TableCell>
                             <Badge variant="solid" color={row.status === "Active" ? "success" : "warning"}>
                               {row.status}
                             </Badge>
                           </TableCell>
                           <TableCell align="right" monospace>
-                            {row.amount}
+                            <Text size="3" weight="normal">
+                              {row.amount}
+                            </Text>
                           </TableCell>
                         </TableRow>
                       )}
                     </For>
                     <TableRow verticalAlign="top">
-                      <TableCell>Notes row (top aligned)</TableCell>
-                      <TableCell colSpan={2}>Use verticalAlign="top" when a row mixes chips with multi-line copy.</TableCell>
+                      <TableCell>
+                        <Text size="3" weight="normal">
+                          Notes row (top aligned)
+                        </Text>
+                      </TableCell>
+                      <TableCell colSpan={2}>
+                        <Text size="3" weight="normal" color="muted">
+                          Use verticalAlign="top" when a row mixes chips with multi-line copy.
+                        </Text>
+                      </TableCell>
                     </TableRow>
                   </TableBody>
                   <TablePagination limit={tablePagination().limit} offset={tablePagination().offset} currentPageCount={tableRows.length} totalCount={120} onChange={setTablePagination} />

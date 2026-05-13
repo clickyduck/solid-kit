@@ -143,6 +143,20 @@ export const TableHead = (properties: ComponentProps<"th"> & { align?: "left" | 
 };
 
 /**
+ * Table footer cell — same height as header cells.
+ */
+export const TableFooterCell = (properties: ComponentProps<"td"> & { align?: "left" | "right" | "center"; monospace?: boolean }) => {
+  const [local, rest] = splitProps(properties, ["align", "monospace", "class"]);
+  const resolvedAlign = (): "left" | "right" | "center" => local.align ?? "left";
+  const alignClass = (): string => {
+    if (resolvedAlign() === "right") return "text-right";
+    if (resolvedAlign() === "center") return "text-center";
+    return "text-left";
+  };
+  return <td class={mergeClasses("min-w-0 overflow-hidden", alignClass(), local.monospace === true ? "font-mono" : "", TABLE_HEAD_CELL_CLASSES, local.class)} {...rest} />;
+};
+
+/**
  * Table data cell.
  */
 export const TableCell = (properties: ComponentProps<"td"> & { align?: "left" | "right" | "center"; monospace?: boolean }) => {
