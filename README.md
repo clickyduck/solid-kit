@@ -444,20 +444,22 @@ import { IconButton } from "@clickyduck/solid-kit";
 
 ### Icons
 
-Material Symbols renderer powered by the [Material Symbols](https://fonts.google.com/icons) rounded set (filled is enabled via `FILL` variation).
+Material Symbols renderer powered by the [Material Symbols](https://fonts.google.com/icons) rounded set. Icons are always rendered filled.
 
-**Exports:** `Icon`, `IconGlyphProperties` (type), `IconComponent` (type)
+**Exports:** `Icon`, `IconColor` (type), `IconGlyphProperties` (type), `IconComponent` (type)
 
 The `material-symbols/rounded.css` stylesheet is requested lazily on first use. Icons render by ligature name (the text content), so you pass the icon name string directly.
 
 **`Icon` props:**
 
-| Prop     | Type      | Default | Description                                                       |
-| -------- | --------- | ------- | ----------------------------------------------------------------- |
-| `name`   | `string`  | —       | Material Symbols slug, e.g. `"account_balance_wallet"` (required) |
-| `size`   | `number`  | —       | Sets both `width` and `height`                                    |
-| `filled` | `boolean` | `true`  | When `false`, uses the rounded outline variant (`FILL` = 0)       |
-| `class`  | `string`  | —       | Extra CSS classes                                                 |
+| Prop    | Type        | Default | Description                                                       |
+| ------- | ----------- | ------- | ----------------------------------------------------------------- |
+| `name`  | `string`    | —       | Material Symbols slug, e.g. `"account_balance_wallet"` (required) |
+| `size`  | `number`    | —       | Sets both `width` and `height`                                    |
+| `color` | `IconColor` | —       | Semantic color token                                              |
+| `class` | `string`    | —       | Extra CSS classes                                                 |
+
+**`IconColor` values:** `"default"` · `"inherit"` · `"muted"` · `"primary"` · `"secondary"` · `"success"` · `"warning"` · `"danger"` · `"info"`
 
 All standard `<span>` props are also forwarded.
 

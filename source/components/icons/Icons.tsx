@@ -4,6 +4,7 @@ import { splitProps } from "solid-js";
 
 export type IconGlyphProperties = ComponentProps<"span">;
 export type IconComponent = Component<IconGlyphProperties>;
+export type IconColor = "default" | "inherit" | "muted" | "primary" | "secondary" | "success" | "warning" | "danger" | "info";
 
 let hasMaterialSymbolsStylesheetLoadBeenRequested: boolean = false;
 
@@ -26,28 +27,40 @@ const requestMaterialSymbolsRoundedStylesheetLoad = (): void => {
 interface IconProperties {
   name: string;
   size?: number;
-  filled?: boolean;
+  color?: IconColor;
   class?: string;
   [key: string]: unknown;
 }
 
-/** Renders a Material Symbol (rounded, optionally filled) by ligature name, e.g. `<Icon name="account_balance_wallet" size={20} />` */
+const iconColorClass: Record<IconColor, string> = {
+  default: "",
+  inherit: "text-inherit",
+  muted: "text-muted-foreground",
+  primary: "text-primary",
+  secondary: "text-secondary",
+  success: "text-success",
+  warning: "text-warning",
+  danger: "text-destructive",
+  info: "text-info"
+};
+
+/** Renders a Material Symbol (rounded, filled) by ligature name, e.g. `<Icon name="account_balance_wallet" size={20} />` */
 export const Icon = (properties: IconProperties) => {
-  const [local, rest] = splitProps(properties, ["name", "size", "filled", "class", "style"]);
+  const [local, rest] = splitProps(properties, ["name", "size", "color", "class", "style"]);
 
   requestMaterialSymbolsRoundedStylesheetLoad();
 
   return (
     <span
       {...(rest as IconGlyphProperties)}
-      class={mergeClasses("material-symbols-rounded inline-flex shrink-0 items-center justify-center align-middle leading-none", local.class)}
+      class={mergeClasses("material-symbols-rounded inline-flex shrink-0 items-center justify-center align-middle leading-none", local.color !== undefined ? iconColorClass[local.color] : "", local.class)}
       style={
         typeof local.style === "string"
-          ? `${local.style}${local.size !== undefined ? `; font-size: ${local.size}px; width: ${local.size}px; height: ${local.size}px` : ""}; font-variation-settings: 'FILL' ${local.filled === false ? 0 : 1}, 'wght' 400, 'GRAD' 0, 'opsz' 24`
+          ? `${local.style}${local.size !== undefined ? `; font-size: ${local.size}px; width: ${local.size}px; height: ${local.size}px` : ""}; font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24`
           : {
               ...(local.style ?? {}),
               ...(local.size !== undefined ? { "font-size": `${local.size}px`, width: `${local.size}px`, height: `${local.size}px` } : {}),
-              "font-variation-settings": `'FILL' ${local.filled === false ? 0 : 1}, 'wght' 400, 'GRAD' 0, 'opsz' 24`
+              "font-variation-settings": `'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24`
             }
       }
       aria-hidden={((rest as IconGlyphProperties)["aria-hidden"] ?? "true") as unknown as boolean | "true" | "false"}
