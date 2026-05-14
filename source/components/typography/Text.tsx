@@ -17,11 +17,11 @@ const SIZE_CLASSES: Record<TextSize, string> = {
   "4": "text-xs"
 };
 
-const Text0Impl = createTypography({ sizeClasses: SIZE_CLASSES["0"], gapClass: "gap-3", iconSize: 36, defaultWeight: "bold" });
-const Text1Impl = createTypography({ sizeClasses: SIZE_CLASSES["1"], gapClass: "gap-2", iconSize: 24, defaultWeight: "semibold" });
-const Text2Impl = createTypography({ sizeClasses: SIZE_CLASSES["2"], gapClass: "gap-1.5", iconSize: 16, defaultWeight: "medium" });
-const Text3Impl = createTypography({ sizeClasses: SIZE_CLASSES["3"], gapClass: "gap-1", iconSize: 14, defaultWeight: "medium" });
-const Text4Impl = createTypography({ sizeClasses: SIZE_CLASSES["4"], gapClass: "gap-0.5", iconSize: 12, defaultWeight: "medium" });
+const Text0Impl = createTypography({ sizeClasses: SIZE_CLASSES["0"], gapClass: "gap-5", iconSize: 36, defaultWeight: "bold" });
+const Text1Impl = createTypography({ sizeClasses: SIZE_CLASSES["1"], gapClass: "gap-3.5", iconSize: 24, defaultWeight: "semibold" });
+const Text2Impl = createTypography({ sizeClasses: SIZE_CLASSES["2"], gapClass: "gap-2", iconSize: 16, defaultWeight: "medium" });
+const Text3Impl = createTypography({ sizeClasses: SIZE_CLASSES["3"], gapClass: "gap-2", iconSize: 14, defaultWeight: "medium" });
+const Text4Impl = createTypography({ sizeClasses: SIZE_CLASSES["4"], gapClass: "gap-1.5", iconSize: 12, defaultWeight: "medium" });
 
 export const Text: ParentComponent<TextProperties> = (properties) => {
   const size = (): TextSize => properties.size ?? "2";
