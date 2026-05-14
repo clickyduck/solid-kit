@@ -301,40 +301,392 @@ export const ShowcaseApplication = (): JSX.Element => {
             {/* ── Typography and layout ───────────────────────────────────── */}
             <ShowcaseCategory categoryTitle="Typography and layout">
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-text" sectionTitle="Text" sectionDescription="Five size steps with semantic color, weight, style, and icon options.">
-                <div class="space-y-4">
-                  <Text size="0">Display — size 0 (bold)</Text>
-                  <Text size="1">Heading — size 1 (semibold)</Text>
-                  <Text size="2">Body — size 2, default weight medium</Text>
-                  <Text size="3">Small — size 3</Text>
-                  <Text size="4">Caption — size 4</Text>
-                </div>
-                <div class="flex flex-wrap gap-4">
-                  <Text color="primary">Primary</Text>
-                  <Text color="secondary">Secondary</Text>
-                  <Text color="muted">Muted</Text>
-                  <Text color="success">Success</Text>
-                  <Text color="warning">Warning</Text>
-                  <Text color="danger">Danger</Text>
-                  <Text color="info">Info</Text>
-                </div>
-                <div class="flex flex-wrap gap-4">
-                  <Text weight="thin">Thin</Text>
-                  <Text weight="normal">Normal</Text>
-                  <Text weight="medium">Medium</Text>
-                  <Text weight="semibold">Semibold</Text>
-                  <Text weight="bold">Bold</Text>
-                </div>
-                <div class="flex flex-wrap gap-4">
-                  <Text italic>Italic text</Text>
-                  <Text underline>Underlined text</Text>
-                  <Text opacity={50}>50% opacity</Text>
-                  <Text icon="tag" color="primary">
-                    Leading icon
+                {/* Sizes */}
+                <div class="space-y-3">
+                  <Text size="4" weight="semibold" color="muted">
+                    Sizes
                   </Text>
-                  <Text icon="arrow_forward" iconPosition="end" color="secondary">
-                    Trailing icon
+                  <div class="space-y-3">
+                    <Text size="0">Size 0 — Display (bold, 4xl tight)</Text>
+                    <Text size="1">Size 1 — Heading (semibold, 2xl tight)</Text>
+                    <Text size="2">Size 2 — Body (medium, base)</Text>
+                    <Text size="3">Size 3 — Small (medium, sm)</Text>
+                    <Text size="4">Size 4 — Caption (medium, xs)</Text>
+                  </div>
+                </div>
+
+                {/* Colors × sizes */}
+                <div class="space-y-3">
+                  <Text size="4" weight="semibold" color="muted">
+                    Colors × sizes
                   </Text>
-                  <Text maxLength={20}>This text will be truncated at 20 characters</Text>
+                  <div class="overflow-x-auto">
+                    <table class="w-full border-collapse text-left">
+                      <thead>
+                        <tr>
+                          <th class="pr-6 pb-2">
+                            <Text size="4" color="muted">
+                              color ↓ / size →
+                            </Text>
+                          </th>
+                          {(["0", "1", "2", "3", "4"] as const).map((s) => (
+                            <th class="pr-6 pb-2">
+                              <Text size="4" color="muted">
+                                size {s}
+                              </Text>
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(["default", "muted", "primary", "secondary", "success", "warning", "danger", "info"] as const).map((c) => (
+                          <tr>
+                            <td class="py-1 pr-6">
+                              <Text size="4" color="muted">
+                                {c}
+                              </Text>
+                            </td>
+                            {(["0", "1", "2", "3", "4"] as const).map((s) => (
+                              <td class="py-1 pr-6">
+                                <Text size={s} color={c}>
+                                  {c}
+                                </Text>
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Weights × sizes */}
+                <div class="space-y-3">
+                  <Text size="4" weight="semibold" color="muted">
+                    Weights × sizes
+                  </Text>
+                  <div class="overflow-x-auto">
+                    <table class="w-full border-collapse text-left">
+                      <thead>
+                        <tr>
+                          <th class="pr-6 pb-2">
+                            <Text size="4" color="muted">
+                              weight ↓ / size →
+                            </Text>
+                          </th>
+                          {(["0", "1", "2", "3", "4"] as const).map((s) => (
+                            <th class="pr-6 pb-2">
+                              <Text size="4" color="muted">
+                                size {s}
+                              </Text>
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(["thin", "normal", "medium", "semibold", "bold"] as const).map((w) => (
+                          <tr>
+                            <td class="py-1 pr-6">
+                              <Text size="4" color="muted">
+                                {w}
+                              </Text>
+                            </td>
+                            {(["0", "1", "2", "3", "4"] as const).map((s) => (
+                              <td class="py-1 pr-6">
+                                <Text size={s} weight={w}>
+                                  {w}
+                                </Text>
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Styles: italic, underline, opacity */}
+                <div class="space-y-3">
+                  <Text size="4" weight="semibold" color="muted">
+                    Style modifiers
+                  </Text>
+                  <div class="flex flex-wrap gap-4">
+                    <Text italic>Italic</Text>
+                    <Text underline>Underline</Text>
+                    <Text italic underline>
+                      Italic + underline
+                    </Text>
+                    <Text opacity={75}>75% opacity</Text>
+                    <Text opacity={50}>50% opacity</Text>
+                    <Text opacity={25}>25% opacity</Text>
+                    <Text italic color="primary">
+                      Italic primary
+                    </Text>
+                    <Text underline color="danger">
+                      Underline danger
+                    </Text>
+                    <Text italic underline color="success">
+                      Italic + underline success
+                    </Text>
+                    <Text opacity={50} color="warning">
+                      50% warning
+                    </Text>
+                  </div>
+                </div>
+
+                {/* Icons leading — all sizes */}
+                <div class="space-y-3">
+                  <Text size="4" weight="semibold" color="muted">
+                    Leading icon × sizes
+                  </Text>
+                  <div class="flex flex-wrap items-center gap-6">
+                    <Text size="0" icon="star">
+                      Size 0
+                    </Text>
+                    <Text size="1" icon="star">
+                      Size 1
+                    </Text>
+                    <Text size="2" icon="star">
+                      Size 2
+                    </Text>
+                    <Text size="3" icon="star">
+                      Size 3
+                    </Text>
+                    <Text size="4" icon="star">
+                      Size 4
+                    </Text>
+                  </div>
+                </div>
+
+                {/* Icons trailing — all sizes */}
+                <div class="space-y-3">
+                  <Text size="4" weight="semibold" color="muted">
+                    Trailing icon × sizes
+                  </Text>
+                  <div class="flex flex-wrap items-center gap-6">
+                    <Text size="0" icon="arrow_forward" iconPosition="end">
+                      Size 0
+                    </Text>
+                    <Text size="1" icon="arrow_forward" iconPosition="end">
+                      Size 1
+                    </Text>
+                    <Text size="2" icon="arrow_forward" iconPosition="end">
+                      Size 2
+                    </Text>
+                    <Text size="3" icon="arrow_forward" iconPosition="end">
+                      Size 3
+                    </Text>
+                    <Text size="4" icon="arrow_forward" iconPosition="end">
+                      Size 4
+                    </Text>
+                  </div>
+                </div>
+
+                {/* Icons × colors */}
+                <div class="space-y-3">
+                  <Text size="4" weight="semibold" color="muted">
+                    Leading icon × colors
+                  </Text>
+                  <div class="flex flex-wrap gap-4">
+                    <Text icon="circle" color="default">
+                      Default
+                    </Text>
+                    <Text icon="circle" color="muted">
+                      Muted
+                    </Text>
+                    <Text icon="circle" color="primary">
+                      Primary
+                    </Text>
+                    <Text icon="circle" color="secondary">
+                      Secondary
+                    </Text>
+                    <Text icon="circle" color="success">
+                      Success
+                    </Text>
+                    <Text icon="circle" color="warning">
+                      Warning
+                    </Text>
+                    <Text icon="circle" color="danger">
+                      Danger
+                    </Text>
+                    <Text icon="circle" color="info">
+                      Info
+                    </Text>
+                  </div>
+                  <Text size="4" weight="semibold" color="muted">
+                    Trailing icon × colors
+                  </Text>
+                  <div class="flex flex-wrap gap-4">
+                    <Text icon="open_in_new" iconPosition="end" color="default">
+                      Default
+                    </Text>
+                    <Text icon="open_in_new" iconPosition="end" color="muted">
+                      Muted
+                    </Text>
+                    <Text icon="open_in_new" iconPosition="end" color="primary">
+                      Primary
+                    </Text>
+                    <Text icon="open_in_new" iconPosition="end" color="secondary">
+                      Secondary
+                    </Text>
+                    <Text icon="open_in_new" iconPosition="end" color="success">
+                      Success
+                    </Text>
+                    <Text icon="open_in_new" iconPosition="end" color="warning">
+                      Warning
+                    </Text>
+                    <Text icon="open_in_new" iconPosition="end" color="danger">
+                      Danger
+                    </Text>
+                    <Text icon="open_in_new" iconPosition="end" color="info">
+                      Info
+                    </Text>
+                  </div>
+                </div>
+
+                {/* Icons × weights */}
+                <div class="space-y-3">
+                  <Text size="4" weight="semibold" color="muted">
+                    Leading icon × weights
+                  </Text>
+                  <div class="flex flex-wrap gap-4">
+                    <Text icon="label" weight="thin">
+                      Thin
+                    </Text>
+                    <Text icon="label" weight="normal">
+                      Normal
+                    </Text>
+                    <Text icon="label" weight="medium">
+                      Medium
+                    </Text>
+                    <Text icon="label" weight="semibold">
+                      Semibold
+                    </Text>
+                    <Text icon="label" weight="bold">
+                      Bold
+                    </Text>
+                  </div>
+                </div>
+
+                {/* Icons + style modifiers */}
+                <div class="space-y-3">
+                  <Text size="4" weight="semibold" color="muted">
+                    Icon + style modifiers
+                  </Text>
+                  <div class="flex flex-wrap gap-4">
+                    <Text icon="edit" italic color="primary">
+                      Italic primary
+                    </Text>
+                    <Text icon="check_circle" underline color="success">
+                      Underline success
+                    </Text>
+                    <Text icon="warning" italic underline color="warning">
+                      Italic + underline warning
+                    </Text>
+                    <Text icon="cancel" opacity={50} color="danger">
+                      50% danger
+                    </Text>
+                    <Text icon="info" opacity={75} color="info">
+                      75% info
+                    </Text>
+                    <Text icon="arrow_forward" iconPosition="end" italic color="secondary">
+                      Trailing + italic
+                    </Text>
+                  </div>
+                </div>
+
+                {/* JSX icon element */}
+                <div class="space-y-3">
+                  <Text size="4" weight="semibold" color="muted">
+                    JSX element as icon
+                  </Text>
+                  <div class="flex flex-wrap gap-6">
+                    <Text icon={<img src="https://api.dicebear.com/7.x/thumbs/svg?seed=solid" alt="" class="rounded-full" />} size="2">
+                      Custom avatar icon
+                    </Text>
+                    <Text icon={<span class="inline-block h-[1em] w-[1em] rounded-full bg-emerald-500" />} color="success">
+                      Green dot indicator
+                    </Text>
+                    <Text icon={<span class="inline-block h-[1em] w-[1em] rounded-full bg-red-500" />} iconPosition="end" color="danger">
+                      Red dot trailing
+                    </Text>
+                  </div>
+                </div>
+
+                {/* maxLength */}
+                <div class="space-y-3">
+                  <Text size="4" weight="semibold" color="muted">
+                    maxLength truncation
+                  </Text>
+                  <div class="space-y-2">
+                    <Text maxLength={30}>Truncated at 30 chars: this sentence is longer than thirty characters</Text>
+                    <Text maxLength={20} color="muted">
+                      Truncated at 20 chars: this sentence is longer
+                    </Text>
+                    <Text maxLength={10} size="1" color="danger">
+                      Short limit
+                    </Text>
+                    <Text maxLength={50} icon="tag" color="primary">
+                      With icon, truncated at 50 chars: this sentence is definitely longer than fifty characters
+                    </Text>
+                  </div>
+                </div>
+
+                {/* Realistic usage examples */}
+                <div class="space-y-3">
+                  <Text size="4" weight="semibold" color="muted">
+                    Realistic usage
+                  </Text>
+                  <div class="space-y-4">
+                    <div class="space-y-1">
+                      <Text size="1" icon="account_balance_wallet">
+                        Wallet balance
+                      </Text>
+                      <Text size="0" color="success">
+                        ₹4,28,500
+                      </Text>
+                    </div>
+                    <div class="space-y-1">
+                      <Text size="3" color="muted">
+                        Status
+                      </Text>
+                      <Text size="2" icon="check_circle" color="success" weight="semibold">
+                        Active
+                      </Text>
+                    </div>
+                    <div class="space-y-1">
+                      <Text size="3" color="muted">
+                        Alert
+                      </Text>
+                      <Text size="2" icon="warning" color="warning" weight="semibold">
+                        Pending review
+                      </Text>
+                    </div>
+                    <div class="space-y-1">
+                      <Text size="3" color="muted">
+                        Error
+                      </Text>
+                      <Text size="2" icon="cancel" color="danger">
+                        Payment declined by bank
+                      </Text>
+                    </div>
+                    <div class="space-y-1">
+                      <Text size="3" color="muted">
+                        Navigation link
+                      </Text>
+                      <Text size="2" icon="arrow_forward" iconPosition="end" color="primary" underline>
+                        View all transactions
+                      </Text>
+                    </div>
+                    <div class="space-y-1">
+                      <Text size="3" color="muted">
+                        Disabled / inactive
+                      </Text>
+                      <Text size="2" opacity={40} icon="block">
+                        Feature unavailable
+                      </Text>
+                    </div>
+                  </div>
                 </div>
               </ShowcaseSection>
 

@@ -42,13 +42,14 @@ export type TypographyBaseProps = Omit<ComponentProps<"div">, "children"> & {
 type CreateTypographyOptions = {
   sizeClasses: string;
   gapClass: string;
+  iconSize: number;
   defaultColor?: TextColor;
   defaultWeight?: TextWeight;
   defaultItalic?: boolean;
   defaultUnderline?: boolean;
 };
 
-const DEFAULT_ICON_CLASSES = "inline-flex shrink-0 items-center justify-center align-middle text-current opacity-70 [&_svg]:h-[1em] [&_svg]:w-[1em] [&_svg]:fill-current";
+const DEFAULT_ICON_CLASSES = "inline-flex shrink-0 items-center justify-center align-middle text-current opacity-70 [&_svg]:fill-current";
 
 export const createTypography = (options: CreateTypographyOptions): ParentComponent<TypographyBaseProps> => {
   return (properties) => {
@@ -75,14 +76,14 @@ export const createTypography = (options: CreateTypographyOptions): ParentCompon
     return (
       <div class={mergeClasses("inline-flex items-center", options.gapClass, options.sizeClasses, COLOR_CLASSES[color()], WEIGHT_CLASSES[weight()], italic() ? "italic" : "", underline() ? "underline" : "", local.class)} {...rest} style={style()}>
         <Show when={local.icon != null && iconPosition() === "start"}>
-          <span class={DEFAULT_ICON_CLASSES} aria-hidden="true">
-            {typeof local.icon === "string" ? <Icon name={local.icon} /> : local.icon}
+          <span class={DEFAULT_ICON_CLASSES} style={{ width: `${options.iconSize}px`, height: `${options.iconSize}px` }} aria-hidden="true">
+            {typeof local.icon === "string" ? <Icon name={local.icon} size={options.iconSize} /> : local.icon}
           </span>
         </Show>
         <div class="min-w-0">{local.children}</div>
         <Show when={local.icon != null && iconPosition() === "end"}>
-          <span class={DEFAULT_ICON_CLASSES} aria-hidden="true">
-            {typeof local.icon === "string" ? <Icon name={local.icon} /> : local.icon}
+          <span class={DEFAULT_ICON_CLASSES} style={{ width: `${options.iconSize}px`, height: `${options.iconSize}px` }} aria-hidden="true">
+            {typeof local.icon === "string" ? <Icon name={local.icon} size={options.iconSize} /> : local.icon}
           </span>
         </Show>
       </div>
