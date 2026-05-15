@@ -380,7 +380,7 @@ import { Field, Input } from "@clickyduck/solid-kit";
 
 ### HeaderLayout
 
-Page-level header row with title, description, back link, and actions slot.
+Page-level header row with title, back link, and actions slot.
 
 **Exports:** `HeaderLayout`, `HeaderLayoutProperties` (type)
 
@@ -395,7 +395,7 @@ Page-level header row with title, description, back link, and actions slot.
 ```tsx
 import { Button, HeaderLayout } from "@clickyduck/solid-kit";
 
-<HeaderLayout title="Users" description="Manage your team">
+<HeaderLayout title="Users">
   <Button>Invite</Button>
 </HeaderLayout>;
 ```
@@ -500,29 +500,140 @@ Application shell layout that positions a header at the top, a left navigation p
 
 **Exports:** `MainLayout`
 
-#### Guide (recommended composition)
+#### Composing the full app shell
+
+`MainLayout` is a full-viewport CSS grid (`h-dvh`) with four named areas: `header`, `left`, `main`, and `right`. Each layout component targets one area; place them as direct children in any order.
+
+```
+┌─────────────────────────────────────┐
+│            HeaderLayout             │  ← grid-area: header
+├──────────┬──────────────────────────┤
+│          │                          │
+│  Left    │       PageLayout         │  ← grid-area: main
+│  Panel   │  (PageHeader + Sections) │
+│ Layout   │                          │
+│          ├──────────────────────────┤
+│          │    RightPanelLayout      │  ← grid-area: right (optional)
+└──────────┴──────────────────────────┘
+    ↑ grid-area: left
+```
+
+**Minimal shell (header + nav + page):**
 
 ```tsx
-import { HeaderLayout, LeftPanelLayout, MainLayout, PageHeader, PageLayout, PageSection, RightPanelLayout } from "@clickyduck/solid-kit";
+import { createSignal } from "solid-js";
+import {
+  Button,
+  HeaderLayout,
+  LeftPanelLayout,
+  MainLayout,
+  PageHeader,
+  PageLayout,
+  PageSection,
+  type LeftPanelLayoutNavigationDocumentJson,
+} from "@clickyduck/solid-kit";
 
-<MainLayout>
-  <HeaderLayout title="Workspace" description="Overview">
-    {/* actions */}
-  </HeaderLayout>
+const nav: LeftPanelLayoutNavigationDocumentJson = {
+  groups: [
+    {
+      groupLabel: "Main",
+      items: [
+        { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
+        { href: "/users",     label: "Users",     icon: "group"     },
+      ],
+    },
+  ],
+};
 
-  <LeftPanelLayout collapsed={false} navigationDocument={navigationDocument} />
+export function App() {
+  const [collapsed, setCollapsed] = createSignal(false);
 
-  <PageLayout>
-    <PageHeader title="Dashboard" />
-    <PageSection>{/* page content */}</PageSection>
-  </PageLayout>
+  return (
+    <MainLayout>
+      {/* Top navigation bar */}
+      <HeaderLayout title="My App">
+        <Button variant="ghost" icon="notifications" />
+      </HeaderLayout>
 
-  {/* Optional: show/hide with <Show when={...}> */}
-  <RightPanelLayout title="Details" closeAriaLabel="Close details" onOpenChange={() => {}}>
-    {/* right panel content */}
-  </RightPanelLayout>
-</MainLayout>;
+      {/* Left sidebar */}
+      <LeftPanelLayout
+        navigationDocument={nav}
+        collapsed={collapsed()}
+        onOpenChange={(open) => { if (!open) setCollapsed(true); }}
+      />
+
+      {/* Main content area */}
+      <PageLayout>
+        <PageHeader
+          title="Dashboard"
+          caption="Overview of your workspace"
+          sidebuttons={<Button>New item</Button>}
+        />
+        <PageSection title="Recent activity">
+          {/* page content */}
+        </PageSection>
+      </PageLayout>
+    </MainLayout>
+  );
+}
 ```
+
+**With an optional right detail panel:**
+
+```tsx
+import { Show, createSignal } from "solid-js";
+import {
+  MainLayout, HeaderLayout, LeftPanelLayout,
+  PageLayout, PageHeader, PageSection,
+  RightPanelLayout,
+  type LeftPanelLayoutNavigationDocumentJson,
+} from "@clickyduck/solid-kit";
+
+export function AppWithPanel() {
+  const [panelOpen, setPanelOpen] = createSignal(false);
+  const [selectedId, setSelectedId] = createSignal<string>();
+
+  const nav: LeftPanelLayoutNavigationDocumentJson = { groups: [/* … */] };
+
+  return (
+    <MainLayout>
+      <HeaderLayout title="My App" />
+
+      <LeftPanelLayout navigationDocument={nav} />
+
+      <PageLayout>
+        <PageHeader title="Items" />
+        <PageSection>
+          {/* Clicking a row opens the panel */}
+          <button onClick={() => { setSelectedId("123"); setPanelOpen(true); }}>
+            Open item
+          </button>
+        </PageSection>
+      </PageLayout>
+
+      {/* Panel unmounts after its close animation finishes */}
+      <Show when={panelOpen()}>
+        <RightPanelLayout
+          title={`Item ${selectedId()}`}
+          closeAriaLabel="Close item details"
+          onOpenChange={(open) => { if (!open) setPanelOpen(false); }}
+          footer={<Button class="w-full">Save changes</Button>}
+        >
+          {/* detail content */}
+        </RightPanelLayout>
+      </Show>
+    </MainLayout>
+  );
+}
+```
+
+**Key points:**
+
+- `MainLayout` sets `--solid-kit-header-height: 4rem` as a CSS variable; `RightPanelLayout` uses it for its mobile top offset.
+- `HeaderLayout` only renders when at least one of `title`, `titleElement`, or `children` is provided.
+- `LeftPanelLayout` handles mobile (full-width overlay, swipe-to-close) and desktop (collapsible sidebar) automatically — no extra wiring needed.
+- Wrap `RightPanelLayout` in `<Show>` and unmount it after `onOpenChange(false)` fires (the callback is called after the 200 ms close animation) to avoid keeping stale content in the tree.
+- `PageLayout` scrolls independently; `RightPanelLayout`'s body also scrolls independently — no outer `overflow` wrapper needed.
 
 ---
 
@@ -707,7 +818,7 @@ import { Spinner } from "@clickyduck/solid-kit";
 
 Full compound component for data tables with pagination.
 
-**Exports:** `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TablePagination`
+**Exports:** `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableFooterCell`, `TablePagination`
 
 `Table` renders a card shell (border, radius, background) with a horizontally scrollable container (min-width 640 px). Place `TablePagination` as a direct child of `Table` — it renders attached below the scroll area inside the card. `TableHeader`, `TableBody`, `TableFooter` accept standard HTML attributes plus `class`.
 
@@ -719,12 +830,14 @@ Full compound component for data tables with pagination.
 | `active`        | `boolean`           | —          | Blue highlight for the selected row |
 | `verticalAlign` | `"top" \| "middle"` | `"middle"` | Cell vertical alignment             |
 
-**`TableHead` / `TableCell` extra props:**
+**`TableHead` / `TableCell` / `TableFooterCell` extra props:**
 
-| Prop        | Type                            | Default  | Description         |
-| ----------- | ------------------------------- | -------- | ------------------- |
-| `align`     | `"left" \| "right" \| "center"` | `"left"` | Text alignment      |
-| `monospace` | `boolean`                       | —        | Applies `font-mono` |
+| Prop        | Type                            | Default  | Description                                                     |
+| ----------- | ------------------------------- | -------- | --------------------------------------------------------------- |
+| `align`     | `"left" \| "right" \| "center"` | `"left"` | Text alignment                                                  |
+| `monospace` | `boolean`                       | —        | Applies `font-mono`                                             |
+
+`TableFooterCell` is a `<td>` styled to match header cell height — use it inside `TableFooter` rows for summary/aggregate cells.
 
 **`TablePagination` props:**
 
