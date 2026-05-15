@@ -74,7 +74,7 @@ export const createTypography = (options: CreateTypographyOptions): ParentCompon
     };
 
     return (
-      <div class={mergeClasses("inline-flex items-center", options.gapClass, options.sizeClasses, COLOR_CLASSES[color()], WEIGHT_CLASSES[weight()], italic() ? "italic" : "", underline() ? "underline" : "", local.class)} {...rest} style={style()}>
+      <div class={mergeClasses("flex items-center", options.gapClass, options.sizeClasses, COLOR_CLASSES[color()], WEIGHT_CLASSES[weight()], italic() ? "italic" : "", underline() ? "underline" : "", local.class)} {...rest} style={style()}>
         <Show when={local.icon != null && iconPosition() === "start"}>
           <span class={DEFAULT_ICON_CLASSES} style={{ width: `${options.iconSize}px`, height: `${options.iconSize}px` }} aria-hidden="true">
             {typeof local.icon === "string" ? <Icon name={local.icon} size={options.iconSize} /> : local.icon}

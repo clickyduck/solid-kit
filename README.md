@@ -521,17 +521,8 @@ Application shell layout that positions a header at the top, a left navigation p
 **Minimal shell (header + nav + page):**
 
 ```tsx
+import { Button, HeaderLayout, LeftPanelLayout, type LeftPanelLayoutNavigationDocumentJson, MainLayout, PageHeader, PageLayout, PageSection } from "@clickyduck/solid-kit";
 import { createSignal } from "solid-js";
-import {
-  Button,
-  HeaderLayout,
-  LeftPanelLayout,
-  MainLayout,
-  PageHeader,
-  PageLayout,
-  PageSection,
-  type LeftPanelLayoutNavigationDocumentJson,
-} from "@clickyduck/solid-kit";
 
 const nav: LeftPanelLayoutNavigationDocumentJson = {
   groups: [
@@ -539,10 +530,10 @@ const nav: LeftPanelLayoutNavigationDocumentJson = {
       groupLabel: "Main",
       items: [
         { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
-        { href: "/users",     label: "Users",     icon: "group"     },
-      ],
-    },
-  ],
+        { href: "/users", label: "Users", icon: "group" }
+      ]
+    }
+  ]
 };
 
 export function App() {
@@ -559,19 +550,15 @@ export function App() {
       <LeftPanelLayout
         navigationDocument={nav}
         collapsed={collapsed()}
-        onOpenChange={(open) => { if (!open) setCollapsed(true); }}
+        onOpenChange={(open) => {
+          if (!open) setCollapsed(true);
+        }}
       />
 
       {/* Main content area */}
       <PageLayout>
-        <PageHeader
-          title="Dashboard"
-          caption="Overview of your workspace"
-          sidebuttons={<Button>New item</Button>}
-        />
-        <PageSection title="Recent activity">
-          {/* page content */}
-        </PageSection>
+        <PageHeader title="Dashboard" caption="Overview of your workspace" sidebuttons={<Button>New item</Button>} />
+        <PageSection title="Recent activity">{/* page content */}</PageSection>
       </PageLayout>
     </MainLayout>
   );
@@ -581,19 +568,18 @@ export function App() {
 **With an optional right detail panel:**
 
 ```tsx
+import { HeaderLayout, LeftPanelLayout, type LeftPanelLayoutNavigationDocumentJson, MainLayout, PageHeader, PageLayout, PageSection, RightPanelLayout } from "@clickyduck/solid-kit";
 import { Show, createSignal } from "solid-js";
-import {
-  MainLayout, HeaderLayout, LeftPanelLayout,
-  PageLayout, PageHeader, PageSection,
-  RightPanelLayout,
-  type LeftPanelLayoutNavigationDocumentJson,
-} from "@clickyduck/solid-kit";
 
 export function AppWithPanel() {
   const [panelOpen, setPanelOpen] = createSignal(false);
   const [selectedId, setSelectedId] = createSignal<string>();
 
-  const nav: LeftPanelLayoutNavigationDocumentJson = { groups: [/* … */] };
+  const nav: LeftPanelLayoutNavigationDocumentJson = {
+    groups: [
+      /* … */
+    ]
+  };
 
   return (
     <MainLayout>
@@ -605,7 +591,12 @@ export function AppWithPanel() {
         <PageHeader title="Items" />
         <PageSection>
           {/* Clicking a row opens the panel */}
-          <button onClick={() => { setSelectedId("123"); setPanelOpen(true); }}>
+          <button
+            onClick={() => {
+              setSelectedId("123");
+              setPanelOpen(true);
+            }}
+          >
             Open item
           </button>
         </PageSection>
@@ -616,7 +607,9 @@ export function AppWithPanel() {
         <RightPanelLayout
           title={`Item ${selectedId()}`}
           closeAriaLabel="Close item details"
-          onOpenChange={(open) => { if (!open) setPanelOpen(false); }}
+          onOpenChange={(open) => {
+            if (!open) setPanelOpen(false);
+          }}
           footer={<Button class="w-full">Save changes</Button>}
         >
           {/* detail content */}
@@ -832,10 +825,10 @@ Full compound component for data tables with pagination.
 
 **`TableHead` / `TableCell` / `TableFooterCell` extra props:**
 
-| Prop        | Type                            | Default  | Description                                                     |
-| ----------- | ------------------------------- | -------- | --------------------------------------------------------------- |
-| `align`     | `"left" \| "right" \| "center"` | `"left"` | Text alignment                                                  |
-| `monospace` | `boolean`                       | —        | Applies `font-mono`                                             |
+| Prop        | Type                            | Default  | Description         |
+| ----------- | ------------------------------- | -------- | ------------------- |
+| `align`     | `"left" \| "right" \| "center"` | `"left"` | Text alignment      |
+| `monospace` | `boolean`                       | —        | Applies `font-mono` |
 
 `TableFooterCell` is a `<td>` styled to match header cell height — use it inside `TableFooter` rows for summary/aggregate cells.
 

@@ -1,10 +1,5 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(npx tsc *)",
-      "Bash(npm run *)",
-      "Bash(Get-ChildItem *)",
-      "Bash(dir C:\\\\Users\\\\desktop\\\\projects\\\\solid-kit *)"
-    ]
+    "allow": ["Bash(npx tsc *)", "Bash(npm run *)", "Bash(Get-ChildItem *)", "Bash(dir C:\\\\Users\\\\desktop\\\\projects\\\\solid-kit *)"]
   }
 }

@@ -71,8 +71,12 @@ export const ShowcaseApplication = (): JSX.Element => {
   const isMobileViewport = useIsMobile();
   const [sidebarCollapsed, setSidebarCollapsed] = createSignal(isMobileViewport());
 
-  const toggleSidebar = (): void => { setSidebarCollapsed((prev) => !prev); };
-  const closeSidebar = (): void => { if (isMobileViewport()) setSidebarCollapsed(true); };
+  const toggleSidebar = (): void => {
+    setSidebarCollapsed((prev) => !prev);
+  };
+  const closeSidebar = (): void => {
+    if (isMobileViewport()) setSidebarCollapsed(true);
+  };
 
   const [dialogOpen, setDialogOpen] = createSignal(false);
   const [dropdownDialogOpen, setDropdownDialogOpen] = createSignal(false);
@@ -118,10 +122,14 @@ export const ShowcaseApplication = (): JSX.Element => {
 
   const tabPanelCopy = createMemo(() => {
     switch (activeShowcaseTab()) {
-      case "overview": return "Overview panel — summary metrics and alerts.";
-      case "reports": return "Reports panel — exports and scheduled deliveries.";
-      case "settings": return "Settings panel — workspace preferences.";
-      default: return "";
+      case "overview":
+        return "Overview panel — summary metrics and alerts.";
+      case "reports":
+        return "Reports panel — exports and scheduled deliveries.";
+      case "settings":
+        return "Settings panel — workspace preferences.";
+      default:
+        return "";
     }
   });
 
@@ -146,13 +154,14 @@ export const ShowcaseApplication = (): JSX.Element => {
 
         <LeftPanelLayout
           collapsed={sidebarCollapsed()}
-          onOpenChange={(isPanelOpen) => { if (!isPanelOpen) closeSidebar(); }}
+          onOpenChange={(isPanelOpen) => {
+            if (!isPanelOpen) closeSidebar();
+          }}
           navigationDocument={showcaseLeftPanelNavigationDocument}
         />
 
         <PageLayout>
           <div class="mx-auto max-w-5xl space-y-16">
-
             {/* Primitives */}
             <ShowcaseCategory categoryTitle="Primitives">
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-badges" sectionTitle="Badges" sectionDescription="Solid and outline variants across all semantic colors. Supports a leading icon and a removable chip.">
@@ -160,10 +169,16 @@ export const ShowcaseApplication = (): JSX.Element => {
                   <For each={badgeVariants}>
                     {(variant) => (
                       <div class="space-y-2">
-                        <Text size="4" weight="semibold" color="muted">{variant}</Text>
+                        <Text size="4" weight="semibold" color="muted">
+                          {variant}
+                        </Text>
                         <div class="flex flex-wrap gap-2">
                           <For each={semanticColors}>
-                            {(color) => <Badge variant={variant} color={color}>{color}</Badge>}
+                            {(color) => (
+                              <Badge variant={variant} color={color}>
+                                {color}
+                              </Badge>
+                            )}
                           </For>
                         </div>
                       </div>
@@ -171,8 +186,12 @@ export const ShowcaseApplication = (): JSX.Element => {
                   </For>
                 </div>
                 <div class="flex flex-wrap gap-2">
-                  <Badge variant="outline" color="primary" icon="tag">With icon</Badge>
-                  <Badge variant="solid" color="warning" onRemove={() => {}}>Removable</Badge>
+                  <Badge variant="outline" color="primary" icon="tag">
+                    With icon
+                  </Badge>
+                  <Badge variant="solid" color="warning" onRemove={() => {}}>
+                    Removable
+                  </Badge>
                 </div>
               </ShowcaseSection>
 
@@ -183,11 +202,17 @@ export const ShowcaseApplication = (): JSX.Element => {
                     <Button variant="outline">Outline</Button>
                     <Button variant="ghost">Ghost</Button>
                     <Button variant="link">Link</Button>
-                    <Button variant="solid" disabled>Disabled</Button>
+                    <Button variant="solid" disabled>
+                      Disabled
+                    </Button>
                   </div>
                   <div class="flex flex-wrap gap-3">
-                    <Button variant="solid" icon="edit">Leading icon</Button>
-                    <Button variant="outline" icon="check_circle" iconPosition="end">Trailing icon</Button>
+                    <Button variant="solid" icon="edit">
+                      Leading icon
+                    </Button>
+                    <Button variant="outline" icon="check_circle" iconPosition="end">
+                      Trailing icon
+                    </Button>
                   </div>
                   <div class="flex flex-wrap gap-3">
                     <IconButton variant="solid" icon="check_circle" aria-label="Solid" />
@@ -203,23 +228,33 @@ export const ShowcaseApplication = (): JSX.Element => {
                 <div class="flex flex-wrap items-end gap-6">
                   <div class="flex flex-col items-center gap-2">
                     <Icon name="account_balance_wallet" size={32} />
-                    <Text size="4" color="muted">filled</Text>
+                    <Text size="4" color="muted">
+                      filled
+                    </Text>
                   </div>
                   <div class="flex flex-col items-center gap-2">
                     <Icon name="account_balance_wallet" size={32} filled={false} />
-                    <Text size="4" color="muted">outline</Text>
+                    <Text size="4" color="muted">
+                      outline
+                    </Text>
                   </div>
                   <div class="flex flex-col items-center gap-2">
                     <Icon name="settings" size={24} />
-                    <Text size="4" color="muted">size 24</Text>
+                    <Text size="4" color="muted">
+                      size 24
+                    </Text>
                   </div>
                   <div class="flex flex-col items-center gap-2">
                     <Icon name="settings" size={16} />
-                    <Text size="4" color="muted">size 16</Text>
+                    <Text size="4" color="muted">
+                      size 16
+                    </Text>
                   </div>
                   <div class="flex flex-col items-center gap-2">
                     <Icon name="notifications" size={28} />
-                    <Text size="4" color="muted">size 28</Text>
+                    <Text size="4" color="muted">
+                      size 28
+                    </Text>
                   </div>
                 </div>
               </ShowcaseSection>
@@ -240,7 +275,9 @@ export const ShowcaseApplication = (): JSX.Element => {
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-text" sectionTitle="Text" sectionDescription="Five size steps with semantic color, weight, style modifiers, and optional leading or trailing icon.">
                 <div class="space-y-8">
                   <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">Sizes</Text>
+                    <Text size="4" weight="semibold" color="muted">
+                      Sizes
+                    </Text>
                     <div class="space-y-2">
                       <Text size="0">Size 0 — Display</Text>
                       <Text size="1">Size 1 — Heading</Text>
@@ -251,7 +288,9 @@ export const ShowcaseApplication = (): JSX.Element => {
                   </div>
 
                   <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">Colors</Text>
+                    <Text size="4" weight="semibold" color="muted">
+                      Colors
+                    </Text>
                     <div class="flex flex-wrap gap-4">
                       {(["default", "muted", "primary", "secondary", "success", "warning", "danger", "info"] as const).map((c) => (
                         <Text color={c}>{c}</Text>
@@ -260,7 +299,9 @@ export const ShowcaseApplication = (): JSX.Element => {
                   </div>
 
                   <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">Weights</Text>
+                    <Text size="4" weight="semibold" color="muted">
+                      Weights
+                    </Text>
                     <div class="flex flex-wrap gap-4">
                       {(["thin", "normal", "medium", "semibold", "bold"] as const).map((w) => (
                         <Text weight={w}>{w}</Text>
@@ -269,11 +310,15 @@ export const ShowcaseApplication = (): JSX.Element => {
                   </div>
 
                   <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">Style modifiers</Text>
+                    <Text size="4" weight="semibold" color="muted">
+                      Style modifiers
+                    </Text>
                     <div class="flex flex-wrap gap-4">
                       <Text italic>Italic</Text>
                       <Text underline>Underline</Text>
-                      <Text italic underline>Italic + underline</Text>
+                      <Text italic underline>
+                        Italic + underline
+                      </Text>
                       <Text opacity={75}>75% opacity</Text>
                       <Text opacity={50}>50% opacity</Text>
                       <Text opacity={25}>25% opacity</Text>
@@ -281,53 +326,101 @@ export const ShowcaseApplication = (): JSX.Element => {
                   </div>
 
                   <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">Icons</Text>
+                    <Text size="4" weight="semibold" color="muted">
+                      Icons
+                    </Text>
                     <div class="flex flex-wrap gap-4">
-                      <Text icon="star" size="0">Size 0</Text>
-                      <Text icon="star" size="1">Size 1</Text>
-                      <Text icon="star" size="2">Size 2</Text>
-                      <Text icon="star" size="3">Size 3</Text>
-                      <Text icon="star" size="4">Size 4</Text>
+                      <Text icon="star" size="0">
+                        Size 0
+                      </Text>
+                      <Text icon="star" size="1">
+                        Size 1
+                      </Text>
+                      <Text icon="star" size="2">
+                        Size 2
+                      </Text>
+                      <Text icon="star" size="3">
+                        Size 3
+                      </Text>
+                      <Text icon="star" size="4">
+                        Size 4
+                      </Text>
                     </div>
                     <div class="flex flex-wrap gap-4">
-                      <Text icon="arrow_forward" iconPosition="end" color="primary">Trailing icon</Text>
-                      <Text icon="check_circle" color="success" weight="semibold">Success state</Text>
-                      <Text icon="warning" color="warning" weight="semibold">Warning state</Text>
-                      <Text icon="cancel" color="danger">Error state</Text>
-                      <Text icon={<span class="inline-block h-[1em] w-[1em] rounded-full bg-emerald-500" />} color="success">JSX element</Text>
+                      <Text icon="arrow_forward" iconPosition="end" color="primary">
+                        Trailing icon
+                      </Text>
+                      <Text icon="check_circle" color="success" weight="semibold">
+                        Success state
+                      </Text>
+                      <Text icon="warning" color="warning" weight="semibold">
+                        Warning state
+                      </Text>
+                      <Text icon="cancel" color="danger">
+                        Error state
+                      </Text>
+                      <Text icon={<span class="inline-block h-[1em] w-[1em] rounded-full bg-emerald-500" />} color="success">
+                        JSX element
+                      </Text>
                     </div>
                   </div>
 
                   <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">maxLength truncation</Text>
+                    <Text size="4" weight="semibold" color="muted">
+                      maxLength truncation
+                    </Text>
                     <div class="space-y-1">
                       <Text maxLength={40}>Truncated at 40 chars: this sentence is definitely longer than forty characters</Text>
-                      <Text maxLength={20} color="muted">Truncated at 20 chars: this is longer than twenty characters</Text>
+                      <Text maxLength={20} color="muted">
+                        Truncated at 20 chars: this is longer than twenty characters
+                      </Text>
                     </div>
                   </div>
 
                   <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">Realistic usage</Text>
+                    <Text size="4" weight="semibold" color="muted">
+                      Realistic usage
+                    </Text>
                     <div class="flex flex-wrap gap-8">
                       <div class="space-y-1">
-                        <Text size="3" color="muted">Balance</Text>
-                        <Text size="0" color="success">₹4,28,500</Text>
+                        <Text size="3" color="muted">
+                          Balance
+                        </Text>
+                        <Text size="0" color="success">
+                          ₹4,28,500
+                        </Text>
                       </div>
                       <div class="space-y-1">
-                        <Text size="3" color="muted">Status</Text>
-                        <Text size="2" icon="check_circle" color="success" weight="semibold">Active</Text>
+                        <Text size="3" color="muted">
+                          Status
+                        </Text>
+                        <Text size="2" icon="check_circle" color="success" weight="semibold">
+                          Active
+                        </Text>
                       </div>
                       <div class="space-y-1">
-                        <Text size="3" color="muted">Alert</Text>
-                        <Text size="2" icon="warning" color="warning" weight="semibold">Pending review</Text>
+                        <Text size="3" color="muted">
+                          Alert
+                        </Text>
+                        <Text size="2" icon="warning" color="warning" weight="semibold">
+                          Pending review
+                        </Text>
                       </div>
                       <div class="space-y-1">
-                        <Text size="3" color="muted">Error</Text>
-                        <Text size="2" icon="cancel" color="danger">Payment declined</Text>
+                        <Text size="3" color="muted">
+                          Error
+                        </Text>
+                        <Text size="2" icon="cancel" color="danger">
+                          Payment declined
+                        </Text>
                       </div>
                       <div class="space-y-1">
-                        <Text size="3" color="muted">Link</Text>
-                        <Text size="2" icon="arrow_forward" iconPosition="end" color="primary" underline>View all transactions</Text>
+                        <Text size="3" color="muted">
+                          Link
+                        </Text>
+                        <Text size="2" icon="arrow_forward" iconPosition="end" color="primary" underline>
+                          View all transactions
+                        </Text>
                       </div>
                     </div>
                   </div>
@@ -379,20 +472,32 @@ export const ShowcaseApplication = (): JSX.Element => {
                 <div class="grid gap-3 sm:grid-cols-3">
                   <DataCard clickable active={activeDataCard() === 0} onClick={() => setActiveDataCard(0)}>
                     <div class="space-y-1">
-                      <Text size="3" weight="semibold">North warehouse</Text>
-                      <Text size="4" color="muted">Active · ₹12,450</Text>
+                      <Text size="3" weight="semibold">
+                        North warehouse
+                      </Text>
+                      <Text size="4" color="muted">
+                        Active · ₹12,450
+                      </Text>
                     </div>
                   </DataCard>
                   <DataCard clickable active={activeDataCard() === 1} onClick={() => setActiveDataCard(1)}>
                     <div class="space-y-1">
-                      <Text size="3" weight="semibold">South warehouse</Text>
-                      <Text size="4" color="muted">Paused · ₹8,120</Text>
+                      <Text size="3" weight="semibold">
+                        South warehouse
+                      </Text>
+                      <Text size="4" color="muted">
+                        Paused · ₹8,120
+                      </Text>
                     </div>
                   </DataCard>
                   <DataCard>
                     <div class="space-y-1">
-                      <Text size="3" weight="semibold">Static card</Text>
-                      <Text size="4" color="muted">Non-interactive surface</Text>
+                      <Text size="3" weight="semibold">
+                        Static card
+                      </Text>
+                      <Text size="4" color="muted">
+                        Non-interactive surface
+                      </Text>
                     </div>
                   </DataCard>
                 </div>
@@ -407,27 +512,49 @@ export const ShowcaseApplication = (): JSX.Element => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead><Text size="4" weight="semibold">Location</Text></TableHead>
-                      <TableHead><Text size="4" weight="semibold">Status</Text></TableHead>
-                      <TableHead align="right" monospace><Text size="4" weight="semibold">Amount</Text></TableHead>
+                      <TableHead>
+                        <Text size="4" weight="semibold">
+                          Location
+                        </Text>
+                      </TableHead>
+                      <TableHead>
+                        <Text size="4" weight="semibold">
+                          Status
+                        </Text>
+                      </TableHead>
+                      <TableHead align="right" monospace>
+                        <Text size="4" weight="semibold">
+                          Amount
+                        </Text>
+                      </TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     <For each={tableRows}>
                       {(row, index) => (
                         <TableRow clickable active={index() === 0} onClick={() => {}}>
-                          <TableCell><Text size="3">{row.name}</Text></TableCell>
                           <TableCell>
-                            <Badge variant="solid" color={row.status === "Active" ? "success" : "warning"}>{row.status}</Badge>
+                            <Text size="3">{row.name}</Text>
                           </TableCell>
-                          <TableCell align="right" monospace><Text size="3">{row.amount}</Text></TableCell>
+                          <TableCell>
+                            <Badge variant="solid" color={row.status === "Active" ? "success" : "warning"}>
+                              {row.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell align="right" monospace>
+                            <Text size="3">{row.amount}</Text>
+                          </TableCell>
                         </TableRow>
                       )}
                     </For>
                     <TableRow verticalAlign="top">
-                      <TableCell><Text size="3">Notes row (top aligned)</Text></TableCell>
+                      <TableCell>
+                        <Text size="3">Notes row (top aligned)</Text>
+                      </TableCell>
                       <TableCell colSpan={2}>
-                        <Text size="3" color="muted">Use verticalAlign="top" when a row mixes chips with multi-line copy.</Text>
+                        <Text size="3" color="muted">
+                          Use verticalAlign="top" when a row mixes chips with multi-line copy.
+                        </Text>
                       </TableCell>
                     </TableRow>
                   </TableBody>
@@ -483,7 +610,9 @@ export const ShowcaseApplication = (): JSX.Element => {
                 </div>
                 <BackgroundCard>
                   <div class="space-y-2">
-                    <Text size="4" weight="semibold">Selected values</Text>
+                    <Text size="4" weight="semibold">
+                      Selected values
+                    </Text>
                     <div class="space-y-1">
                       <Text size="4">
                         Single:{" "}
@@ -607,7 +736,9 @@ export const ShowcaseApplication = (): JSX.Element => {
                         value={itemizedDropdownValue()}
                         onChange={setItemizedDropdownValue}
                         itemComponent={({ item }) => (
-                          <Text color="primary" weight="semibold">{item.rawValue}</Text>
+                          <Text color="primary" weight="semibold">
+                            {item.rawValue}
+                          </Text>
                         )}
                       >
                         <DropdownTrigger id="showcase-dropdown-custom">
@@ -631,8 +762,12 @@ export const ShowcaseApplication = (): JSX.Element => {
                         <DropdownContent>
                           <DropdownItem clickable={false}>
                             <div class="space-y-0.5">
-                              <Text size="3" weight="medium">Jane Smith</Text>
-                              <Text size="4" color="muted">jane@example.com</Text>
+                              <Text size="3" weight="medium">
+                                Jane Smith
+                              </Text>
+                              <Text size="4" color="muted">
+                                jane@example.com
+                              </Text>
                             </div>
                           </DropdownItem>
                         </DropdownContent>
@@ -660,9 +795,13 @@ export const ShowcaseApplication = (): JSX.Element => {
                         <DropdownIconTrigger id="showcase-dropdown-item-icon-disabled" icon="more_vert" aria-label="Actions menu" />
                         <DropdownContent>
                           <DropdownItem icon="edit">Edit</DropdownItem>
-                          <DropdownItem icon="content_copy" disabled>Duplicate (disabled)</DropdownItem>
+                          <DropdownItem icon="content_copy" disabled>
+                            Duplicate (disabled)
+                          </DropdownItem>
                           <DropdownSeparator />
-                          <DropdownItem icon="delete" disabled>Delete (disabled)</DropdownItem>
+                          <DropdownItem icon="delete" disabled>
+                            Delete (disabled)
+                          </DropdownItem>
                         </DropdownContent>
                       </Dropdown>
                     </Field>
@@ -670,7 +809,9 @@ export const ShowcaseApplication = (): JSX.Element => {
                       <Dropdown options={[]} onChange={() => {}}>
                         <DropdownIconTrigger id="showcase-dropdown-item-icon-selected" icon="more_vert" aria-label="View menu" />
                         <DropdownContent>
-                          <DropdownItem icon="check_circle" selected>Active (selected)</DropdownItem>
+                          <DropdownItem icon="check_circle" selected>
+                            Active (selected)
+                          </DropdownItem>
                           <DropdownItem icon="pause_circle">Paused</DropdownItem>
                           <DropdownItem icon="cancel">Archived</DropdownItem>
                         </DropdownContent>
@@ -717,7 +858,9 @@ export const ShowcaseApplication = (): JSX.Element => {
                 <div class="flex flex-wrap items-center gap-3">
                   <Button
                     variant={isRightPanelOpen() ? "solid" : "outline"}
-                    onClick={() => { if (!isRightPanelOpen()) openRightPanel(); }}
+                    onClick={() => {
+                      if (!isRightPanelOpen()) openRightPanel();
+                    }}
                     disabled={isRightPanelOpen()}
                   >
                     {isRightPanelOpen() ? "Panel open" : "Open right panel"}
@@ -738,8 +881,12 @@ export const ShowcaseApplication = (): JSX.Element => {
               >
                 <div class="flex flex-wrap gap-3">
                   <Button onClick={() => setDialogOpen(true)}>Open dialog</Button>
-                  <Button variant="outline" onClick={() => setDropdownDialogOpen(true)}>With dropdowns</Button>
-                  <Button variant="outline" onClick={() => setHeaderDropdownDialogOpen(true)}>With header dropdown</Button>
+                  <Button variant="outline" onClick={() => setDropdownDialogOpen(true)}>
+                    With dropdowns
+                  </Button>
+                  <Button variant="outline" onClick={() => setHeaderDropdownDialogOpen(true)}>
+                    With header dropdown
+                  </Button>
                 </div>
 
                 <Dialog open={dialogOpen()} onOpenChange={setDialogOpen}>
@@ -758,8 +905,12 @@ export const ShowcaseApplication = (): JSX.Element => {
                       <DialogDescription>Once deleted, all data will be permanently removed and billing will stop immediately.</DialogDescription>
                     </DialogBody>
                     <DialogFooter>
-                      <Button variant="ghost" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                      <Button variant="solid" onClick={() => setDialogOpen(false)}>Confirm</Button>
+                      <Button variant="ghost" onClick={() => setDialogOpen(false)}>
+                        Cancel
+                      </Button>
+                      <Button variant="solid" onClick={() => setDialogOpen(false)}>
+                        Confirm
+                      </Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -771,9 +922,15 @@ export const ShowcaseApplication = (): JSX.Element => {
                         <Dropdown options={[]} value={headerDropdownDialogView()} onChange={() => {}}>
                           <DropdownTrigger variant="ghost">{headerDropdownDialogView()}</DropdownTrigger>
                           <DropdownContent>
-                            <DropdownItem item={{ rawValue: "Details" }} selected={headerDropdownDialogView() === "Details"} onClick={() => setHeaderDropdownDialogView("Details")}>Details</DropdownItem>
-                            <DropdownItem item={{ rawValue: "Activity" }} selected={headerDropdownDialogView() === "Activity"} onClick={() => setHeaderDropdownDialogView("Activity")}>Activity</DropdownItem>
-                            <DropdownItem item={{ rawValue: "Settings" }} selected={headerDropdownDialogView() === "Settings"} onClick={() => setHeaderDropdownDialogView("Settings")}>Settings</DropdownItem>
+                            <DropdownItem item={{ rawValue: "Details" }} selected={headerDropdownDialogView() === "Details"} onClick={() => setHeaderDropdownDialogView("Details")}>
+                              Details
+                            </DropdownItem>
+                            <DropdownItem item={{ rawValue: "Activity" }} selected={headerDropdownDialogView() === "Activity"} onClick={() => setHeaderDropdownDialogView("Activity")}>
+                              Activity
+                            </DropdownItem>
+                            <DropdownItem item={{ rawValue: "Settings" }} selected={headerDropdownDialogView() === "Settings"} onClick={() => setHeaderDropdownDialogView("Settings")}>
+                              Settings
+                            </DropdownItem>
                           </DropdownContent>
                         </Dropdown>
                       }
@@ -784,7 +941,9 @@ export const ShowcaseApplication = (): JSX.Element => {
                       <DialogDescription>The header dropdown should open left-aligned below the trigger, not centered in the viewport.</DialogDescription>
                     </DialogBody>
                     <DialogFooter>
-                      <Button variant="ghost" onClick={() => setHeaderDropdownDialogOpen(false)}>Close</Button>
+                      <Button variant="ghost" onClick={() => setHeaderDropdownDialogOpen(false)}>
+                        Close
+                      </Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -810,7 +969,9 @@ export const ShowcaseApplication = (): JSX.Element => {
                       </div>
                     </DialogBody>
                     <DialogFooter>
-                      <Button variant="ghost" onClick={() => setDropdownDialogOpen(false)}>Close</Button>
+                      <Button variant="ghost" onClick={() => setDropdownDialogOpen(false)}>
+                        Close
+                      </Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -818,14 +979,21 @@ export const ShowcaseApplication = (): JSX.Element => {
 
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-toast" sectionTitle="Toasts" sectionDescription="Auto-dismiss after 5 seconds. Place Toaster once in your app root; call addToast from anywhere.">
                 <div class="flex flex-wrap gap-3">
-                  <Button variant="outline" onClick={() => addToast({ title: "Saved", description: "Workspace preferences were updated.", variant: "success" })}>Success</Button>
-                  <Button variant="outline" onClick={() => addToast({ title: "Payment failed", description: "The bank declined this charge.", variant: "danger" })}>Danger</Button>
-                  <Button variant="outline" onClick={() => addToast({ title: "Deprecation", description: "This endpoint will be removed next month.", variant: "warning" })}>Warning</Button>
-                  <Button variant="outline" onClick={() => addToast({ title: "Heads up", description: "Default styling for informational notices." })}>Default</Button>
+                  <Button variant="outline" onClick={() => addToast({ title: "Saved", description: "Workspace preferences were updated.", variant: "success" })}>
+                    Success
+                  </Button>
+                  <Button variant="outline" onClick={() => addToast({ title: "Payment failed", description: "The bank declined this charge.", variant: "danger" })}>
+                    Danger
+                  </Button>
+                  <Button variant="outline" onClick={() => addToast({ title: "Deprecation", description: "This endpoint will be removed next month.", variant: "warning" })}>
+                    Warning
+                  </Button>
+                  <Button variant="outline" onClick={() => addToast({ title: "Heads up", description: "Default styling for informational notices." })}>
+                    Default
+                  </Button>
                 </div>
               </ShowcaseSection>
             </ShowcaseCategory>
-
           </div>
         </PageLayout>
 
@@ -833,7 +1001,9 @@ export const ShowcaseApplication = (): JSX.Element => {
           <RightPanelLayout
             title="Right panel"
             subtitle="In flow with the main column on medium screens and up; fixed overlay on small viewports"
-            onOpenChange={(isPanelOpen) => { if (!isPanelOpen) setIsRightPanelOpen(false); }}
+            onOpenChange={(isPanelOpen) => {
+              if (!isPanelOpen) setIsRightPanelOpen(false);
+            }}
             closeAriaLabel="Close right panel"
           >
             <div class="space-y-3">
@@ -866,7 +1036,9 @@ const ShowcaseSection = (properties: ShowcaseSectionProperties): JSX.Element => 
         <header class="space-y-1.5 pb-5">
           <SectionHeading id={properties.sectionHeadingIdentifier}>{properties.sectionTitle}</SectionHeading>
           <Show when={properties.sectionDescription}>
-            <Text size="3" color="muted">{properties.sectionDescription}</Text>
+            <Text size="3" color="muted">
+              {properties.sectionDescription}
+            </Text>
           </Show>
           <Divider />
         </header>
