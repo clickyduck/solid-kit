@@ -1,7 +1,10 @@
 import { FORM_CONTROL_HINT_CLASS, FORM_CONTROL_LABEL_CLASS, mergeClasses } from "@/utilities";
 import { For, Show } from "solid-js";
 
-const TOGGLE_INPUT_CLASS = "mt-0.5 h-4 w-4 shrink-0 accent-blue-600 dark:accent-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-1";
+const TOGGLE_INPUT_BASE_CLASS =
+  "peer absolute inset-0 m-0 h-full w-full cursor-[inherit] appearance-none border border-solid border-gray-300 bg-white transition-colors checked:border-transparent checked:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:border-gray-600 dark:bg-gray-700 dark:checked:border-transparent dark:checked:bg-blue-500 dark:focus-visible:ring-offset-gray-900";
+
+const TOGGLE_INDICATOR_WRAPPER_CLASS = "relative mt-0.5 h-4 w-4 shrink-0";
 
 export type ToggleGroupOption = {
   label: string;
@@ -56,15 +59,25 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
           const isDisabled = () => properties.disabled || (option.disabled ?? false);
           return (
             <label class={mergeClasses("flex items-start gap-2.5", isDisabled() ? "cursor-not-allowed opacity-60" : "cursor-pointer")}>
-              <input
-                type={properties.selectionMode === "single" ? "radio" : "checkbox"}
-                name={properties.name}
-                value={option.value}
-                checked={isSelected(option.value)}
-                disabled={isDisabled()}
-                class={mergeClasses(TOGGLE_INPUT_CLASS, isDisabled() ? "cursor-not-allowed" : "cursor-pointer")}
-                onChange={(event) => handleChange(option.value, event.currentTarget.checked)}
-              />
+              <span class={TOGGLE_INDICATOR_WRAPPER_CLASS}>
+                <input
+                  type={properties.selectionMode === "single" ? "radio" : "checkbox"}
+                  name={properties.name}
+                  value={option.value}
+                  checked={isSelected(option.value)}
+                  disabled={isDisabled()}
+                  class={mergeClasses(TOGGLE_INPUT_BASE_CLASS, properties.selectionMode === "single" ? "rounded-full" : "rounded-sm")}
+                  onChange={(event) => handleChange(option.value, event.currentTarget.checked)}
+                />
+                <Show when={properties.selectionMode === "multiple"}>
+                  <svg class="pointer-events-none absolute top-1/2 left-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 peer-checked:opacity-100" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
+                    <path d="m382-354 339-339q12-12 28-12t28 12q12 12 12 28.5T777-636L410-268q-12 12-28 12t-28-12L182-440q-12-12-11.5-28.5T183-497q12-12 28.5-12t28.5 12l142 143Z" />
+                  </svg>
+                </Show>
+                <Show when={properties.selectionMode === "single"}>
+                  <span class="pointer-events-none absolute top-1/2 left-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white opacity-0 peer-checked:opacity-100" />
+                </Show>
+              </span>
               <span class="flex min-w-0 flex-1 flex-col gap-0.5">
                 <span class={FORM_CONTROL_LABEL_CLASS}>{option.label}</span>
                 <Show when={option.description != null}>
