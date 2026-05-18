@@ -1,8 +1,8 @@
 import { Button } from "@/components/button/Button";
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon } from "@/components/icons";
+import { Input } from "@/components/input/Input";
 import {
-  CHROME_MUTED_ICON_CLASSES,
   DROPDOWN_MENU_SURFACE_CLASSES,
   FORM_CONTROL_DROP_DOWN_CONTENT_MIN_WIDTH_CLASS_BY_SIZE,
   FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE,
@@ -10,9 +10,6 @@ import {
   FORM_CONTROL_DROP_DOWN_MENU_PANEL_CLASS_BY_SIZE,
   FORM_CONTROL_DROP_DOWN_MENU_SEARCH_WRAPPER_CLASS_BY_SIZE,
   FORM_CONTROL_ICON_SIZE,
-  FORM_CONTROL_LEADING_ICON_INPUT_CLASS,
-  FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS,
-  FORM_CONTROL_SIZE_CLASSES,
   FORM_CONTROL_TEXT_CLASS_BY_SIZE,
   mergeClasses
 } from "@/utilities";
@@ -34,6 +31,7 @@ type DropdownContextType = {
   setDropdownOpen: (open: boolean) => void;
   filteredOptions: () => string[];
   isSearchable: () => boolean;
+  isRemoteSearch: () => boolean;
   isMultiSelect: () => boolean;
   searchQuery: () => string;
   setSearchQuery: (value: string) => void;
@@ -66,6 +64,9 @@ type DropdownRootProperties = {
   onMultiSelectChange?: (values: string[]) => void;
   disabled?: boolean;
   searchable?: boolean;
+  searchMode?: "local" | "remote";
+  onSearchChange?: (query: string) => void;
+  searchDebounceMs?: number;
   multiSelect?: boolean;
   itemComponent?: (props: { item: { rawValue: string } }) => JSX.Element;
   children: JSX.Element;
@@ -84,29 +85,19 @@ type DropdownBuiltInSearchFieldProperties = {
 const DropdownBuiltInSearchField: Component<DropdownBuiltInSearchFieldProperties> = (properties) => {
   return (
     <div class={FORM_CONTROL_DROP_DOWN_MENU_SEARCH_WRAPPER_CLASS_BY_SIZE}>
-      <div class="relative">
-        <div class={mergeClasses("pointer-events-none absolute inset-y-0 left-0 flex items-center", FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS)}>
-          <Icon name="search" size={FORM_CONTROL_ICON_SIZE} class={mergeClasses("pointer-events-none shrink-0", CHROME_MUTED_ICON_CLASSES)} aria-hidden="true" />
-        </div>
-        <input
-          ref={properties.searchInputReference}
-          type="text"
-          value={properties.searchQuery()}
-          onInput={(event) => {
-            properties.setSearchQuery(event.currentTarget.value);
-          }}
-          placeholder="Search…"
-          class={mergeClasses(
-            "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-400 transition-colors duration-150 focus:border-blue-500 focus:ring-0 focus:outline-none dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400",
-            FORM_CONTROL_SIZE_CLASSES,
-            FORM_CONTROL_LEADING_ICON_INPUT_CLASS,
-            "pr-3"
-          )}
-          onClick={(event) => {
-            event.stopPropagation();
-          }}
-        />
-      </div>
+      <Input
+        ref={properties.searchInputReference}
+        type="text"
+        icon="search"
+        value={properties.searchQuery()}
+        onInput={(event) => {
+          properties.setSearchQuery(event.currentTarget.value);
+        }}
+        placeholder="Search…"
+        onClick={(event) => {
+          event.stopPropagation();
+        }}
+      />
     </div>
   );
 };
@@ -158,7 +149,25 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
  * Dropdown root. Provides options, value, onChange and open state via context.
  */
 const Dropdown = (properties: DropdownRootProperties) => {
-  const [local] = splitProps(properties, ["options", "value", "multiSelectValue", "onChange", "onMultiSelectChange", "disabled", "searchable", "multiSelect", "itemComponent", "children", "class", "menuClass", "menuFullWidth", "initialOpen"]);
+  const [local] = splitProps(properties, [
+    "options",
+    "value",
+    "multiSelectValue",
+    "onChange",
+    "onMultiSelectChange",
+    "disabled",
+    "searchable",
+    "searchMode",
+    "onSearchChange",
+    "searchDebounceMs",
+    "multiSelect",
+    "itemComponent",
+    "children",
+    "class",
+    "menuClass",
+    "menuFullWidth",
+    "initialOpen"
+  ]);
   const [selectedValue, setSelectedValue] = createSignal(properties.value);
   const [selectedValues, setSelectedValues] = createSignal<string[]>(properties.multiSelectValue ?? []);
   const [dropdownOpen, setDropdownOpen] = createSignal(local.initialOpen ?? false);
@@ -170,13 +179,47 @@ const Dropdown = (properties: DropdownRootProperties) => {
 
   const disabledState = createMemo(() => properties.disabled);
   const isSearchable = () => properties.searchable === true;
+  const isRemoteSearch = () => properties.searchMode === "remote";
   const isMultiSelect = () => properties.multiSelect === true;
   const filteredOptions = createMemo(() => {
+    if (!isSearchable() || isRemoteSearch()) {
+      return properties.options;
+    }
     const query = searchQuery().trim().toLowerCase();
-    if (!isSearchable() || query === "") {
+    if (query === "") {
       return properties.options;
     }
     return properties.options.filter((option) => option.toLowerCase().includes(query));
+  });
+
+  let searchDebounceTimer: number | undefined;
+  createEffect(
+    on(
+      searchQuery,
+      (query) => {
+        if (!isSearchable() || !properties.onSearchChange) {
+          return;
+        }
+        if (searchDebounceTimer !== undefined) {
+          window.clearTimeout(searchDebounceTimer);
+        }
+        const delay = properties.searchDebounceMs ?? 300;
+        if (delay <= 0) {
+          properties.onSearchChange(query);
+          return;
+        }
+        searchDebounceTimer = window.setTimeout(() => {
+          searchDebounceTimer = undefined;
+          properties.onSearchChange?.(query);
+        }, delay);
+      },
+      { defer: true }
+    )
+  );
+  onCleanup(() => {
+    if (searchDebounceTimer !== undefined) {
+      window.clearTimeout(searchDebounceTimer);
+    }
   });
 
   createEffect(
@@ -285,6 +328,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
     setDropdownOpen,
     filteredOptions,
     isSearchable,
+    isRemoteSearch,
     isMultiSelect,
     searchQuery,
     setSearchQuery,
@@ -571,7 +615,7 @@ const DropdownItem = (properties: DropdownItemProperties) => {
   };
 
   const isHiddenBySearch = (): boolean => {
-    if (!context.isSearchable()) {
+    if (!context.isSearchable() || context.isRemoteSearch()) {
       return false;
     }
     const query = context.searchQuery().trim().toLowerCase();

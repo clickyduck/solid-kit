@@ -277,20 +277,23 @@ Accessible select-style dropdown with optional search.
 
 **`Dropdown` (root) props:**
 
-| Prop                  | Type                                                     | Default | Description                                                                 |
-| --------------------- | -------------------------------------------------------- | ------- | --------------------------------------------------------------------------- |
-| `options`             | `string[]`                                               | —       | List of option values (required)                                            |
-| `value`               | `string`                                                 | —       | Controlled selected value (single-select)                                   |
-| `onChange`            | `(value: string \| undefined) => void`                   | —       | Called on selection change (single-select); menu closes after each pick     |
-| `multiSelect`         | `boolean`                                                | —       | Enables multi-select mode; menu stays open, selected items show a checkmark |
-| `multiSelectValue`    | `string[]`                                               | —       | Initial selected values (multi-select); treated as uncontrolled after mount |
-| `onMultiSelectChange` | `(values: string[]) => void`                             | —       | Called when the selection array changes (multi-select)                      |
-| `disabled`            | `boolean`                                                | —       | Disables the trigger                                                        |
-| `searchable`          | `boolean`                                                | —       | Adds a filter input inside the menu                                         |
-| `itemComponent`       | `(props: { item: { rawValue: string } }) => JSX.Element` | —       | Custom item renderer                                                        |
-| `menuClass`           | `string`                                                 | —       | Extra classes on the menu surface                                           |
-| `menuFullWidth`       | `boolean`                                                | `true`  | Menu width matches trigger width                                            |
-| `initialOpen`         | `boolean`                                                | —       | Open on first render                                                        |
+| Prop                  | Type                                                     | Default   | Description                                                                                                                                                                              |
+| --------------------- | -------------------------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `options`             | `string[]`                                               | —         | List of option values (required)                                                                                                                                                         |
+| `value`               | `string`                                                 | —         | Controlled selected value (single-select)                                                                                                                                                |
+| `onChange`            | `(value: string \| undefined) => void`                   | —         | Called on selection change (single-select); menu closes after each pick                                                                                                                  |
+| `multiSelect`         | `boolean`                                                | —         | Enables multi-select mode; menu stays open, selected items show a checkmark                                                                                                              |
+| `multiSelectValue`    | `string[]`                                               | —         | Initial selected values (multi-select); treated as uncontrolled after mount                                                                                                              |
+| `onMultiSelectChange` | `(values: string[]) => void`                             | —         | Called when the selection array changes (multi-select)                                                                                                                                   |
+| `disabled`            | `boolean`                                                | —         | Disables the trigger                                                                                                                                                                     |
+| `searchable`          | `boolean`                                                | —         | Adds a filter input inside the menu                                                                                                                                                      |
+| `searchMode`          | `"local" \| "remote"`                                    | `"local"` | `local`: client-side substring filter over `options`. `remote`: parent owns filtering — `options` is passed through unchanged and the parent updates it in response to `onSearchChange`. |
+| `onSearchChange`      | `(query: string) => void`                                | —         | Called when the search input changes, debounced by `searchDebounceMs`. Fires in both modes when set; primary signal for remote search.                                                   |
+| `searchDebounceMs`    | `number`                                                 | `300`     | Debounce delay (ms) applied to `onSearchChange`. Set to `0` to fire synchronously.                                                                                                       |
+| `itemComponent`       | `(props: { item: { rawValue: string } }) => JSX.Element` | —         | Custom item renderer                                                                                                                                                                     |
+| `menuClass`           | `string`                                                 | —         | Extra classes on the menu surface                                                                                                                                                        |
+| `menuFullWidth`       | `boolean`                                                | `true`    | Menu width matches trigger width                                                                                                                                                         |
+| `initialOpen`         | `boolean`                                                | —         | Open on first render                                                                                                                                                                     |
 
 All menus render via a portal above any modal dialog backdrop.
 
@@ -328,6 +331,24 @@ const [tags, setTags] = createSignal<string[]>([]);
   <DropdownTrigger>
     <DropdownValue>{tags().length > 0 ? tags().join(", ") : "Select tags"}</DropdownValue>
   </DropdownTrigger>
+</Dropdown>;
+
+// Remote search — parent fetches matching options as the user types
+const [remoteOptions, setRemoteOptions] = createSignal<string[]>([]);
+const [picked, setPicked] = createSignal<string>();
+<Dropdown
+  options={remoteOptions()}
+  value={picked()}
+  onChange={setPicked}
+  searchable
+  searchMode="remote"
+  searchDebounceMs={300}
+  onSearchChange={async (query) => {
+    const results = await fetch(`/api/search?q=${encodeURIComponent(query)}`).then((r) => r.json());
+    setRemoteOptions(results);
+  }}
+>
+  <DropdownTrigger>{picked() ?? "Search…"}</DropdownTrigger>
 </Dropdown>;
 ```
 
