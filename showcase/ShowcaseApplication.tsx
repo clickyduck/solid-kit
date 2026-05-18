@@ -702,6 +702,36 @@ export const ShowcaseApplication = (): JSX.Element => {
                     ]}
                   />
                 </Field>
+                <div class="grid gap-6 lg:grid-cols-2">
+                  <Field label="Traditional radios — single">
+                    <ToggleGroup
+                      name="showcase-toggle-traditional-single"
+                      selectionMode="single"
+                      traditional
+                      value={shippingMethod()}
+                      onChange={setShippingMethod}
+                      options={[
+                        { label: "Standard (3–5 days)", value: "standard", description: "Best value for non-urgent orders." },
+                        { label: "Express (1–2 days)", value: "express", description: "Faster delivery with tracking updates." },
+                        { label: "Overnight", value: "overnight" }
+                      ]}
+                    />
+                  </Field>
+                  <Field label="Traditional checkboxes — multiple">
+                    <ToggleGroup
+                      name="showcase-toggle-traditional-multiple"
+                      selectionMode="multiple"
+                      traditional
+                      value={contactChannels()}
+                      onChange={setContactChannels}
+                      options={[
+                        { label: "Email", value: "email", description: "Daily summary at 8am." },
+                        { label: "SMS", value: "sms" },
+                        { label: "Push", value: "push", disabled: true }
+                      ]}
+                    />
+                  </Field>
+                </div>
               </ShowcaseSection>
             </ShowcaseCategory>
 

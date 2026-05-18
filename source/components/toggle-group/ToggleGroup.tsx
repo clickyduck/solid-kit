@@ -31,6 +31,10 @@ type ToggleGroupBase = {
    * Unused when `selectionMode` is `"multiple"` (empty selection is always valid).
    */
   allowNoSelection?: boolean;
+  /**
+   * If true, renders native checkbox/radio inputs next to plain labels instead of the card-style face.
+   */
+  traditional?: boolean;
   class?: string;
 };
 
@@ -104,8 +108,17 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
         {(option) => {
           const isDisabled = () => properties.disabled || (option.disabled ?? false);
           const selected = () => isSelected(option.value);
+          const traditional = () => properties.traditional ?? false;
+          const traditionalInputClass = () => mergeClasses("mt-0.5 h-4 w-4 shrink-0 accent-blue-600 dark:accent-blue-500", isDisabled() ? "cursor-not-allowed" : "cursor-pointer");
+          const inputClass = () => (traditional() ? traditionalInputClass() : mergeClasses(CHOICE_INPUT_SR_ONLY_CLASS, isDisabled() ? "cursor-not-allowed" : "cursor-pointer"));
           return (
-            <label class={mergeClasses(CHOICE_CONTROL_LABEL_CLASS, CHOICE_CONTROL_LABEL_HAS_INTERACTION_CLASSES, CHOICE_CONTROL_FACE_DISABLED_CLASS, isDisabled() ? "cursor-not-allowed" : "cursor-pointer transition-opacity duration-150 active:opacity-75")}>
+            <label
+              class={mergeClasses(
+                traditional()
+                  ? mergeClasses("flex items-start gap-2.5", isDisabled() ? "cursor-not-allowed opacity-60" : "cursor-pointer")
+                  : mergeClasses(CHOICE_CONTROL_LABEL_CLASS, CHOICE_CONTROL_LABEL_HAS_INTERACTION_CLASSES, CHOICE_CONTROL_FACE_DISABLED_CLASS, isDisabled() ? "cursor-not-allowed" : "cursor-pointer transition-opacity duration-150 active:opacity-75")
+              )}
+            >
               <Show
                 when={properties.selectionMode === "multiple"}
                 fallback={
@@ -115,7 +128,7 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
                     value={option.value}
                     checked={selected()}
                     disabled={isDisabled()}
-                    class={mergeClasses(CHOICE_INPUT_SR_ONLY_CLASS, isDisabled() ? "cursor-not-allowed" : "cursor-pointer")}
+                    class={inputClass()}
                     onMouseDown={(event) => handleSingleSelectedMouseDown(event, option.value)}
                     onChange={() => handleSingleChange(option.value)}
                   />
@@ -127,19 +140,31 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
                   value={option.value}
                   checked={selected()}
                   disabled={isDisabled()}
-                  class={mergeClasses(CHOICE_INPUT_SR_ONLY_CLASS, isDisabled() ? "cursor-not-allowed" : "cursor-pointer")}
+                  class={inputClass()}
                   onChange={(event) => handleMultipleInput(option.value, event.currentTarget.checked)}
                 />
               </Show>
-              <span class={mergeClasses(CHOICE_CONTROL_FACE_CLASS, FORM_CONTROL_CHOICE_FACE_SIZE_CLASSES_BY_SIZE)}>
+              <Show
+                when={traditional()}
+                fallback={
+                  <span class={mergeClasses(CHOICE_CONTROL_FACE_CLASS, FORM_CONTROL_CHOICE_FACE_SIZE_CLASSES_BY_SIZE)}>
+                    <span class="flex min-w-0 flex-1 flex-col gap-0.5">
+                      <span class={CHOICE_CONTROL_TITLE_CLASS}>{option.label}</span>
+                      <Show when={option.description != null}>
+                        <span class={CHOICE_CONTROL_DESCRIPTION_CLASS}>{option.description}</span>
+                      </Show>
+                    </span>
+                    <Icon name="check_circle" size={FORM_CONTROL_ICON_SIZE} class={CHOICE_CONTROL_CHECK_CLASS} aria-hidden="true" />
+                  </span>
+                }
+              >
                 <span class="flex min-w-0 flex-1 flex-col gap-0.5">
                   <span class={CHOICE_CONTROL_TITLE_CLASS}>{option.label}</span>
                   <Show when={option.description != null}>
                     <span class={CHOICE_CONTROL_DESCRIPTION_CLASS}>{option.description}</span>
                   </Show>
                 </span>
-                <Icon name="check_circle" size={FORM_CONTROL_ICON_SIZE} class={CHOICE_CONTROL_CHECK_CLASS} aria-hidden="true" />
-              </span>
+              </Show>
             </label>
           );
         }}

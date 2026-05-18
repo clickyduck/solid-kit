@@ -1045,7 +1045,7 @@ addToast({ title: "Saved", description: "Your changes were saved.", variant: "su
 
 ### ToggleGroup
 
-Radio or checkbox toggle card group. Selected options show a blue border, background fill, primary-colored label, and a check icon. Unselected options respond to hover with a subtle background change.
+Radio or checkbox toggle card group. Selected options show a blue border, background fill, primary-colored label, and a check icon. Unselected options respond to hover with a subtle background change. Pass `traditional` to render native checkbox/radio inputs with plain labels instead of the card style.
 
 **Exports:** `ToggleGroup`, `ToggleGroupOption`, `ToggleGroupProperties` (type)
 
@@ -1071,6 +1071,7 @@ Single selection:
 | `onChange`         | `(value: string \| undefined) => void` | Called on selection                    |
 | `disabled`         | `boolean`                              | Disables all options                   |
 | `allowNoSelection` | `boolean`                              | Clicking the selected option clears it |
+| `traditional`      | `boolean`                              | Render native radio inputs with plain labels instead of the card face |
 
 Multiple selection:
 
@@ -1082,6 +1083,7 @@ Multiple selection:
 | `value`         | `string[]`                  | Selected values                |
 | `onChange`      | `(value: string[]) => void` | Called on selection change     |
 | `disabled`      | `boolean`                   | Disables all options           |
+| `traditional`   | `boolean`                   | Render native checkbox inputs with plain labels instead of the card face |
 
 ```tsx
 import { ToggleGroup } from "@clickyduck/solid-kit";
