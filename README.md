@@ -1062,27 +1062,27 @@ Radio or checkbox toggle card group. Selected options show a blue border, backgr
 
 Single selection:
 
-| Prop               | Type                                   | Description                            |
-| ------------------ | -------------------------------------- | -------------------------------------- |
-| `selectionMode`    | `"single"`                             | (required)                             |
-| `name`             | `string`                               | Radio group name (required)            |
-| `options`          | `ToggleGroupOption[]`                  | (required)                             |
-| `value`            | `string`                               | Selected value                         |
-| `onChange`         | `(value: string \| undefined) => void` | Called on selection                    |
-| `disabled`         | `boolean`                              | Disables all options                   |
-| `allowNoSelection` | `boolean`                              | Clicking the selected option clears it |
+| Prop               | Type                                   | Description                                                           |
+| ------------------ | -------------------------------------- | --------------------------------------------------------------------- |
+| `selectionMode`    | `"single"`                             | (required)                                                            |
+| `name`             | `string`                               | Radio group name (required)                                           |
+| `options`          | `ToggleGroupOption[]`                  | (required)                                                            |
+| `value`            | `string`                               | Selected value                                                        |
+| `onChange`         | `(value: string \| undefined) => void` | Called on selection                                                   |
+| `disabled`         | `boolean`                              | Disables all options                                                  |
+| `allowNoSelection` | `boolean`                              | Clicking the selected option clears it                                |
 | `traditional`      | `boolean`                              | Render native radio inputs with plain labels instead of the card face |
 
 Multiple selection:
 
-| Prop            | Type                        | Description                    |
-| --------------- | --------------------------- | ------------------------------ |
-| `selectionMode` | `"multiple"`                | (required)                     |
-| `name`          | `string`                    | Checkbox group name (required) |
-| `options`       | `ToggleGroupOption[]`       | (required)                     |
-| `value`         | `string[]`                  | Selected values                |
-| `onChange`      | `(value: string[]) => void` | Called on selection change     |
-| `disabled`      | `boolean`                   | Disables all options           |
+| Prop            | Type                        | Description                                                              |
+| --------------- | --------------------------- | ------------------------------------------------------------------------ |
+| `selectionMode` | `"multiple"`                | (required)                                                               |
+| `name`          | `string`                    | Checkbox group name (required)                                           |
+| `options`       | `ToggleGroupOption[]`       | (required)                                                               |
+| `value`         | `string[]`                  | Selected values                                                          |
+| `onChange`      | `(value: string[]) => void` | Called on selection change                                               |
+| `disabled`      | `boolean`                   | Disables all options                                                     |
 | `traditional`   | `boolean`                   | Render native checkbox inputs with plain labels instead of the card face |
 
 ```tsx

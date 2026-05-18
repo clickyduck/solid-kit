@@ -134,15 +134,7 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
                   />
                 }
               >
-                <input
-                  type="checkbox"
-                  name={properties.name}
-                  value={option.value}
-                  checked={selected()}
-                  disabled={isDisabled()}
-                  class={inputClass()}
-                  onChange={(event) => handleMultipleInput(option.value, event.currentTarget.checked)}
-                />
+                <input type="checkbox" name={properties.name} value={option.value} checked={selected()} disabled={isDisabled()} class={inputClass()} onChange={(event) => handleMultipleInput(option.value, event.currentTarget.checked)} />
               </Show>
               <Show
                 when={traditional()}
