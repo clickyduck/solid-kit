@@ -640,7 +640,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                 </BackgroundCard>
               </ShowcaseSection>
 
-              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-toggle-group" sectionTitle="Toggle group" sectionDescription="Radio (single) or checkbox (multiple) card group. Selected options show a blue border and check icon.">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-toggle-group" sectionTitle="Toggle group" sectionDescription="Native radio (single) or checkbox (multiple) inputs with labels and optional descriptions.">
                 <div class="space-y-4">
                   <ToggleGroup
                     name="showcase-toggle-digest"
@@ -659,11 +659,10 @@ export const ShowcaseApplication = (): JSX.Element => {
                   />
                 </div>
                 <div class="grid gap-6 lg:grid-cols-2">
-                  <Field label="Shipping method — single, allowNoSelection" hint="Click the active option again to clear it.">
+                  <Field label="Shipping method — single">
                     <ToggleGroup
                       name="showcase-toggle-shipping"
                       selectionMode="single"
-                      allowNoSelection
                       value={shippingMethod()}
                       onChange={setShippingMethod}
                       options={[
@@ -677,7 +676,6 @@ export const ShowcaseApplication = (): JSX.Element => {
                     <ToggleGroup
                       name="showcase-toggle-shipping-disabled"
                       selectionMode="single"
-                      allowNoSelection={false}
                       value="express"
                       disabled
                       onChange={() => {}}
@@ -702,36 +700,6 @@ export const ShowcaseApplication = (): JSX.Element => {
                     ]}
                   />
                 </Field>
-                <div class="grid gap-6 lg:grid-cols-2">
-                  <Field label="Traditional radios — single">
-                    <ToggleGroup
-                      name="showcase-toggle-traditional-single"
-                      selectionMode="single"
-                      traditional
-                      value={shippingMethod()}
-                      onChange={setShippingMethod}
-                      options={[
-                        { label: "Standard (3–5 days)", value: "standard", description: "Best value for non-urgent orders." },
-                        { label: "Express (1–2 days)", value: "express", description: "Faster delivery with tracking updates." },
-                        { label: "Overnight", value: "overnight" }
-                      ]}
-                    />
-                  </Field>
-                  <Field label="Traditional checkboxes — multiple">
-                    <ToggleGroup
-                      name="showcase-toggle-traditional-multiple"
-                      selectionMode="multiple"
-                      traditional
-                      value={contactChannels()}
-                      onChange={setContactChannels}
-                      options={[
-                        { label: "Email", value: "email", description: "Daily summary at 8am." },
-                        { label: "SMS", value: "sms" },
-                        { label: "Push", value: "push", disabled: true }
-                      ]}
-                    />
-                  </Field>
-                </div>
               </ShowcaseSection>
             </ShowcaseCategory>
 

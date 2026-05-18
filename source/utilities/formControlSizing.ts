@@ -16,8 +16,6 @@ export const FORM_CONTROL_ROW_MIN_HEIGHT_CLASS_BY_SIZE = "min-h-8";
 
 export const FORM_CONTROL_PADDED_ROW_CLASSES_BY_SIZE = "px-2.5 py-1.5";
 
-export const FORM_CONTROL_CHOICE_FACE_SIZE_CLASSES_BY_SIZE = "min-h-8 gap-2.5 px-2.5 py-1.5";
-
 export const FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES = "h-8 min-h-8 w-8 min-w-8 p-0 text-sm";
 
 export const FORM_CONTROL_TEXTAREA_LINE_HEIGHT_REM = 1.25;
