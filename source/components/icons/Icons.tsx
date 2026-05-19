@@ -35,13 +35,13 @@ interface IconProperties {
 const iconColorClass: Record<IconColor, string> = {
   default: "",
   inherit: "text-inherit",
-  muted: "text-muted-foreground",
-  primary: "text-primary",
-  secondary: "text-secondary",
-  success: "text-success",
-  warning: "text-warning",
-  danger: "text-destructive",
-  info: "text-info"
+  muted: "text-gray-500 dark:text-gray-400",
+  primary: "text-blue-600 dark:text-blue-400",
+  secondary: "text-gray-700 dark:text-gray-300",
+  success: "text-emerald-600 dark:text-emerald-400",
+  warning: "text-amber-600 dark:text-amber-400",
+  danger: "text-red-600 dark:text-red-400",
+  info: "text-sky-600 dark:text-sky-400"
 };
 
 /** Renders a Material Symbol (rounded, filled) by ligature name, e.g. `<Icon name="account_balance_wallet" size={20} />` */
