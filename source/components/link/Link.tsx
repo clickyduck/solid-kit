@@ -1,10 +1,4 @@
 import { RenderIcon } from "@/components/icons";
-import type { IconPosition } from "@/utilities/componentClassStrings";
-import { mergeClasses } from "@/utilities/mergeClasses";
-import type { ComponentProps, JSX, ValidComponent } from "solid-js";
-import { Show, mergeProps, splitProps } from "solid-js";
-import { Dynamic } from "solid-js/web";
-
 import {
   ALIGN_CLASSES,
   COLOR_CLASSES,
@@ -21,30 +15,35 @@ import {
   type TextWeight,
   WEIGHT_CLASSES,
   truncateTextChildren
-} from "./_typography";
+} from "@/components/typography/_typography";
+import type { IconPosition } from "@/utilities/componentClassStrings";
+import { mergeClasses } from "@/utilities/mergeClasses";
+import { A } from "@solidjs/router";
+import type { ComponentProps, JSX } from "solid-js";
+import { Show, mergeProps, splitProps } from "solid-js";
+import { Dynamic } from "solid-js/web";
 
-export type { TextColor, TextWeight, TextSize, TextAlign, TextTransform, TextDisplay };
+/** Anchor implementation: `"A"` is `@solidjs/router`'s client-side `<A>`; `"a"` is a plain anchor for non-router contexts. */
+export type LinkAnchorTag = "A" | "a";
 
-export type TextElement = "div" | "p" | "span" | "label" | "h1" | "h2" | "h3" | "h4";
-
-export type TextProperties = Omit<ComponentProps<"div">, "children"> & {
+export type LinkProperties = Omit<ComponentProps<"a">, "children"> & {
   children: JSX.Element;
-  /** Render element. Use `label` for form labels, `h1`–`h4` for headings, `p`/`span` for prose. */
-  as?: TextElement;
+  /** `"A"` (default) uses `@solidjs/router`'s `<A>`; `"a"` is a plain anchor for use outside a router. */
+  anchorTag?: LinkAnchorTag;
   size?: TextSize;
+  /** Defaults to `primary` so links read as links. */
   color?: TextColor;
   weight?: TextWeight;
   align?: TextAlign;
   transform?: TextTransform;
-  /** Layout mode. `flex` (default) lays out an icon row; `block`/`inline` for plain runs of text. */
+  /** Layout mode. `inline` (default) flows the link within surrounding text; `flex`/`block` for standalone rows. */
   display?: TextDisplay;
   italic?: boolean;
-  underline?: boolean;
   /** Single-line CSS ellipsis truncation. */
   truncate?: boolean;
   /** Clamp to N lines with an ellipsis. Overrides `truncate`. */
   lineClamp?: number;
-  /** 0..100 (percent). Applied to the whole text row (including icon). */
+  /** 0..100 (percent). Applied to the whole link row (including icon). */
   opacity?: number;
   icon?: string | JSX.Element;
   iconPosition?: IconPosition;
@@ -52,11 +51,15 @@ export type TextProperties = Omit<ComponentProps<"div">, "children"> & {
   maxLength?: number;
 };
 
-export const Text = (properties: TextProperties): JSX.Element => {
-  const [local, rest] = splitProps(properties, ["children", "class", "as", "size", "color", "weight", "align", "transform", "display", "italic", "underline", "truncate", "lineClamp", "opacity", "icon", "iconPosition", "maxLength", "style"]);
+/**
+ * Typographic link. Mirrors `Text`'s typographic props but renders an anchor. No underline by
+ * default — color (and `cursor-pointer`) is the affordance. Use `anchorTag="a"` outside a router.
+ */
+export const Link = (properties: LinkProperties): JSX.Element => {
+  const [local, rest] = splitProps(properties, ["children", "class", "anchorTag", "size", "color", "weight", "align", "transform", "display", "italic", "truncate", "lineClamp", "opacity", "icon", "iconPosition", "maxLength", "style"]);
 
   const config = (): SizeConfig => SIZE_CONFIG[local.size ?? "body"];
-  const display = (): TextDisplay => local.display ?? "flex";
+  const display = (): TextDisplay => local.display ?? "inline";
   const iconPosition = (): IconPosition => local.iconPosition ?? "start";
 
   const text = () => truncateTextChildren(local.children, local.maxLength);
@@ -84,17 +87,16 @@ export const Text = (properties: TextProperties): JSX.Element => {
 
   const containerClass = () =>
     mergeClasses(
-      // Reset UA margins so `as="p"`/`h1`–`h4` don't introduce default spacing.
-      "m-0",
+      "m-0 no-underline cursor-pointer transition-opacity duration-100 ease-out hover:opacity-80 active:opacity-75",
       DISPLAY_CLASSES[display()],
       config().textClass,
       config().gapClass,
-      COLOR_CLASSES[local.color ?? "default"],
+      // Links default to `primary` (not `default`) so they read as links.
+      COLOR_CLASSES[local.color ?? "primary"],
       WEIGHT_CLASSES[local.weight ?? config().defaultWeight],
       local.align ? ALIGN_CLASSES[local.align] : "",
       TRANSFORM_CLASSES[local.transform ?? "none"],
       local.italic ? "italic" : "",
-      local.underline ? "underline" : "",
       truncationClass(),
       local.class
     );
@@ -108,8 +110,11 @@ export const Text = (properties: TextProperties): JSX.Element => {
     }
   });
 
+  // `@solidjs/router`'s <A> requires an `href`; the plain anchor accepts the same attributes.
+  const component = () => (local.anchorTag === "a" ? "a" : A);
+
   return (
-    <Dynamic component={(local.as ?? "div") as ValidComponent} {...restProps}>
+    <Dynamic component={component()} {...restProps}>
       <Show when={local.icon != null && iconPosition() === "start"}>
         <RenderIcon icon={local.icon!} size={config().iconSize} class={TYPOGRAPHY_ICON_CLASSES} />
       </Show>

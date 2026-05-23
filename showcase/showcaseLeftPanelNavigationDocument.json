@@ -41,6 +41,11 @@
           "href": "#showcase-heading-divider",
           "label": "Divider and section heading",
           "icon": "horizontal_rule"
+        },
+        {
+          "href": "#showcase-heading-link",
+          "label": "Link",
+          "icon": "link"
         }
       ]
     },
@@ -95,6 +100,11 @@
           "href": "#showcase-heading-toggle-group",
           "label": "Toggle group",
           "icon": "toggle_on"
+        },
+        {
+          "href": "#showcase-heading-card-toggle-group",
+          "label": "Card toggle group",
+          "icon": "view_agenda"
         }
       ]
     },

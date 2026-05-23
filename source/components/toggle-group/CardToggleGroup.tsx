@@ -1,0 +1,100 @@
+import { Icon } from "@/components/icons";
+import { Text } from "@/components/typography";
+import { FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
+import { For, Show } from "solid-js";
+
+const CARD_BASE_CLASS =
+  "group block rounded-xl border border-gray-200 bg-white p-3 pr-9 text-left text-gray-900 transition-colors duration-100 ease-out hover:border-gray-300 peer-checked:border-blue-500 peer-checked:bg-blue-500/5 peer-checked:hover:border-blue-600 peer-checked:hover:bg-blue-500/10 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500/70 peer-focus-visible:outline-none dark:border-gray-800 dark:bg-gray-800/40 dark:text-gray-100 dark:hover:border-gray-700 dark:peer-checked:border-blue-400 dark:peer-checked:bg-blue-500/10 dark:peer-checked:hover:border-blue-300 dark:peer-checked:hover:bg-blue-500/20";
+
+const CARD_DISABLED_CLASS = "cursor-not-allowed opacity-60 hover:border-gray-200 peer-checked:hover:border-blue-500 peer-checked:hover:bg-blue-500/5 dark:hover:border-gray-800 dark:peer-checked:hover:border-blue-400 dark:peer-checked:hover:bg-blue-500/10";
+
+const HIDDEN_INPUT_CLASS = "peer sr-only";
+
+const CHECK_ICON_CLASS = "pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-blue-500 dark:text-blue-400";
+
+export type CardToggleGroupOption = {
+  label: string;
+  value: string;
+  description?: string;
+  disabled?: boolean;
+};
+
+type CardToggleGroupBase = {
+  name: string;
+  options: CardToggleGroupOption[];
+  disabled?: boolean;
+  class?: string;
+};
+
+export type CardToggleGroupProperties = CardToggleGroupBase &
+  (
+    | {
+        selectionMode: "single";
+        value?: string;
+        onChange?: (value: string) => void;
+      }
+    | {
+        selectionMode: "multiple";
+        value?: string[];
+        onChange?: (value: string[]) => void;
+      }
+  );
+
+const CardToggleGroup = (properties: CardToggleGroupProperties) => {
+  const isSelected = (optionValue: string): boolean => {
+    if (properties.selectionMode === "multiple") {
+      return (properties.value ?? []).includes(optionValue);
+    }
+    return properties.value === optionValue;
+  };
+
+  const handleChange = (optionValue: string, checked: boolean) => {
+    if (properties.selectionMode === "multiple") {
+      const current = properties.value ?? [];
+      const next = checked ? (current.includes(optionValue) ? current : [...current, optionValue]) : current.filter((value) => value !== optionValue);
+      properties.onChange?.(next);
+      return;
+    }
+    properties.onChange?.(optionValue);
+  };
+
+  return (
+    <div class={mergeClasses("flex flex-col gap-2", properties.class)}>
+      <For each={properties.options}>
+        {(option) => {
+          const isDisabled = (): boolean => properties.disabled === true || option.disabled === true;
+          return (
+            <label class={mergeClasses("relative block", isDisabled() ? "cursor-not-allowed" : "cursor-pointer")}>
+              <input
+                type={properties.selectionMode === "single" ? "radio" : "checkbox"}
+                name={properties.name}
+                value={option.value}
+                checked={isSelected(option.value)}
+                disabled={isDisabled()}
+                class={HIDDEN_INPUT_CLASS}
+                onChange={(event) => handleChange(option.value, event.currentTarget.checked)}
+              />
+              <span class={mergeClasses(CARD_BASE_CLASS, isDisabled() ? CARD_DISABLED_CLASS : "")}>
+                <span class="flex min-w-0 flex-col gap-0.5">
+                  <Text as="span" size="small" weight="normal" color="secondary" display="block">
+                    {option.label}
+                  </Text>
+                  <Show when={option.description != null}>
+                    <Text as="span" size="caption" color="muted" display="block">
+                      {option.description}
+                    </Text>
+                  </Show>
+                </span>
+              </span>
+              <Show when={isSelected(option.value)}>
+                <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class={CHECK_ICON_CLASS} aria-hidden="true" />
+              </Show>
+            </label>
+          );
+        }}
+      </For>
+    </div>
+  );
+};
+
+export { CardToggleGroup };

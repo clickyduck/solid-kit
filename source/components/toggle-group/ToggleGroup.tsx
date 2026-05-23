@@ -1,8 +1,9 @@
-import { FORM_CONTROL_HINT_CLASS, FORM_CONTROL_LABEL_CLASS, mergeClasses } from "@/utilities";
+import { Text } from "@/components/typography";
+import { mergeClasses } from "@/utilities";
 import { For, Show } from "solid-js";
 
 const TOGGLE_INPUT_BASE_CLASS =
-  "peer absolute inset-0 m-0 h-full w-full cursor-[inherit] appearance-none border border-solid border-gray-300 bg-white transition-colors checked:border-transparent checked:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:border-gray-600 dark:bg-gray-700 dark:checked:border-transparent dark:checked:bg-blue-500 dark:focus-visible:ring-offset-gray-900";
+  "peer absolute inset-0 m-0 h-full w-full cursor-[inherit] appearance-none border border-solid border-gray-300 bg-white transition-colors duration-100 ease-out checked:border-transparent checked:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:border-gray-600 dark:bg-gray-700 dark:checked:border-transparent dark:checked:bg-blue-500 dark:focus-visible:ring-offset-gray-900";
 
 const TOGGLE_INDICATOR_WRAPPER_CLASS = "relative mt-0.5 h-4 w-4 shrink-0";
 
@@ -79,9 +80,13 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
                 </Show>
               </span>
               <span class="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span class={FORM_CONTROL_LABEL_CLASS}>{option.label}</span>
+                <Text as="span" size="small" weight="normal" color="secondary" display="block">
+                  {option.label}
+                </Text>
                 <Show when={option.description != null}>
-                  <span class={mergeClasses(FORM_CONTROL_HINT_CLASS, "mt-0")}>{option.description}</span>
+                  <Text as="span" size="caption" color="muted" display="block">
+                    {option.description}
+                  </Text>
                 </Show>
               </span>
             </label>

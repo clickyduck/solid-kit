@@ -1,5 +1,7 @@
 import { BackgroundCard } from "@/components/card/BackgroundCard";
-import { Icon } from "@/components/icons";
+import { RenderIcon } from "@/components/icons";
+import { Link } from "@/components/link";
+import { Text } from "@/components/typography";
 import { mergeClasses } from "@/utilities";
 import type { JSX } from "solid-js";
 import { Show } from "solid-js";
@@ -11,31 +13,31 @@ const ACCENT_CLASSES: Record<AccentColor, { card: string; iconBox: string; iconC
     card: "border-l-emerald-500",
     iconBox: "bg-emerald-500/15",
     iconColor: "text-emerald-600",
-    link: "text-emerald-600 hover:text-emerald-700 hover:underline"
+    link: "text-emerald-600 transition-colors duration-100 ease-out hover:text-emerald-700"
   },
   blue: {
     card: "border-l-blue-500",
     iconBox: "bg-blue-500/15",
     iconColor: "text-blue-600",
-    link: "text-blue-600 hover:text-blue-700 hover:underline"
+    link: "text-blue-600 transition-colors duration-100 ease-out hover:text-blue-700"
   },
   amber: {
     card: "border-l-amber-500",
     iconBox: "bg-amber-500/15",
     iconColor: "text-amber-700",
-    link: "text-amber-700 hover:text-amber-800 hover:underline"
+    link: "text-amber-700 transition-colors duration-100 ease-out hover:text-amber-800"
   },
   violet: {
     card: "border-l-violet-500",
     iconBox: "bg-violet-500/15",
     iconColor: "text-violet-600",
-    link: "text-violet-600 hover:text-violet-700 hover:underline"
+    link: "text-violet-600 transition-colors duration-100 ease-out hover:text-violet-700"
   },
   rose: {
     card: "border-l-rose-500",
     iconBox: "bg-rose-500/15",
     iconColor: "text-rose-600",
-    link: "text-rose-600 hover:text-rose-700 hover:underline"
+    link: "text-rose-600 transition-colors duration-100 ease-out hover:text-rose-700"
   }
 };
 
@@ -47,6 +49,8 @@ type MetricCardProperties = {
   value: string;
   linkHref?: string;
   linkLabel?: string;
+  /** Tag used for the optional link. "A" (default) is @solidjs/router's <A>; "a" is a plain anchor for non-router contexts. */
+  anchorTag?: "A" | "a";
   class?: string;
 };
 
@@ -60,15 +64,11 @@ export const MetricCard = (properties: MetricCardProperties) => {
     <BackgroundCard class={mergeClasses("overflow-hidden", properties.class)}>
       <div class={mergeClasses("-ml-6 border-l-4 pl-6", accent().card)}>
         <div class="flex flex-row items-center justify-between">
-          <h3 class="text-sm font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-400">{properties.title}</h3>
+          <Text as="h3" size="small" weight="semibold" transform="uppercase" color="muted">
+            {properties.title}
+          </Text>
           <span class={mergeClasses("flex h-9 w-9 items-center justify-center rounded-lg", accent().iconBox, accent().iconColor)}>
-            {typeof properties.icon === "string" ? (
-              <Icon name={properties.icon} size={20} aria-hidden="true" />
-            ) : (
-              <span class="inline-flex items-center justify-center" style={{ width: "20px", height: "20px" }} aria-hidden="true">
-                {properties.icon}
-              </span>
-            )}
+            <RenderIcon icon={properties.icon} size={20} />
           </span>
         </div>
       </div>
@@ -76,18 +76,19 @@ export const MetricCard = (properties: MetricCardProperties) => {
         <Show
           when={!isLoading()}
           fallback={
-            <div class="text-2xl font-semibold tracking-tight text-gray-400 dark:text-gray-600" aria-busy="true">
+            <Text as="div" size="title" display="block" color="inherit" class="text-gray-400 dark:text-gray-600" aria-busy="true">
               —
-            </div>
+            </Text>
           }
         >
-          <div class="text-2xl font-semibold tracking-tight text-gray-900 dark:text-gray-100">{properties.value}</div>
+          <Text as="div" size="title" display="block" color="default">
+            {properties.value}
+          </Text>
         </Show>
         <Show when={properties.linkHref !== undefined && properties.linkLabel !== undefined}>
-          <a href={properties.linkHref!} class={mergeClasses("inline-flex items-center gap-1.5 text-sm font-medium", accent().link)}>
+          <Link anchorTag={properties.anchorTag ?? "A"} href={properties.linkHref!} size="small" weight="normal" color="inherit" icon="arrow_forward" iconPosition="end" class={mergeClasses("gap-1.5", accent().link)}>
             {properties.linkLabel}
-            <Icon name="arrow_forward" size={16} aria-hidden="true" />
-          </a>
+          </Link>
         </Show>
       </div>
     </BackgroundCard>

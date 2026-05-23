@@ -1,3 +1,4 @@
+import { Text } from "@/components/typography";
 import { mergeClasses } from "@/utilities";
 import type { JSX, ParentComponent } from "solid-js";
 import { Show } from "solid-js";
@@ -25,7 +26,16 @@ export const HeaderLayout: ParentComponent<HeaderLayoutProperties> = (properties
           <Show when={properties.back}>
             <div class="mb-2">{properties.back}</div>
           </Show>
-          <Show when={properties.titleElement} fallback={<h2 class="text-xl font-semibold tracking-tight text-gray-900 md:text-2xl dark:text-white">{properties.title}</h2>}>
+          <Show
+            when={properties.titleElement}
+            fallback={
+              <Show when={properties.title}>
+                <Text as="h2" size="title" weight="semibold" color="default" display="block" class="text-xl md:text-2xl">
+                  {properties.title}
+                </Text>
+              </Show>
+            }
+          >
             {properties.titleElement}
           </Show>
         </div>

@@ -1,9 +1,9 @@
-import { Icon } from "@/components/icons";
+import { RenderIcon } from "@/components/icons";
 import { FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
-type IconButtonVariant = "solid" | "outline" | "ghost" | "link";
+type IconButtonVariant = "solid" | "outline" | "ghost";
 
 type IconButtonProperties = Omit<ComponentProps<"button">, "class"> & {
   variant?: IconButtonVariant;
@@ -19,8 +19,6 @@ const getVariantClasses = (variant: IconButtonVariant = "solid"): string => {
       return "border border-solid border-gray-300 bg-white text-gray-700 enabled:hover:bg-gray-50 focus-visible:border-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:enabled:hover:bg-gray-700 dark:focus-visible:border-blue-400";
     case "ghost":
       return "border-2 border-transparent text-gray-700 enabled:hover:bg-gray-100/60 focus-visible:border-gray-400 dark:text-white dark:enabled:hover:bg-gray-700/60 dark:focus-visible:border-gray-500";
-    case "link":
-      return "border-2 border-transparent text-blue-600 enabled:hover:text-blue-500 focus-visible:border-blue-500 dark:text-blue-500 dark:enabled:hover:text-blue-400 dark:focus-visible:border-blue-400";
   }
 };
 
@@ -34,7 +32,7 @@ export const IconButton = (properties: IconButtonProperties) => {
     <button
       type="button"
       class={mergeClasses(
-        "inline-flex cursor-pointer items-center justify-center rounded-lg transition-[colors,opacity] duration-150 focus:outline-none focus-visible:ring-0 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:opacity-50",
+        "inline-flex cursor-pointer items-center justify-center rounded-lg transition-[color,background-color,border-color,opacity] duration-100 ease-out focus:outline-none focus-visible:ring-0 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:opacity-50",
         getVariantClasses(local.variant),
         FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES,
         local.class
@@ -42,13 +40,7 @@ export const IconButton = (properties: IconButtonProperties) => {
       {...rest}
     >
       <Show when={local.icon != null}>
-        {typeof local.icon === "string" ? (
-          <Icon name={local.icon} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
-        ) : (
-          <span class="pointer-events-none inline-flex shrink-0 items-center justify-center" style={{ width: `${FORM_CONTROL_ICON_SIZE}px`, height: `${FORM_CONTROL_ICON_SIZE}px` }} aria-hidden="true">
-            {local.icon}
-          </span>
-        )}
+        <RenderIcon icon={local.icon!} size={FORM_CONTROL_ICON_SIZE} />
       </Show>
       {local.children}
     </button>

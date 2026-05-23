@@ -1,10 +1,13 @@
 import { Button } from "@/components/button/Button";
 import { Icon } from "@/components/icons";
+import { Text } from "@/components/typography";
 import { mergeClasses } from "@/utilities/mergeClasses";
 import { themedScrollControlClassName } from "@/utilities/themedScrollControlClassName";
 import { useIsMobile } from "@/utilities/useIsMobile";
+import { A } from "@solidjs/router";
 import type { Component, JSX } from "solid-js";
 import { For, Show, createMemo, createSignal, onCleanup, onMount } from "solid-js";
+import { Dynamic } from "solid-js/web";
 
 /** One navigation row rendered inside a group. */
 export type LeftPanelNavigationItemJson = {
@@ -42,7 +45,7 @@ export type LeftPanelNavigationDocumentJson = {
 export type LeftPanelLayoutNavigationDocumentJson = LeftPanelNavigationDocumentJson;
 
 const NAVIGATION_LINK_ICON_CLASS = "nav-link-icon shrink-0 opacity-80 w-3.5 h-3.5";
-const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-9 min-h-9 max-h-9 text-xs font-medium transition-all duration-150 text-gray-800 dark:text-white";
+const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-9 min-h-9 max-h-9 text-xs transition-all duration-100 ease-out text-gray-800 dark:text-white";
 const NAVIGATION_LINK_LABEL_CLASS = "min-w-0 truncate";
 const NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS = "px-3 space-x-3";
 const NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS = "size-9 mx-auto justify-center";
@@ -77,7 +80,7 @@ type LeftPanelNavigationBodyProperties = {
   collapsed: boolean;
   navigationDocument: LeftPanelLayoutNavigationDocumentJson;
   onItemClick?: () => void;
-  anchorComponent?: Component<Record<string, unknown>>;
+  anchorTag?: "A" | "a";
 };
 
 const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (properties) => {
@@ -127,7 +130,11 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
     <nav class="space-y-8 md:space-y-7">
       <Show
         when={hasAnyNavigationItems()}
-        fallback={<div class={mergeClasses("rounded-lg border border-dashed border-gray-200 p-4 text-sm text-gray-600 dark:border-gray-800 dark:text-gray-400", properties.collapsed ? "hidden" : "")}>No matches. Try a different search term.</div>}
+        fallback={
+          <Text as="div" size="small" color="muted" display="block" class={mergeClasses("rounded-lg border border-dashed border-gray-200 p-4 dark:border-gray-800", properties.collapsed ? "hidden" : "")}>
+            No matches. Try a different search term.
+          </Text>
+        }
       >
         <For each={properties.navigationDocument.groups}>
           {(group, groupIndex) => {
@@ -141,7 +148,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
               return group.navigationGroupInitiallyCollapsed === true;
             });
             const useCollapsibleNavigationGroupMemo = createMemo(() => {
-              return group.collapsibleNavigationGroup !== false && !properties.collapsed;
+              return group.collapsibleNavigationGroup === true && !properties.collapsed;
             });
             const isNavigationGroupBodyExpandedMemo = createMemo(() => {
               return resolveNavigationGroupBodyExpanded(navigationGroupIdentifierMemo(), navigationGroupInitiallyCollapsedMemo());
@@ -183,19 +190,16 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                 <>
                   <Icon name={item.icon} size={14} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
                   <Show when={!properties.collapsed}>
-                    <span class={NAVIGATION_LINK_LABEL_CLASS}>{item.label}</span>
+                    <Text as="span" size="caption" weight="normal" color="inherit" display="inline" truncate class={NAVIGATION_LINK_LABEL_CLASS}>
+                      {item.label}
+                    </Text>
                   </Show>
                 </>
               );
-              const CustomAnchor = properties.anchorComponent;
-              return CustomAnchor ? (
-                <CustomAnchor href={item.href} class={linkClass()} aria-current={isActive() ? "page" : undefined} aria-label={item.label} onClick={handleClick}>
+              return (
+                <Dynamic component={(properties.anchorTag ?? "A") === "a" ? "a" : A} href={item.href} class={linkClass()} aria-current={isActive() ? "page" : undefined} aria-label={item.label} onClick={handleClick}>
                   {linkChildren}
-                </CustomAnchor>
-              ) : (
-                <a href={item.href} class={linkClass()} aria-current={isActive() ? "page" : undefined} aria-label={item.label} onClick={handleClick}>
-                  {linkChildren}
-                </a>
+                </Dynamic>
               );
             };
 
@@ -206,7 +210,9 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                     when={useCollapsibleNavigationGroupMemo()}
                     fallback={
                       <div class={mergeClasses("h-full min-h-0", GROUP_LABEL_TEXT_CLASS, properties.collapsed ? "pointer-events-none invisible" : "")} aria-hidden={properties.collapsed ? true : undefined}>
-                        <span class="min-w-0 truncate">{group.groupLabel}</span>
+                        <Text as="span" size="caption" weight="semibold" color="inherit" transform="uppercase" display="inline" truncate class="min-w-0">
+                          {group.groupLabel}
+                        </Text>
                       </div>
                     }
                   >
@@ -219,8 +225,10 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                         toggleNavigationGroupBody(navigationGroupIdentifierMemo(), navigationGroupInitiallyCollapsedMemo());
                       }}
                     >
-                      <span class="min-w-0 flex-1 truncate">{group.groupLabel}</span>
-                      <span class={mergeClasses("inline-flex shrink-0 items-center justify-center text-gray-500 transition-transform duration-200 ease-out", isNavigationGroupBodyExpandedMemo() ? "rotate-180" : "rotate-0")} aria-hidden>
+                      <Text as="span" size="caption" weight="semibold" color="inherit" transform="uppercase" display="inline" truncate class="min-w-0 flex-1">
+                        {group.groupLabel}
+                      </Text>
+                      <span class={mergeClasses("inline-flex shrink-0 items-center justify-center text-gray-500 transition-transform duration-200 ease-in-out", isNavigationGroupBodyExpandedMemo() ? "rotate-180" : "rotate-0")} aria-hidden>
                         <Icon name="keyboard_arrow_down" size={16} class="size-4" />
                       </span>
                     </Button>
@@ -252,7 +260,8 @@ type LeftPanelLayoutProperties = {
   expandedWidthClass?: string;
   /** Desktop width when collapsed (defaults to `md:w-16`). */
   collapsedWidthClass?: string;
-  anchorComponent?: Component<Record<string, unknown>>;
+  /** Tag used for navigation links. "A" (default) is @solidjs/router's <A>; "a" is a plain anchor for non-router contexts. */
+  anchorTag?: "A" | "a";
 };
 
 /**
@@ -275,13 +284,17 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
     setIsSwipeDragging(false);
   };
 
+  const isActiveSwipeTarget = (event: PointerEvent): boolean => {
+    return !resolvedCollapsed() && isMobileViewport() && event.pointerType === "touch";
+  };
+
   return (
     <>
       <Show when={(properties.scrim ?? true) && !resolvedCollapsed() && isMobileViewport()}>
         <div
           role="presentation"
           aria-hidden="true"
-          class={mergeClasses(properties.scrimZIndexClass ?? "z-20", "fixed inset-0 bg-black/50", "top-(--solid-kit-header-height,4rem)", "transition-opacity duration-200")}
+          class={mergeClasses(properties.scrimZIndexClass ?? "z-20", "fixed inset-0 bg-black/50", "top-(--solid-kit-header-height,4rem)", "transition-opacity duration-200 ease-in-out")}
           onClick={() => {
             properties.onOpenChange?.(false);
           }}
@@ -309,9 +322,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
             : { "grid-area": "left", "touch-action": "auto" }
         }
         onPointerDown={(event: PointerEvent) => {
-          if (resolvedCollapsed()) return;
-          if (!isMobileViewport()) return;
-          if (event.pointerType !== "touch") return;
+          if (!isActiveSwipeTarget(event)) return;
           (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
           setSwipeStartClientX(event.clientX);
           setSwipeStartClientY(event.clientY);
@@ -320,9 +331,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setIsSwipeDragging(false);
         }}
         onPointerMove={(event: PointerEvent) => {
-          if (resolvedCollapsed()) return;
-          if (!isMobileViewport()) return;
-          if (event.pointerType !== "touch") return;
+          if (!isActiveSwipeTarget(event)) return;
           const initialClientX = swipeStartClientX();
           const initialClientY = swipeStartClientY();
           if (initialClientX == null || initialClientY == null) return;
@@ -344,9 +353,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setSwipeTranslationX(Math.min(0, deltaX));
         }}
         onPointerUp={(event: PointerEvent) => {
-          if (resolvedCollapsed()) return;
-          if (!isMobileViewport()) return;
-          if (event.pointerType !== "touch") return;
+          if (!isActiveSwipeTarget(event)) return;
           const translationX = swipeTranslationX();
           const width = sidebarElement()?.offsetWidth ?? 0;
           const closeThreshold = Math.max(60, Math.floor(width / 2));
@@ -360,18 +367,16 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setSwipeTranslationX(0);
         }}
         onPointerCancel={(event: PointerEvent) => {
-          if (resolvedCollapsed()) return;
-          if (!isMobileViewport()) return;
-          if (event.pointerType !== "touch") return;
+          if (!isActiveSwipeTarget(event)) return;
           resetSwipeGesture();
           setSwipeTranslationX(0);
         }}
       >
-        <div class={mergeClasses("flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-y-scroll px-3 py-4", themedScrollControlClassName)}>
+        <div class={mergeClasses("flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-y-auto px-3 py-4", themedScrollControlClassName)}>
           <LeftPanelNavigationBody
             collapsed={resolvedCollapsed()}
             navigationDocument={properties.navigationDocument}
-            anchorComponent={properties.anchorComponent}
+            anchorTag={properties.anchorTag}
             onItemClick={() => {
               properties.onOpenChange?.(false);
             }}

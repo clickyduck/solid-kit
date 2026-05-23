@@ -15,6 +15,7 @@ import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon } from "@/components/icons/Icons";
 import { Input } from "@/components/input/Input";
 import { LeftPanelLayout, type LeftPanelLayoutNavigationDocumentJson } from "@/components/left-panel-layout";
+import { Link } from "@/components/link/Link";
 import { Loading } from "@/components/loading/Loading";
 import { MainLayout } from "@/components/main-layout";
 import { PageLayout } from "@/components/page-layout";
@@ -27,8 +28,9 @@ import { Tabs } from "@/components/tabs/Tabs";
 import { Textarea } from "@/components/textarea/Textarea";
 import { addToast } from "@/components/toast/Toast";
 import { Toaster } from "@/components/toast/Toaster";
+import { CardToggleGroup } from "@/components/toggle-group/CardToggleGroup";
 import { ToggleGroup } from "@/components/toggle-group/ToggleGroup";
-import { Text } from "@/components/typography/Text";
+import { Text, type TextColor, type TextSize, type TextWeight } from "@/components/typography/Text";
 import { Upload } from "@/components/upload/Upload";
 import { type Color, createDocumentColorSchemePreferenceSignal, useIsMobile } from "@/utilities";
 import type { JSX } from "solid-js";
@@ -54,6 +56,17 @@ type ShowcaseCategoryProperties = {
 
 const badgeVariants: BadgeVariant[] = ["solid", "outline"];
 const semanticColors: Color[] = ["primary", "secondary", "neutral", "success", "warning", "danger"];
+
+const textSizeScale: { size: TextSize; detail: string }[] = [
+  { size: "display", detail: "36px · bold" },
+  { size: "title", detail: "24px · semibold" },
+  { size: "body", detail: "16px · normal · default" },
+  { size: "small", detail: "14px · normal" },
+  { size: "caption", detail: "12px · normal" }
+];
+const textColors: TextColor[] = ["default", "muted", "primary", "secondary", "success", "warning", "danger", "info"];
+const textWeights: TextWeight[] = ["thin", "normal", "medium", "semibold", "bold"];
+const linkColors: TextColor[] = ["primary", "secondary", "success", "warning", "danger", "info"];
 
 const tableRows: { name: string; status: string; amount: string }[] = [
   { name: "North warehouse", status: "Active", amount: "₹12,450" },
@@ -99,15 +112,17 @@ export const ShowcaseApplication = (): JSX.Element => {
   const [plainInputValue, setPlainInputValue] = createSignal("Solid Kit");
   const [textareaAutoGrowValue, setTextareaAutoGrowValue] = createSignal("Type multiple lines to watch auto-grow clamp between min and max rows.");
   const [uploadSelectedFiles, setUploadSelectedFiles] = createSignal<File[]>([]);
+  const [uploadProgress, setUploadProgress] = createSignal<Record<string, number>>({});
 
   const [digestSelection, setDigestSelection] = createSignal<string[]>(["weekly"]);
   const [shippingMethod, setShippingMethod] = createSignal<string | undefined>("standard");
   const [contactChannels, setContactChannels] = createSignal<string[]>(["email"]);
+  const [cardPlanSelection, setCardPlanSelection] = createSignal<string | undefined>("pro");
+  const [cardFeatureSelection, setCardFeatureSelection] = createSignal<string[]>(["analytics"]);
 
   const [activeShowcaseTab, setActiveShowcaseTab] = createSignal<ShowcaseTabValue>("overview");
   const [tablePagination, setTablePagination] = createSignal<{ limit: number; offset: number }>({ limit: 25, offset: 0 });
   const [isRightPanelOpen, setIsRightPanelOpen] = createSignal(false);
-  const [activeDataCard, setActiveDataCard] = createSignal<number | undefined>(0);
 
   const [documentColorSchemeName, setDocumentColorSchemeName] = createDocumentColorSchemePreferenceSignal();
 
@@ -142,7 +157,9 @@ export const ShowcaseApplication = (): JSX.Element => {
           titleElement={
             <div class="flex min-w-0 items-center gap-3">
               <IconButton variant="ghost" icon={sidebarCollapsed() ? "menu" : "menu_open"} onClick={toggleSidebar} aria-label={sidebarCollapsed() ? "Expand sidebar" : "Collapse sidebar"} />
-              <Text size="1">Solid Kit</Text>
+              <Text as="h1" size="title">
+                Solid Kit
+              </Text>
             </div>
           }
         >
@@ -158,6 +175,7 @@ export const ShowcaseApplication = (): JSX.Element => {
             if (!isPanelOpen) closeSidebar();
           }}
           navigationDocument={showcaseLeftPanelNavigationDocument}
+          anchorTag="a"
         />
 
         <PageLayout>
@@ -169,7 +187,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                   <For each={badgeVariants}>
                     {(variant) => (
                       <div class="space-y-2">
-                        <Text size="4" weight="semibold" color="muted">
+                        <Text size="caption" weight="semibold" color="muted">
                           {variant}
                         </Text>
                         <div class="flex flex-wrap gap-2">
@@ -195,13 +213,12 @@ export const ShowcaseApplication = (): JSX.Element => {
                 </div>
               </ShowcaseSection>
 
-              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-buttons" sectionTitle="Buttons and icon buttons" sectionDescription="Four variants — solid, outline, ghost, link. Size is responsive: large on mobile (≤767 px), default on desktop.">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-buttons" sectionTitle="Buttons and icon buttons" sectionDescription="Solid, outline, and ghost variants with optional icons.">
                 <div class="space-y-4">
                   <div class="flex flex-wrap gap-3">
                     <Button variant="solid">Solid</Button>
                     <Button variant="outline">Outline</Button>
                     <Button variant="ghost">Ghost</Button>
-                    <Button variant="link">Link</Button>
                     <Button variant="solid" disabled>
                       Disabled
                     </Button>
@@ -218,42 +235,47 @@ export const ShowcaseApplication = (): JSX.Element => {
                     <IconButton variant="solid" icon="check_circle" aria-label="Solid" />
                     <IconButton variant="outline" icon="settings" aria-label="Outline" />
                     <IconButton variant="ghost" icon="more_vert" aria-label="Ghost" />
-                    <IconButton variant="link" icon="search" aria-label="Link" />
                     <IconButton variant="solid" icon="settings" aria-label="Disabled" disabled />
                   </div>
                 </div>
               </ShowcaseSection>
 
-              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-icons" sectionTitle="Icons" sectionDescription="Material Symbols rounded set. Pass the slug as name; filled is the default. The stylesheet loads lazily on first use.">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-icons" sectionTitle="Icons" sectionDescription="Material Symbols (rounded, filled). Pass the slug as name, plus an optional size or color.">
                 <div class="flex flex-wrap items-end gap-6">
                   <div class="flex flex-col items-center gap-2">
                     <Icon name="account_balance_wallet" size={32} />
-                    <Text size="4" color="muted">
-                      filled
+                    <Text size="caption" color="muted">
+                      size 32
                     </Text>
                   </div>
                   <div class="flex flex-col items-center gap-2">
-                    <Icon name="account_balance_wallet" size={32} filled={false} />
-                    <Text size="4" color="muted">
-                      outline
+                    <Icon name="notifications" size={28} />
+                    <Text size="caption" color="muted">
+                      size 28
                     </Text>
                   </div>
                   <div class="flex flex-col items-center gap-2">
                     <Icon name="settings" size={24} />
-                    <Text size="4" color="muted">
+                    <Text size="caption" color="muted">
                       size 24
                     </Text>
                   </div>
                   <div class="flex flex-col items-center gap-2">
                     <Icon name="settings" size={16} />
-                    <Text size="4" color="muted">
+                    <Text size="caption" color="muted">
                       size 16
                     </Text>
                   </div>
                   <div class="flex flex-col items-center gap-2">
-                    <Icon name="notifications" size={28} />
-                    <Text size="4" color="muted">
-                      size 28
+                    <Icon name="check_circle" size={28} color="success" />
+                    <Text size="caption" color="muted">
+                      success
+                    </Text>
+                  </div>
+                  <div class="flex flex-col items-center gap-2">
+                    <Icon name="warning" size={28} color="warning" />
+                    <Text size="caption" color="muted">
+                      warning
                     </Text>
                   </div>
                 </div>
@@ -272,178 +294,102 @@ export const ShowcaseApplication = (): JSX.Element => {
 
             {/* Typography and layout */}
             <ShowcaseCategory categoryTitle="Typography and layout">
-              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-text" sectionTitle="Text" sectionDescription="Five size steps with semantic color, weight, style modifiers, and optional leading or trailing icon.">
-                <div class="space-y-8">
-                  <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">
-                      Sizes
-                    </Text>
-                    <div class="space-y-2">
-                      <Text size="0">Size 0 — Display</Text>
-                      <Text size="1">Size 1 — Heading</Text>
-                      <Text size="2">Size 2 — Body</Text>
-                      <Text size="3">Size 3 — Small</Text>
-                      <Text size="4">Size 4 — Caption</Text>
-                    </div>
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-text" sectionTitle="Text" sectionDescription="The primitive for all text. Pick a size by name; weight, color, and icons are props.">
+                <div class="space-y-6">
+                  <ShowcaseEyebrow label="Sizes" />
+                  <div class="space-y-2">
+                    <For each={textSizeScale}>
+                      {(step) => (
+                        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                          <Text size={step.size}>{step.size}</Text>
+                          <Text size="caption" color="muted">
+                            {step.detail}
+                          </Text>
+                        </div>
+                      )}
+                    </For>
                   </div>
 
-                  <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">
-                      Colors
-                    </Text>
-                    <div class="flex flex-wrap gap-4">
-                      {(["default", "muted", "primary", "secondary", "success", "warning", "danger", "info"] as const).map((c) => (
-                        <Text color={c}>{c}</Text>
-                      ))}
-                    </div>
+                  <Divider />
+
+                  <ShowcaseEyebrow label="Colors" />
+                  <div class="flex flex-wrap gap-x-4 gap-y-1">
+                    <For each={textColors}>{(c) => <Text color={c}>{c}</Text>}</For>
                   </div>
 
-                  <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">
-                      Weights
-                    </Text>
-                    <div class="flex flex-wrap gap-4">
-                      {(["thin", "normal", "medium", "semibold", "bold"] as const).map((w) => (
-                        <Text weight={w}>{w}</Text>
-                      ))}
-                    </div>
+                  <ShowcaseEyebrow label="Weights" />
+                  <div class="flex flex-wrap gap-x-4 gap-y-1">
+                    <For each={textWeights}>{(w) => <Text weight={w}>{w}</Text>}</For>
                   </div>
 
-                  <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">
-                      Style modifiers
+                  <ShowcaseEyebrow label="Icons" />
+                  <div class="flex flex-wrap gap-4">
+                    <Text icon="check_circle" color="success" weight="semibold">
+                      Leading
                     </Text>
-                    <div class="flex flex-wrap gap-4">
-                      <Text italic>Italic</Text>
-                      <Text underline>Underline</Text>
-                      <Text italic underline>
-                        Italic + underline
-                      </Text>
-                      <Text opacity={75}>75% opacity</Text>
-                      <Text opacity={50}>50% opacity</Text>
-                      <Text opacity={25}>25% opacity</Text>
-                    </div>
-                  </div>
-
-                  <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">
-                      Icons
+                    <Text icon="arrow_forward" iconPosition="end" color="primary">
+                      Trailing
                     </Text>
-                    <div class="flex flex-wrap gap-4">
-                      <Text icon="star" size="0">
-                        Size 0
-                      </Text>
-                      <Text icon="star" size="1">
-                        Size 1
-                      </Text>
-                      <Text icon="star" size="2">
-                        Size 2
-                      </Text>
-                      <Text icon="star" size="3">
-                        Size 3
-                      </Text>
-                      <Text icon="star" size="4">
-                        Size 4
-                      </Text>
-                    </div>
-                    <div class="flex flex-wrap gap-4">
-                      <Text icon="arrow_forward" iconPosition="end" color="primary">
-                        Trailing icon
-                      </Text>
-                      <Text icon="check_circle" color="success" weight="semibold">
-                        Success state
-                      </Text>
-                      <Text icon="warning" color="warning" weight="semibold">
-                        Warning state
-                      </Text>
-                      <Text icon="cancel" color="danger">
-                        Error state
-                      </Text>
-                      <Text icon={<span class="inline-block h-[1em] w-[1em] rounded-full bg-emerald-500" />} color="success">
-                        JSX element
-                      </Text>
-                    </div>
-                  </div>
-
-                  <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">
-                      maxLength truncation
+                    <Text icon={<span class="inline-block h-[1em] w-[1em] rounded-full bg-emerald-500" />} color="success">
+                      JSX element
                     </Text>
-                    <div class="space-y-1">
-                      <Text maxLength={40}>Truncated at 40 chars: this sentence is definitely longer than forty characters</Text>
-                      <Text maxLength={20} color="muted">
-                        Truncated at 20 chars: this is longer than twenty characters
-                      </Text>
-                    </div>
-                  </div>
-
-                  <div class="space-y-3">
-                    <Text size="4" weight="semibold" color="muted">
-                      Realistic usage
-                    </Text>
-                    <div class="flex flex-wrap gap-8">
-                      <div class="space-y-1">
-                        <Text size="3" color="muted">
-                          Balance
-                        </Text>
-                        <Text size="0" color="success">
-                          ₹4,28,500
-                        </Text>
-                      </div>
-                      <div class="space-y-1">
-                        <Text size="3" color="muted">
-                          Status
-                        </Text>
-                        <Text size="2" icon="check_circle" color="success" weight="semibold">
-                          Active
-                        </Text>
-                      </div>
-                      <div class="space-y-1">
-                        <Text size="3" color="muted">
-                          Alert
-                        </Text>
-                        <Text size="2" icon="warning" color="warning" weight="semibold">
-                          Pending review
-                        </Text>
-                      </div>
-                      <div class="space-y-1">
-                        <Text size="3" color="muted">
-                          Error
-                        </Text>
-                        <Text size="2" icon="cancel" color="danger">
-                          Payment declined
-                        </Text>
-                      </div>
-                      <div class="space-y-1">
-                        <Text size="3" color="muted">
-                          Link
-                        </Text>
-                        <Text size="2" icon="arrow_forward" iconPosition="end" color="primary" underline>
-                          View all transactions
-                        </Text>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </ShowcaseSection>
 
-              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-divider" sectionTitle="Divider and SectionHeading" sectionDescription="Use Divider to separate content regions and SectionHeading for labelled subsections.">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-divider" sectionTitle="Divider and SectionHeading" sectionDescription="Separate regions and label subsections.">
                 <div class="space-y-4">
                   <SectionHeading>Section heading</SectionHeading>
-                  <Divider />
-                  <Text color="muted">Content below the divider. Pair with SectionHeading inside cards to build structured forms or detail panels.</Text>
+                  <Text color="muted">Body text below the heading.</Text>
                   <Divider />
                   <SectionHeading>Another section</SectionHeading>
-                  <Text color="muted">Second section body text.</Text>
+                  <Text color="muted">A divider separates the two regions.</Text>
+                </div>
+              </ShowcaseSection>
+
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-link" sectionTitle="Link" sectionDescription="Text that links. Same size/color/weight/icon props; no underline. Shown with anchorTag='a' (no router here).">
+                <div class="space-y-6">
+                  <Text color="muted">
+                    Inline links flow within copy — see the{" "}
+                    <Link anchorTag="a" href="#showcase-heading-text">
+                      Text section
+                    </Link>{" "}
+                    for the shared props, or the{" "}
+                    <Link anchorTag="a" href="#showcase-heading-metrics">
+                      metric cards
+                    </Link>{" "}
+                    for a footer link.
+                  </Text>
+
+                  <ShowcaseEyebrow label="Colors" />
+                  <div class="flex flex-wrap gap-x-4 gap-y-1">
+                    <For each={linkColors}>
+                      {(c) => (
+                        <Link anchorTag="a" href="#showcase-heading-link" color={c}>
+                          {c}
+                        </Link>
+                      )}
+                    </For>
+                  </div>
+
+                  <ShowcaseEyebrow label="With icons" />
+                  <div class="flex flex-wrap gap-4">
+                    <Link anchorTag="a" href="#showcase-heading-link" weight="medium" icon="arrow_forward" iconPosition="end">
+                      View report
+                    </Link>
+                    <Link anchorTag="a" href="https://example.com" target="_blank" rel="noreferrer" color="info" icon="north_east" iconPosition="end">
+                      External link
+                    </Link>
+                  </div>
                 </div>
               </ShowcaseSection>
             </ShowcaseCategory>
 
             {/* Data surfaces */}
             <ShowcaseCategory categoryTitle="Data surfaces">
-              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-metrics" sectionTitle="Metric cards" sectionDescription="Stat card with accent color, icon, value, and an optional footer link. Pass loading to show a skeleton.">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-metrics" sectionTitle="Metric cards" sectionDescription="Accent color, icon, value, and an optional footer link. The last card is in its loading state.">
                 <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <MetricCard title="Gross volume" accent="emerald" icon="account_balance_wallet" value="₹4.2M" linkHref="#" linkLabel="View settlements" />
+                  <MetricCard title="Gross volume" accent="emerald" icon="account_balance_wallet" value="₹4.2M" linkHref="#" linkLabel="View settlements" anchorTag="a" />
                   <MetricCard title="Active users" accent="blue" icon="dashboard" value="1,284" />
                   <MetricCard title="Risk score" accent="amber" icon="tag" value="Medium" />
                   <MetricCard title="Automation" accent="violet" icon="settings" value="Running" />
@@ -456,7 +402,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                 <BackgroundCard>
                   <div class="space-y-4">
                     <div class="space-y-1">
-                      <Text size="1">Workspace usage</Text>
+                      <Text size="title">Workspace usage</Text>
                       <Text color="muted">Pair with Metric cards for dashboard layouts.</Text>
                     </div>
                     <Text color="muted">Use multiple BackgroundCards per page to group related information.</Text>
@@ -468,34 +414,34 @@ export const ShowcaseApplication = (): JSX.Element => {
                 </BackgroundCard>
               </ShowcaseSection>
 
-              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-data-card" sectionTitle="DataCard" sectionDescription="Ticket-style data surface. Can be clickable with an active/selected state, or static.">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-data-card" sectionTitle="DataCard" sectionDescription="Data surface — clickable or static. For selectable cards, use CardToggleGroup.">
                 <div class="grid gap-3 sm:grid-cols-3">
-                  <DataCard clickable active={activeDataCard() === 0} onClick={() => setActiveDataCard(0)}>
+                  <DataCard clickable onClick={() => addToast({ title: "North warehouse", description: "Card click handled.", variant: "default" })}>
                     <div class="space-y-1">
-                      <Text size="3" weight="semibold">
+                      <Text size="small" weight="semibold">
                         North warehouse
                       </Text>
-                      <Text size="4" color="muted">
+                      <Text size="caption" color="muted">
                         Active · ₹12,450
                       </Text>
                     </div>
                   </DataCard>
-                  <DataCard clickable active={activeDataCard() === 1} onClick={() => setActiveDataCard(1)}>
+                  <DataCard clickable onClick={() => addToast({ title: "South warehouse", description: "Card click handled.", variant: "default" })}>
                     <div class="space-y-1">
-                      <Text size="3" weight="semibold">
+                      <Text size="small" weight="semibold">
                         South warehouse
                       </Text>
-                      <Text size="4" color="muted">
+                      <Text size="caption" color="muted">
                         Paused · ₹8,120
                       </Text>
                     </div>
                   </DataCard>
                   <DataCard>
                     <div class="space-y-1">
-                      <Text size="3" weight="semibold">
+                      <Text size="small" weight="semibold">
                         Static card
                       </Text>
-                      <Text size="4" color="muted">
+                      <Text size="caption" color="muted">
                         Non-interactive surface
                       </Text>
                     </div>
@@ -513,17 +459,17 @@ export const ShowcaseApplication = (): JSX.Element => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>
-                        <Text size="4" weight="semibold">
+                        <Text size="caption" weight="semibold">
                           Location
                         </Text>
                       </TableHead>
                       <TableHead>
-                        <Text size="4" weight="semibold">
+                        <Text size="caption" weight="semibold">
                           Status
                         </Text>
                       </TableHead>
                       <TableHead align="right" monospace>
-                        <Text size="4" weight="semibold">
+                        <Text size="caption" weight="semibold">
                           Amount
                         </Text>
                       </TableHead>
@@ -534,7 +480,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                       {(row, index) => (
                         <TableRow clickable active={index() === 0} onClick={() => {}}>
                           <TableCell>
-                            <Text size="3">{row.name}</Text>
+                            <Text size="small">{row.name}</Text>
                           </TableCell>
                           <TableCell>
                             <Badge variant="solid" color={row.status === "Active" ? "success" : "warning"}>
@@ -542,17 +488,17 @@ export const ShowcaseApplication = (): JSX.Element => {
                             </Badge>
                           </TableCell>
                           <TableCell align="right" monospace>
-                            <Text size="3">{row.amount}</Text>
+                            <Text size="small">{row.amount}</Text>
                           </TableCell>
                         </TableRow>
                       )}
                     </For>
                     <TableRow verticalAlign="top">
                       <TableCell>
-                        <Text size="3">Notes row (top aligned)</Text>
+                        <Text size="small">Notes row (top aligned)</Text>
                       </TableCell>
                       <TableCell colSpan={2}>
-                        <Text size="3" color="muted">
+                        <Text size="small" color="muted">
                           Use verticalAlign="top" when a row mixes chips with multi-line copy.
                         </Text>
                       </TableCell>
@@ -591,12 +537,58 @@ export const ShowcaseApplication = (): JSX.Element => {
                     <Textarea id="showcase-textarea-autogrow" autoGrow minRows={2} maxRows={8} value={textareaAutoGrowValue()} onInput={(e) => setTextareaAutoGrowValue(e.currentTarget.value)} />
                   </Field>
                 </div>
-                <Field label="Upload" for="showcase-upload" hint="Shows count of selected files; supports multiple.">
-                  <Upload id="showcase-upload" multiple selectedFiles={uploadSelectedFiles()} onSelectedFilesChange={setUploadSelectedFiles} />
+                <Field label="Upload" for="showcase-upload" hint="Drop files or click. Image files show a thumbnail. PDFs and CSVs up to 5 MB.">
+                  <Upload
+                    id="showcase-upload"
+                    multiple
+                    accept=".pdf,.csv,image/*"
+                    maxSizeBytes={5 * 1024 * 1024}
+                    selectedFiles={uploadSelectedFiles()}
+                    onSelectedFilesChange={(files) => {
+                      setUploadSelectedFiles(files);
+                      setUploadProgress((previous) => {
+                        const activeKeys = new Set(files.map((file) => `${file.name}:${file.size.toString()}`));
+                        const next: Record<string, number> = {};
+                        for (const [key, value] of Object.entries(previous)) {
+                          if (activeKeys.has(key)) next[key] = value;
+                        }
+                        for (const file of files) {
+                          const key = `${file.name}:${file.size.toString()}`;
+                          if (!(key in next)) {
+                            next[key] = 0;
+                            const tick = (): void => {
+                              setUploadProgress((current) => {
+                                const value = current[key];
+                                if (value === undefined || value >= 100) return current;
+                                const incremented = Math.min(100, value + 20);
+                                if (incremented < 100) window.setTimeout(tick, 400);
+                                return { ...current, [key]: incremented };
+                              });
+                            };
+                            window.setTimeout(tick, 200);
+                          }
+                        }
+                        return next;
+                      });
+                    }}
+                    onReject={(rejectedFiles, reason) => {
+                      const titleByReason: Record<typeof reason, string> = {
+                        accept: "Wrong file type",
+                        maxSize: "File too large",
+                        multiple: "Only one file allowed"
+                      };
+                      addToast({
+                        title: titleByReason[reason],
+                        description: rejectedFiles.map((file) => file.name).join(", "),
+                        variant: "warning"
+                      });
+                    }}
+                    progressByFile={uploadProgress()}
+                  />
                 </Field>
               </ShowcaseSection>
 
-              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-date-picker" sectionTitle="Date picker" sectionDescription="Single date or date range selection. Range mode sets start to 12:00 AM and end to 11:59:59 PM automatically.">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-date-picker" sectionTitle="Date picker" sectionDescription="Single date or range selection.">
                 <div class="grid gap-6 lg:grid-cols-2">
                   <Field label="Single date" for="showcase-date-picker-single" hint="Pick one calendar day.">
                     <DatePicker id="showcase-date-picker-single" mode="single" value={singleDateValue()} onChange={setSingleDateValue} placeholder="Select a date" />
@@ -610,25 +602,25 @@ export const ShowcaseApplication = (): JSX.Element => {
                 </div>
                 <BackgroundCard>
                   <div class="space-y-2">
-                    <Text size="4" weight="semibold">
+                    <Text size="caption" weight="semibold">
                       Selected values
                     </Text>
                     <div class="space-y-1">
-                      <Text size="4">
+                      <Text size="caption">
                         Single:{" "}
                         {createMemo(() => {
                           const v = singleDateValue();
                           return v.mode === "single" && v.date ? v.date.toISOString() : "—";
                         })()}
                       </Text>
-                      <Text size="4">
+                      <Text size="caption">
                         Range from:{" "}
                         {createMemo(() => {
                           const v = rangeDateValue();
                           return v.mode === "range" && v.from ? v.from.toISOString() : "—";
                         })()}
                       </Text>
-                      <Text size="4">
+                      <Text size="caption">
                         Range to:{" "}
                         {createMemo(() => {
                           const v = rangeDateValue();
@@ -701,6 +693,50 @@ export const ShowcaseApplication = (): JSX.Element => {
                   />
                 </Field>
               </ShowcaseSection>
+
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-card-toggle-group" sectionTitle="Card toggle group" sectionDescription="ToggleGroup's option model, rendered as selectable cards.">
+                <div class="grid gap-6 lg:grid-cols-2">
+                  <Field label="Plan — single">
+                    <CardToggleGroup
+                      name="showcase-card-toggle-plan"
+                      selectionMode="single"
+                      value={cardPlanSelection()}
+                      onChange={setCardPlanSelection}
+                      options={[
+                        { label: "Starter", value: "starter", description: "Up to 5 users and basic reports." },
+                        { label: "Pro", value: "pro", description: "Unlimited users, advanced analytics, priority support." },
+                        { label: "Enterprise", value: "enterprise", description: "Custom contracts, SSO, dedicated success manager." }
+                      ]}
+                    />
+                  </Field>
+                  <Field label="Features — multiple">
+                    <CardToggleGroup
+                      name="showcase-card-toggle-features"
+                      selectionMode="multiple"
+                      value={cardFeatureSelection()}
+                      onChange={setCardFeatureSelection}
+                      options={[
+                        { label: "Analytics", value: "analytics", description: "Daily traffic and conversion dashboards." },
+                        { label: "Automations", value: "automations", description: "Trigger workflows from any event." },
+                        { label: "Integrations", value: "integrations", description: "Connect Slack, Stripe, and more.", disabled: true }
+                      ]}
+                    />
+                  </Field>
+                </div>
+                <Field label="Disabled group">
+                  <CardToggleGroup
+                    name="showcase-card-toggle-disabled"
+                    selectionMode="single"
+                    value="pro"
+                    disabled
+                    onChange={() => {}}
+                    options={[
+                      { label: "Starter", value: "starter", description: "Up to 5 users and basic reports." },
+                      { label: "Pro", value: "pro", description: "Unlimited users, advanced analytics, priority support." }
+                    ]}
+                  />
+                </Field>
+              </ShowcaseSection>
             </ShowcaseCategory>
 
             {/* Navigation */}
@@ -760,10 +796,10 @@ export const ShowcaseApplication = (): JSX.Element => {
                         <DropdownContent>
                           <DropdownItem clickable={false}>
                             <div class="space-y-0.5">
-                              <Text size="3" weight="medium">
+                              <Text size="small" weight="medium">
                                 Jane Smith
                               </Text>
-                              <Text size="4" color="muted">
+                              <Text size="caption" color="muted">
                                 jane@example.com
                               </Text>
                             </div>
@@ -803,27 +839,6 @@ export const ShowcaseApplication = (): JSX.Element => {
                         </DropdownContent>
                       </Dropdown>
                     </Field>
-                    <Field label="Selected item" for="showcase-dropdown-item-icon-selected">
-                      <Dropdown options={[]} onChange={() => {}}>
-                        <DropdownIconTrigger id="showcase-dropdown-item-icon-selected" icon="more_vert" aria-label="View menu" />
-                        <DropdownContent>
-                          <DropdownItem icon="check_circle" selected>
-                            Active (selected)
-                          </DropdownItem>
-                          <DropdownItem icon="pause_circle">Paused</DropdownItem>
-                          <DropdownItem icon="cancel">Archived</DropdownItem>
-                        </DropdownContent>
-                      </Dropdown>
-                    </Field>
-                    <Field label="img element as icon" for="showcase-dropdown-item-icon-img">
-                      <Dropdown options={[]} onChange={() => {}}>
-                        <DropdownIconTrigger id="showcase-dropdown-item-icon-img" icon="more_vert" aria-label="Profile menu" />
-                        <DropdownContent>
-                          <DropdownItem icon={<img src="https://api.dicebear.com/7.x/thumbs/svg?seed=alice" alt="" />}>Alice</DropdownItem>
-                          <DropdownItem icon={<img src="https://api.dicebear.com/7.x/thumbs/svg?seed=bob" alt="" />}>Bob</DropdownItem>
-                        </DropdownContent>
-                      </Dropdown>
-                    </Field>
                   </div>
                 </div>
 
@@ -848,11 +863,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                 </div>
               </ShowcaseSection>
 
-              <ShowcaseSection
-                sectionHeadingIdentifier="showcase-heading-right-panel"
-                sectionTitle="Right panel"
-                sectionDescription="On medium screens and up the main column reflows beside this panel. On narrow viewports it is a fixed full-width overlay."
-              >
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-right-panel" sectionTitle="Right panel" sectionDescription="Reflows beside the main column on desktop; a full-width overlay on mobile.">
                 <div class="flex flex-wrap items-center gap-3">
                   <Button
                     variant={isRightPanelOpen() ? "solid" : "outline"}
@@ -863,7 +874,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                   >
                     {isRightPanelOpen() ? "Panel open" : "Open right panel"}
                   </Button>
-                  <Text size="3" color="muted">
+                  <Text size="small" color="muted">
                     Opening on mobile while the sidebar is visible will close the sidebar automatically.
                   </Text>
                 </div>
@@ -872,11 +883,7 @@ export const ShowcaseApplication = (): JSX.Element => {
 
             {/* Overlays and feedback */}
             <ShowcaseCategory categoryTitle="Overlays and feedback">
-              <ShowcaseSection
-                sectionHeadingIdentifier="showcase-heading-dialog"
-                sectionTitle="Dialog"
-                sectionDescription="Uses the native dialog element: focus management, backdrop blur, and scroll locking built in. On mobile the dialog fills the full viewport with only the body scrolling."
-              >
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-dialog" sectionTitle="Dialog" sectionDescription="Native dialog element — focus management, backdrop, and scroll locking built in.">
                 <div class="flex flex-wrap gap-3">
                   <Button onClick={() => setDialogOpen(true)}>Open dialog</Button>
                   <Button variant="outline" onClick={() => setDropdownDialogOpen(true)}>
@@ -1005,7 +1012,22 @@ export const ShowcaseApplication = (): JSX.Element => {
             closeAriaLabel="Close right panel"
           >
             <div class="space-y-3">
-              <Text color="muted">Place order details, filters, or a creation form here. On medium screens and up the main column reflows beside this surface.</Text>
+              <Text color="muted">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rhoncus, elit non tincidunt tincidunt, quam eros sodales mauris, ut auctor nulla neque sed turpis. Aliquam erat volutpat. Praesent consectetur dignissim lorem eget tempus.
+                Phasellus sit amet sagittis erat. Nunc sagittis dignissim volutpat. Sed vulputate mollis suscipit. Ut id vestibulum nulla, a mattis justo. Donec nec accumsan mi, quis vehicula nisl. Phasellus maximus tortor sagittis, rutrum purus vel,
+                dapibus odio. Proin sed bibendum ante, sed fermentum nunc. Cras placerat pellentesque tortor id tincidunt. Fusce mi turpis, pulvinar sagittis tortor nec, fermentum venenatis ex. Mauris metus dui, vehicula eu dictum et, condimentum nec nunc.
+                Maecenas quis dolor sit amet ex scelerisque ultricies. Sed convallis vehicula dolor in dapibus. Sed consequat egestas tortor nec posuere. Vestibulum lobortis mattis enim non luctus. Suspendisse potenti. Aliquam non sagittis quam. Donec arcu
+                dui, tristique ut vestibulum quis, eleifend mollis magna. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Aenean luctus varius nibh, sit amet feugiat tortor. Phasellus feugiat bibendum commodo. Nulla
+                a posuere mauris. Maecenas hendrerit dignissim ex. Integer euismod ipsum dapibus neque tincidunt bibendum. Sed eu est euismod, posuere eros non, dictum nulla. Aliquam auctor sodales diam. Proin egestas, arcu sed pellentesque blandit, ipsum
+                enim venenatis eros, tempor consequat velit urna eget leo. Vestibulum in orci ac eros elementum porta quis ac purus. Donec ac tincidunt est. Sed quis mi feugiat tellus finibus sodales. Etiam pretium mattis arcu, cursus auctor eros viverra
+                dapibus. Mauris a cursus massa. Vivamus sodales in lectus id ullamcorper. Morbi urna est, auctor tempus iaculis nec, fermentum convallis ante. Nullam elementum nisl non quam venenatis pharetra. Sed ornare quam et mi commodo tincidunt.
+                Aliquam vitae consectetur massa, sed aliquet libero. Curabitur blandit eros in euismod eleifend. Etiam cursus, leo vel commodo bibendum, diam purus venenatis nulla, et tempor ipsum leo in felis. Pellentesque cursus volutpat pellentesque. Ut
+                lacinia sem ex, nec finibus quam tincidunt eget. Vivamus ac vulputate sapien, vitae molestie ex. Phasellus tempus purus nec ipsum iaculis consequat. Mauris et ante commodo, volutpat lacus et, dapibus mi. Sed sit amet enim vitae odio laoreet
+                congue non sed felis. In at nisl convallis, sagittis purus nec, viverra risus. Nullam in enim eu nulla dapibus interdum sit amet nec dolor. In ut ornare dui. Donec gravida ultrices sem, quis vehicula tellus pulvinar at. Nullam vitae
+                pulvinar ex, vitae blandit massa. Nulla fringilla dolor eu sapien tempus commodo. Sed sed lorem vel tellus fringilla pretium et vitae lectus. Integer ut tincidunt ipsum, id sodales ligula. Nam tempus diam sed lorem ullamcorper dictum. Nunc
+                molestie at massa ac interdum. Sed fringilla, erat ac tincidunt sagittis, odio nisl elementum nisl, sed tincidunt lorem tortor eu lectus. Praesent justo nisi, condimentum eu metus vel, ultricies consequat sapien. Sed lacinia condimentum
+                odio, et ultricies mauris. Proin mattis lorem eros, vel lobortis purus volutpat vel. Maecenas interdum nisl non augue ultricies convallis. Proin dictum sit amet mauris vitae egestas.
+              </Text>
               <Text color="muted">This panel scrolls independently from the main column.</Text>
             </div>
           </RightPanelLayout>
@@ -1015,11 +1037,21 @@ export const ShowcaseApplication = (): JSX.Element => {
   );
 };
 
+const ShowcaseEyebrow = (properties: { label: string }): JSX.Element => {
+  return (
+    <Text size="caption" weight="semibold" color="muted" transform="uppercase">
+      {properties.label}
+    </Text>
+  );
+};
+
 const ShowcaseCategory = (properties: ShowcaseCategoryProperties): JSX.Element => {
   return (
     <section class="space-y-10" aria-label={properties.categoryTitle}>
       <div class="space-y-3">
-        <Text size="1">{properties.categoryTitle}</Text>
+        <Text as="h2" size="title">
+          {properties.categoryTitle}
+        </Text>
         <Divider />
       </div>
       <div class="space-y-8">{properties.children}</div>
@@ -1034,7 +1066,7 @@ const ShowcaseSection = (properties: ShowcaseSectionProperties): JSX.Element => 
         <header class="space-y-1.5 pb-5">
           <SectionHeading id={properties.sectionHeadingIdentifier}>{properties.sectionTitle}</SectionHeading>
           <Show when={properties.sectionDescription}>
-            <Text size="3" color="muted">
+            <Text size="small" color="muted">
               {properties.sectionDescription}
             </Text>
           </Show>

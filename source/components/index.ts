@@ -14,6 +14,7 @@ export * from "./header-layout";
 export * from "./icon-button";
 export * from "./input";
 export * from "./left-panel-layout";
+export * from "./link";
 export * from "./main-layout";
 export * from "./right-panel-layout";
 export * from "./loading";

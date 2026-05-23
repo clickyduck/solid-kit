@@ -1,4 +1,5 @@
 import { IconButton } from "@/components/icon-button/IconButton";
+import { Text } from "@/components/typography";
 import { mergeClasses } from "@/utilities";
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, createContext, createEffect, on, onCleanup, onMount, splitProps, useContext } from "solid-js";
@@ -46,11 +47,13 @@ export const Dialog = (properties: DialogRootProperties) => {
   );
 
   onMount(() => {
-    const handleCancel = (event: Event) => {
-      event.preventDefault();
-      properties.onOpenChange?.(false);
+    const handleCancel = (event: Event): void => {
+      if (!closeable()) {
+        // Block native ESC dismissal when the dialog is not closeable.
+        event.preventDefault();
+      }
     };
-    const handleClose = () => {
+    const handleClose = (): void => {
       properties.onOpenChange?.(false);
     };
     dialogElement?.addEventListener("cancel", handleCancel);
@@ -62,13 +65,21 @@ export const Dialog = (properties: DialogRootProperties) => {
   });
 
   onMount(() => {
-    const handleBackdropClick = (event: MouseEvent) => {
-      if (!dialogElement) return;
-      const rect = dialogElement.getBoundingClientRect();
-      const clickedOutside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
-      if (clickedOutside) {
-        properties.onOpenChange?.(false);
+    const handleBackdropClick = (event: MouseEvent): void => {
+      if (!dialogElement) {
+        return;
       }
+      if (!closeable()) {
+        return;
+      }
+      // Backdrop clicks land on the <dialog> element itself; clicks on the inner
+      // content card bubble up from a child. Comparing event.target identity is
+      // viewport-agnostic, unlike getBoundingClientRect() which fails when the
+      // dialog fills the screen (mobile full-height layout).
+      if (event.target !== dialogElement) {
+        return;
+      }
+      properties.onOpenChange?.(false);
     };
     dialogElement?.addEventListener("click", handleBackdropClick);
     onCleanup(() => {
@@ -126,8 +137,12 @@ type DialogTitlePropertiesType = ComponentProps<"h3">;
  * Dialog title heading.
  */
 export const DialogTitle = (properties: DialogTitlePropertiesType) => {
-  const [local, rest] = splitProps(properties, ["class"]);
-  return <h3 class={mergeClasses("text-lg font-medium text-gray-900 dark:text-white", local.class)} {...rest} />;
+  const [local, rest] = splitProps(properties, ["class", "children"]);
+  return (
+    <Text as="h3" size="body" weight="medium" color="default" display="block" class={mergeClasses("text-lg", local.class)} {...rest}>
+      {local.children}
+    </Text>
+  );
 };
 
 type DialogDescriptionPropertiesType = ComponentProps<"div">;
@@ -136,8 +151,12 @@ type DialogDescriptionPropertiesType = ComponentProps<"div">;
  * Dialog description text.
  */
 export const DialogDescription = (properties: DialogDescriptionPropertiesType) => {
-  const [local, rest] = splitProps(properties, ["class"]);
-  return <div class={mergeClasses("leading-relaxed text-gray-600 dark:text-gray-300", local.class)} {...rest} />;
+  const [local, rest] = splitProps(properties, ["class", "children"]);
+  return (
+    <Text as="div" color="secondary" display="block" class={mergeClasses("leading-relaxed", local.class)} {...rest}>
+      {local.children}
+    </Text>
+  );
 };
 
 /**

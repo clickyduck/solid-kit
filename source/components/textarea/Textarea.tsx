@@ -1,4 +1,4 @@
-import { FORM_CONTROL_TEXTAREA_LINE_HEIGHT_REM, FORM_CONTROL_TEXTAREA_SIZE_CLASSES, mergeClasses } from "@/utilities";
+import { FORM_CONTROL_TEXTAREA_LINE_HEIGHT_REM, FORM_CONTROL_TEXTAREA_SIZE_CLASSES, callBoundHandler, mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { splitProps } from "solid-js";
 
@@ -38,18 +38,9 @@ export const Textarea = (properties: TextareaProperties) => {
   const minRows = () => local.minRows ?? 1;
   const maxRows = () => local.maxRows ?? 8;
 
-  const handleInput = (event: InputEvent & { currentTarget: HTMLTextAreaElement; target: HTMLTextAreaElement }): void => {
-    const element = event.currentTarget;
-    if (local.autoGrow) {
-      adjustAutoGrowHeight(element, minRows(), maxRows());
-    }
-    const userOnInput = local.onInput;
-    if (typeof userOnInput === "function") {
-      userOnInput(event);
-    } else if (Array.isArray(userOnInput)) {
-      const [handler, data] = userOnInput;
-      handler(data, event);
-    }
+  const handleAutoGrowInput = (event: InputEvent & { currentTarget: HTMLTextAreaElement; target: HTMLTextAreaElement }): void => {
+    adjustAutoGrowHeight(event.currentTarget, minRows(), maxRows());
+    callBoundHandler(local.onInput, event);
   };
 
   const handleRef = (element: HTMLTextAreaElement): void => {
@@ -58,9 +49,7 @@ export const Textarea = (properties: TextareaProperties) => {
     }
     const reference = local.ref;
     if (typeof reference === "function") {
-      reference(element);
-    } else if (reference !== undefined && reference !== null) {
-      (reference as { current?: HTMLTextAreaElement }).current = element;
+      (reference as (element: HTMLTextAreaElement) => void)(element);
     }
   };
 
@@ -69,13 +58,13 @@ export const Textarea = (properties: TextareaProperties) => {
       ref={local.autoGrow ? handleRef : local.ref}
       rows={local.autoGrow ? minRows() : local.rows}
       class={mergeClasses(
-        "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-400 transition-colors duration-150 focus:border-blue-500 focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400",
+        "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-400 transition-colors duration-100 ease-out focus:border-blue-500 focus:ring-0 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400",
         FORM_CONTROL_TEXTAREA_SIZE_CLASSES,
         local.autoGrow && "overflow-hidden",
         resizeClass(),
         local.class
       )}
-      onInput={local.autoGrow ? handleInput : local.onInput}
+      onInput={local.autoGrow ? handleAutoGrowInput : local.onInput}
       {...rest}
     />
   );

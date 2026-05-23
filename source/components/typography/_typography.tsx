@@ -1,13 +1,11 @@
-import { Icon } from "@/components/icons";
-import type { IconPosition } from "@/utilities/componentClassStrings";
-import { mergeClasses } from "@/utilities/mergeClasses";
-import type { ComponentProps, JSX, ParentComponent } from "solid-js";
-import { Show, splitProps } from "solid-js";
-
 export type TextColor = "default" | "inherit" | "muted" | "primary" | "secondary" | "success" | "warning" | "danger" | "info";
 export type TextWeight = "thin" | "normal" | "medium" | "semibold" | "bold";
+export type TextSize = "display" | "title" | "body" | "small" | "caption";
+export type TextAlign = "start" | "center" | "end";
+export type TextTransform = "none" | "uppercase" | "capitalize";
+export type TextDisplay = "flex" | "block" | "inline";
 
-const COLOR_CLASSES: Record<TextColor, string> = {
+export const COLOR_CLASSES: Record<TextColor, string> = {
   inherit: "",
   default: "text-gray-900 dark:text-gray-100",
   muted: "text-gray-600 dark:text-gray-400",
@@ -19,7 +17,7 @@ const COLOR_CLASSES: Record<TextColor, string> = {
   info: "text-sky-700 dark:text-sky-400"
 };
 
-const WEIGHT_CLASSES: Record<TextWeight, string> = {
+export const WEIGHT_CLASSES: Record<TextWeight, string> = {
   thin: "font-light",
   normal: "font-normal",
   medium: "font-medium",
@@ -27,66 +25,40 @@ const WEIGHT_CLASSES: Record<TextWeight, string> = {
   bold: "font-bold"
 };
 
-export type TypographyBaseProps = Omit<ComponentProps<"div">, "children"> & {
-  children: JSX.Element;
-  color?: TextColor;
-  weight?: TextWeight;
-  italic?: boolean;
-  underline?: boolean;
-  /** 0..100 (percent). Applied to the whole text row (including icon). */
-  opacity?: number;
-  icon?: string | JSX.Element;
-  iconPosition?: IconPosition;
+export type SizeConfig = { textClass: string; gapClass: string; iconSize: number; defaultWeight: TextWeight };
+
+export const SIZE_CONFIG: Record<TextSize, SizeConfig> = {
+  display: { textClass: "text-4xl tracking-tight", gapClass: "gap-5", iconSize: 36, defaultWeight: "bold" },
+  title: { textClass: "text-2xl tracking-tight", gapClass: "gap-3.5", iconSize: 24, defaultWeight: "semibold" },
+  body: { textClass: "text-base", gapClass: "gap-2", iconSize: 16, defaultWeight: "normal" },
+  small: { textClass: "text-sm", gapClass: "gap-2", iconSize: 14, defaultWeight: "normal" },
+  caption: { textClass: "text-xs", gapClass: "gap-1.5", iconSize: 12, defaultWeight: "normal" }
 };
 
-type CreateTypographyOptions = {
-  sizeClasses: string;
-  gapClass: string;
-  iconSize: number;
-  defaultColor?: TextColor;
-  defaultWeight?: TextWeight;
-  defaultItalic?: boolean;
-  defaultUnderline?: boolean;
+export const ALIGN_CLASSES: Record<TextAlign, string> = {
+  start: "text-left justify-start",
+  center: "text-center justify-center",
+  end: "text-right justify-end"
 };
 
-const DEFAULT_ICON_CLASSES = "inline-flex shrink-0 items-center justify-center align-middle text-current opacity-70 [&_svg]:fill-current";
+export const TRANSFORM_CLASSES: Record<TextTransform, string> = {
+  none: "",
+  uppercase: "uppercase tracking-wide",
+  capitalize: "capitalize"
+};
 
-export const createTypography = (options: CreateTypographyOptions): ParentComponent<TypographyBaseProps> => {
-  return (properties) => {
-    const [local, rest] = splitProps(properties, ["children", "class", "color", "weight", "italic", "underline", "opacity", "icon", "iconPosition"]);
-    const iconPosition = () => local.iconPosition ?? "start";
-    const color = (): TextColor => local.color ?? options.defaultColor ?? "default";
-    const weight = (): TextWeight => local.weight ?? options.defaultWeight ?? "normal";
-    const italic = (): boolean => local.italic ?? options.defaultItalic ?? false;
-    const underline = (): boolean => local.underline ?? options.defaultUnderline ?? false;
-    const opacity = (): number | undefined => local.opacity;
+export const DISPLAY_CLASSES: Record<TextDisplay, string> = {
+  flex: "flex items-center",
+  block: "block",
+  inline: "inline-flex items-center"
+};
 
-    const style = () => {
-      const baseStyle = rest.style;
-      if (opacity() === undefined) {
-        return baseStyle;
-      }
-      const clamped = Math.max(0, Math.min(100, opacity()!)) / 100;
-      if (typeof baseStyle === "object" && baseStyle !== null) {
-        return { ...(baseStyle as JSX.CSSProperties), opacity: clamped };
-      }
-      return { opacity: clamped } satisfies JSX.CSSProperties;
-    };
+export const TYPOGRAPHY_ICON_CLASSES = "align-middle opacity-70 [&_svg]:fill-current";
 
-    return (
-      <div class={mergeClasses("flex items-center", options.gapClass, options.sizeClasses, COLOR_CLASSES[color()], WEIGHT_CLASSES[weight()], italic() ? "italic" : "", underline() ? "underline" : "", local.class)} {...rest} style={style()}>
-        <Show when={local.icon != null && iconPosition() === "start"}>
-          <span class={DEFAULT_ICON_CLASSES} style={{ width: `${options.iconSize}px`, height: `${options.iconSize}px` }} aria-hidden="true">
-            {typeof local.icon === "string" ? <Icon name={local.icon} size={options.iconSize} /> : local.icon}
-          </span>
-        </Show>
-        <div class="min-w-0">{local.children}</div>
-        <Show when={local.icon != null && iconPosition() === "end"}>
-          <span class={DEFAULT_ICON_CLASSES} style={{ width: `${options.iconSize}px`, height: `${options.iconSize}px` }} aria-hidden="true">
-            {typeof local.icon === "string" ? <Icon name={local.icon} size={options.iconSize} /> : local.icon}
-          </span>
-        </Show>
-      </div>
-    );
-  };
+/** Truncates string children with `…` at `maxLength`. Non-string children pass through unchanged. */
+export const truncateTextChildren = <T,>(children: T, maxLength: number | undefined): T => {
+  if (maxLength !== undefined && typeof children === "string" && children.length > maxLength) {
+    return (children.slice(0, maxLength) + "…") as unknown as T;
+  }
+  return children;
 };

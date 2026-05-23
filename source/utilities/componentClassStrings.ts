@@ -2,6 +2,23 @@
 
 export type IconPosition = "start" | "end";
 
+/**
+ * Shared animation tokens. Keep all motion in the library on these two tiers so
+ * hover/focus feedback feels identical everywhere.
+ *
+ * - `INTERACTIVE_TRANSITION_DURATION` (100ms): hover/active/color/opacity/border
+ *   feedback on interactive elements. Snappy and consistent across buttons,
+ *   inputs, menu items, table rows, toggles, etc.
+ * - `LAYOUT_TRANSITION_DURATION` (200ms): larger structural movement — sliding
+ *   panels/drawers, width changes, accordion chevrons. Slightly slower reads
+ *   better for bigger movement.
+ *
+ * Easing is unified to `ease-out` so the timing curve also matches.
+ */
+export const INTERACTIVE_TRANSITION_DURATION = "duration-100";
+export const LAYOUT_TRANSITION_DURATION = "duration-200";
+export const TRANSITION_EASING = "ease-out";
+
 /** Muted inline icons (leading search, decorative) with balanced contrast in light and dark. */
 export const CHROME_MUTED_ICON_CLASSES = "text-gray-400 dark:text-gray-500";
 

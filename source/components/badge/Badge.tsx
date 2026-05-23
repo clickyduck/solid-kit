@@ -1,4 +1,5 @@
-import { Icon } from "@/components/icons";
+import { Icon, RenderIcon } from "@/components/icons";
+import { Text } from "@/components/typography";
 import { BADGE_ICON_CLASSES, type Color, mergeClasses } from "@/utilities";
 import type { JSX } from "solid-js";
 import { Show } from "solid-js";
@@ -7,7 +8,7 @@ export type BadgeVariant = "solid" | "outline";
 
 export type { Color };
 
-const BADGE_REMOVE_BUTTON_BASE_CLASS = "-mr-1 -ml-0.5 inline-flex shrink-0 cursor-pointer items-center justify-center self-center rounded-full p-0.5 transition-[colors,opacity] duration-150 active:opacity-75";
+const BADGE_REMOVE_BUTTON_BASE_CLASS = "-mr-1 -ml-0.5 inline-flex shrink-0 cursor-pointer items-center justify-center self-center rounded-full p-0.5 transition-[color,background-color,border-color,opacity] duration-100 ease-out active:opacity-75";
 
 const BADGE_CONTAINER_CLASSES_BY_VARIANT_AND_COLOR: Record<BadgeVariant, Record<Color, string>> = {
   solid: {
@@ -61,18 +62,14 @@ export const Badge = (properties: BadgeProperties): JSX.Element => {
   const color = (): Color => properties.color ?? "neutral";
 
   return (
-    <span class={mergeClasses("inline-flex items-stretch gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium", BADGE_CONTAINER_CLASSES_BY_VARIANT_AND_COLOR[variant()][color()], properties.class)}>
+    <span class={mergeClasses("inline-flex items-stretch gap-1.5 rounded-full px-3 py-1.5 text-xs", BADGE_CONTAINER_CLASSES_BY_VARIANT_AND_COLOR[variant()][color()], properties.class)}>
       <span class="inline-flex min-w-0 items-center gap-1.5 self-center">
         <Show when={properties.icon != null}>
-          {typeof properties.icon === "string" ? (
-            <Icon name={properties.icon} size={14} class={BADGE_ICON_CLASSES} aria-hidden="true" />
-          ) : (
-            <span class={mergeClasses("inline-flex shrink-0 items-center justify-center", BADGE_ICON_CLASSES)} style={{ width: "14px", height: "14px" }} aria-hidden="true">
-              {properties.icon}
-            </span>
-          )}
+          <RenderIcon icon={properties.icon!} size={14} class={BADGE_ICON_CLASSES} />
         </Show>
-        {properties.children}
+        <Text as="span" size="caption" weight="normal" color="inherit" display="inline" class="min-w-0">
+          {properties.children}
+        </Text>
       </span>
       <Show when={typeof properties.onRemove === "function"}>
         <button

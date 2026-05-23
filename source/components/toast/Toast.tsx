@@ -1,5 +1,6 @@
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon } from "@/components/icons";
+import { Text } from "@/components/typography";
 import { mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { Match, Show, Switch, createSignal, splitProps } from "solid-js";
@@ -16,11 +17,18 @@ const toastTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 export { toastStore };
 
+const generateToastId = (): string => {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return `toast-${crypto.randomUUID()}`;
+  }
+  return `toast-${Date.now().toString()}-${Math.random().toString(36).slice(2)}`;
+};
+
 /**
  * Adds a toast notification. Returns the toast id. Auto-removes after 5 seconds.
  */
 export const addToast = (toast: Omit<ToastData, "id">): string => {
-  const toastId = `toast-${Date.now()}-${Math.random().toString()}`;
+  const toastId = generateToastId();
   setToastStore([...toastStore(), { ...toast, id: toastId }]);
 
   const timerId = setTimeout(() => {
@@ -93,12 +101,16 @@ export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) 
           </Match>
         </Switch>
       </div>
-      <div class="ms-3 text-sm font-normal">
+      <div class="ms-3">
         <Show when={toast().title}>
-          <div class="font-medium text-gray-900 dark:text-white">{toast().title}</div>
+          <Text as="div" size="small" weight="normal" color="default" display="block">
+            {toast().title}
+          </Text>
         </Show>
         <Show when={toast().description}>
-          <div class="text-gray-600 dark:text-gray-400">{toast().description}</div>
+          <Text as="div" size="small" weight="normal" color="muted" display="block">
+            {toast().description}
+          </Text>
         </Show>
       </div>
       <IconButton

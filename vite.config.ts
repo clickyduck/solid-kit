@@ -19,6 +19,7 @@ const componentEntries: Record<string, string> = {
   icons: resolve(__dirname, "source/components/icons/index.ts"),
   input: resolve(__dirname, "source/components/input/index.ts"),
   "left-panel-layout": resolve(__dirname, "source/components/left-panel-layout/index.ts"),
+  link: resolve(__dirname, "source/components/link/index.ts"),
   loading: resolve(__dirname, "source/components/loading/index.ts"),
   "main-layout": resolve(__dirname, "source/components/main-layout/index.ts"),
   "page-layout": resolve(__dirname, "source/components/page-layout/index.ts"),

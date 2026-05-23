@@ -1,7 +1,9 @@
 import { IconButton } from "@/components/icon-button/IconButton";
+import { Text } from "@/components/typography";
 import { mergeClasses } from "@/utilities/mergeClasses";
+import { themedScrollControlClassName } from "@/utilities/themedScrollControlClassName";
 import type { Component, JSX } from "solid-js";
-import { Show, createEffect, createSignal, onCleanup, onMount } from "solid-js";
+import { Show, createEffect, createSignal, on, onCleanup, onMount, splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 
 type RightPanelLayoutProperties = {
@@ -97,23 +99,38 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
     });
   };
 
-  createEffect(() => {
-    const nextOpen = properties.open;
-    if (nextOpen === undefined) {
-      return;
-    }
-    if (nextOpen) {
-      openRightPanel();
-    } else {
-      closeRightPanel();
-    }
-  });
+  createEffect(
+    on(
+      () => properties.open,
+      (nextOpen) => {
+        if (nextOpen === undefined) {
+          return;
+        }
+        if (nextOpen) {
+          openRightPanel();
+        } else {
+          closeRightPanel();
+        }
+      },
+      { defer: true }
+    )
+  );
 
-  const resolvedTopOffset = properties.topOffset ?? "var(--solid-kit-header-height, 4rem)";
-  const resolvedVariant = properties.variant ?? "grid";
-  const panelPropsClass = () => (properties.panelProps?.class ? String(properties.panelProps.class) : "");
-  const { class: _panelClass, ...panelPropsRest } = properties.panelProps ?? {};
-  const portalMount = () => {
+  const resolvedTopOffset = (): string => properties.topOffset ?? "var(--solid-kit-header-height, 4rem)";
+  const resolvedVariant = (): "grid" | "overlay" => properties.variant ?? "grid";
+  const panelPropsClass = (): string => {
+    const incoming = properties.panelProps?.class;
+    return incoming ? String(incoming) : "";
+  };
+  const panelPropsRest = (): JSX.HTMLAttributes<HTMLElement> => {
+    const incoming = properties.panelProps;
+    if (!incoming) {
+      return {};
+    }
+    const [, rest] = splitProps(incoming, ["class"]);
+    return rest;
+  };
+  const portalMount = (): HTMLElement | undefined => {
     if (typeof document === "undefined") {
       return undefined;
     }
@@ -124,20 +141,20 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
     <div
       class={mergeClasses(
         "min-h-0 shrink-0",
-        resolvedVariant === "grid" ? "max-md:contents md:min-w-0 md:overflow-hidden md:transition-[width] md:duration-200 md:ease-in-out" : "",
-        resolvedVariant === "grid" ? (isPanelVisible() ? "md:w-md lg:w-xl" : "md:w-0") : ""
+        resolvedVariant() === "grid" ? "max-md:contents md:min-w-0 md:overflow-hidden md:transition-[width] md:duration-200 md:ease-in-out" : "",
+        resolvedVariant() === "grid" ? (isPanelVisible() ? "md:w-md lg:w-xl" : "md:w-0") : ""
       )}
-      style={resolvedVariant === "grid" ? { "grid-area": "right" } : undefined}
+      style={resolvedVariant() === "grid" ? { "grid-area": "right" } : undefined}
     >
       <aside
-        {...panelPropsRest}
+        {...panelPropsRest()}
         class={mergeClasses(
           "flex h-full min-h-0 w-full min-w-0 flex-col bg-white text-gray-900 shadow-xl dark:bg-gray-950 dark:text-gray-100",
           "border-l border-gray-200 dark:border-gray-700/80",
-          resolvedVariant === "overlay"
+          resolvedVariant() === "overlay"
             ? "fixed right-0 bottom-0 left-0 z-30 w-full max-w-full transform transition-transform duration-200 ease-in-out md:left-auto md:w-md lg:w-xl"
             : "max-md:fixed max-md:right-0 max-md:bottom-0 max-md:left-0 max-md:z-30 max-md:transform max-md:transition-transform max-md:duration-200 max-md:ease-in-out md:static md:max-h-none",
-          resolvedVariant === "overlay"
+          resolvedVariant() === "overlay"
             ? isPanelVisible()
               ? "pointer-events-auto translate-x-0"
               : "pointer-events-none translate-x-full"
@@ -147,19 +164,25 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
           panelPropsClass()
         )}
         style={{
-          top: resolvedTopOffset,
-          "max-height": `calc(100dvh - ${resolvedTopOffset})`
+          top: resolvedTopOffset(),
+          "max-height": `calc(100dvh - ${resolvedTopOffset()})`
         }}
         aria-hidden={isPanelVisible() ? undefined : true}
       >
         <header class="shrink-0 border-b border-gray-200 dark:border-gray-700/80">
           <div class="flex items-center justify-between gap-3 px-4 py-3">
             <div class="min-w-0">
-              <div class="min-w-0 truncate text-lg font-semibold tracking-tight text-gray-900 dark:text-white">{properties.title}</div>
-              {properties.subtitle ? <div class="mt-1 truncate text-sm text-gray-600 dark:text-gray-400">{properties.subtitle}</div> : null}
+              <Text as="div" weight="semibold" color="default" display="block" truncate class="min-w-0 text-lg tracking-tight">
+                {properties.title}
+              </Text>
+              <Show when={properties.subtitle}>
+                <Text as="div" size="small" color="muted" display="block" truncate class="mt-1 min-w-0">
+                  {properties.subtitle}
+                </Text>
+              </Show>
             </div>
             <div class="flex shrink-0 items-center gap-1">
-              {properties.headerActions ?? null}
+              <Show when={properties.headerActions}>{properties.headerActions}</Show>
               <IconButton
                 icon="cancel"
                 class="shrink-0"
@@ -172,15 +195,17 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
             </div>
           </div>
         </header>
-        <div class={mergeClasses("min-h-0 min-w-0 flex-1 overflow-y-auto px-4 py-3")}>{properties.children}</div>
-        {properties.footer ? <div class="shrink-0 border-t border-gray-200 px-4 py-3 dark:border-gray-700/80">{properties.footer}</div> : null}
+        <div class={mergeClasses("min-h-0 min-w-0 flex-1 overflow-y-auto px-4 py-3", themedScrollControlClassName)}>{properties.children}</div>
+        <Show when={properties.footer}>
+          <div class="shrink-0 border-t border-gray-200 px-4 py-3 dark:border-gray-700/80">{properties.footer}</div>
+        </Show>
       </aside>
     </div>
   );
 
   return (
     <Show when={isPanelMounted()}>
-      <Show when={resolvedVariant === "overlay"} fallback={layout}>
+      <Show when={resolvedVariant() === "overlay"} fallback={layout}>
         <Portal mount={portalMount()}>{layout}</Portal>
       </Show>
     </Show>

@@ -1,16 +1,16 @@
 import { Button } from "@/components/button/Button";
 import { IconButton } from "@/components/icon-button/IconButton";
-import { Icon } from "@/components/icons";
+import { Icon, RenderIcon } from "@/components/icons";
 import { Input } from "@/components/input/Input";
+import { Text } from "@/components/typography";
 import {
   DROPDOWN_MENU_SURFACE_CLASSES,
   FORM_CONTROL_DROP_DOWN_CONTENT_MIN_WIDTH_CLASS_BY_SIZE,
-  FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE,
+  FORM_CONTROL_DROP_DOWN_MENU_ITEM_CLASS_BY_SIZE,
   FORM_CONTROL_DROP_DOWN_MENU_LIST_CLASS_BY_SIZE,
   FORM_CONTROL_DROP_DOWN_MENU_PANEL_CLASS_BY_SIZE,
   FORM_CONTROL_DROP_DOWN_MENU_SEARCH_WRAPPER_CLASS_BY_SIZE,
   FORM_CONTROL_ICON_SIZE,
-  FORM_CONTROL_TEXT_CLASS_BY_SIZE,
   mergeClasses
 } from "@/utilities";
 import { getPortalMount } from "@/utilities/getPortalMount";
@@ -38,6 +38,7 @@ type DropdownContextType = {
   registerSearchInput: (element: HTMLInputElement) => void;
   getDropdownContainerElement: () => HTMLDivElement | undefined;
   setContentPortalMenuElement: (element: HTMLElement | null) => void;
+  registerCustomContent: () => void;
 };
 
 const DropdownContext = createContext<DropdownContextType>();
@@ -50,10 +51,41 @@ export const useDropdownContext = (): DropdownContextType => {
   return context;
 };
 
+const makeToggleHandler = (context: DropdownContextType, externalOnClick: JSX.EventHandlerUnion<HTMLButtonElement, MouseEvent> | undefined) => {
+  return (event: MouseEvent & { currentTarget: HTMLButtonElement; target: Element }) => {
+    if (context.disabled()) {
+      return;
+    }
+    event.stopPropagation();
+    context.setDropdownOpen(!context.dropdownOpen());
+    if (typeof externalOnClick === "function") {
+      externalOnClick(event);
+    }
+  };
+};
+
 type DropdownMenuPosition = {
   top: number;
   left: number;
   width: number;
+  measured: boolean;
+};
+
+const VIEWPORT_EDGE_GAP_PIXELS = 4;
+
+const computeFlippedMenuPosition = (triggerRectangle: DOMRect, menuElement: HTMLElement): { top: number; left: number } => {
+  const menuHeight = menuElement.offsetHeight;
+  const menuWidth = menuElement.offsetWidth;
+  const spaceBelow = window.innerHeight - triggerRectangle.bottom;
+  const spaceAbove = triggerRectangle.top;
+  const spaceRight = window.innerWidth - triggerRectangle.left;
+
+  const openUpward = spaceBelow < menuHeight + VIEWPORT_EDGE_GAP_PIXELS && spaceAbove > spaceBelow;
+  const openLeftward = spaceRight < menuWidth + VIEWPORT_EDGE_GAP_PIXELS;
+
+  const top = openUpward ? triggerRectangle.top - menuHeight - VIEWPORT_EDGE_GAP_PIXELS : triggerRectangle.bottom + VIEWPORT_EDGE_GAP_PIXELS;
+  const left = openLeftward ? triggerRectangle.right - menuWidth : triggerRectangle.left;
+  return { top, left };
 };
 
 type DropdownRootProperties = {
@@ -114,28 +146,35 @@ type DropdownBuiltInOptionsListProperties = {
 const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties> = (properties) => {
   return (
     <ul class={FORM_CONTROL_DROP_DOWN_MENU_LIST_CLASS_BY_SIZE}>
-      <Show when={properties.filteredOptions().length > 0} fallback={<li class="py-4 text-center text-gray-500 dark:text-gray-400">No matches found</li>}>
+      <Show
+        when={properties.filteredOptions().length > 0}
+        fallback={
+          <li class="py-4">
+            <Text as="div" size="small" color="muted" align="center" display="block">
+              No matches found
+            </Text>
+          </li>
+        }
+      >
         <For each={properties.filteredOptions()}>
           {(option: string) => {
             const isSelected = (): boolean => (properties.isMultiSelect() ? properties.selectedValues().includes(option) : properties.selectedValue() === option);
-            const selectedClasses = (): string => (isSelected() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : "");
-            const itemClass = (): string => FORM_CONTROL_DROP_DOWN_MENU_ITEM_ANCHOR_CLASS_BY_SIZE;
+            const selectedClasses = (): string => (isSelected() ? "bg-blue-500/8 hover:bg-blue-500/15 hover:text-gray-900 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:hover:text-white" : "");
             return (
               <li>
-                <a
-                  href="#"
-                  class={mergeClasses(itemClass(), selectedClasses(), "transition-opacity duration-150 active:opacity-75")}
+                <button
+                  type="button"
+                  class={mergeClasses(FORM_CONTROL_DROP_DOWN_MENU_ITEM_CLASS_BY_SIZE, selectedClasses(), "cursor-pointer transition-opacity duration-100 ease-out active:opacity-75")}
                   onClick={(event) => {
-                    event.preventDefault();
                     event.stopPropagation();
                     properties.onSelectOption(option);
                   }}
                 >
                   <span class="flex min-w-0 flex-1 items-center">{properties.itemComponent ? properties.itemComponent({ item: { rawValue: option } }) : option}</span>
                   <Show when={isSelected()}>
-                    <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-current" aria-hidden="true" />
+                    <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-blue-500 dark:text-blue-400" aria-hidden="true" />
                   </Show>
-                </a>
+                </button>
               </li>
             );
           }}
@@ -173,11 +212,13 @@ const Dropdown = (properties: DropdownRootProperties) => {
   const [dropdownOpen, setDropdownOpen] = createSignal(local.initialOpen ?? false);
   const [searchQuery, setSearchQuery] = createSignal("");
   const [portalPosition, setPortalPosition] = createSignal<DropdownMenuPosition | null>(null);
+  const [hasCustomContent, setHasCustomContent] = createSignal(false);
   let dropdownContainerElement: HTMLDivElement | undefined;
   let contentPortalMenuElement: HTMLElement | null = null;
+  let builtInMenuElement: HTMLDivElement | undefined;
   let searchInputElement: HTMLInputElement | undefined;
 
-  const disabledState = createMemo(() => properties.disabled);
+  const disabledState = (): boolean | undefined => properties.disabled;
   const isSearchable = () => properties.searchable === true;
   const isRemoteSearch = () => properties.searchMode === "remote";
   const isMultiSelect = () => properties.multiSelect === true;
@@ -232,6 +273,16 @@ const Dropdown = (properties: DropdownRootProperties) => {
   );
 
   createEffect(
+    on(
+      () => properties.multiSelectValue,
+      (values) => {
+        setSelectedValues(values ?? []);
+      },
+      { defer: true }
+    )
+  );
+
+  createEffect(
     on(dropdownOpen, (open) => {
       if (!open) {
         setSearchQuery("");
@@ -257,20 +308,30 @@ const Dropdown = (properties: DropdownRootProperties) => {
     on(dropdownOpen, (open) => {
       if (!open) {
         setPortalPosition(null);
+        builtInMenuElement = undefined;
         return;
       }
       const updatePosition = () => {
         if (!dropdownContainerElement) {
           return;
         }
-        const rectangle = dropdownContainerElement.getBoundingClientRect();
-        setPortalPosition({
-          top: rectangle.bottom + 4,
-          left: rectangle.left,
-          width: rectangle.width
-        });
+        const triggerRectangle = dropdownContainerElement.getBoundingClientRect();
+        if (!builtInMenuElement) {
+          setPortalPosition({
+            top: triggerRectangle.bottom + VIEWPORT_EDGE_GAP_PIXELS,
+            left: triggerRectangle.left,
+            width: triggerRectangle.width,
+            measured: false
+          });
+          return;
+        }
+        const { top, left } = computeFlippedMenuPosition(triggerRectangle, builtInMenuElement);
+        setPortalPosition({ top, left, width: triggerRectangle.width, measured: true });
       };
-      requestAnimationFrame(updatePosition);
+      requestAnimationFrame(() => {
+        updatePosition();
+        requestAnimationFrame(updatePosition);
+      });
       window.addEventListener("scroll", updatePosition, true);
       window.addEventListener("resize", updatePosition);
       onCleanup(() => {
@@ -338,6 +399,9 @@ const Dropdown = (properties: DropdownRootProperties) => {
     getDropdownContainerElement: () => dropdownContainerElement,
     setContentPortalMenuElement: (element: HTMLElement | null) => {
       contentPortalMenuElement = element;
+    },
+    registerCustomContent: () => {
+      setHasCustomContent(true);
     }
   };
 
@@ -356,15 +420,22 @@ const Dropdown = (properties: DropdownRootProperties) => {
         class={mergeClasses("relative", local.class)}
       >
         {local.children}
-        <Show when={dropdownOpen() && !disabledState() && properties.options.length > 0 && portalPosition()}>
+        <Show when={!hasCustomContent() && dropdownOpen() && !disabledState() && properties.options.length > 0 && portalPosition()}>
           {(position) => (
             <Portal mount={getPortalMount(dropdownContainerElement)}>
               <div
                 ref={(el) => {
                   contentPortalMenuElement = el;
+                  builtInMenuElement = el;
                 }}
                 class={mergeClasses("z-9999 min-w-min", builtInMenuChromeClass())}
-                style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, width: `${position().width}px` }}
+                style={{
+                  position: "fixed",
+                  top: `${position().top}px`,
+                  left: `${position().left}px`,
+                  width: `${position().width}px`,
+                  visibility: position().measured ? "visible" : "hidden"
+                }}
               >
                 <Show when={isSearchable()}>
                   <DropdownBuiltInSearchField searchQuery={searchQuery} setSearchQuery={setSearchQuery} searchInputReference={assignSearchInputReference} />
@@ -383,8 +454,12 @@ const Dropdown = (properties: DropdownRootProperties) => {
  * Displays the selected value. Use inside Dropdown.
  */
 const DropdownValue: ParentComponent<ComponentProps<"div">> = (properties) => {
-  const [local, rest] = splitProps(properties, ["class"]);
-  return <div class={mergeClasses("min-w-0 flex-1 truncate text-left", FORM_CONTROL_TEXT_CLASS_BY_SIZE, local.class)} {...rest} />;
+  const [local, rest] = splitProps(properties, ["class", "children"]);
+  return (
+    <Text as="div" size="small" color="inherit" align="start" display="block" truncate class={mergeClasses("min-w-0 flex-1", local.class)} {...rest}>
+      {local.children}
+    </Text>
+  );
 };
 
 type DropdownTriggerWithLabel = Omit<ComponentProps<typeof Button>, "variant" | "iconPosition" | "class"> & {
@@ -414,16 +489,7 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
         id={local.id}
         variant={local.variant ?? "outline"}
         icon={local.icon ?? "keyboard_arrow_down"}
-        onClick={(event) => {
-          if (context.disabled()) {
-            return;
-          }
-          event.stopPropagation();
-          context.setDropdownOpen(!context.dropdownOpen());
-          if (typeof local.onClick === "function") {
-            local.onClick(event);
-          }
-        }}
+        onClick={makeToggleHandler(context, local.onClick)}
         disabled={context.disabled()}
         aria-expanded={context.dropdownOpen()}
         aria-haspopup="true"
@@ -439,16 +505,7 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
       icon="keyboard_arrow_down"
       iconPosition="end"
       class="w-full min-w-0 justify-between text-left font-normal aria-expanded:bg-gray-100 dark:aria-expanded:bg-gray-700"
-      onClick={(event) => {
-        if (context.disabled()) {
-          return;
-        }
-        event.stopPropagation();
-        context.setDropdownOpen(!context.dropdownOpen());
-        if (typeof local.onClick === "function") {
-          local.onClick(event);
-        }
-      }}
+      onClick={makeToggleHandler(context, local.onClick)}
       disabled={context.disabled()}
       aria-expanded={context.dropdownOpen()}
       aria-haspopup="true"
@@ -456,15 +513,11 @@ const DropdownTrigger = (properties: DropdownTriggerProperties) => {
     >
       <span class="flex min-w-0 flex-1 items-center gap-2">
         <Show when={local.icon != null}>
-          {typeof local.icon === "string" ? (
-            <Icon name={local.icon} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
-          ) : (
-            <span class="pointer-events-none inline-flex shrink-0 items-center justify-center text-current" style={{ width: `${FORM_CONTROL_ICON_SIZE}px`, height: `${FORM_CONTROL_ICON_SIZE}px` }} aria-hidden="true">
-              {local.icon}
-            </span>
-          )}
+          <RenderIcon icon={local.icon!} size={FORM_CONTROL_ICON_SIZE} />
         </Show>
-        <span class={mergeClasses("min-w-0 flex-1 truncate", FORM_CONTROL_TEXT_CLASS_BY_SIZE, "text-gray-900 dark:text-white")}>{local.children}</span>
+        <Text as="span" size="small" color="default" display="inline" truncate class="min-w-0 flex-1">
+          {local.children}
+        </Text>
       </span>
     </Button>
   );
@@ -481,31 +534,11 @@ type DropdownIconTriggerProperties = Omit<ComponentProps<typeof IconButton>, "on
 const DropdownIconTrigger = (properties: DropdownIconTriggerProperties) => {
   const context = useDropdownContext();
   const [local, rest] = splitProps(properties, ["onClick", "variant"]);
-  return (
-    <IconButton
-      variant={local.variant ?? "outline"}
-      disabled={context.disabled()}
-      aria-expanded={context.dropdownOpen()}
-      aria-haspopup="true"
-      onClick={(event) => {
-        if (context.disabled()) {
-          return;
-        }
-        event.stopPropagation();
-        context.setDropdownOpen(!context.dropdownOpen());
-        if (typeof local.onClick === "function") {
-          local.onClick(event);
-        }
-      }}
-      {...rest}
-    />
-  );
+  return <IconButton variant={local.variant ?? "outline"} disabled={context.disabled()} aria-expanded={context.dropdownOpen()} aria-haspopup="true" onClick={makeToggleHandler(context, local.onClick)} {...rest} />;
 };
 
 type DropdownContentProperties = Omit<ComponentProps<"div">, "class"> & {
   class?: string;
-  xDirection?: "left" | "right";
-  yDirection?: "up" | "down";
   wrapChildrenInList?: boolean;
 };
 
@@ -517,25 +550,20 @@ type DropdownContentProperties = Omit<ComponentProps<"div">, "class"> & {
  */
 const DropdownContent = (properties: DropdownContentProperties) => {
   const context = useDropdownContext();
+  context.registerCustomContent();
 
-  const [local, rest] = splitProps(properties, ["class", "children", "xDirection", "yDirection", "wrapChildrenInList"]);
+  const [local, rest] = splitProps(properties, ["class", "children", "wrapChildrenInList"]);
   let menuEl: HTMLDivElement | undefined;
 
   const applyPosition = (): void => {
     const container = context.getDropdownContainerElement();
     if (!container || !menuEl) return;
 
-    const rectangle = container.getBoundingClientRect();
-    const gapPixels = 4;
-    const xDir = local.xDirection ?? "right";
-    const yDir = local.yDirection ?? "down";
-
-    const translateX = xDir === "left" ? "translateX(-100%)" : "";
-    const translateY = yDir === "up" ? `translateY(calc(-100% - ${gapPixels}px))` : "";
-    menuEl.style.transform = [translateX, translateY].filter(Boolean).join(" ") || "";
-    menuEl.style.minWidth = `${rectangle.width}px`;
-    menuEl.style.left = xDir === "left" ? `${rectangle.right}px` : `${rectangle.left}px`;
-    menuEl.style.top = yDir === "up" ? `${rectangle.top}px` : `${rectangle.bottom + gapPixels}px`;
+    const triggerRectangle = container.getBoundingClientRect();
+    menuEl.style.minWidth = `${triggerRectangle.width}px`;
+    const { top, left } = computeFlippedMenuPosition(triggerRectangle, menuEl);
+    menuEl.style.top = `${top}px`;
+    menuEl.style.left = `${left}px`;
   };
 
   createEffect(
@@ -544,8 +572,10 @@ const DropdownContent = (properties: DropdownContentProperties) => {
       if (open) {
         const mount = getPortalMount(context.getDropdownContainerElement());
         mount.appendChild(menuEl);
-        applyPosition();
+        menuEl.style.visibility = "hidden";
         menuEl.style.display = "";
+        applyPosition();
+        menuEl.style.visibility = "";
         context.setContentPortalMenuElement(menuEl);
         window.addEventListener("scroll", applyPosition, true);
         window.addEventListener("resize", applyPosition);
@@ -586,7 +616,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
   );
 };
 
-type DropdownItemProperties = Omit<ComponentProps<"a">, "class"> & {
+type DropdownItemProperties = Omit<ComponentProps<"button">, "class" | "type"> & {
   class?: string;
   item?: { rawValue: string };
   disabled?: boolean;
@@ -631,15 +661,14 @@ const DropdownItem = (properties: DropdownItemProperties) => {
   return (
     <Show when={!isHiddenBySearch()}>
       <li>
-        <a
-          href="#"
+        <button
+          type="button"
           class={mergeClasses(
-            "inline-flex w-full items-start rounded-lg px-2.5 py-1.5 text-left transition-colors duration-100 hover:bg-gray-100 hover:text-gray-900 focus:outline-none dark:hover:bg-gray-700/60 dark:hover:text-white",
-            local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : !isClickable() ? "pointer-events-none cursor-default" : "transition-opacity duration-150 active:opacity-75",
-            isSelected() && isClickable() ? "bg-blue-600/15 text-blue-800 dark:bg-blue-600/20 dark:text-blue-300" : ""
+            "inline-flex w-full items-start rounded-lg px-2.5 py-1.5 text-left transition-colors duration-100 ease-out hover:bg-gray-100 hover:text-gray-900 focus:outline-none dark:hover:bg-gray-700/60 dark:hover:text-white",
+            local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : !isClickable() ? "pointer-events-none cursor-default" : "cursor-pointer transition-opacity duration-100 ease-out active:opacity-75",
+            isSelected() && isClickable() ? "bg-blue-500/8 hover:bg-blue-500/15 hover:text-gray-900 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:hover:text-white" : ""
           )}
           onClick={(event) => {
-            event.preventDefault();
             event.stopPropagation();
             if (local.disabled || context.disabled() || !isClickable()) {
               return;
@@ -666,30 +695,19 @@ const DropdownItem = (properties: DropdownItemProperties) => {
         >
           <span class="flex min-w-0 flex-1 items-center gap-2">
             <Show when={local.icon != null}>
-              {typeof local.icon === "string" ? (
-                <Icon name={local.icon!} size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
-              ) : (
-                <span class="pointer-events-none inline-flex shrink-0 items-center justify-center text-current" style={{ width: `${FORM_CONTROL_ICON_SIZE}px`, height: `${FORM_CONTROL_ICON_SIZE}px` }} aria-hidden="true">
-                  {local.icon}
-                </span>
-              )}
+              <RenderIcon icon={local.icon!} size={FORM_CONTROL_ICON_SIZE} />
             </Show>
-            <span class={mergeClasses("min-w-0 flex-1 truncate", local.class)}>{local.children}</span>
+            <Text as="span" size="small" color="inherit" display="inline" truncate class={mergeClasses("min-w-0 flex-1", local.class)}>
+              {local.children}
+            </Text>
           </span>
           <Show when={isSelected() && isClickable()}>
-            <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-current" aria-hidden="true" />
+            <Icon name="check" size={FORM_CONTROL_ICON_SIZE} class="ml-2 shrink-0 text-blue-500 dark:text-blue-400" aria-hidden="true" />
           </Show>
-        </a>
+        </button>
       </li>
     </Show>
   );
-};
-
-/**
- * Label for the menu. Use inside Dropdown.
- */
-const DropdownLabel = (properties: ComponentProps<"label">) => {
-  return <label {...properties} />;
 };
 
 /**
@@ -699,4 +717,4 @@ const DropdownSeparator = (properties: ComponentProps<"div">) => {
   return <div class="my-1 border-t border-gray-200 dark:border-gray-700" {...properties} />;
 };
 
-export { Dropdown, DropdownValue, DropdownTrigger, DropdownIconTrigger, DropdownContent, DropdownLabel, DropdownItem, DropdownSeparator };
+export { Dropdown, DropdownValue, DropdownTrigger, DropdownIconTrigger, DropdownContent, DropdownItem, DropdownSeparator };

@@ -1,4 +1,5 @@
-import { FORM_CONTROL_HINT_CLASS, FORM_CONTROL_LABEL_CLASS, mergeClasses } from "@/utilities";
+import { Text } from "@/components/typography";
+import { mergeClasses } from "@/utilities";
 import type { JSX, ParentComponent } from "solid-js";
 import { Show } from "solid-js";
 
@@ -16,16 +17,25 @@ type FieldProperties = {
 export const Field: ParentComponent<FieldProperties> = (properties) => {
   return (
     <div class={mergeClasses("space-y-2", properties.class)}>
-      {typeof properties.for === "string" && properties.for.length > 0 ? (
-        <label for={properties.for} class={FORM_CONTROL_LABEL_CLASS}>
-          {properties.label}
+      <Show
+        when={typeof properties.for === "string" && properties.for.length > 0}
+        fallback={
+          <Text as="div" size="small" weight="normal" color="secondary" display="block">
+            {properties.label}
+          </Text>
+        }
+      >
+        <label for={properties.for}>
+          <Text as="span" size="small" weight="normal" color="secondary" display="block">
+            {properties.label}
+          </Text>
         </label>
-      ) : (
-        <div class={FORM_CONTROL_LABEL_CLASS}>{properties.label}</div>
-      )}
+      </Show>
       {properties.children}
       <Show when={properties.hint}>
-        <div class={FORM_CONTROL_HINT_CLASS}>{properties.hint}</div>
+        <Text size="caption" color="muted" display="block" class="mt-2">
+          {properties.hint}
+        </Text>
       </Show>
     </div>
   );

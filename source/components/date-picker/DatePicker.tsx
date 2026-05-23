@@ -1,7 +1,8 @@
 import { Button } from "@/components/button/Button";
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon } from "@/components/icons";
-import { DROPDOWN_MENU_SURFACE_CLASSES, FORM_CONTROL_ICON_SIZE, FORM_CONTROL_TEXT_CLASS_BY_SIZE, mergeClasses } from "@/utilities";
+import { Text } from "@/components/typography";
+import { DROPDOWN_MENU_SURFACE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
 import { getPortalMount } from "@/utilities/getPortalMount";
 import type { JSX } from "solid-js";
 import { For, Show, createEffect, createMemo, createSignal, on, onCleanup, onMount } from "solid-js";
@@ -114,7 +115,7 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
     const isToday = isSameDay(day.date, new Date());
     const isCurrentMonth = day.currentMonth;
     const mutedText = isCurrentMonth ? "text-gray-900 dark:text-gray-100" : "text-gray-400 dark:text-gray-600";
-    const base = "relative z-10 flex h-8 w-8 items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 focus:outline-none";
+    const base = "relative z-10 flex h-8 w-8 items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 ease-out focus:outline-none";
     const todayRing = isToday ? "ring-1 ring-inset ring-blue-500" : "";
 
     const isFrom = createMemo(() => properties.mode === "range" && !!properties.rangeFrom && isSameDay(day.date, properties.rangeFrom));
@@ -143,11 +144,11 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
     return { buttonClass, bandClass };
   };
 
-  const chipBase = "rounded-md px-2 py-0.5 text-sm font-semibold transition-colors duration-100 focus:outline-none";
+  const chipBase = "rounded-md px-2 py-0.5 text-sm transition-colors duration-100 ease-out focus:outline-none";
   const chipActive = "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300";
   const chipIdle = "text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-700";
 
-  const itemBase = "flex items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 focus:outline-none";
+  const itemBase = "flex items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 ease-out focus:outline-none";
   const itemDefault = "text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700";
   const itemSelected = "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600";
 
@@ -199,7 +200,13 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
 
       <Show when={view() === "days"}>
         <div class="mb-1 grid grid-cols-7">
-          <For each={DAYS_OF_WEEK}>{(dow) => <div class="flex h-8 items-center justify-center text-xs font-semibold text-gray-500 dark:text-gray-400">{dow}</div>}</For>
+          <For each={DAYS_OF_WEEK}>
+            {(dow) => (
+              <Text as="div" size="caption" weight="semibold" color="muted" align="center" class="h-8 justify-center">
+                {dow}
+              </Text>
+            )}
+          </For>
         </div>
         <div class="grid grid-cols-7" onMouseLeave={() => properties.onDayHover(undefined)}>
           <For each={days()}>
@@ -357,6 +364,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
     on(open, (isOpen) => {
       if (!isOpen) {
         setPortalPosition(null);
+        setHoverDate(undefined);
         return;
       }
       // When the calendar opens with a complete range already set, always restart selection.
@@ -433,7 +441,13 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
         onYearChange={handleYearChange}
         onMonthChange={handleMonthChange}
       />
-      <Show when={rangeStatusLabel()}>{(label) => <div class="border-t border-gray-200 px-3 py-2 text-xs text-gray-500 dark:border-gray-700 dark:text-gray-400">{label()}</div>}</Show>
+      <Show when={rangeStatusLabel()}>
+        {(label) => (
+          <Text as="div" size="caption" color="muted" display="block" class="border-t border-gray-200 px-3 py-2 dark:border-gray-700">
+            {label()}
+          </Text>
+        )}
+      </Show>
       <Show when={hasValue()}>
         <div class="border-t border-gray-200 px-3 py-2 dark:border-gray-700">
           <Button variant="ghost" class="w-full text-xs text-gray-500 dark:text-gray-400" onClick={handleClear}>
@@ -472,7 +486,9 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
       >
         <span class="flex min-w-0 flex-1 items-center gap-2">
           <Icon name="calendar_today" size={FORM_CONTROL_ICON_SIZE} class="pointer-events-none shrink-0 text-current" aria-hidden="true" />
-          <span class={mergeClasses("min-w-0 flex-1 truncate", FORM_CONTROL_TEXT_CLASS_BY_SIZE, "text-gray-900 dark:text-white")}>{triggerLabel()}</span>
+          <Text as="span" size="small" color="default" display="inline" truncate class="min-w-0 flex-1">
+            {triggerLabel()}
+          </Text>
         </span>
       </Button>
 

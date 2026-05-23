@@ -2,6 +2,10 @@
 
 A SolidJS component library built with Tailwind CSS, published privately via GitHub Packages. Import UI pieces from the main entry or per-component sub-paths for better tree-shaking.
 
+> **Text rendering:** Use the [`Text`](#text) component for **all** text you render — labels, headings, captions, body copy, helper text. Every typographic decision (size, color, weight, alignment, casing, truncation, semantic element) is a prop on `Text`, so you should never reach for raw `<p>`/`<span>`/`<h*>` tags or a `class` to style text. For text that navigates somewhere, use [`Link`](#link) instead of a raw `<a>` — it shares `Text`'s typographic props but renders an anchor. Components in this library already render their own internal text; the rule applies to the content **you** pass in (children, slots) and to any markup you build around these components.
+
+> **Dashboard / app-shell layouts:** Dashboard-like screens must be composed with the app-shell layout primitives — [`MainLayout`](#mainlayout) (the full-viewport grid) wrapping [`HeaderLayout`](#headerlayout), [`LeftPanelLayout`](#leftpanellayout), [`PageLayout`](#pagelayout), and the optional [`RightPanelLayout`](#rightpanellayout). See [MainLayout → Composing the full app shell](#mainlayout) for the grid diagram and complete examples.
+
 ## Requirements
 
 Before installing, ensure your project has the following:
@@ -40,6 +44,7 @@ npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge mater
 - [Input](#input)
 - [MainLayout](#mainlayout)
 - [LeftPanelLayout](#leftpanellayout)
+- [Link](#link)
 - [PageLayout](#pagelayout)
 - [Loading](#loading)
 - [MetricCard](#metriccard)
@@ -51,6 +56,7 @@ npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge mater
 - [Textarea](#textarea)
 - [Toast](#toast)
 - [ToggleGroup](#togglegroup)
+- [CardToggleGroup](#cardtogglegroup)
 - [Upload](#upload)
 
 ---
@@ -59,13 +65,13 @@ npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge mater
 
 Chip/tag with optional icon and remove button.
 
-**Exports:** `Badge`, `BadgeVariant` (type), `BadgeProperties` (type)
+**Exports:** `Badge`, `BadgeVariant` (type), `BadgeProperties` (type), `Color` (type)
 
 | Prop       | Type                                                                          | Default     | Description                             |
 | ---------- | ----------------------------------------------------------------------------- | ----------- | --------------------------------------- |
 | `children` | `JSX.Element`                                                                 | —           | Badge label (required)                  |
-| `variant`  | `"solid" \| "outline"`                                                        | `"solid"`   | Visual style                            |
-| `color`    | `"primary" \| "secondary" \| "neutral" \| "success" \| "warning" \| "danger"` | `"neutral"` | Color scheme                            |
+| `variant`  | `"solid" \| "outline"`                                                        | `"solid"`   | Visual style (`BadgeVariant`)           |
+| `color`    | `"primary" \| "secondary" \| "neutral" \| "success" \| "warning" \| "danger"` | `"neutral"` | Color scheme (the shared `Color` token) |
 | `icon`     | `string \| JSX.Element`                                                       | —           | Material Symbols name or an img/element |
 | `onRemove` | `() => void`                                                                  | —           | Shows × button; called on click         |
 | `class`    | `string`                                                                      | —           | Extra CSS classes                       |
@@ -88,17 +94,17 @@ Standard action button with optional icon.
 
 Extends all native `<button>` HTML attributes.
 
-| Prop           | Type                                        | Default   | Description                             |
-| -------------- | ------------------------------------------- | --------- | --------------------------------------- |
-| `children`     | `JSX.Element`                               | —         | Button label                            |
-| `variant`      | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style                            |
-| `icon`         | `string \| JSX.Element`                     | —         | Material Symbols name or an img/element |
-| `iconPosition` | `"start" \| "end"`                          | `"start"` | Icon placement relative to label        |
-| `class`        | `string`                                    | —         | Extra CSS classes                       |
-| `disabled`     | `boolean`                                   | —         | Native disabled attribute               |
-| `type`         | `"button" \| "submit" \| "reset"`           | —         | Native type attribute                   |
+| Prop           | Type                              | Default    | Description                                                                                         |
+| -------------- | --------------------------------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| `children`     | `JSX.Element`                     | —          | Button label                                                                                        |
+| `variant`      | `"solid" \| "outline" \| "ghost"` | `"solid"`  | Visual style                                                                                        |
+| `icon`         | `string \| JSX.Element`           | —          | Material Symbols name or an img/element                                                             |
+| `iconPosition` | `"start" \| "end"`                | `"start"`  | Icon placement relative to label (when `"end"`, the icon is pushed to the far right with `ml-auto`) |
+| `class`        | `string`                          | —          | Extra CSS classes                                                                                   |
+| `disabled`     | `boolean`                         | —          | Native disabled attribute                                                                           |
+| `type`         | `"button" \| "submit" \| "reset"` | `"button"` | Native type attribute (defaults to `"button"`)                                                      |
 
-Size is responsive: `large` on mobile (≤767 px), `default` on desktop.
+Sized to match all other form controls (`h-8`, `text-sm`) via the shared `FORM_CONTROL_SIZE_CLASSES`. The `type` defaults to `"button"` so it will not submit a surrounding form unless you set `type="submit"`.
 
 ```tsx
 import { Button } from "@clickyduck/solid-kit";
@@ -135,15 +141,14 @@ import { BackgroundCard } from "@clickyduck/solid-kit";
 
 ### DataCard
 
-Ticket-style data surface card. Can be clickable or static.
+Ticket-style data surface card. Clickable (renders as a `<button>` with hover affordance) or static (renders as a `<div>`). For selectable-card UIs (radio/checkbox semantics), use [CardToggleGroup](#cardtogglegroup) instead.
 
 **Exports:** `DataCard`
 
-| Prop        | Type      | Description                                  |
-| ----------- | --------- | -------------------------------------------- |
-| `clickable` | `boolean` | Enables hover/cursor affordance + `<button>` |
-| `active`    | `boolean` | Optional selected style (clickable only)     |
-| `class`     | `string`  | Extra CSS classes                            |
+| Prop        | Type      | Description                                                                              |
+| ----------- | --------- | ---------------------------------------------------------------------------------------- |
+| `clickable` | `boolean` | Enables hover/cursor affordance + renders as a `<button>`. Implied when `onClick` is set |
+| `class`     | `string`  | Extra CSS classes                                                                        |
 
 Extends all native `<div>` (static) or `<button>` (clickable) HTML attributes.
 
@@ -273,7 +278,7 @@ import { Divider } from "@clickyduck/solid-kit";
 
 Accessible select-style dropdown with optional search.
 
-**Exports:** `Dropdown`, `DropdownValue`, `DropdownTrigger`, `DropdownIconTrigger`, `DropdownContent`, `DropdownLabel`, `DropdownItem`, `DropdownSeparator`
+**Exports:** `Dropdown`, `DropdownValue`, `DropdownTrigger`, `DropdownIconTrigger`, `DropdownContent`, `DropdownItem`, `DropdownSeparator`
 
 **`Dropdown` (root) props:**
 
@@ -295,15 +300,13 @@ Accessible select-style dropdown with optional search.
 | `menuFullWidth`       | `boolean`                                                | `true`    | Menu width matches trigger width                                                                                                                                                         |
 | `initialOpen`         | `boolean`                                                | —         | Open on first render                                                                                                                                                                     |
 
-All menus render via a portal above any modal dialog backdrop.
+All menus render via a portal above any modal dialog backdrop. Opening direction is chosen automatically by measuring the trigger against the viewport — the menu flips upward or leftward when it would otherwise overflow.
 
 **`DropdownContent` extra props:**
 
-| Prop                 | Type                | Default   | Description             |
-| -------------------- | ------------------- | --------- | ----------------------- |
-| `xDirection`         | `"left" \| "right"` | `"right"` | Horizontal opening side |
-| `yDirection`         | `"up" \| "down"`    | `"down"`  | Vertical opening side   |
-| `wrapChildrenInList` | `boolean`           | `true`    | Wrap items in `<ul>`    |
+| Prop                 | Type      | Default | Description          |
+| -------------------- | --------- | ------- | -------------------- |
+| `wrapChildrenInList` | `boolean` | `true`  | Wrap items in `<ul>` |
 
 **`DropdownItem` extra props:**
 
@@ -425,7 +428,7 @@ import { Button, HeaderLayout } from "@clickyduck/solid-kit";
 
 ### SectionHeading
 
-Standardized section heading (`<h3>`, small, semibold, uppercase, tracked).
+Standardized section heading (`<h3>`, body size, semibold, uppercase, tracked) — same size as body text but heavier and uppercase, so it reads as a label heading above content.
 
 **Exports:** `SectionHeading`
 
@@ -447,13 +450,13 @@ Square icon-only button sized to match form controls.
 
 Extends all native `<button>` HTML attributes.
 
-| Prop      | Type                                        | Default   | Description                             |
-| --------- | ------------------------------------------- | --------- | --------------------------------------- |
-| `icon`    | `string \| JSX.Element`                     | —         | Material Symbols name or an img/element |
-| `variant` | `"solid" \| "outline" \| "ghost" \| "link"` | `"solid"` | Visual style                            |
-| `class`   | `string`                                    | —         | Extra CSS classes                       |
+| Prop      | Type                              | Default   | Description                             |
+| --------- | --------------------------------- | --------- | --------------------------------------- |
+| `icon`    | `string \| JSX.Element`           | —         | Material Symbols name or an img/element |
+| `variant` | `"solid" \| "outline" \| "ghost"` | `"solid"` | Visual style                            |
+| `class`   | `string`                          | —         | Extra CSS classes                       |
 
-Size is responsive: `large` on mobile (≤767 px), `default` on desktop.
+Square (`h-8 w-8`), sized to match the sibling form controls via `FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES`. The `type` defaults to `"button"`. Always pass an `aria-label` since the button has no text.
 
 ```tsx
 import { IconButton } from "@clickyduck/solid-kit";
@@ -542,7 +545,7 @@ Application shell layout that positions a header at the top, a left navigation p
 **Minimal shell (header + nav + page):**
 
 ```tsx
-import { Button, HeaderLayout, LeftPanelLayout, type LeftPanelLayoutNavigationDocumentJson, MainLayout, PageHeader, PageLayout, PageSection } from "@clickyduck/solid-kit";
+import { Button, HeaderLayout, LeftPanelLayout, type LeftPanelLayoutNavigationDocumentJson, MainLayout, PageHeader, PageLayout, PageSection, Text } from "@clickyduck/solid-kit";
 import { createSignal } from "solid-js";
 
 const nav: LeftPanelLayoutNavigationDocumentJson = {
@@ -579,7 +582,12 @@ export function App() {
       {/* Main content area */}
       <PageLayout>
         <PageHeader title="Dashboard" caption="Overview of your workspace" sidebuttons={<Button>New item</Button>} />
-        <PageSection title="Recent activity">{/* page content */}</PageSection>
+        <PageSection title="Recent activity">
+          {/* All free-form text goes through <Text> */}
+          <Text size="small" color="muted">
+            Nothing happened yet.
+          </Text>
+        </PageSection>
       </PageLayout>
     </MainLayout>
   );
@@ -589,7 +597,7 @@ export function App() {
 **With an optional right detail panel:**
 
 ```tsx
-import { HeaderLayout, LeftPanelLayout, type LeftPanelLayoutNavigationDocumentJson, MainLayout, PageHeader, PageLayout, PageSection, RightPanelLayout } from "@clickyduck/solid-kit";
+import { Button, HeaderLayout, LeftPanelLayout, type LeftPanelLayoutNavigationDocumentJson, MainLayout, PageHeader, PageLayout, PageSection, RightPanelLayout } from "@clickyduck/solid-kit";
 import { Show, createSignal } from "solid-js";
 
 export function AppWithPanel() {
@@ -612,14 +620,15 @@ export function AppWithPanel() {
         <PageHeader title="Items" />
         <PageSection>
           {/* Clicking a row opens the panel */}
-          <button
+          <Button
+            variant="outline"
             onClick={() => {
               setSelectedId("123");
               setPanelOpen(true);
             }}
           >
             Open item
-          </button>
+          </Button>
         </PageSection>
       </PageLayout>
 
@@ -669,7 +678,7 @@ Collapsible sidebar navigation panel.
 | `panelZIndexClass`    | `string`                                | —                                       | Tailwind `z-*` class for the panel                                                                    |
 | `expandedWidthClass`  | `string`                                | `"md:w-64"`                             | Tailwind width class for the expanded panel                                                           |
 | `collapsedWidthClass` | `string`                                | `"md:w-16"`                             | Tailwind width class for the icon-only panel                                                          |
-| `anchorComponent`     | `Component<Record<string, unknown>>`    | —                                       | Custom link/anchor component replacing the default `<a>`                                              |
+| `anchorTag`           | `"A" \| "a"`                            | `"A"`                                   | Tag used for navigation links. `"A"` is `@solidjs/router`'s `<A>`; use `"a"` in non-router contexts.  |
 
 **`LeftPanelLayoutNavigationDocumentJson`** — root navigation config:
 
@@ -703,6 +712,54 @@ On mobile the panel is full-width with a swipe-to-close gesture. On desktop it s
 
 ---
 
+### Link
+
+Typographic link — the same typographic primitive as [`Text`](#text), but it renders an anchor. It shares `Text`'s size/color/weight/alignment/icon props so links match surrounding text exactly. **No underline** is applied (at rest or on hover); color (default `primary`) plus a subtle hover-opacity shift is the only affordance.
+
+**Exports:** `Link`, `LinkProperties` (type), `LinkAnchorTag` (type)
+
+Extends all native `<a>` HTML attributes (`href`, `target`, `rel`, …).
+
+| Prop           | Type                                                                                                            | Default      | Description                                                                                                                      |
+| -------------- | --------------------------------------------------------------------------------------------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| `children`     | `JSX.Element`                                                                                                   | —            | Link label (required)                                                                                                            |
+| `anchorTag`    | `"A" \| "a"`                                                                                                    | `"A"`        | `"A"` uses `@solidjs/router`'s client-side `<A>`; `"a"` is a plain anchor outside a router                                       |
+| `size`         | `"display" \| "title" \| "body" \| "small" \| "caption"`                                                        | `"body"`     | Size step — identical scale to `Text` (see the [`TextSize` scale](#text)); match the size of the text the link sits in or beside |
+| `color`        | `"default" \| "inherit" \| "muted" \| "primary" \| "secondary" \| "success" \| "warning" \| "danger" \| "info"` | `"primary"`  | Semantic color — defaults to `primary` so links read as links                                                                    |
+| `weight`       | `"thin" \| "normal" \| "medium" \| "semibold" \| "bold"`                                                        | size default | Font weight                                                                                                                      |
+| `align`        | `"start" \| "center" \| "end"`                                                                                  | —            | Text alignment                                                                                                                   |
+| `transform`    | `"none" \| "uppercase" \| "capitalize"`                                                                         | `"none"`     | Case transform                                                                                                                   |
+| `display`      | `"flex" \| "block" \| "inline"`                                                                                 | `"inline"`   | Layout mode — `inline` (default) flows within text; `flex`/`block` for standalone rows                                           |
+| `italic`       | `boolean`                                                                                                       | `false`      | Italic style                                                                                                                     |
+| `truncate`     | `boolean`                                                                                                       | `false`      | Single-line CSS ellipsis truncation                                                                                              |
+| `lineClamp`    | `number`                                                                                                        | —            | Clamp to N lines with an ellipsis (overrides `truncate`)                                                                         |
+| `opacity`      | `number`                                                                                                        | —            | 0–100 percent opacity                                                                                                            |
+| `icon`         | `string \| JSX.Element`                                                                                         | —            | Material Symbols name or an img/element                                                                                          |
+| `iconPosition` | `"start" \| "end"`                                                                                              | `"start"`    | Icon placement                                                                                                                   |
+| `maxLength`    | `number`                                                                                                        | —            | Truncates string children with `…` at this length                                                                                |
+| `class`        | `string`                                                                                                        | —            | Extra CSS classes                                                                                                                |
+
+`Link` has no `underline` prop (unlike `Text`) — links are intentionally not underlined. Use the `color` prop to distinguish them.
+
+```tsx
+import { Link } from "@clickyduck/solid-kit";
+
+// Router link (default) — flows inline within a sentence
+<Text>See the <Link href="/settings">settings page</Link> for details.</Text>
+
+// Standalone link with a trailing icon
+<Link href="/reports" size="small" weight="medium" icon="arrow_forward" iconPosition="end">
+  View report
+</Link>
+
+// Plain anchor outside a router (e.g. an external URL)
+<Link anchorTag="a" href="https://example.com" target="_blank" rel="noreferrer" color="primary">
+  External docs
+</Link>
+```
+
+---
+
 ### Loading
 
 Centered spinner with a status message.
@@ -728,16 +785,17 @@ Stat card with accent color, icon, value, and optional link.
 
 **Exports:** `MetricCard`, `MetricCardProperties` (type)
 
-| Prop        | Type                                                   | Description                                                               |
-| ----------- | ------------------------------------------------------ | ------------------------------------------------------------------------- |
-| `title`     | `string`                                               | Metric label (rendered uppercase, required)                               |
-| `accent`    | `"emerald" \| "blue" \| "amber" \| "violet" \| "rose"` | Left-border and icon box color (required)                                 |
-| `icon`      | `string \| JSX.Element`                                | Material Symbols name or an img/element for the top-right icon (required) |
-| `value`     | `string`                                               | Large primary value (required)                                            |
-| `loading`   | `boolean`                                              | Shows an em dash instead of `value`                                       |
-| `linkHref`  | `string`                                               | Makes the footer a link                                                   |
-| `linkLabel` | `string`                                               | Link text                                                                 |
-| `class`     | `string`                                               | Extra CSS classes                                                         |
+| Prop        | Type                                                   | Description                                                                           |
+| ----------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| `title`     | `string`                                               | Metric label (rendered uppercase, required)                                           |
+| `accent`    | `"emerald" \| "blue" \| "amber" \| "violet" \| "rose"` | Left-border and icon box color (required)                                             |
+| `icon`      | `string \| JSX.Element`                                | Material Symbols name or an img/element for the top-right icon (required)             |
+| `value`     | `string`                                               | Large primary value (required)                                                        |
+| `loading`   | `boolean`                                              | Shows an em dash instead of `value`                                                   |
+| `linkHref`  | `string`                                               | Makes the footer a link                                                               |
+| `linkLabel` | `string`                                               | Link text                                                                             |
+| `anchorTag` | `"A" \| "a"`                                           | Tag for the link. `"A"` (default) uses `@solidjs/router`; use `"a"` outside a router. |
+| `class`     | `string`                                               | Extra CSS classes                                                                     |
 
 ```tsx
 import { MetricCard } from "@clickyduck/solid-kit";
@@ -939,32 +997,48 @@ const [tab, setTab] = createSignal("overview");
 
 ### Text
 
-Typographic component with five size steps and semantic color, weight, style, and icon options.
+A single typographic primitive for **all** text in the library. Every typographic decision — size, color, weight, alignment, casing, layout, semantic element, truncation — is a prop, so consumers never need a `class` to style text. For text that links somewhere, use [`Link`](#link) — it shares these same typographic props but renders an anchor.
 
-**Exports:** `Text`, `TextSize`, `TextProperties`, `TextColor`, `TextWeight`
+**Exports:** `Text`, `TextProperties`, `TextSize`, `TextColor`, `TextWeight`, `TextAlign`, `TextTransform`, `TextDisplay`, `TextElement`
 
-`Text` wraps `createTypography`. All sizes default to `"default"` color.
+**`TextSize` scale** — each step sets a font size and a default weight (override with `weight`). Use this to pick a size by intent:
 
-**`TextSize` values:** `"0"` (4xl, bold), `"1"` (2xl, semibold), `"2"` (base, medium — default), `"3"` (sm, medium), `"4"` (xs, medium).
+| `size`      | Tailwind    | Font size       | Default weight | Use for                                               |
+| ----------- | ----------- | --------------- | -------------- | ----------------------------------------------------- |
+| `"display"` | `text-4xl`  | 2.25rem / 36px  | `bold`         | Hero numbers, page-level stat values, splash headings |
+| `"title"`   | `text-2xl`  | 1.5rem / 24px   | `semibold`     | Page titles, card titles, section headings            |
+| `"body"`    | `text-base` | 1rem / 16px     | `normal`       | Default — paragraphs, list items, most UI copy        |
+| `"small"`   | `text-sm`   | 0.875rem / 14px | `normal`       | Secondary copy, form labels, table cells, dense rows  |
+| `"caption"` | `text-xs`   | 0.75rem / 12px  | `normal`       | Captions, hints, metadata, uppercase eyebrow labels   |
 
-| Prop           | Type                                                                                                            | Default      | Description                                       |
-| -------------- | --------------------------------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------- |
-| `size`         | `"0" \| "1" \| "2" \| "3" \| "4"`                                                                               | `"2"`        | Size step                                         |
-| `color`        | `"default" \| "inherit" \| "muted" \| "primary" \| "secondary" \| "success" \| "warning" \| "danger" \| "info"` | `"default"`  | Semantic color                                    |
-| `weight`       | `"thin" \| "normal" \| "medium" \| "semibold" \| "bold"`                                                        | size default | Font weight                                       |
-| `italic`       | `boolean`                                                                                                       | `false`      | Italic style                                      |
-| `underline`    | `boolean`                                                                                                       | `false`      | Underline decoration                              |
-| `opacity`      | `number`                                                                                                        | —            | 0–100 percent opacity                             |
-| `icon`         | `string \| JSX.Element`                                                                                         | —            | Material Symbols name or an img/element           |
-| `iconPosition` | `"start" \| "end"`                                                                                              | `"start"`    | Icon placement                                    |
-| `maxLength`    | `number`                                                                                                        | —            | Truncates string children with `…` at this length |
-| `class`        | `string`                                                                                                        | —            | Extra CSS classes                                 |
+`"body"` is the default. `display` and `title` also apply `tracking-tight`; `transform="uppercase"` adds `tracking-wide`.
+
+| Prop           | Type                                                                                                            | Default      | Description                                                            |
+| -------------- | --------------------------------------------------------------------------------------------------------------- | ------------ | ---------------------------------------------------------------------- |
+| `as`           | `"div" \| "p" \| "span" \| "label" \| "h1" \| "h2" \| "h3" \| "h4"`                                             | `"div"`      | Rendered element — use `label` for form labels, `h1`–`h4` for headings |
+| `size`         | `"display" \| "title" \| "body" \| "small" \| "caption"`                                                        | `"body"`     | Size step                                                              |
+| `color`        | `"default" \| "inherit" \| "muted" \| "primary" \| "secondary" \| "success" \| "warning" \| "danger" \| "info"` | `"default"`  | Semantic color                                                         |
+| `weight`       | `"thin" \| "normal" \| "medium" \| "semibold" \| "bold"`                                                        | size default | Font weight                                                            |
+| `align`        | `"start" \| "center" \| "end"`                                                                                  | —            | Text alignment                                                         |
+| `transform`    | `"none" \| "uppercase" \| "capitalize"`                                                                         | `"none"`     | Case transform                                                         |
+| `display`      | `"flex" \| "block" \| "inline"`                                                                                 | `"flex"`     | Layout mode — `block`/`inline` for plain runs of text                  |
+| `italic`       | `boolean`                                                                                                       | `false`      | Italic style                                                           |
+| `underline`    | `boolean`                                                                                                       | `false`      | Underline decoration                                                   |
+| `truncate`     | `boolean`                                                                                                       | `false`      | Single-line CSS ellipsis truncation                                    |
+| `lineClamp`    | `number`                                                                                                        | —            | Clamp to N lines with an ellipsis (overrides `truncate`)               |
+| `opacity`      | `number`                                                                                                        | —            | 0–100 percent opacity                                                  |
+| `icon`         | `string \| JSX.Element`                                                                                         | —            | Material Symbols name or an img/element                                |
+| `iconPosition` | `"start" \| "end"`                                                                                              | `"start"`    | Icon placement                                                         |
+| `maxLength`    | `number`                                                                                                        | —            | Truncates string children with `…` at this length                      |
+| `class`        | `string`                                                                                                        | —            | Extra CSS classes                                                      |
 
 ```tsx
 import { Text } from "@clickyduck/solid-kit";
 
-<Text size="1" color="primary">Dashboard</Text>
-<Text size="3" color="muted" weight="normal">Last updated 2 hours ago</Text>
+<Text as="h1" size="title" color="primary">Dashboard</Text>
+<Text size="small" color="muted" weight="normal">Last updated 2 hours ago</Text>
+<Text as="label" size="caption" transform="uppercase" color="muted">Email</Text>
+<Text display="block" truncate>A very long single line that ends with an ellipsis…</Text>
 ```
 
 ---
@@ -1102,30 +1176,73 @@ const [plan, setPlan] = createSignal<string>();
 
 ---
 
+### CardToggleGroup
+
+Same selection model as [ToggleGroup](#togglegroup), but each option renders as a selectable card instead of a radio/checkbox row. The native `<input>` is visually hidden behind the card so form submission, keyboard navigation (Tab + Space/Arrow), and screen-reader semantics still work — no custom focus or selection logic.
+
+**Exports:** `CardToggleGroup`, `CardToggleGroupOption`, `CardToggleGroupProperties` (type)
+
+`CardToggleGroupOption` and the props are identical in shape to `ToggleGroupOption` / `ToggleGroupProperties` (single vs. multiple discriminated by `selectionMode`). See the [ToggleGroup](#togglegroup) tables for the field reference.
+
+```tsx
+import { CardToggleGroup } from "@clickyduck/solid-kit";
+import { createSignal } from "solid-js";
+
+const [plan, setPlan] = createSignal<string>("pro");
+
+<CardToggleGroup
+  selectionMode="single"
+  name="plan"
+  options={[
+    { value: "starter", label: "Starter", description: "Up to 5 users and basic reports." },
+    { value: "pro", label: "Pro", description: "Unlimited users, advanced analytics, priority support." }
+  ]}
+  value={plan()}
+  onChange={setPlan}
+/>;
+```
+
+---
+
 ### Upload
 
-Styled file input with file-count display.
+File picker with drag-and-drop, an empty-state drop zone (dashed border) that flips to a compact row once files are picked, a removable file list with formatted sizes, optional image thumbnails, and optional per-file upload progress.
 
-**Exports:** `Upload`, `UploadProperties` (type)
+**Exports:** `Upload`, `UploadProperties` (type), `UploadRejectionReason` (type)
 
 Extends all native `<input type="file">` HTML attributes.
 
-| Prop                    | Type                      | Description                                  |
-| ----------------------- | ------------------------- | -------------------------------------------- |
-| `selectedFiles`         | `File[]`                  | Controlled file list (required)              |
-| `onSelectedFilesChange` | `(files: File[]) => void` | Called when the selection changes (required) |
-| `class`                 | `string`                  | Extra CSS classes                            |
-| `accept`                | `string`                  | Native file type filter                      |
-| `multiple`              | `boolean`                 | Allow multiple file selection                |
-| `disabled`              | `boolean`                 | Disables the control                         |
+| Prop                    | Type                                                             | Description                                                                                                                                                |
+| ----------------------- | ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `selectedFiles`         | `File[]`                                                         | Controlled file list (required)                                                                                                                            |
+| `onSelectedFilesChange` | `(files: File[]) => void`                                        | Called when the selection changes (required)                                                                                                               |
+| `onReject`              | `(rejectedFiles: File[], reason: UploadRejectionReason) => void` | Called when files are rejected. `reason` is `"accept"`, `"maxSize"`, or `"multiple"` (extra files dropped in single mode)                                  |
+| `maxSizeBytes`          | `number`                                                         | Per-file size limit. Files over this size are rejected via `onReject`                                                                                      |
+| `acceptHint`            | `string`                                                         | Helper text under the empty-state drop zone. Defaults to the `accept` value joined with `maxSizeBytes` (e.g. `.pdf · up to 5 MB`)                          |
+| `progressByFile`        | `Record<string, number>`                                         | Upload progress keyed by `` `${file.name}:${file.size}` ``; values are `0`–`100`. Renders a thin progress bar and a `42%` label, or a check icon at `100`. |
+| `showImagePreviews`     | `boolean`                                                        | Render thumbnails for image files. Defaults to `true`                                                                                                      |
+| `class`                 | `string`                                                         | Extra CSS classes                                                                                                                                          |
+| `accept`                | `string`                                                         | Native file type filter (also enforced on drop)                                                                                                            |
+| `multiple`              | `boolean`                                                        | Allow multiple file selection                                                                                                                              |
+| `disabled`              | `boolean`                                                        | Disables the control                                                                                                                                       |
 
 ```tsx
 import { Upload } from "@clickyduck/solid-kit";
+import { addToast } from "@clickyduck/solid-kit";
 import { createSignal } from "solid-js";
 
 const [files, setFiles] = createSignal<File[]>([]);
 
-<Upload selectedFiles={files()} onSelectedFilesChange={setFiles} accept=".csv" multiple />;
+<Upload
+  selectedFiles={files()}
+  onSelectedFilesChange={setFiles}
+  accept=".pdf,.csv,image/*"
+  maxSizeBytes={5 * 1024 * 1024}
+  onReject={(rejected, reason) => {
+    addToast({ title: reason === "maxSize" ? "File too large" : "Wrong type", description: rejected.map((f) => f.name).join(", "), variant: "warning" });
+  }}
+  multiple
+/>;
 ```
 
 ---
@@ -1361,7 +1478,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogBody, DialogFoo
 import { Icon } from "@clickyduck/solid-kit/icons";
 ```
 
-Available sub-paths: `badge`, `button`, `card`, `date-picker`, `dialog`, `divider`, `dropdown`, `empty-state`, `field`, `header-layout`, `icon-button`, `icons`, `input`, `left-panel-layout`, `loading`, `main-layout`, `page-layout`, `right-panel-layout`, `section-heading`, `spinner`, `table`, `tabs`, `textarea`, `toast`, `toggle-group`, `typography`, `upload`, `utilities`.
+Available sub-paths: `badge`, `button`, `card`, `date-picker`, `dialog`, `divider`, `dropdown`, `empty-state`, `field`, `header-layout`, `icon-button`, `icons`, `input`, `left-panel-layout`, `link`, `loading`, `main-layout`, `page-layout`, `right-panel-layout`, `section-heading`, `spinner`, `table`, `tabs`, `textarea`, `toast`, `toggle-group`, `typography`, `upload`, `utilities`.
 
 ```tsx
 import { Button } from "@clickyduck/solid-kit/button";

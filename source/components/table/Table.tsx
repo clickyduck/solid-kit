@@ -1,9 +1,16 @@
 import { Dropdown, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
 import { IconButton } from "@/components/icon-button/IconButton";
+import { Text } from "@/components/typography";
 import { TABLE_BODY_TEXT_CLASSES, TABLE_DATA_CELL_CLASSES, TABLE_HEADER_LABEL_CLASSES, TABLE_HEAD_CELL_CLASSES, TABLE_PAGINATION_BAR_CLASSES, mergeClasses } from "@/utilities";
-import { type ComponentProps, type JSX, Show, createContext, createSignal, splitProps, useContext } from "solid-js";
+import { type ComponentProps, type JSX, Show, createContext, createSignal, onCleanup, onMount, splitProps, useContext } from "solid-js";
 
 const TABLE_MIN_WIDTH = "min-w-[640px]";
+
+type TableCellAlign = "left" | "right" | "center";
+
+const cellAlignmentClass = (align: TableCellAlign | undefined, monospace: boolean | undefined): string => {
+  return mergeClasses(`text-${align ?? "left"}`, monospace === true ? "font-mono" : "");
+};
 
 type TableContextValue = {
   setPaginationSlot: (element: JSX.Element) => void;
@@ -37,7 +44,7 @@ export const Table = (properties: ComponentProps<"table">) => {
  */
 export const TableHeader = (properties: ComponentProps<"thead">) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return <thead class={mergeClasses("border-b border-gray-200 bg-gray-50 font-medium tracking-wide text-gray-500 uppercase dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-400", TABLE_HEADER_LABEL_CLASSES, local.class)} {...rest} />;
+  return <thead class={mergeClasses("border-b border-gray-200 bg-gray-50 tracking-wide text-gray-500 uppercase dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-400", TABLE_HEADER_LABEL_CLASSES, local.class)} {...rest} />;
 };
 
 /**
@@ -53,7 +60,7 @@ export const TableBody = (properties: ComponentProps<"tbody">) => {
  */
 export const TableFooter = (properties: ComponentProps<"tfoot">) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return <tfoot class={mergeClasses("border-t border-gray-200 bg-gray-50 font-medium tracking-wide text-gray-500 dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-400", TABLE_HEADER_LABEL_CLASSES, local.class)} {...rest} />;
+  return <tfoot class={mergeClasses("border-t border-gray-200 bg-gray-50 tracking-wide text-gray-500 dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-400", TABLE_HEADER_LABEL_CLASSES, local.class)} {...rest} />;
 };
 
 type TableRowProperties = ComponentProps<"tr"> & {
@@ -108,9 +115,9 @@ export const TableRow = (properties: TableRowProperties) => {
 
   return (
     <tr
-      tabIndex={clickable() && typeof rest.onClick === "function" ? 0 : undefined}
+      tabIndex={clickable() ? 0 : undefined}
       class={mergeClasses(
-        "bg-transparent transition-colors duration-100",
+        "bg-transparent transition-colors duration-100 ease-out",
         resolvedVerticalAlign() === "top" ? "align-top" : "align-middle",
         clickable() ? "cursor-pointer hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:hover:bg-gray-700/25" : "",
         isActive() ? "bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20" : "",
@@ -122,58 +129,30 @@ export const TableRow = (properties: TableRowProperties) => {
   );
 };
 
+type TableCellOwnProperties = { align?: TableCellAlign; monospace?: boolean };
+
 /**
  * Table header cell.
  */
-export const TableHead = (properties: ComponentProps<"th"> & { align?: "left" | "right" | "center"; monospace?: boolean }) => {
+export const TableHead = (properties: ComponentProps<"th"> & TableCellOwnProperties) => {
   const [local, rest] = splitProps(properties, ["align", "monospace", "class"]);
-  const resolvedAlign = (): "left" | "right" | "center" => {
-    return local.align ?? "left";
-  };
-  const alignClass = (): string => {
-    if (resolvedAlign() === "right") {
-      return "text-right";
-    }
-    if (resolvedAlign() === "center") {
-      return "text-center";
-    }
-    return "text-left";
-  };
-  return <th scope="col" class={mergeClasses("min-w-0 overflow-hidden font-semibold", alignClass(), local.monospace === true ? "font-mono" : "", TABLE_HEAD_CELL_CLASSES, local.class)} {...rest} />;
+  return <th scope="col" class={mergeClasses("min-w-0 overflow-hidden", cellAlignmentClass(local.align, local.monospace), TABLE_HEAD_CELL_CLASSES, local.class)} {...rest} />;
 };
 
 /**
  * Table footer cell — same height as header cells.
  */
-export const TableFooterCell = (properties: ComponentProps<"td"> & { align?: "left" | "right" | "center"; monospace?: boolean }) => {
+export const TableFooterCell = (properties: ComponentProps<"td"> & TableCellOwnProperties) => {
   const [local, rest] = splitProps(properties, ["align", "monospace", "class"]);
-  const resolvedAlign = (): "left" | "right" | "center" => local.align ?? "left";
-  const alignClass = (): string => {
-    if (resolvedAlign() === "right") return "text-right";
-    if (resolvedAlign() === "center") return "text-center";
-    return "text-left";
-  };
-  return <td class={mergeClasses("min-w-0 overflow-hidden", alignClass(), local.monospace === true ? "font-mono" : "", TABLE_HEAD_CELL_CLASSES, local.class)} {...rest} />;
+  return <td class={mergeClasses("min-w-0 overflow-hidden", cellAlignmentClass(local.align, local.monospace), TABLE_HEAD_CELL_CLASSES, local.class)} {...rest} />;
 };
 
 /**
  * Table data cell.
  */
-export const TableCell = (properties: ComponentProps<"td"> & { align?: "left" | "right" | "center"; monospace?: boolean }) => {
+export const TableCell = (properties: ComponentProps<"td"> & TableCellOwnProperties) => {
   const [local, rest] = splitProps(properties, ["align", "monospace", "class"]);
-  const resolvedAlign = (): "left" | "right" | "center" => {
-    return local.align ?? "left";
-  };
-  const alignClass = (): string => {
-    if (resolvedAlign() === "right") {
-      return "text-right";
-    }
-    if (resolvedAlign() === "center") {
-      return "text-center";
-    }
-    return "text-left";
-  };
-  return <td class={mergeClasses("min-w-0 overflow-hidden", alignClass(), local.monospace === true ? "font-mono" : "", TABLE_DATA_CELL_CLASSES, local.class)} {...rest} />;
+  return <td class={mergeClasses("min-w-0 overflow-hidden", cellAlignmentClass(local.align, local.monospace), TABLE_DATA_CELL_CLASSES, local.class)} {...rest} />;
 };
 
 type TablePaginationProperties = {
@@ -255,7 +234,9 @@ export const TablePagination = (properties: TablePaginationProperties) => {
       )}
     >
       <div class="flex items-center gap-2">
-        <span class="font-medium text-gray-500 dark:text-gray-400">Rows per page</span>
+        <Text as="span" size="small" weight="normal" color="muted" display="inline">
+          Rows per page
+        </Text>
         <Dropdown
           options={limitOptionValues()}
           value={selectedLimitValue()}
@@ -276,7 +257,9 @@ export const TablePagination = (properties: TablePaginationProperties) => {
 
       <div class="flex items-center gap-2 md:gap-3">
         <Show when={properties.currentPageCount > 0}>
-          <span class={mergeClasses("px-1 font-medium tracking-wide text-gray-500 uppercase dark:text-gray-400", TABLE_BODY_TEXT_CLASSES)}>Page {currentPage()}</span>
+          <Text as="span" size="small" weight="normal" color="muted" transform="uppercase" display="inline" class="px-1">
+            Page {currentPage()}
+          </Text>
         </Show>
         <div class="flex items-center gap-1.5">
           <IconButton
@@ -306,7 +289,12 @@ export const TablePagination = (properties: TablePaginationProperties) => {
   );
 
   if (context !== undefined) {
-    context.setPaginationSlot(paginationElement);
+    onMount(() => {
+      context.setPaginationSlot(paginationElement);
+      onCleanup(() => {
+        context.setPaginationSlot(null);
+      });
+    });
     return null;
   }
 
