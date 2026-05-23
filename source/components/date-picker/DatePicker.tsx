@@ -115,7 +115,7 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
     const isToday = isSameDay(day.date, new Date());
     const isCurrentMonth = day.currentMonth;
     const mutedText = isCurrentMonth ? "text-gray-900 dark:text-gray-100" : "text-gray-400 dark:text-gray-600";
-    const base = "relative z-10 flex h-8 w-8 items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 ease-out focus:outline-none";
+    const base = "relative z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 ease-out focus:outline-none";
     const todayRing = isToday ? "ring-1 ring-inset ring-blue-500" : "";
 
     const isFrom = createMemo(() => properties.mode === "range" && !!properties.rangeFrom && isSameDay(day.date, properties.rangeFrom));
@@ -144,11 +144,11 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
     return { buttonClass, bandClass };
   };
 
-  const chipBase = "rounded-md px-2 py-0.5 text-sm transition-colors duration-100 ease-out focus:outline-none";
+  const chipBase = "cursor-pointer rounded-md px-2 py-0.5 text-sm transition-colors duration-100 ease-out focus:outline-none";
   const chipActive = "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300";
   const chipIdle = "text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-700";
 
-  const itemBase = "flex items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 ease-out focus:outline-none";
+  const itemBase = "flex cursor-pointer items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 ease-out focus:outline-none";
   const itemDefault = "text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700";
   const itemSelected = "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600";
 

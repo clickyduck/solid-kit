@@ -104,7 +104,7 @@ Extends all native `<button>` HTML attributes.
 | `disabled`     | `boolean`                         | —          | Native disabled attribute                                                                           |
 | `type`         | `"button" \| "submit" \| "reset"` | `"button"` | Native type attribute (defaults to `"button"`)                                                      |
 
-Sized to match all other form controls (`h-8`, `text-sm`) via the shared `FORM_CONTROL_SIZE_CLASSES`. The `type` defaults to `"button"` so it will not submit a surrounding form unless you set `type="submit"`.
+Sized to match all other form controls (`h-9`, `text-sm`) via the shared `FORM_CONTROL_SIZE_CLASSES`. The `type` defaults to `"button"` so it will not submit a surrounding form unless you set `type="submit"`.
 
 ```tsx
 import { Button } from "@clickyduck/solid-kit";
@@ -456,7 +456,7 @@ Extends all native `<button>` HTML attributes.
 | `variant` | `"solid" \| "outline" \| "ghost"` | `"solid"` | Visual style                            |
 | `class`   | `string`                          | —         | Extra CSS classes                       |
 
-Square (`h-8 w-8`), sized to match the sibling form controls via `FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES`. The `type` defaults to `"button"`. Always pass an `aria-label` since the button has no text.
+Square (`h-9 w-9`), sized to match the sibling form controls via `FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES`. The `type` defaults to `"button"`. Always pass an `aria-label` since the button has no text.
 
 ```tsx
 import { IconButton } from "@clickyduck/solid-kit";
@@ -913,17 +913,17 @@ Full compound component for data tables with pagination.
 
 **`TablePagination` props:**
 
-| Prop               | Type                                                | Default              | Description                                   |
-| ------------------ | --------------------------------------------------- | -------------------- | --------------------------------------------- |
-| `limit`            | `number`                                            | —                    | Rows per page (required)                      |
-| `offset`           | `number`                                            | —                    | Current row offset (required)                 |
-| `currentPageCount` | `number`                                            | —                    | Number of rows on the current page (required) |
-| `totalCount`       | `number`                                            | —                    | Total rows; used to disable Next when at end  |
-| `onChange`         | `(next: { limit: number; offset: number }) => void` | —                    | Called on page or limit change (required)     |
-| `limitOptions`     | `number[]`                                          | `[25, 50, 100, 200]` | Rows-per-page choices                         |
-| `class`            | `string`                                            | —                    | Extra CSS classes                             |
+| Prop               | Type                                                | Default              | Description                                                               |
+| ------------------ | --------------------------------------------------- | -------------------- | ------------------------------------------------------------------------- |
+| `limit`            | `number`                                            | —                    | Rows per page (required)                                                  |
+| `offset`           | `number`                                            | —                    | Current row offset (required)                                             |
+| `currentPageCount` | `number`                                            | —                    | Number of rows on the current page (required)                             |
+| `totalCount`       | `number`                                            | —                    | Total rows; shown in the range label and used to disable Next when at end |
+| `onChange`         | `(next: { limit: number; offset: number }) => void` | —                    | Called on page or limit change (required)                                 |
+| `limitOptions`     | `number[]`                                          | `[25, 50, 100, 200]` | Rows-per-page choices                                                     |
+| `class`            | `string`                                            | —                    | Extra CSS classes                                                         |
 
-Clickable rows support keyboard activation via Enter / Space.
+The pagination bar renders a rows-per-page dropdown on the left and, on the right, a row-range label with previous/next arrows. The label reads `"{start} to {end} of {totalCount}"` (e.g. `1 to 25 of 100`) when `totalCount` is supplied, `"{start} to {end}"` when it is not, and `"0 of 0"` when the current page is empty. Clickable rows support keyboard activation via Enter / Space.
 
 ```tsx
 import { Table, TableBody, TableCell, TableHead, TableHeader, TablePagination, TableRow } from "@clickyduck/solid-kit";

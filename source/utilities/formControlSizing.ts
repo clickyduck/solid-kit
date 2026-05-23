@@ -1,16 +1,16 @@
-export const FORM_CONTROL_SIZE_CLASSES = "h-8 min-h-8 px-2.5 py-1.5 text-sm";
+export const FORM_CONTROL_SIZE_CLASSES = "h-9 min-h-9 px-2.5 py-1.5 text-sm";
 
-export const FORM_CONTROL_TEXTAREA_SIZE_CLASSES = "min-h-8 px-2.5 py-1.5 text-sm";
+export const FORM_CONTROL_TEXTAREA_SIZE_CLASSES = "min-h-9 px-2.5 py-1.5 text-sm";
 
 export const FORM_CONTROL_ICON_SIZE = 14;
 
-export const FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS = "pl-3";
+export const FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS = "pl-2.5";
 
-export const FORM_CONTROL_LEADING_ICON_INPUT_CLASS = "pl-10";
+export const FORM_CONTROL_LEADING_ICON_INPUT_CLASS = "pl-[34px]";
 
 export const FORM_CONTROL_TEXT_CLASS_BY_SIZE = "text-sm";
 
-export const FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES = "h-8 min-h-8 w-8 min-w-8 p-0 text-sm";
+export const FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES = "h-9 min-h-9 w-9 min-w-9 p-0 text-sm";
 
 export const FORM_CONTROL_TEXTAREA_LINE_HEIGHT_REM = 1.25;
 

@@ -312,7 +312,7 @@
     "public"
   ],
   "scripts": {
-    "development": "vite",
+    "development": "vite --host",
     "format": "npx prettier --write .",
     "lint": "tsc --noEmit && npx eslint . --max-warnings=0",
     "build": "node --eval \"import('fs').then(({ rmSync }) => { rmSync('public', { recursive: true, force: true }); console.log('Cleaned public/'); })\" && vite build",

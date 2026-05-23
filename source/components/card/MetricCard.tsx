@@ -62,7 +62,7 @@ export const MetricCard = (properties: MetricCardProperties) => {
   const isLoading = (): boolean => properties.loading === true;
   return (
     <BackgroundCard class={mergeClasses("overflow-hidden", properties.class)}>
-      <div class={mergeClasses("-ml-6 border-l-4 pl-6", accent().card)}>
+      <div class={mergeClasses("-ml-3 border-l-4 pl-3 sm:-ml-4 sm:pl-4 md:-ml-5 md:pl-5 lg:-ml-6 lg:pl-6", accent().card)}>
         <div class="flex flex-row items-center justify-between">
           <Text as="h3" size="small" weight="semibold" transform="uppercase" color="muted">
             {properties.title}
@@ -72,7 +72,7 @@ export const MetricCard = (properties: MetricCardProperties) => {
           </span>
         </div>
       </div>
-      <div class="space-y-3 pt-4">
+      <div class="space-y-2 pt-3 sm:space-y-3 sm:pt-4">
         <Show
           when={!isLoading()}
           fallback={

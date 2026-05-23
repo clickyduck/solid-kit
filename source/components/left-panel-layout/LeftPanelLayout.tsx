@@ -44,16 +44,16 @@ export type LeftPanelNavigationDocumentJson = {
 
 export type LeftPanelLayoutNavigationDocumentJson = LeftPanelNavigationDocumentJson;
 
-const NAVIGATION_LINK_ICON_CLASS = "nav-link-icon shrink-0 opacity-80 w-3.5 h-3.5";
-const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-9 min-h-9 max-h-9 text-xs transition-all duration-100 ease-out text-gray-800 dark:text-white";
+const NAVIGATION_LINK_ICON_CLASS = "nav-link-icon shrink-0 opacity-80 w-4.5 h-4.5";
+const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-9 min-h-9 max-h-9 text-sm transition-all duration-100 ease-out text-gray-800 dark:text-white";
 const NAVIGATION_LINK_LABEL_CLASS = "min-w-0 truncate";
-const NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS = "px-3 space-x-3";
+const NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS = "px-2.5 space-x-3";
 const NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS = "size-9 mx-auto justify-center";
 const NAVIGATION_LINK_ACTIVE_CLASS = "border-l-2 border-blue-500 bg-blue-500/10 text-blue-700 dark:text-blue-300 [&_.nav-link-icon]:opacity-100 [&_.nav-link-icon]:text-blue-600 dark:[&_.nav-link-icon]:text-blue-400";
 const NAVIGATION_LINK_INACTIVE_CLASS = "border-l-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700/50";
-/** Same vertical rhythm as navigation link rows on desktop so toggling icon-only mode does not move links. */
-const NAVIGATION_GROUP_HEADING_SLOT_CLASS = "mb-2 flex h-9 min-h-9 max-h-9 w-full shrink-0 items-stretch";
-const GROUP_LABEL_TEXT_CLASS = "flex w-full min-w-0 items-center text-xs leading-none font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase md:px-2";
+/** Group label slot above each group's items, aligned to the same left edge so the label reads as belonging to the items beneath it. Sized to a standard control height (h-9) so the collapsible toggle matches every other button. */
+const NAVIGATION_GROUP_HEADING_SLOT_CLASS = "mb-1.5 flex h-9 min-h-9 max-h-9 w-full shrink-0 items-stretch";
+const GROUP_LABEL_TEXT_CLASS = "flex w-full min-w-0 items-center px-2.5 text-xs leading-none font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase";
 
 const computeIsNavigationItemActive = (item: LeftPanelNavigationItemJson, pathname: string, hash: string): boolean => {
   if (item.href.startsWith("#")) {
@@ -188,9 +188,9 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
               };
               const linkChildren = (
                 <>
-                  <Icon name={item.icon} size={14} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
+                  <Icon name={item.icon} size={18} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
                   <Show when={!properties.collapsed}>
-                    <Text as="span" size="caption" weight="normal" color="inherit" display="inline" truncate class={NAVIGATION_LINK_LABEL_CLASS}>
+                    <Text as="span" size="small" weight="normal" color="inherit" display="inline" truncate class={NAVIGATION_LINK_LABEL_CLASS}>
                       {item.label}
                     </Text>
                   </Show>
@@ -219,7 +219,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                     <Button
                       type="button"
                       variant="ghost"
-                      class={mergeClasses("h-full min-h-0 w-full min-w-0 justify-between gap-2 px-3 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase hover:bg-gray-100 md:h-full md:px-2 dark:text-gray-400 dark:hover:bg-gray-800/60")}
+                      class={mergeClasses("w-full min-w-0 justify-between gap-2 px-2.5 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800/60")}
                       aria-expanded={isNavigationGroupBodyExpandedMemo()}
                       onClick={() => {
                         toggleNavigationGroupBody(navigationGroupIdentifierMemo(), navigationGroupInitiallyCollapsedMemo());
@@ -235,7 +235,9 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                   </Show>
                 </div>
                 <Show when={!useCollapsibleNavigationGroupMemo() || isNavigationGroupBodyExpandedMemo()}>
-                  <For each={group.items}>{(item) => renderNavigationItemLink(item)}</For>
+                  <div class={mergeClasses("space-y-1", properties.collapsed ? "" : "ml-3 border-l border-gray-200 pl-2 dark:border-gray-700/60")}>
+                    <For each={group.items}>{(item) => renderNavigationItemLink(item)}</For>
+                  </div>
                 </Show>
               </div>
             );

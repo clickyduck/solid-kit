@@ -220,8 +220,18 @@ export const TablePagination = (properties: TablePaginationProperties) => {
     });
   };
 
-  const currentPage = (): number => {
-    return Math.floor(resolvedOffset() / resolvedLimit()) + 1;
+  const rangeLabel = (): string => {
+    const count = properties.currentPageCount;
+    if (count <= 0) {
+      return "0 of 0";
+    }
+    const start = resolvedOffset() + 1;
+    const end = resolvedOffset() + count;
+    const totalCount = properties.totalCount;
+    if (typeof totalCount === "number" && Number.isFinite(totalCount) && totalCount >= 0) {
+      return `${start} to ${end} of ${totalCount}`;
+    }
+    return `${start} to ${end}`;
   };
 
   const paginationElement = (
@@ -234,9 +244,6 @@ export const TablePagination = (properties: TablePaginationProperties) => {
       )}
     >
       <div class="flex items-center gap-2">
-        <Text as="span" size="small" weight="normal" color="muted" display="inline">
-          Rows per page
-        </Text>
         <Dropdown
           options={limitOptionValues()}
           value={selectedLimitValue()}
@@ -257,8 +264,8 @@ export const TablePagination = (properties: TablePaginationProperties) => {
 
       <div class="flex items-center gap-2 md:gap-3">
         <Show when={properties.currentPageCount > 0}>
-          <Text as="span" size="small" weight="normal" color="muted" transform="uppercase" display="inline" class="px-1">
-            Page {currentPage()}
+          <Text as="span" size="small" weight="normal" color="muted" display="inline" class="px-1">
+            {rangeLabel()}
           </Text>
         </Show>
         <div class="flex items-center gap-1.5">
