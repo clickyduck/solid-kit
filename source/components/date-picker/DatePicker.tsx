@@ -3,6 +3,7 @@ import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon } from "@/components/icons";
 import { Text } from "@/components/typography";
 import { DROPDOWN_MENU_SURFACE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
+import { VIEWPORT_EDGE_GAP_PIXELS, computeFlippedMenuPosition } from "@/utilities/computeFlippedMenuPosition";
 import { getPortalMount } from "@/utilities/getPortalMount";
 import type { JSX } from "solid-js";
 import { For, Show, createEffect, createMemo, createSignal, on, onCleanup, onMount } from "solid-js";
@@ -255,6 +256,8 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
 type PopoverMenuPosition = {
   top: number;
   left: number;
+  width: number;
+  measured: boolean;
 };
 
 /**
@@ -357,7 +360,15 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
   const updatePortalPosition = (): void => {
     if (!triggerElement) return;
     const rect = triggerElement.getBoundingClientRect();
-    setPortalPosition({ top: rect.bottom + 4, left: rect.left });
+    // Before the popover is mounted we cannot measure it to know whether it
+    // overflows, so place it below the trigger and keep it hidden (measured:
+    // false) until the next frame, when we can flip it against the viewport.
+    if (!popoverElement) {
+      setPortalPosition({ top: rect.bottom + VIEWPORT_EDGE_GAP_PIXELS, left: rect.left, width: rect.width, measured: false });
+      return;
+    }
+    const { top, left } = computeFlippedMenuPosition(rect, popoverElement);
+    setPortalPosition({ top, left, width: rect.width, measured: true });
   };
 
   createEffect(
@@ -365,13 +376,19 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
       if (!isOpen) {
         setPortalPosition(null);
         setHoverDate(undefined);
+        popoverElement = null;
         return;
       }
       // When the calendar opens with a complete range already set, always restart selection.
       if (mode() === "range" && rangeFrom() && rangeTo()) {
         setPickingStart(true);
       }
-      requestAnimationFrame(updatePortalPosition);
+      // First frame mounts the popover (measured: false, hidden); the second
+      // frame measures it and flips against the viewport if needed.
+      requestAnimationFrame(() => {
+        updatePortalPosition();
+        requestAnimationFrame(updatePortalPosition);
+      });
       window.addEventListener("scroll", updatePortalPosition, true);
       window.addEventListener("resize", updatePortalPosition);
       onCleanup(() => {
@@ -425,7 +442,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
   };
 
   const calendarElement = (): JSX.Element => (
-    <div class={mergeClasses(DROPDOWN_MENU_SURFACE_CLASSES, "w-[280px]")} onClick={(e) => e.stopPropagation()}>
+    <div class={mergeClasses(DROPDOWN_MENU_SURFACE_CLASSES, "w-full min-w-[280px]")} onClick={(e) => e.stopPropagation()}>
       <Calendar
         year={viewYear()}
         month={viewMonth()}
@@ -448,13 +465,11 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
           </Text>
         )}
       </Show>
-      <Show when={hasValue()}>
-        <div class="border-t border-gray-200 px-3 py-2 dark:border-gray-700">
-          <Button variant="ghost" class="w-full text-xs text-gray-500 dark:text-gray-400" onClick={handleClear}>
-            Clear
-          </Button>
-        </div>
-      </Show>
+      <div class="border-t border-gray-200 px-3 py-2 dark:border-gray-700">
+        <Button variant="ghost" class="w-full text-xs text-gray-500 dark:text-gray-400" onClick={handleClear} disabled={!hasValue()}>
+          Clear
+        </Button>
+      </div>
     </div>
   );
 
@@ -500,7 +515,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
                 popoverElement = el;
               }}
               class="z-9999"
-              style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px` }}
+              style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, "min-width": `${position().width}px`, visibility: position().measured ? "visible" : "hidden" }}
             >
               {calendarElement()}
             </div>

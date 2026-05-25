@@ -92,6 +92,7 @@ export const ShowcaseApplication = (): JSX.Element => {
   };
 
   const [dialogOpen, setDialogOpen] = createSignal(false);
+  const [scrollableDialogOpen, setScrollableDialogOpen] = createSignal(false);
   const [dropdownDialogOpen, setDropdownDialogOpen] = createSignal(false);
   const [dropdownDialogValue, setDropdownDialogValue] = createSignal<string | undefined>("Cherry");
   const [headerDropdownDialogOpen, setHeaderDropdownDialogOpen] = createSignal(false);
@@ -886,6 +887,9 @@ export const ShowcaseApplication = (): JSX.Element => {
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-dialog" sectionTitle="Dialog" sectionDescription="Native dialog element — focus management, backdrop, and scroll locking built in.">
                 <div class="flex flex-wrap gap-3">
                   <Button onClick={() => setDialogOpen(true)}>Open dialog</Button>
+                  <Button variant="outline" onClick={() => setScrollableDialogOpen(true)}>
+                    With scrolling body
+                  </Button>
                   <Button variant="outline" onClick={() => setDropdownDialogOpen(true)}>
                     With dropdowns
                   </Button>
@@ -915,6 +919,39 @@ export const ShowcaseApplication = (): JSX.Element => {
                       </Button>
                       <Button variant="solid" onClick={() => setDialogOpen(false)}>
                         Confirm
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+
+                <Dialog open={scrollableDialogOpen()} onOpenChange={setScrollableDialogOpen}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Terms of service</DialogTitle>
+                    </DialogHeader>
+                    <DialogBody>
+                      <DialogDescription>The header and footer stay fixed while this body scrolls. On mobile, swipe the header down to dismiss or up for full height.</DialogDescription>
+                      <For
+                        each={[
+                          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+                          "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt.",
+                          "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae.",
+                          "Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est.",
+                          "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati.",
+                          "Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus.",
+                          "Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur.",
+                          "On a mobile viewport this body scrolls independently while the header above and the footer below remain pinned, so the action buttons are always reachable no matter how long the content grows."
+                        ]}
+                      >
+                        {(paragraph) => <DialogDescription>{paragraph}</DialogDescription>}
+                      </For>
+                    </DialogBody>
+                    <DialogFooter>
+                      <Button variant="ghost" onClick={() => setScrollableDialogOpen(false)}>
+                        Decline
+                      </Button>
+                      <Button variant="solid" onClick={() => setScrollableDialogOpen(false)}>
+                        Accept
                       </Button>
                     </DialogFooter>
                   </DialogContent>
