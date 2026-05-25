@@ -1,6 +1,6 @@
 import { Text } from "@/components/typography";
 import { mergeClasses } from "@/utilities";
-import { For, Show } from "solid-js";
+import { For, Show, onMount } from "solid-js";
 
 const TOGGLE_INPUT_BASE_CLASS =
   "peer absolute inset-0 m-0 h-full w-full cursor-[inherit] appearance-none border border-solid border-gray-300 bg-white transition-colors duration-100 ease-out checked:border-transparent checked:bg-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:border-gray-600 dark:bg-gray-700 dark:checked:border-transparent dark:checked:bg-blue-500 dark:focus-visible:ring-offset-gray-900";
@@ -52,6 +52,20 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
     }
     properties.onChange?.(optionValue);
   };
+
+  onMount(() => {
+    if (properties.selectionMode !== "single") {
+      return;
+    }
+    const firstOption = properties.options[0];
+    if (firstOption === undefined) {
+      return;
+    }
+    const valueMatchesAnOption = properties.options.some((option) => option.value === properties.value);
+    if (!valueMatchesAnOption) {
+      properties.onChange?.(firstOption.value);
+    }
+  });
 
   return (
     <div class={mergeClasses("flex flex-col gap-2", properties.class)}>

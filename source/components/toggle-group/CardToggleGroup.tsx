@@ -1,7 +1,7 @@
 import { Icon } from "@/components/icons";
 import { Text } from "@/components/typography";
 import { FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
-import { For, Show } from "solid-js";
+import { For, Show, onMount } from "solid-js";
 
 const CARD_BASE_CLASS =
   "group block rounded-xl border border-gray-200 bg-white p-3 pr-9 text-left text-gray-900 transition-colors duration-100 ease-out hover:border-gray-300 peer-checked:border-blue-500 peer-checked:bg-blue-500/5 peer-checked:hover:border-blue-600 peer-checked:hover:bg-blue-500/10 peer-focus-visible:ring-2 peer-focus-visible:ring-blue-500/70 peer-focus-visible:outline-none dark:border-gray-800 dark:bg-gray-800/40 dark:text-gray-100 dark:hover:border-gray-700 dark:peer-checked:border-blue-400 dark:peer-checked:bg-blue-500/10 dark:peer-checked:hover:border-blue-300 dark:peer-checked:hover:bg-blue-500/20";
@@ -57,6 +57,20 @@ const CardToggleGroup = (properties: CardToggleGroupProperties) => {
     }
     properties.onChange?.(optionValue);
   };
+
+  onMount(() => {
+    if (properties.selectionMode !== "single") {
+      return;
+    }
+    const firstOption = properties.options[0];
+    if (firstOption === undefined) {
+      return;
+    }
+    const valueMatchesAnOption = properties.options.some((option) => option.value === properties.value);
+    if (!valueMatchesAnOption) {
+      properties.onChange?.(firstOption.value);
+    }
+  });
 
   return (
     <div class={mergeClasses("flex flex-col gap-2", properties.class)}>
