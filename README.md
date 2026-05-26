@@ -27,6 +27,7 @@ npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge mater
 
 ## Components
 
+- [ArrayInput](#arrayinput)
 - [Badge](#badge)
 - [Button](#button)
 - [BackgroundCard](#backgroundcard)
@@ -58,6 +59,29 @@ npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge mater
 - [ToggleGroup](#togglegroup)
 - [CardToggleGroup](#cardtogglegroup)
 - [Upload](#upload)
+
+---
+
+### ArrayInput
+
+Edits a list of short free-text string values as removable chips. Type a value and press **Enter** or **comma** to commit it as a chip; click a chip's ✕ or press **Backspace** on the empty field to remove the last one. Values are trimmed and deduplicated case-insensitively. Controlled — holds no value state of its own, only the in-progress text. Renders committed values with [`Badge`](#badge).
+
+**Exports:** `ArrayInput`, `ArrayInputProperties` (type)
+
+| Prop          | Type                       | Default     | Description                                                      |
+| ------------- | -------------------------- | ----------- | ---------------------------------------------------------------- |
+| `value`       | `string[]`                 | —           | Committed values (required)                                      |
+| `onChange`    | `(next: string[]) => void` | —           | Called with the next array on every add/remove (required)        |
+| `placeholder` | `string`                   | —           | Placeholder for the text field                                   |
+| `disabled`    | `boolean`                  | `false`     | Disables input and removal                                       |
+| `maximum`     | `number`                   | —           | Reject commits past this many values; omit for unbounded         |
+| `color`       | `Color`                    | `"neutral"` | Chip colour, forwarded to `Badge`                                |
+| `class`       | `string`                   | —           | Extra classes on the container                                   |
+| `id`          | `string`                   | —           | `id` on the inner text field (e.g. to pair with a `Field` label) |
+
+```tsx
+<ArrayInput value={tags()} onChange={setTags} placeholder="Add a tag…" maximum={50} />
+```
 
 ---
 

@@ -1,4 +1,5 @@
 export * from "./icons";
+export * from "./array-input";
 export * from "./badge";
 export * from "./date-picker";
 export * from "./button";

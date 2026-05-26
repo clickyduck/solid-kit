@@ -5,6 +5,7 @@ import solidPlugin from "vite-plugin-solid";
 import solidSvg from "vite-plugin-solid-svg";
 
 const componentEntries: Record<string, string> = {
+  "array-input": resolve(__dirname, "source/components/array-input/index.ts"),
   badge: resolve(__dirname, "source/components/badge/index.ts"),
   button: resolve(__dirname, "source/components/button/index.ts"),
   card: resolve(__dirname, "source/components/card/index.ts"),

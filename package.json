@@ -17,6 +17,16 @@
         "default": "./public/index.cjs"
       }
     },
+    "./array-input": {
+      "import": {
+        "types": "./public/array-input.d.ts",
+        "default": "./public/array-input.js"
+      },
+      "require": {
+        "types": "./public/array-input.d.ts",
+        "default": "./public/array-input.cjs"
+      }
+    },
     "./badge": {
       "import": {
         "types": "./public/badge.d.ts",
