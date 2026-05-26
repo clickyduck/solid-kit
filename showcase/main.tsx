@@ -1,6 +1,8 @@
+import { Route, Router } from "@solidjs/router";
 import { render } from "solid-js/web";
 
 import { ShowcaseApplication } from "./ShowcaseApplication";
+import { ShowcaseCenteredCardPage } from "./ShowcaseCenteredCardPage";
 import "./showcaseGlobalStyles.css";
 
 const showcaseRootElement = document.getElementById("showcaseRoot");
@@ -34,5 +36,10 @@ window.addEventListener("keydown", (event: KeyboardEvent) => {
 });
 
 render(() => {
-  return <ShowcaseApplication />;
+  return (
+    <Router>
+      <Route path="/" component={ShowcaseApplication} />
+      <Route path="/centered-card" component={ShowcaseCenteredCardPage} />
+    </Router>
+  );
 }, showcaseRootElement);

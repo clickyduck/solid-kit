@@ -33,6 +33,7 @@ import { ToggleGroup } from "@/components/toggle-group/ToggleGroup";
 import { Text, type TextColor, type TextSize, type TextWeight } from "@/components/typography/Text";
 import { Upload } from "@/components/upload/Upload";
 import { type Color, createDocumentColorSchemePreferenceSignal, useIsMobile } from "@/utilities";
+import { useNavigate } from "@solidjs/router";
 import type { JSX } from "solid-js";
 import { For, Show, createMemo, createSignal } from "solid-js";
 
@@ -81,6 +82,7 @@ const tabDefinitions: readonly TabDefinition<ShowcaseTabValue>[] = [
 ];
 
 export const ShowcaseApplication = (): JSX.Element => {
+  const navigate = useNavigate();
   const isMobileViewport = useIsMobile();
   const [sidebarCollapsed, setSidebarCollapsed] = createSignal(isMobileViewport());
 
@@ -176,7 +178,7 @@ export const ShowcaseApplication = (): JSX.Element => {
             if (!isPanelOpen) closeSidebar();
           }}
           navigationDocument={showcaseLeftPanelNavigationDocument}
-          anchorTag="a"
+          anchorTag="A"
         />
 
         <PageLayout>
@@ -447,6 +449,21 @@ export const ShowcaseApplication = (): JSX.Element => {
                       </Text>
                     </div>
                   </DataCard>
+                </div>
+              </ShowcaseSection>
+
+              <ShowcaseSection
+                sectionHeadingIdentifier="showcase-heading-centered-card"
+                sectionTitle="Centered card"
+                sectionDescription="Full-viewport centred card with a gradient backdrop, built for login and other focused single-action screens. Because it fills the whole viewport, it opens as its own full-page screen rather than rendering inline."
+              >
+                <div class="flex flex-wrap items-center gap-3">
+                  <Button icon="open_in_full" onClick={() => navigate("/centered-card")}>
+                    Open full-page demo
+                  </Button>
+                  <Text size="small" color="muted">
+                    Opens the live full-page login screen; use “Back to showcase” there to return here.
+                  </Text>
                 </div>
               </ShowcaseSection>
 

@@ -84,8 +84,6 @@ export const Text = (properties: TextProperties): JSX.Element => {
 
   const containerClass = () =>
     mergeClasses(
-      // Reset UA margins so `as="p"`/`h1`–`h4` don't introduce default spacing.
-      "m-0",
       DISPLAY_CLASSES[display()],
       config().textClass,
       config().gapClass,

@@ -70,6 +70,11 @@
           "icon": "article"
         },
         {
+          "href": "/centered-card",
+          "label": "Centered card",
+          "icon": "login"
+        },
+        {
           "href": "#showcase-heading-empty-state",
           "label": "Empty state",
           "icon": "inventory_2"

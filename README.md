@@ -31,6 +31,7 @@ npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge mater
 - [Badge](#badge)
 - [Button](#button)
 - [BackgroundCard](#backgroundcard)
+- [CenteredCard](#centeredcard)
 - [DataCard](#datacard)
 - [DatePicker](#datepicker)
 - [Dialog](#dialog)
@@ -159,6 +160,54 @@ import { BackgroundCard } from "@clickyduck/solid-kit";
     <div>Body content</div>
   </div>
 </BackgroundCard>;
+```
+
+---
+
+### CenteredCard
+
+Full-viewport centred card with a decorative gradient backdrop, built for login and other focused single-action screens. Centres a [`BackgroundCard`](#backgroundcard) in the middle of the page with optional icon badge, title, subtitle, and footer slots around the left-aligned body content (`children`).
+
+**Exports:** `CenteredCard`, `CenteredCardProperties` (type)
+
+| Prop           | Type                    | Description                                                                |
+| -------------- | ----------------------- | -------------------------------------------------------------------------- |
+| `children`     | `JSX.Element`           | Card body — typically the form fields and submit button (required)         |
+| `title`        | `string`                | Heading rendered at the top of the card                                    |
+| `subtitle`     | `string`                | Supporting line shown beneath the title                                    |
+| `icon`         | `string \| JSX.Element` | Material Symbols name or an img/element shown in the badge above the title |
+| `footer`       | `JSX.Element`           | Footer slot rendered below the body (e.g. a sign-up link)                  |
+| `class`        | `string`                | Extra classes applied to the `BackgroundCard` surface                      |
+| `wrapperClass` | `string`                | Extra classes applied to the full-height centring wrapper                  |
+
+The component owns the full-viewport wrapper (`min-h-dvh`), so render it as the whole screen — do not nest it inside the app shell layout primitives.
+
+```tsx
+import { Button, CenteredCard, Field, Input, Link, Text } from "@clickyduck/solid-kit";
+
+<CenteredCard
+  icon="lock"
+  title="Welcome back"
+  subtitle="Sign in to continue"
+  footer={
+    <Text size="small" color="muted">
+      New here?{" "}
+      <Link href="/sign-up" weight="medium">
+        Create an account
+      </Link>
+    </Text>
+  }
+>
+  <Field label="Email" for="email">
+    <Input id="email" type="email" icon="mail" placeholder="you@example.com" />
+  </Field>
+  <Field label="Password" for="password">
+    <Input id="password" type="password" icon="lock" placeholder="••••••••" />
+  </Field>
+  <Button class="w-full" type="submit">
+    Sign in
+  </Button>
+</CenteredCard>;
 ```
 
 ---
