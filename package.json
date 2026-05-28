@@ -237,6 +237,16 @@
         "default": "./public/spinner.cjs"
       }
     },
+    "./swipe-button": {
+      "import": {
+        "types": "./public/swipe-button.d.ts",
+        "default": "./public/swipe-button.js"
+      },
+      "require": {
+        "types": "./public/swipe-button.d.ts",
+        "default": "./public/swipe-button.cjs"
+      }
+    },
     "./table": {
       "import": {
         "types": "./public/table.d.ts",

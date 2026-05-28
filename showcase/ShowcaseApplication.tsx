@@ -22,6 +22,7 @@ import { PageLayout } from "@/components/page-layout";
 import { RightPanelLayout } from "@/components/right-panel-layout";
 import { SectionHeading } from "@/components/section-heading/SectionHeading";
 import { Spinner } from "@/components/spinner/Spinner";
+import { SwipeButton } from "@/components/swipe-button/SwipeButton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TablePagination, TableRow } from "@/components/table/Table";
 import type { TabDefinition } from "@/components/tabs/Tabs";
 import { Tabs } from "@/components/tabs/Tabs";
@@ -122,6 +123,9 @@ export const ShowcaseApplication = (): JSX.Element => {
   const [contactChannels, setContactChannels] = createSignal<string[]>(["email"]);
   const [cardPlanSelection, setCardPlanSelection] = createSignal<string | undefined>("pro");
   const [cardFeatureSelection, setCardFeatureSelection] = createSignal<string[]>(["analytics"]);
+
+  const [swipeConfirmedCount, setSwipeConfirmedCount] = createSignal(0);
+  const [swipeResetKey, setSwipeResetKey] = createSignal(1);
 
   const [activeShowcaseTab, setActiveShowcaseTab] = createSignal<ShowcaseTabValue>("overview");
   const [tablePagination, setTablePagination] = createSignal<{ limit: number; offset: number }>({ limit: 25, offset: 0 });
@@ -240,6 +244,40 @@ export const ShowcaseApplication = (): JSX.Element => {
                     <IconButton variant="ghost" icon="more_vert" aria-label="Ghost" />
                     <IconButton variant="solid" icon="settings" aria-label="Disabled" disabled />
                   </div>
+                </div>
+              </ShowcaseSection>
+
+              <ShowcaseSection
+                sectionHeadingIdentifier="showcase-heading-swipe-button"
+                sectionTitle="Swipe button"
+                sectionDescription="Swipe-to-confirm for deliberate actions. Drag the thumb (or focus it and press → / End / Enter). Primary look only; size and shape it with class."
+              >
+                <div class="space-y-6">
+                  <div class="max-w-sm">
+                    <SwipeButton class="w-full" onConfirm={() => setSwipeConfirmedCount((count) => count + 1)}>
+                      Swipe to pay
+                    </SwipeButton>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-3">
+                    <Show keyed when={swipeResetKey()}>
+                      {(key) => (
+                        <SwipeButton icon="bolt" confirmLabel="Sent!" confirmIcon="done_all" onConfirm={() => addToast({ title: "Sent", description: `Resettable swipe #${key.toString()} confirmed.`, variant: "success" })}>
+                          Swipe to send
+                        </SwipeButton>
+                      )}
+                    </Show>
+                    <Button variant="outline" icon="restart_alt" onClick={() => setSwipeResetKey((key) => key + 1)}>
+                      Reset
+                    </Button>
+                  </div>
+                  <div class="max-w-sm">
+                    <SwipeButton class="w-full rounded-none" disabled onConfirm={() => {}}>
+                      Disabled (no border radius)
+                    </SwipeButton>
+                  </div>
+                  <Text size="caption" color="muted" data-testid="swipe-confirm-count">
+                    Confirmed {swipeConfirmedCount().toString()} time(s)
+                  </Text>
                 </div>
               </ShowcaseSection>
 

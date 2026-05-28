@@ -27,6 +27,7 @@ const componentEntries: Record<string, string> = {
   "right-panel-layout": resolve(__dirname, "source/components/right-panel-layout/index.ts"),
   "section-heading": resolve(__dirname, "source/components/section-heading/index.ts"),
   spinner: resolve(__dirname, "source/components/spinner/index.ts"),
+  "swipe-button": resolve(__dirname, "source/components/swipe-button/index.ts"),
   table: resolve(__dirname, "source/components/table/index.ts"),
   tabs: resolve(__dirname, "source/components/tabs/index.ts"),
   textarea: resolve(__dirname, "source/components/textarea/index.ts"),
@@ -51,7 +52,7 @@ export default defineConfig(({ command }) => {
       plugins: [solidPlugin(), solidSvg({ defaultAsComponent: true })],
       resolve: sharedResolve,
       server: {
-        open: true
+        open: false
       }
     };
   }

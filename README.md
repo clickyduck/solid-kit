@@ -52,6 +52,7 @@ npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge mater
 - [MetricCard](#metriccard)
 - [RightPanelLayout](#rightpanellayout)
 - [Spinner](#spinner)
+- [SwipeButton](#swipebutton)
 - [Table](#table)
 - [Tabs](#tabs)
 - [Text](#text)
@@ -955,6 +956,43 @@ Animated loading indicator.
 import { Spinner } from "@clickyduck/solid-kit";
 
 <Spinner aria-label="Loading" />;
+```
+
+---
+
+### SwipeButton
+
+Swipe-to-confirm control for deliberate actions (e.g. "Swipe to pay"). The user drags the thumb across the track — past the threshold it confirms and fires `onConfirm`; short of it the thumb springs back. Primary look only (no variants); pass `class` to size or reshape it (e.g. `class="w-full"` for full width, `class="rounded-none"` for square ends). Pointer-driven (works with mouse and touch) and keyboard accessible: focus the thumb, then **→** / **End** / **Enter** / **Space** to advance or confirm, **←** / **Home** to reset.
+
+**Exports:** `SwipeButton`
+
+Extends all native `<div>` HTML attributes except `class` and the pointer handlers it owns.
+
+| Prop           | Type                    | Default                         | Description                                                             |
+| -------------- | ----------------------- | ------------------------------- | ----------------------------------------------------------------------- |
+| `children`     | `JSX.Element`           | —                               | Track label, e.g. "Swipe to pay" (required)                             |
+| `onConfirm`    | `() => void`            | —                               | Called once when the thumb passes the confirmation threshold (required) |
+| `icon`         | `string \| JSX.Element` | `"keyboard_double_arrow_right"` | Thumb cue icon (Material Symbols name or an element)                    |
+| `confirmLabel` | `JSX.Element`           | `children`                      | Label shown once confirmed                                              |
+| `confirmIcon`  | `string \| JSX.Element` | `"check"`                       | Thumb icon shown once confirmed                                         |
+| `disabled`     | `boolean`               | `false`                         | Disables interaction                                                    |
+| `threshold`    | `number`                | `0.9`                           | Fraction of the track (0–1) the thumb must cross to confirm             |
+| `class`        | `string`                | —                               | Extra CSS classes (size/shape it here — defaults to `h-11 w-64`)        |
+
+The component is uncontrolled — it owns its drag state and fires `onConfirm` once when the threshold is crossed. To reset it after a failed action, remount it (e.g. change its `key`/`Show` condition).
+
+```tsx
+import { SwipeButton } from "@clickyduck/solid-kit";
+
+// Full-width swipe-to-pay
+<SwipeButton class="w-full" onConfirm={() => pay()}>
+  Swipe to pay
+</SwipeButton>
+
+// Custom cue + confirmed state
+<SwipeButton icon="bolt" confirmLabel="Sent!" confirmIcon="done_all" onConfirm={() => send()}>
+  Swipe to send
+</SwipeButton>
 ```
 
 ---

@@ -20,6 +20,7 @@ export * from "./main-layout";
 export * from "./right-panel-layout";
 export * from "./loading";
 export * from "./spinner";
+export * from "./swipe-button";
 export * from "./table";
 export * from "./textarea";
 export * from "./toast";
