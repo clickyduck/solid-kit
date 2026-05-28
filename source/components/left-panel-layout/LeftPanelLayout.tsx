@@ -49,8 +49,8 @@ const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-
 const NAVIGATION_LINK_LABEL_CLASS = "min-w-0 truncate";
 const NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS = "px-2.5 space-x-3";
 const NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS = "size-9 mx-auto justify-center";
-const NAVIGATION_LINK_ACTIVE_CLASS = "border-l-2 border-blue-500 bg-blue-500/10 text-blue-700 dark:text-blue-300 [&_.nav-link-icon]:opacity-100 [&_.nav-link-icon]:text-blue-600 dark:[&_.nav-link-icon]:text-blue-400";
-const NAVIGATION_LINK_INACTIVE_CLASS = "border-l-2 border-transparent hover:bg-gray-100 dark:hover:bg-gray-700/50";
+const NAVIGATION_LINK_ACTIVE_CLASS = "bg-blue-500/10 text-blue-700 dark:text-blue-300 [&_.nav-link-icon]:opacity-100 [&_.nav-link-icon]:text-blue-600 dark:[&_.nav-link-icon]:text-blue-400";
+const NAVIGATION_LINK_INACTIVE_CLASS = "hover:bg-gray-100 dark:hover:bg-gray-700/50";
 /** Group label slot above each group's items, aligned to the same left edge so the label reads as belonging to the items beneath it. Sized to a standard control height (h-9) so the collapsible toggle matches every other button. */
 const NAVIGATION_GROUP_HEADING_SLOT_CLASS = "mb-1.5 flex h-9 min-h-9 max-h-9 w-full shrink-0 items-stretch";
 const GROUP_LABEL_TEXT_CLASS = "flex w-full min-w-0 items-center px-2.5 text-xs leading-none font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase";
