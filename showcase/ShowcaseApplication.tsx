@@ -261,7 +261,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                   <div class="flex flex-wrap items-center gap-3">
                     <Show keyed when={swipeResetKey()}>
                       {(key) => (
-                        <SwipeButton icon="bolt" confirmLabel="Sent!" confirmIcon="done_all" onConfirm={() => addToast({ title: "Sent", description: `Resettable swipe #${key.toString()} confirmed.`, variant: "success" })}>
+                        <SwipeButton confirmLabel="Sent!" onConfirm={() => addToast({ title: "Sent", description: `Resettable swipe #${key.toString()} confirmed.`, variant: "success" })}>
                           Swipe to send
                         </SwipeButton>
                       )}

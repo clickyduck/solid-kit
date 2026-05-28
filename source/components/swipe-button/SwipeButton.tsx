@@ -10,12 +10,8 @@ type SwipeButtonProperties = Omit<ComponentProps<"div">, "class" | "onPointerDow
   /** Called once when the thumb is dragged (or keyed) past the confirmation threshold. */
   onConfirm: () => void;
   class?: string;
-  /** Thumb cue icon (Material Symbols name or element). Defaults to a double-chevron. */
-  icon?: string | JSX.Element;
   /** Label shown once confirmed. Defaults to the resting `children`. */
   confirmLabel?: JSX.Element;
-  /** Thumb icon shown once confirmed. Defaults to a check. */
-  confirmIcon?: string | JSX.Element;
   /** Disables interaction. */
   disabled?: boolean;
   /** Fraction of the track (0–1) the thumb must pass to confirm. */
@@ -26,6 +22,9 @@ const THUMB_SIZE_PX = 36;
 const TRACK_PADDING_PX = 4;
 const DEFAULT_THRESHOLD = 0.9;
 const KEYBOARD_STEP_PX = 24;
+// The thumb cue is fixed: a double-chevron at rest, a check once confirmed.
+const THUMB_REST_ICON = "keyboard_double_arrow_right";
+const THUMB_CONFIRMED_ICON = "check";
 
 /**
  * Swipe-to-confirm control: the user drags (or keys) the thumb across the track
@@ -33,7 +32,7 @@ const KEYBOARD_STEP_PX = 24;
  * (e.g. `w-full`) or reshape it (e.g. `rounded-none`).
  */
 export const SwipeButton = (properties: SwipeButtonProperties) => {
-  const [local, rest] = splitProps(properties, ["children", "onConfirm", "class", "icon", "confirmLabel", "confirmIcon", "disabled", "threshold"]);
+  const [local, rest] = splitProps(properties, ["children", "onConfirm", "class", "confirmLabel", "disabled", "threshold"]);
 
   let trackElement: HTMLDivElement | undefined;
   const [offsetPx, setOffsetPx] = createSignal(0);
@@ -149,11 +148,8 @@ export const SwipeButton = (properties: SwipeButtonProperties) => {
 
   onCleanup(releasePointer);
 
-  const thumbIcon = (): string | JSX.Element => {
-    if (isConfirmed()) {
-      return local.confirmIcon ?? "check";
-    }
-    return local.icon ?? "keyboard_double_arrow_right";
+  const thumbIcon = (): string => {
+    return isConfirmed() ? THUMB_CONFIRMED_ICON : THUMB_REST_ICON;
   };
 
   // No transition while dragging so the thumb tracks the finger 1:1; animate the spring-back / snap.
