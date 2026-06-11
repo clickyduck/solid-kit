@@ -23,6 +23,9 @@ type CardToggleGroupBase = {
   name: string;
   options: CardToggleGroupOption[];
   disabled?: boolean;
+  // "vertical" stacks the options (default); "horizontal" lays them out inline
+  // as equal-width columns sharing one row.
+  orientation?: "vertical" | "horizontal";
   class?: string;
 };
 
@@ -73,7 +76,7 @@ const CardToggleGroup = (properties: CardToggleGroupProperties) => {
   });
 
   return (
-    <div class={mergeClasses("flex flex-col gap-2", properties.class)}>
+    <div class={mergeClasses(properties.orientation === "horizontal" ? "grid auto-cols-fr grid-flow-col gap-2" : "flex flex-col gap-2", properties.class)}>
       <For each={properties.options}>
         {(option) => {
           const isDisabled = (): boolean => properties.disabled === true || option.disabled === true;

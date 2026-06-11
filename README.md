@@ -939,6 +939,123 @@ Responsive detail/drawer panel that slides in from the right.
 
 On desktop the panel pushes the main area. On mobile it overlays full-screen with smooth entrance/exit transitions.
 
+#### Recommended: drive the panel from the URL (create vs. update)
+
+A `RightPanelLayout` that creates or edits a record should be opened from the
+**query string**, not a private `open` signal, so the panel is deep-linkable, the
+browser back button closes it, and the open state survives a refresh. Use one
+convention across every panel in the app:
+
+| Intent              | URL                  | Behaviour                                                                                             |
+| ------------------- | -------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Create new**      | `?create=true`       | Seed a blank draft, open the panel, submit with `POST`.                                               |
+| **Open / edit one** | `?id=<id>`           | Fetch the full record by id (list endpoints often return a subset), seed the draft, submit `PATCH`.  |
+| **Edit an open one**| `?id=<id>&edit=true` | Optional: open `?id=<id>` read-only (disabled fields) and flip to editable with `edit=true`.         |
+
+Closing the panel clears these params (set them to `null`).
+
+**One page owns one panel.** The params above don't name an entity, so let the
+**route** decide which panel they mean — mount one panel per page (e.g. the
+configuration panel only on `/configurations`, the run panel only on `/runs`).
+Because the panel must be a direct child of [`MainLayout`](#mainlayout) (grid area
+`right`), render it in the shell but gate it on `location.pathname`. Two panels
+then never collide even though they share `?create=true`.
+
+```tsx
+import { MainLayout, RightPanelLayout } from "@clickyduck/solid-kit";
+import { useLocation, useSearchParams } from "@solidjs/router";
+import { type JSX, Show } from "solid-js";
+
+function Shell(props: { children: JSX.Element }) {
+  const [params, setParams] = useSearchParams();
+  const location = useLocation();
+
+  const recordId = () => (params.id ? Number(params.id) : null);
+  const isCreating = () => params.create === "true";
+  // This page (route) owns the "items" panel.
+  const itemPanelOpen = () => location.pathname === "/items" && (isCreating() || recordId() !== null);
+
+  const closePanel = () => setParams({ create: null, id: null, edit: null });
+
+  return (
+    <MainLayout>
+      {/* …HeaderLayout / LeftPanelLayout / PageLayout… */}
+      {/* Plain (un-keyed) Show: switching target while open is a prop change on
+          the SAME instance, so the open animation does not replay. See
+          "Animate on open/close, not on switch" below. */}
+      <Show when={itemPanelOpen()}>
+        <ItemPanel
+          itemId={isCreating() ? null : recordId()}
+          editing={isCreating() || params.edit === "true"}
+          onClose={closePanel}
+        />
+      </Show>
+    </MainLayout>
+  );
+}
+```
+
+The panel component fetches its own record (for edit), seeds a draft plus a clean
+snapshot for dirty-tracking, and submits via `POST` (create) or `PATCH` (update,
+with the id). Open it from a page by setting the params — e.g. a table row calls
+`setParams({ id: String(row.id) })` and a "New" button calls
+`setParams({ create: "true" })`.
+
+#### Animate on open/close, not on switch
+
+The panel should animate **only when opening from nothing or closing to nothing**.
+When the user picks a *different* item while it is already open, the content should
+swap in place with no close/reopen flicker. Two rules make that work:
+
+**1. Gate the panel on a plain, un-keyed `<Show>` (truthiness only).** Do **not**
+key it on the id (`<Show keyed>`, `<Key>`, or `key={item.id}`) — a key change
+forces a remount and replays the enter animation on every switch. With a plain
+`<Show when={selectedItem()}>`, going A → B is a prop change on the same instance,
+so the panel (whose animation is driven by mount/unmount, or by an explicit `open`
+prop) stays open and only its content updates.
+
+**2. Only ever close on "no selection".** Drive selection through one signal (or the
+`?id=` param) and flip the panel closed solely when the selection goes away — never
+as part of switching. The panel re-seeds itself from its reactive props (re-fetch +
+re-seed when the id changes; reset to blank for create), so the parent never needs a
+"reset before load" step.
+
+```tsx
+// Selection is the single source of truth; the panel reacts to it.
+const selectedItem = () => itemForId(params.id);
+
+<Show when={selectedItem()}>
+  {/* NOT keyed — same instance across A → B */}
+  <ItemPanel itemId={Number(params.id)} onClose={() => setParams({ id: null })} />
+</Show>;
+```
+
+Inside the panel, re-seed on the id changing rather than once on mount, and don't
+reset state on a same-id refetch (it would clobber edits):
+
+```tsx
+const [item] = createResource(() => props.itemId, fetchItem); // refetches on switch
+const [seededForId, setSeededForId] = createSignal<number>();
+
+createEffect(() => {
+  const loaded = item();
+  if (loaded && seededForId() !== loaded.id) {
+    seedDraftFrom(loaded); // name, fields, a clean snapshot for dirty-tracking
+    setSeededForId(loaded.id);
+  }
+});
+```
+
+**Pitfalls that re-trigger the animation:** keying the panel (`<Show keyed>` /
+`key={id}`) → remount on every switch; calling the panel's "close" (`open=false`
+or unmounting) on a selection *change* rather than only on selection *cleared* →
+flicker; closing by setting `open=false` and clearing the item in the same tick —
+clear the selection and let the close path own `open=false` so the exit animation
+has a stable target.
+
+Net: the panel animates on **none → selected** (open) and **selected → none**
+(close); **selected → other** is a pure in-place content update.
+
 ---
 
 ### Spinner

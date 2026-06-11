@@ -123,6 +123,7 @@ export const ShowcaseApplication = (): JSX.Element => {
   const [contactChannels, setContactChannels] = createSignal<string[]>(["email"]);
   const [cardPlanSelection, setCardPlanSelection] = createSignal<string | undefined>("pro");
   const [cardFeatureSelection, setCardFeatureSelection] = createSignal<string[]>(["analytics"]);
+  const [cardBillingSelection, setCardBillingSelection] = createSignal<string | undefined>("annual");
 
   const [swipeConfirmedCount, setSwipeConfirmedCount] = createSignal(0);
   const [swipeResetKey, setSwipeResetKey] = createSignal(1);
@@ -789,6 +790,19 @@ export const ShowcaseApplication = (): JSX.Element => {
                     options={[
                       { label: "Starter", value: "starter", description: "Up to 5 users and basic reports." },
                       { label: "Pro", value: "pro", description: "Unlimited users, advanced analytics, priority support." }
+                    ]}
+                  />
+                </Field>
+                <Field label="Horizontal — options share one row as equal columns">
+                  <CardToggleGroup
+                    name="showcase-card-toggle-horizontal"
+                    orientation="horizontal"
+                    selectionMode="single"
+                    value={cardBillingSelection()}
+                    onChange={setCardBillingSelection}
+                    options={[
+                      { label: "Monthly", value: "monthly", description: "Billed every month. Cancel any time." },
+                      { label: "Annual", value: "annual", description: "Billed yearly at a discount." }
                     ]}
                   />
                 </Field>
