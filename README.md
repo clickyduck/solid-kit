@@ -946,11 +946,11 @@ A `RightPanelLayout` that creates or edits a record should be opened from the
 browser back button closes it, and the open state survives a refresh. Use one
 convention across every panel in the app:
 
-| Intent              | URL                  | Behaviour                                                                                             |
-| ------------------- | -------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Create new**      | `?create=true`       | Seed a blank draft, open the panel, submit with `POST`.                                               |
-| **Open / edit one** | `?id=<id>`           | Fetch the full record by id (list endpoints often return a subset), seed the draft, submit `PATCH`.  |
-| **Edit an open one**| `?id=<id>&edit=true` | Optional: open `?id=<id>` read-only (disabled fields) and flip to editable with `edit=true`.         |
+| Intent               | URL                  | Behaviour                                                                                           |
+| -------------------- | -------------------- | --------------------------------------------------------------------------------------------------- |
+| **Create new**       | `?create=true`       | Seed a blank draft, open the panel, submit with `POST`.                                             |
+| **Open / edit one**  | `?id=<id>`           | Fetch the full record by id (list endpoints often return a subset), seed the draft, submit `PATCH`. |
+| **Edit an open one** | `?id=<id>&edit=true` | Optional: open `?id=<id>` read-only (disabled fields) and flip to editable with `edit=true`.        |
 
 Closing the panel clears these params (set them to `null`).
 
@@ -984,11 +984,7 @@ function Shell(props: { children: JSX.Element }) {
           the SAME instance, so the open animation does not replay. See
           "Animate on open/close, not on switch" below. */}
       <Show when={itemPanelOpen()}>
-        <ItemPanel
-          itemId={isCreating() ? null : recordId()}
-          editing={isCreating() || params.edit === "true"}
-          onClose={closePanel}
-        />
+        <ItemPanel itemId={isCreating() ? null : recordId()} editing={isCreating() || params.edit === "true"} onClose={closePanel} />
       </Show>
     </MainLayout>
   );
@@ -1004,7 +1000,7 @@ with the id). Open it from a page by setting the params — e.g. a table row cal
 #### Animate on open/close, not on switch
 
 The panel should animate **only when opening from nothing or closing to nothing**.
-When the user picks a *different* item while it is already open, the content should
+When the user picks a _different_ item while it is already open, the content should
 swap in place with no close/reopen flicker. Two rules make that work:
 
 **1. Gate the panel on a plain, un-keyed `<Show>` (truthiness only).** Do **not**
@@ -1048,7 +1044,7 @@ createEffect(() => {
 
 **Pitfalls that re-trigger the animation:** keying the panel (`<Show keyed>` /
 `key={id}`) → remount on every switch; calling the panel's "close" (`open=false`
-or unmounting) on a selection *change* rather than only on selection *cleared* →
+or unmounting) on a selection _change_ rather than only on selection _cleared_ →
 flicker; closing by setting `open=false` and clearing the item in the same tick —
 clear the selection and let the close path own `open=false` so the exit animation
 has a stable target.
