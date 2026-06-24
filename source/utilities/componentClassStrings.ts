@@ -29,8 +29,12 @@ export const DROPDOWN_MENU_SURFACE_CLASSES = "overflow-hidden rounded-lg border 
 export const BADGE_ICON_CLASSES = "size-3.5 shrink-0 align-middle pointer-events-none text-current";
 
 // Table
+// Rows share one height (h-10, 40px — matching inputs/buttons/dropdown triggers). On a table cell `height`
+// behaves as a minimum, and `align-middle` centers the content, so a single-line row sits at exactly 40px while
+// a taller cell (a wrapped value, a control inside a cell) can still grow past it. A small symmetric `py` keeps
+// such grown content padded; it does not affect the 40px single-line height.
 export const TABLE_BODY_TEXT_CLASSES = "text-sm";
 export const TABLE_HEADER_LABEL_CLASSES = "text-xs";
-export const TABLE_HEAD_CELL_CLASSES = "align-middle px-6 py-3.5";
-export const TABLE_DATA_CELL_CLASSES = "align-middle px-6 py-1.5";
+export const TABLE_HEAD_CELL_CLASSES = "h-10 align-middle px-6 py-1.5";
+export const TABLE_DATA_CELL_CLASSES = "h-10 align-middle px-6 py-1.5";
 export const TABLE_PAGINATION_BAR_CLASSES = "px-6 py-2";

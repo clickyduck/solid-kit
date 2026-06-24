@@ -85,6 +85,7 @@ export const SwipeButton = (properties: SwipeButtonProperties) => {
     }
     window.removeEventListener("pointermove", handleWindowPointerMove);
     window.removeEventListener("pointerup", handleWindowPointerUp);
+    window.removeEventListener("pointercancel", handleWindowPointerUp);
   };
 
   const handleWindowPointerMove = (event: PointerEvent): void => {
@@ -115,6 +116,7 @@ export const SwipeButton = (properties: SwipeButtonProperties) => {
     trackElement?.setPointerCapture(event.pointerId);
     window.addEventListener("pointermove", handleWindowPointerMove);
     window.addEventListener("pointerup", handleWindowPointerUp);
+    window.addEventListener("pointercancel", handleWindowPointerUp);
   };
 
   const handleThumbKeyDown: JSX.EventHandler<HTMLButtonElement, KeyboardEvent> = (event) => {
@@ -186,7 +188,7 @@ export const SwipeButton = (properties: SwipeButtonProperties) => {
         tabIndex={local.disabled ? -1 : 0}
         disabled={local.disabled}
         class={mergeClasses(
-          "relative z-10 flex aspect-square h-9 items-center justify-center rounded-full bg-white text-blue-600 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 disabled:cursor-not-allowed",
+          "relative z-10 flex aspect-square h-9 touch-none items-center justify-center rounded-full bg-white text-blue-600 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 disabled:cursor-not-allowed",
           local.disabled ? "" : "cursor-grab active:cursor-grabbing",
           motionClass()
         )}

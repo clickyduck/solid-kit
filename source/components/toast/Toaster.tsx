@@ -8,7 +8,7 @@ import { Toast, toastStore } from "./Toast";
  */
 export const Toaster = (properties: { class?: string }) => {
   return (
-    <div class={mergeClasses("fixed bottom-4 left-1/2 z-50 w-full max-w-sm -translate-x-1/2 space-y-3 sm:right-4 sm:left-auto sm:translate-x-0", properties.class)}>
+    <div class={mergeClasses("fixed bottom-4 left-1/2 z-[70] w-full max-w-sm -translate-x-1/2 space-y-3 sm:right-4 sm:left-auto sm:translate-x-0", properties.class)}>
       <For each={toastStore()}>
         {(toast) => {
           return <Toast toast={toast} />;

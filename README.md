@@ -130,7 +130,7 @@ Extends all native `<button>` HTML attributes.
 | `disabled`     | `boolean`                         | —          | Native disabled attribute                                                                           |
 | `type`         | `"button" \| "submit" \| "reset"` | `"button"` | Native type attribute (defaults to `"button"`)                                                      |
 
-Sized to match all other form controls (`h-9`, `text-sm`) via the shared `FORM_CONTROL_SIZE_CLASSES`. The `type` defaults to `"button"` so it will not submit a surrounding form unless you set `type="submit"`.
+Sized to match all other form controls (`h-10`, `text-sm`) via the shared `FORM_CONTROL_SIZE_CLASSES`. The `type` defaults to `"button"` so it will not submit a surrounding form unless you set `type="submit"`.
 
 ```tsx
 import { Button } from "@clickyduck/solid-kit";
@@ -530,7 +530,7 @@ Extends all native `<button>` HTML attributes.
 | `variant` | `"solid" \| "outline" \| "ghost"` | `"solid"` | Visual style                            |
 | `class`   | `string`                          | —         | Extra CSS classes                       |
 
-Square (`h-9 w-9`), sized to match the sibling form controls via `FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES`. The `type` defaults to `"button"`. Always pass an `aria-label` since the button has no text.
+Square (`h-10 w-10`), sized to match the sibling form controls via `FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES`. The `type` defaults to `"button"`. Always pass an `aria-label` since the button has no text.
 
 ```tsx
 import { IconButton } from "@clickyduck/solid-kit";
@@ -1131,7 +1131,7 @@ Full compound component for data tables with pagination.
 | `align`     | `"left" \| "right" \| "center"` | `"left"` | Text alignment      |
 | `monospace` | `boolean`                       | —        | Applies `font-mono` |
 
-`TableFooterCell` is a `<td>` styled to match header cell height — use it inside `TableFooter` rows for summary/aggregate cells.
+Header, body, and footer rows share one uniform height (40px, matching the other form controls); a cell whose content is taller grows past it. `TableFooterCell` is a `<td>` styled like a header cell — use it inside `TableFooter` rows for summary/aggregate cells.
 
 **`TablePagination` props:**
 

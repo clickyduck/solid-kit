@@ -25,7 +25,7 @@ export const Field: ParentComponent<FieldProperties> = (properties) => {
           </Text>
         }
       >
-        <label for={properties.for}>
+        <label for={properties.for} class="block">
           <Text as="span" size="small" weight="normal" color="secondary" display="block">
             {properties.label}
           </Text>
@@ -33,7 +33,7 @@ export const Field: ParentComponent<FieldProperties> = (properties) => {
       </Show>
       {properties.children}
       <Show when={properties.hint}>
-        <Text size="caption" color="muted" display="block" class="mt-2">
+        <Text size="caption" color="muted" display="block">
           {properties.hint}
         </Text>
       </Show>

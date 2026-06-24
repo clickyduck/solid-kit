@@ -45,14 +45,14 @@ export type LeftPanelNavigationDocumentJson = {
 export type LeftPanelLayoutNavigationDocumentJson = LeftPanelNavigationDocumentJson;
 
 const NAVIGATION_LINK_ICON_CLASS = "nav-link-icon shrink-0 opacity-80 w-4.5 h-4.5";
-const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-9 min-h-9 max-h-9 text-sm transition-all duration-100 ease-out text-gray-800 dark:text-white";
+const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-10 min-h-10 max-h-10 text-sm transition-all duration-100 ease-out text-gray-800 dark:text-white";
 const NAVIGATION_LINK_LABEL_CLASS = "min-w-0 truncate";
 const NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS = "px-2.5 space-x-3";
-const NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS = "size-9 mx-auto justify-center";
+const NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS = "size-10 mx-auto justify-center";
 const NAVIGATION_LINK_ACTIVE_CLASS = "bg-blue-500/10 text-blue-700 dark:text-blue-300 [&_.nav-link-icon]:opacity-100 [&_.nav-link-icon]:text-blue-600 dark:[&_.nav-link-icon]:text-blue-400";
 const NAVIGATION_LINK_INACTIVE_CLASS = "hover:bg-gray-100 dark:hover:bg-gray-700/50";
-/** Group label slot above each group's items, aligned to the same left edge so the label reads as belonging to the items beneath it. Sized to a standard control height (h-9) so the collapsible toggle matches every other button. */
-const NAVIGATION_GROUP_HEADING_SLOT_CLASS = "mb-1.5 flex h-9 min-h-9 max-h-9 w-full shrink-0 items-stretch";
+/** Group label slot above each group's items, aligned to the same left edge so the label reads as belonging to the items beneath it. Sized to a standard control height (h-10) so the collapsible toggle matches every other button. */
+const NAVIGATION_GROUP_HEADING_SLOT_CLASS = "mb-1.5 flex h-10 min-h-10 max-h-10 w-full shrink-0 items-stretch";
 const GROUP_LABEL_TEXT_CLASS = "flex w-full min-w-0 items-center px-2.5 text-xs leading-none font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase";
 
 const computeIsNavigationItemActive = (item: LeftPanelNavigationItemJson, pathname: string, hash: string): boolean => {
@@ -254,9 +254,9 @@ type LeftPanelLayoutProperties = {
   onOpenChange?: (isPanelOpen: boolean) => void;
   navigationDocument: LeftPanelLayoutNavigationDocumentJson;
   scrim?: boolean;
-  /** Tailwind z-index for the scrim layer (panel stays above). */
+  /** Tailwind z-index for the scrim layer (panel stays above). Defaults to `z-30`. */
   scrimZIndexClass?: string;
-  /** Tailwind z-index for the panel layer. */
+  /** Tailwind z-index for the panel layer. Defaults to `z-40`. */
   panelZIndexClass?: string;
   /** Desktop width when expanded (defaults to `md:w-64`). */
   expandedWidthClass?: string;
@@ -296,7 +296,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
         <div
           role="presentation"
           aria-hidden="true"
-          class={mergeClasses(properties.scrimZIndexClass ?? "z-20", "fixed inset-0 bg-black/50", "top-(--solid-kit-header-height,4rem)", "transition-opacity duration-200 ease-in-out")}
+          class={mergeClasses(properties.scrimZIndexClass ?? "z-30", "fixed inset-0 bg-black/50", "top-(--solid-kit-header-height,4rem)", "transition-opacity duration-200 ease-in-out")}
           onClick={() => {
             properties.onOpenChange?.(false);
           }}
@@ -310,7 +310,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
         class={mergeClasses(
           "layout-left-panel flex min-h-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700/60 dark:bg-gray-950",
           isMobileViewport()
-            ? [properties.panelZIndexClass ?? "z-30", "fixed inset-x-0 bottom-0 w-full transition-transform duration-200 ease-in-out", "top-(--solid-kit-header-height,4rem)", resolvedCollapsed() ? "-translate-x-full" : "translate-x-0"]
+            ? [properties.panelZIndexClass ?? "z-40", "fixed inset-x-0 bottom-0 w-full transition-transform duration-200 ease-in-out", "top-(--solid-kit-header-height,4rem)", resolvedCollapsed() ? "-translate-x-full" : "translate-x-0"]
             : ["static h-full transition-[width] duration-200 ease-in-out", resolvedCollapsed() ? (properties.collapsedWidthClass ?? "w-16") : (properties.expandedWidthClass ?? "w-64")]
         )}
         style={

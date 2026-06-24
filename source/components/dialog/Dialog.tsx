@@ -51,7 +51,14 @@ export const Dialog = (properties: DialogRootProperties) => {
   // Pending close timer, so a second dismissal during the animation does not schedule a duplicate close.
   let closeTimeoutIdentifier: ReturnType<typeof setTimeout> | undefined;
 
-  // Show the native dialog and trigger the entrance animation on the next frame (so the from-state paints first).
+  // Show the native dialog and trigger the entrance animation.
+  //
+  // The slide must start from a painted from-state (panel parked offscreen, set synchronously below via
+  // `setHasEntered(false)`). On the *first* open the panel goes from `display:none` to visible in the same tick
+  // `showModal()` runs, so a single requestAnimationFrame can flip `hasEntered` before the from-state has ever
+  // painted — leaving nothing for the transition to animate from. A double rAF guarantees the order: the first
+  // frame lets the from-state paint, the second flips to the to-state. (The bottom-pinned wrapper in
+  // DialogContent is what keeps the slide's anchor stable; this just sequences the paint.)
   const openDialog = (): void => {
     if (!dialogElement || dialogElement.open) {
       return;
@@ -60,7 +67,9 @@ export const Dialog = (properties: DialogRootProperties) => {
     setHasEntered(false);
     dialogElement.showModal();
     requestAnimationFrame(() => {
-      setHasEntered(true);
+      requestAnimationFrame(() => {
+        setHasEntered(true);
+      });
     });
   };
 
@@ -183,6 +192,9 @@ export const Dialog = (properties: DialogRootProperties) => {
         ref={(element) => {
           dialogElement = element;
         }}
+        // No z-index by design: showModal() promotes the dialog to the browser's top layer, which paints above all
+        // z-indexed content regardless of value. A z-index here would do nothing. The backdrop is the modal's own
+        // scrim. This is why a dropdown/date-picker opened *outside* a dialog can never cover it — expected.
         // The backdrop fades in via the `starting:` from-state and fades out while the `closing` state is set.
         class={mergeClasses(
           "m-0 h-dvh max-h-dvh w-full max-w-full border-0 bg-transparent p-0 backdrop:bg-black/30 backdrop:opacity-100 backdrop:backdrop-blur-xl backdrop:transition-opacity backdrop:duration-200 backdrop:ease-out open:flex open:items-end open:justify-center motion-reduce:backdrop:transition-none sm:m-auto sm:h-auto sm:max-h-none sm:max-w-2xl sm:p-4 sm:open:items-center dark:backdrop:bg-gray-900/50 starting:open:backdrop:opacity-0",
@@ -326,11 +338,10 @@ export const DialogContent = (properties: DialogContentPropertiesType) => {
   // Drive the entrance and exit slide on mobile from the root's animation state. Reduced motion or desktop
   // leaves the inline transform untouched (instant, or handled by desktop CSS classes respectively).
   //
-  // The entrance is the delicate case: the panel must be parked offscreen (translateY(100%), no transition)
-  // and that from-state must paint before the slide-to-0 begins, or the browser has no origin to animate from
-  // and the panel jumps into place. Setting both states in one synchronous pass collapses them into a single
-  // style recalc, so the to-state is committed inside requestAnimationFrame after forcing a reflow that locks
-  // in the from-state.
+  // This effect just maps the current animation state to a transform; it does not orchestrate frame timing.
+  // `openDialog` guarantees (via a double requestAnimationFrame) that the parked from-state below has painted
+  // before `hasEntered` flips to true, so by the time the entered branch runs the slide-to-0 already has a
+  // committed, visible origin and no per-frame reflow dance is needed here.
   createEffect(() => {
     const closing: boolean = context?.isClosing() ?? false;
     const entered: boolean = context?.hasEntered() ?? true;
@@ -339,25 +350,19 @@ export const DialogContent = (properties: DialogContentPropertiesType) => {
       return;
     }
     if (closing) {
-      // Slide fully offscreen (own height) downward.
+      // Slide fully offscreen (own height) downward. The wrapper is pinned to the viewport bottom, so the panel's
+      // bottom edge sits at the fold and translating by 100% of its own height clears it completely.
       setPanelTransform("100%", true);
       return;
     }
     if (!entered) {
-      // Pre-entrance from-state: parked below the viewport, no transition so the slide-in reads cleanly.
+      // Pre-entrance from-state: parked just below the fold (100% of the panel's height), no transition so the
+      // slide-in reads cleanly. Stable because the bottom-pinned wrapper gives the panel a fixed resting edge.
       setPanelTransform("100%", false);
       return;
     }
-    // Entered: park at the offscreen from-state without a transition, force the browser to commit that frame,
-    // then slide up to rest on the next frame so the transition has a real starting point.
-    setPanelTransform("100%", false);
-    if (panelElement) {
-      // Reading layout forces a synchronous reflow, committing the from-state above before the to-state below.
-      void panelElement.offsetHeight;
-    }
-    requestAnimationFrame(() => {
-      setPanelTransform("0px", true);
-    });
+    // Entered: slide up to rest. The from-state has already painted, so this animates from a real origin.
+    setPanelTransform("0px", true);
   });
 
   // Shared guard: a sheet drag may only begin on mobile, when dismissible, on the primary pointer, and never
@@ -508,7 +513,16 @@ export const DialogContent = (properties: DialogContentPropertiesType) => {
 
   return (
     <DialogContentContext.Provider value={{ onDragHandlePointerDown, onDragHandlePointerMove, onDragHandlePointerEnd, registerBodyElement, beginBodyGesture, moveBodyGesture, endBodyGesture }}>
-      <div class="relative w-full p-0 sm:my-auto sm:h-auto sm:w-full">
+      {/*
+        Mobile: pin the sheet wrapper to the viewport bottom with `fixed inset-x-0 bottom-0` rather than relying
+        on the dialog's `open:items-end` flex alignment. The dialog is `h-dvh`, and on the first open the mobile
+        `dvh` value resolves a frame late (the URL bar / top-layer entry), so a flex `items-end` anchor shifts
+        between frames — the entrance slide then animates against a moving anchor and the panel visibly jumps to
+        the top and back (only on tall sheets, where the shift is large). A fixed `bottom-0` anchor is resolved
+        from the real viewport edge on the first frame and never moves, so the slide has a static origin. Reset to
+        `static` at `sm:` so the desktop centered-card flex layout is unchanged.
+      */}
+      <div class="fixed inset-x-0 bottom-0 w-full p-0 sm:static sm:my-auto sm:h-auto sm:w-full">
         <div
           ref={(element) => {
             panelElement = element;

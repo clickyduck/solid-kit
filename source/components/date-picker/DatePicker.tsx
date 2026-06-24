@@ -116,7 +116,7 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
     const isToday = isSameDay(day.date, new Date());
     const isCurrentMonth = day.currentMonth;
     const mutedText = isCurrentMonth ? "text-gray-900 dark:text-gray-100" : "text-gray-400 dark:text-gray-600";
-    const base = "relative z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 ease-out focus:outline-none";
+    const base = "relative z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 ease-out focus:outline-none";
     const todayRing = isToday ? "ring-1 ring-inset ring-blue-500" : "";
 
     const isFrom = createMemo(() => properties.mode === "range" && !!properties.rangeFrom && isSameDay(day.date, properties.rangeFrom));
@@ -145,7 +145,7 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
     return { buttonClass, bandClass };
   };
 
-  const chipBase = "cursor-pointer rounded-md px-2 py-0.5 text-sm transition-colors duration-100 ease-out focus:outline-none";
+  const chipBase = "cursor-pointer rounded-md px-2.5 py-1.5 text-sm transition-colors duration-100 ease-out focus:outline-none";
   const chipActive = "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300";
   const chipIdle = "text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-700";
 
@@ -203,7 +203,7 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
         <div class="mb-1 grid grid-cols-7">
           <For each={DAYS_OF_WEEK}>
             {(dow) => (
-              <Text as="div" size="caption" weight="semibold" color="muted" align="center" class="h-8 justify-center">
+              <Text as="div" size="caption" weight="semibold" color="muted" align="center" class="h-9 justify-center">
                 {dow}
               </Text>
             )}
@@ -214,7 +214,7 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
             {(day) => {
               const { buttonClass, bandClass } = makeDayState(day);
               return (
-                <div class="relative flex h-9 w-full items-center justify-center">
+                <div class="relative flex h-10 w-full items-center justify-center">
                   <div class={bandClass()} />
                   <button type="button" class={buttonClass()} onClick={() => properties.onDayClick(day.date)} onMouseEnter={() => properties.onDayHover(day.date)}>
                     {day.date.getDate()}
@@ -230,7 +230,7 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
         <div class="grid grid-cols-3 gap-1">
           <For each={MONTHS}>
             {(name, i) => (
-              <button type="button" class={mergeClasses(itemBase, "h-9 px-1", i() === properties.month ? itemSelected : itemDefault)} onClick={() => handleMonthSelect(i())}>
+              <button type="button" class={mergeClasses(itemBase, "h-10 px-1", i() === properties.month ? itemSelected : itemDefault)} onClick={() => handleMonthSelect(i())}>
                 {name.slice(0, 3)}
               </button>
             )}
@@ -242,7 +242,7 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
         <div class="grid grid-cols-3 gap-1">
           <For each={Array.from({ length: YEAR_RANGE }, (_, i) => yearPageStart() + i)}>
             {(yr) => (
-              <button type="button" class={mergeClasses(itemBase, "h-9 px-1", yr === properties.year ? itemSelected : itemDefault)} onClick={() => handleYearSelect(yr)}>
+              <button type="button" class={mergeClasses(itemBase, "h-10 px-1", yr === properties.year ? itemSelected : itemDefault)} onClick={() => handleYearSelect(yr)}>
                 {yr}
               </button>
             )}
@@ -442,7 +442,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
   };
 
   const calendarElement = (): JSX.Element => (
-    <div class={mergeClasses(DROPDOWN_MENU_SURFACE_CLASSES, "w-full min-w-[280px]")} onClick={(e) => e.stopPropagation()}>
+    <div class={mergeClasses(DROPDOWN_MENU_SURFACE_CLASSES, "w-full min-w-[300px]")} onClick={(e) => e.stopPropagation()}>
       <Calendar
         year={viewYear()}
         month={viewMonth()}
@@ -514,7 +514,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
               ref={(el) => {
                 popoverElement = el;
               }}
-              class="z-9999"
+              class="z-50"
               style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, "min-width": `${position().width}px`, visibility: position().measured ? "visible" : "hidden" }}
             >
               {calendarElement()}

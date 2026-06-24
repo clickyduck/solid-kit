@@ -412,7 +412,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
                   contentPortalMenuElement = el;
                   builtInMenuElement = el;
                 }}
-                class={mergeClasses("z-9999 min-w-min", builtInMenuChromeClass())}
+                class={mergeClasses("z-50 min-w-min", builtInMenuChromeClass())}
                 style={{
                   position: "fixed",
                   top: `${position().top}px`,
@@ -585,7 +585,7 @@ const DropdownContent = (properties: DropdownContentProperties) => {
         ref={(el) => {
           menuEl = el;
         }}
-        style={{ display: "none", position: "fixed", "z-index": "9999" }}
+        style={{ display: "none", position: "fixed", "z-index": "50" }}
         class={mergeClasses(FORM_CONTROL_DROP_DOWN_CONTENT_MIN_WIDTH_CLASS_BY_SIZE, DROPDOWN_MENU_SURFACE_CLASSES, local.class)}
         {...rest}
       >
@@ -648,7 +648,7 @@ const DropdownItem = (properties: DropdownItemProperties) => {
         <button
           type="button"
           class={mergeClasses(
-            "inline-flex w-full items-start rounded-lg px-2.5 py-1.5 text-left transition-colors duration-100 ease-out hover:bg-gray-100 hover:text-gray-900 focus:outline-none dark:hover:bg-gray-700/60 dark:hover:text-white",
+            "inline-flex min-h-10 w-full items-center rounded-lg px-3 py-2 text-left transition-colors duration-100 ease-out hover:bg-gray-100 hover:text-gray-900 focus:outline-none dark:hover:bg-gray-700/60 dark:hover:text-white",
             local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : !isClickable() ? "pointer-events-none cursor-default" : "cursor-pointer transition-opacity duration-100 ease-out active:opacity-75",
             isSelected() && isClickable() ? "bg-blue-500/8 hover:bg-blue-500/15 hover:text-gray-900 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:hover:text-white" : ""
           )}
