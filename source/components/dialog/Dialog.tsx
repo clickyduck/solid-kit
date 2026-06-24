@@ -704,17 +704,11 @@ export const DialogBody = (properties: DialogBodyPropertiesType) => {
 };
 
 /**
- * Dialog footer — does not shrink or scroll. Buttons get equal minimum width.
+ * Dialog footer — does not shrink or scroll. Buttons stretch to fill the row width
+ * equally at every breakpoint, so they read as full, consistent-height controls
+ * rather than collapsing to content width on desktop.
  */
 export const DialogFooter = (properties: ComponentProps<"div">) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return (
-    <div
-      class={mergeClasses(
-        "flex w-full shrink-0 flex-row items-stretch gap-3 border-t border-gray-200 p-3 sm:flex-row sm:items-center sm:justify-end sm:gap-0 sm:space-x-4 sm:p-4 md:p-5 lg:p-6 dark:border-gray-700 [&>button]:min-w-32 [&>button]:flex-1 sm:[&>button]:flex-initial [&>div]:hidden sm:[&>div]:block",
-        local.class
-      )}
-      {...rest}
-    />
-  );
+  return <div class={mergeClasses("flex w-full shrink-0 flex-row items-center gap-3 border-t border-gray-200 p-3 sm:p-4 md:p-5 lg:p-6 dark:border-gray-700 [&>button]:flex-1 [&>div]:hidden", local.class)} {...rest} />;
 };
