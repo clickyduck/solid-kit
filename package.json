@@ -117,6 +117,16 @@
         "default": "./public/field.cjs"
       }
     },
+    "./footer-layout": {
+      "import": {
+        "types": "./public/footer-layout.d.ts",
+        "default": "./public/footer-layout.js"
+      },
+      "require": {
+        "types": "./public/footer-layout.d.ts",
+        "default": "./public/footer-layout.cjs"
+      }
+    },
     "./header-layout": {
       "import": {
         "types": "./public/header-layout.d.ts",

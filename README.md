@@ -40,6 +40,7 @@ npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge mater
 - [EmptyState](#emptystate)
 - [Field](#field)
 - [HeaderLayout](#headerlayout)
+- [FooterLayout](#footerlayout)
 - [SectionHeading](#sectionheading)
 - [IconButton](#iconbutton)
 - [Icons](#icons)
@@ -496,6 +497,40 @@ import { Button, HeaderLayout } from "@clickyduck/solid-kit";
 <HeaderLayout title="Users">
   <Button>Invite</Button>
 </HeaderLayout>;
+```
+
+---
+
+### FooterLayout
+
+Fixed bottom action bar — the counterpart to [`HeaderLayout`](#headerlayout). Pins a full-width surface to the bottom of the viewport with a hairline top border and the same translucent, blurred chrome as `HeaderLayout`, so page content scrolls underneath it. Built for persistent primary actions on mobile-first screens (cart total + checkout, a [`SwipeButton`](#swipebutton) "swipe to pay", form save bars).
+
+**Exports:** `FooterLayout`, `FooterLayoutProperties` (type)
+
+| Prop          | Type          | Default  | Description                                                                       |
+| ------------- | ------------- | -------- | --------------------------------------------------------------------------------- |
+| `children`    | `JSX.Element` | —        | Bar content; the component only renders when `children` is present                |
+| `zIndexClass` | `string`      | `"z-20"` | Tailwind z-index for the bar (above page content, below modals)                   |
+| `class`       | `string`      | —        | Extra CSS classes for inner spacing or width constraints                          |
+
+It is not part of the [`MainLayout`](#mainlayout) grid; render it anywhere. Wrapping it in a `Portal` to `document.body` keeps it anchored to the viewport rather than a scroll container. Leave room at the bottom of the scrolling content (e.g. bottom padding) so the bar does not cover the last rows.
+
+```tsx
+import { Button, FooterLayout, Text } from "@clickyduck/solid-kit";
+import { Portal } from "solid-js/web";
+
+<Portal>
+  <FooterLayout>
+    <div class="flex items-center gap-3">
+      <Text size="title" weight="bold" color="primary">
+        $42.00
+      </Text>
+      <Button icon="shopping_cart_checkout" iconPosition="end" class="ml-auto">
+        Place order
+      </Button>
+    </div>
+  </FooterLayout>
+</Portal>;
 ```
 
 ---

@@ -15,6 +15,7 @@ const componentEntries: Record<string, string> = {
   dropdown: resolve(__dirname, "source/components/dropdown/index.ts"),
   "empty-state": resolve(__dirname, "source/components/empty-state/index.ts"),
   field: resolve(__dirname, "source/components/field/index.ts"),
+  "footer-layout": resolve(__dirname, "source/components/footer-layout/index.ts"),
   "header-layout": resolve(__dirname, "source/components/header-layout/index.ts"),
   "icon-button": resolve(__dirname, "source/components/icon-button/index.ts"),
   icons: resolve(__dirname, "source/components/icons/index.ts"),

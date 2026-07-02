@@ -12,6 +12,7 @@ export * from "./empty-state";
 export * from "./field";
 export * from "./section-heading";
 export * from "./header-layout";
+export * from "./footer-layout";
 export * from "./icon-button";
 export * from "./input";
 export * from "./left-panel-layout";
