@@ -125,6 +125,7 @@ Extends all native `<button>` HTML attributes.
 | -------------- | --------------------------------- | ---------- | --------------------------------------------------------------------------------------------------- |
 | `children`     | `JSX.Element`                     | —          | Button label                                                                                        |
 | `variant`      | `"solid" \| "outline" \| "ghost"` | `"solid"`  | Visual style                                                                                        |
+| `radius`       | `"default" \| "none"`             | `"default"` | Corner rounding. `"none"` squares the corners for a full-bleed action bar (e.g. a sticky bottom "View cart" bar) |
 | `icon`         | `string \| JSX.Element`           | —          | Material Symbols name or an img/element                                                             |
 | `iconPosition` | `"start" \| "end"`                | `"start"`  | Icon placement relative to label (when `"end"`, the icon is pushed to the far right with `ml-auto`) |
 | `class`        | `string`                          | —          | Extra CSS classes                                                                                   |

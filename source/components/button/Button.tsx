@@ -5,8 +5,14 @@ import { Show, splitProps } from "solid-js";
 
 type ButtonVariant = "solid" | "outline" | "ghost";
 
+// Corner rounding. `default` is the standard rounded-lg button; `none` squares the corners for a
+// full-bleed action bar (e.g. a sticky "View cart" bar pinned edge-to-edge at the bottom of the
+// viewport) so consumers don't reach past the component with a `rounded-*` class override.
+type ButtonRadius = "default" | "none";
+
 type ButtonProps = Omit<ComponentProps<"button">, "class"> & {
   variant?: ButtonVariant;
+  radius?: ButtonRadius;
   class?: string;
   icon?: string | JSX.Element;
   iconPosition?: IconPosition;
@@ -23,14 +29,19 @@ const getVariantClasses = (variant: ButtonVariant = "solid"): string => {
   }
 };
 
+const getRadiusClass = (radius: ButtonRadius = "default"): string => {
+  return radius === "none" ? "rounded-none" : "rounded-lg";
+};
+
 export const Button = (properties: ButtonProps) => {
-  const [local, rest] = splitProps(properties, ["class", "variant", "icon", "iconPosition", "children"]);
+  const [local, rest] = splitProps(properties, ["class", "variant", "radius", "icon", "iconPosition", "children"]);
 
   return (
     <button
       type="button"
       class={mergeClasses(
-        "flex cursor-pointer items-center justify-center gap-2 rounded-lg text-center font-normal transition-[color,background-color,border-color,opacity] duration-100 ease-out focus:outline-none focus-visible:ring-0 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:opacity-50",
+        "flex cursor-pointer items-center justify-center gap-2 text-center font-normal transition-[color,background-color,border-color,opacity] duration-100 ease-out focus:outline-none focus-visible:ring-0 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:opacity-50",
+        getRadiusClass(local.radius),
         getVariantClasses(local.variant),
         FORM_CONTROL_SIZE_CLASSES,
         local.class
