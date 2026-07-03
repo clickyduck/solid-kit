@@ -17,7 +17,16 @@ export const ShowcaseCenteredCardPage = (): JSX.Element => {
     <>
       <Toaster />
       <CenteredCard
-        icon="lock"
+        // Element `icon` (here an inline SVG wordmark) renders bare above the title — no badge — so a
+        // wide logo keeps its aspect ratio. Pass a plain string (e.g. "lock") to use the icon badge.
+        icon={
+          <svg viewBox="0 0 160 32" role="img" aria-label="Acme" class="h-8 w-auto">
+            <circle cx="16" cy="16" r="12" fill="#6366f1" />
+            <text x="40" y="23" font-family="system-ui, sans-serif" font-size="22" font-weight="700" fill="currentColor">
+              Acme
+            </text>
+          </svg>
+        }
         title="Welcome back"
         subtitle="Sign in to continue to your workspace"
         footer={

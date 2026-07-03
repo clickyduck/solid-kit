@@ -10,7 +10,11 @@ type CenteredCardProperties = {
   title?: string;
   /** Supporting line shown beneath the title. */
   subtitle?: string;
-  /** Material Symbols name or an img/element shown in the badge above the title. */
+  /**
+   * Adornment shown above the title. A Material Symbols name (string) renders inside the gradient
+   * icon badge; an element (e.g. an `<img>` logo or wordmark) renders bare — centred, at its own
+   * aspect ratio up to a fixed height — with no badge, so a wide wordmark is not squashed.
+   */
   icon?: string | JSX.Element;
   /** Footer slot rendered below the body, separated by spacing (e.g. a sign-up link). */
   footer?: JSX.Element;
@@ -40,9 +44,18 @@ export const CenteredCard: ParentComponent<CenteredCardProperties> = (properties
       <BackgroundCard class={mergeClasses("relative z-10 w-full max-w-md", properties.class)}>
         <Show when={properties.icon !== undefined}>
           <div class="mb-5">
-            <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow-lg">
-              <RenderIcon icon={properties.icon} size={28} />
-            </div>
+            <Show
+              when={typeof properties.icon === "string"}
+              fallback={
+                // An element adornment (img/wordmark) renders bare: no badge, no forced square, so it
+                // keeps its aspect ratio. `[&>*]:` targets the passed child (e.g. <img>) to cap height.
+                <div class="flex items-center [&>*]:max-h-10 [&>*]:w-auto">{properties.icon}</div>
+              }
+            >
+              <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow-lg">
+                <RenderIcon icon={properties.icon} size={28} />
+              </div>
+            </Show>
           </div>
         </Show>
 

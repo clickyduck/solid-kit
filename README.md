@@ -121,16 +121,16 @@ Standard action button with optional icon.
 
 Extends all native `<button>` HTML attributes.
 
-| Prop           | Type                              | Default    | Description                                                                                         |
-| -------------- | --------------------------------- | ---------- | --------------------------------------------------------------------------------------------------- |
-| `children`     | `JSX.Element`                     | —          | Button label                                                                                        |
-| `variant`      | `"solid" \| "outline" \| "ghost"` | `"solid"`  | Visual style                                                                                        |
+| Prop           | Type                              | Default     | Description                                                                                                      |
+| -------------- | --------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
+| `children`     | `JSX.Element`                     | —           | Button label                                                                                                     |
+| `variant`      | `"solid" \| "outline" \| "ghost"` | `"solid"`   | Visual style                                                                                                     |
 | `radius`       | `"default" \| "none"`             | `"default"` | Corner rounding. `"none"` squares the corners for a full-bleed action bar (e.g. a sticky bottom "View cart" bar) |
-| `icon`         | `string \| JSX.Element`           | —          | Material Symbols name or an img/element                                                             |
-| `iconPosition` | `"start" \| "end"`                | `"start"`  | Icon placement relative to label (when `"end"`, the icon is pushed to the far right with `ml-auto`) |
-| `class`        | `string`                          | —          | Extra CSS classes                                                                                   |
-| `disabled`     | `boolean`                         | —          | Native disabled attribute                                                                           |
-| `type`         | `"button" \| "submit" \| "reset"` | `"button"` | Native type attribute (defaults to `"button"`)                                                      |
+| `icon`         | `string \| JSX.Element`           | —           | Material Symbols name or an img/element                                                                          |
+| `iconPosition` | `"start" \| "end"`                | `"start"`   | Icon placement relative to label (when `"end"`, the icon is pushed to the far right with `ml-auto`)              |
+| `class`        | `string`                          | —           | Extra CSS classes                                                                                                |
+| `disabled`     | `boolean`                         | —           | Native disabled attribute                                                                                        |
+| `type`         | `"button" \| "submit" \| "reset"` | `"button"`  | Native type attribute (defaults to `"button"`)                                                                   |
 
 Sized to match all other form controls (`h-10`, `text-sm`) via the shared `FORM_CONTROL_SIZE_CLASSES`. The `type` defaults to `"button"` so it will not submit a surrounding form unless you set `type="submit"`.
 
@@ -508,11 +508,11 @@ Fixed bottom action bar — the counterpart to [`HeaderLayout`](#headerlayout). 
 
 **Exports:** `FooterLayout`, `FooterLayoutProperties` (type)
 
-| Prop          | Type          | Default  | Description                                                                       |
-| ------------- | ------------- | -------- | --------------------------------------------------------------------------------- |
-| `children`    | `JSX.Element` | —        | Bar content; the component only renders when `children` is present                |
-| `zIndexClass` | `string`      | `"z-20"` | Tailwind z-index for the bar (above page content, below modals)                   |
-| `class`       | `string`      | —        | Extra CSS classes for inner spacing or width constraints                          |
+| Prop          | Type          | Default  | Description                                                        |
+| ------------- | ------------- | -------- | ------------------------------------------------------------------ |
+| `children`    | `JSX.Element` | —        | Bar content; the component only renders when `children` is present |
+| `zIndexClass` | `string`      | `"z-20"` | Tailwind z-index for the bar (above page content, below modals)    |
+| `class`       | `string`      | —        | Extra CSS classes for inner spacing or width constraints           |
 
 It is not part of the [`MainLayout`](#mainlayout) grid; render it anywhere. Wrapping it in a `Portal` to `document.body` keeps it anchored to the viewport rather than a scroll container. Leave room at the bottom of the scrolling content (e.g. bottom padding) so the bar does not cover the last rows.
 
@@ -1603,6 +1603,21 @@ source/
 ## Publishing
 
 This section is the full checklist for publishing **`@clickyduck/solid-kit`** to GitHub Packages.
+
+### Deploy steps (TL;DR)
+
+The canonical release order:
+
+```bash
+npm run format   # 1. Prettier-write the tree
+npm run lint     # 2. tsc --noEmit && eslint (must be clean)
+git add -A && git commit -m "…" && git push   # 3. Commit + push the changes
+npm run patch    # 4. Version bump — commits the bump, tags, and (via postversion) pushes with tags
+                 #    use `npm run minor` / `npm run major` per semver
+npm run release  # 5. Publish — prepublishOnly runs typecheck + build, then npm publish to GitHub Packages
+```
+
+Notes: step 4's **`npm version`** refuses a dirty tree, which is why the commit in step 3 comes first; its **`postversion`** hook runs **`git push --follow-tags`** for you. Step 5's **`prepublishOnly`** re-runs typecheck + build, so the published tarball always matches the tagged sources. The subsections below expand each step.
 
 ### Build, typecheck, and release (how they relate)
 
