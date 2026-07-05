@@ -25,6 +25,27 @@ npm install @clickyduck/solid-kit solid-js tailwindcss clsx tailwind-merge mater
 
 ---
 
+## Theme
+
+The components are written against Tailwind's `gray-*` scale. In **Tailwind CSS v4** the
+default `gray` palette is blue-tinted (it sits close to `slate`), so an unmodified dark
+theme reads as blue-charcoal. The library ships a CSS partial that remaps the whole `gray`
+scale to the hueless `neutral` values. Import it once in your Tailwind entry, right after
+`@import "tailwindcss"`, and every `dark:bg-gray-*` in solid-kit renders as a true neutral
+gray:
+
+```css
+@import "tailwindcss";
+@import "@clickyduck/solid-kit/theme.css";
+@source "./node_modules/@clickyduck/solid-kit/public/**/*.{js,cjs}";
+```
+
+Prefer a warmer or cooler charcoal? Skip the partial and define your own `@theme` block
+overriding `--color-gray-*` — for example map them to `--color-zinc-*` (barely warm) or
+keep Tailwind's default `gray` for the original blue cast.
+
+---
+
 ## Components
 
 - [ArrayInput](#arrayinput)

@@ -1,8 +1,21 @@
+import { copyFileSync } from "fs";
 import { resolve } from "path";
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import dtsPlugin from "vite-plugin-dts";
 import solidPlugin from "vite-plugin-solid";
 import solidSvg from "vite-plugin-solid-svg";
+
+// theme.css is a hand-written Tailwind `@theme` partial, not a module in the
+// dependency graph, so Rollup never sees it. Copy it into the published
+// public/ directory verbatim after the bundle is written.
+function copyThemePartial(): Plugin {
+  return {
+    name: "copy-theme-partial",
+    closeBundle() {
+      copyFileSync(resolve(__dirname, "source/theme.css"), resolve(__dirname, "public/theme.css"));
+    }
+  };
+}
 
 const componentEntries: Record<string, string> = {
   "array-input": resolve(__dirname, "source/components/array-input/index.ts"),
@@ -66,7 +79,8 @@ export default defineConfig(({ command }) => {
         insertTypesEntry: true,
         rollupTypes: true,
         tsconfigPath: "./tsconfig.json"
-      })
+      }),
+      copyThemePartial()
     ],
     build: {
       outDir: "public",

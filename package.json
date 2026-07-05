@@ -7,6 +7,7 @@
   "module": "./public/index.js",
   "types": "./public/index.d.ts",
   "exports": {
+    "./theme.css": "./public/theme.css",
     ".": {
       "import": {
         "types": "./public/index.d.ts",

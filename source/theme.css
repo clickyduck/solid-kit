@@ -1,0 +1,27 @@
+/*
+ * solid-kit neutral-gray theme partial.
+ *
+ * solid-kit's components are written against Tailwind's `gray-*` scale. In
+ * Tailwind CSS v4 the default `gray` palette is blue-tinted (it sits close to
+ * `slate`), which makes the dark theme read as blue-charcoal. This partial
+ * remaps the whole `gray` scale to the hueless `neutral` values, so every
+ * `dark:bg-gray-*` in solid-kit renders as a true neutral gray.
+ *
+ * Consume it from an app's Tailwind entry, after `@import "tailwindcss"`:
+ *
+ *   @import "tailwindcss";
+ *   @import "@clickyduck/solid-kit/theme.css";
+ */
+@theme {
+  --color-gray-50: #fafafa;
+  --color-gray-100: #f5f5f5;
+  --color-gray-200: #e5e5e5;
+  --color-gray-300: #d4d4d4;
+  --color-gray-400: #a1a1a1;
+  --color-gray-500: #737373;
+  --color-gray-600: #525252;
+  --color-gray-700: #404040;
+  --color-gray-800: #262626;
+  --color-gray-900: #171717;
+  --color-gray-950: #0a0a0a;
+}
