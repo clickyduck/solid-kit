@@ -25,23 +25,17 @@ type CenteredCardProperties = {
 };
 
 /**
- * Full-viewport centred card with a decorative gradient backdrop, built for login and other
- * focused single-action screens. Centres a `BackgroundCard` in the middle of the page with
- * optional icon badge, title, subtitle, and footer slots around the body content.
+ * Full-viewport centred card, built for login and other focused single-action screens. Centres
+ * a `BackgroundCard` in the middle of the page with optional icon badge, title, subtitle, and
+ * footer slots around the body content.
  *
  * Usage:
  * `<CenteredCard icon="lock" title="Welcome back" subtitle="Sign in to continue">...form...</CenteredCard>`
  */
 export const CenteredCard: ParentComponent<CenteredCardProperties> = (properties) => {
   return (
-    <div class={mergeClasses("relative flex min-h-dvh w-full items-center justify-center overflow-hidden bg-gray-50 p-4 sm:p-6 dark:bg-gray-950", properties.wrapperClass)}>
-      {/* Decorative gradient blobs behind the card. */}
-      <div aria-hidden="true" class="pointer-events-none absolute inset-0 overflow-hidden">
-        <div class="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-gradient-to-br from-indigo-400/40 to-purple-400/40 blur-3xl dark:from-indigo-500/20 dark:to-purple-500/20" />
-        <div class="absolute -right-24 -bottom-24 h-72 w-72 rounded-full bg-gradient-to-br from-sky-400/40 to-emerald-400/40 blur-3xl dark:from-sky-500/20 dark:to-emerald-500/20" />
-      </div>
-
-      <BackgroundCard class={mergeClasses("relative z-10 w-full max-w-md", properties.class)}>
+    <div class={mergeClasses("flex min-h-dvh w-full items-center justify-center bg-gray-50 p-4 sm:p-6 dark:bg-gray-950", properties.wrapperClass)}>
+      <BackgroundCard class={mergeClasses("w-full max-w-md", properties.class)}>
         <Show when={properties.icon !== undefined}>
           <div class="mb-5">
             <Show
@@ -52,7 +46,7 @@ export const CenteredCard: ParentComponent<CenteredCardProperties> = (properties
                 <div class="flex items-center [&>*]:max-h-10 [&>*]:w-auto">{properties.icon}</div>
               }
             >
-              <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-white shadow-lg">
+              <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100">
                 <RenderIcon icon={properties.icon} size={28} />
               </div>
             </Show>

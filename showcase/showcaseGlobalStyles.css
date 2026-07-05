@@ -1,8 +1,10 @@
 @import "tailwindcss";
-@config "../tailwind.config.ts";
 /* Same neutral-gray remap the library ships to consumers — keeps the showcase's
-   dark theme neutral instead of Tailwind v4's blue-tinted default `gray`. */
+   dark theme neutral instead of Tailwind v4's blue-tinted default `gray`.
+   Must sit with the other @import statements, before @config (CSS requires all
+   @import to precede non-import rules). */
 @import "../source/theme.css";
+@config "../tailwind.config.ts";
 
 /* One vertical scroll: main column in RightPanelLayout. Prevent document level scroll (nested scrollbars). */
 html {

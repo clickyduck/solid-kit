@@ -1,6 +1,6 @@
 import { copyFileSync } from "fs";
 import { resolve } from "path";
-import { defineConfig, type Plugin } from "vite";
+import { type Plugin, defineConfig } from "vite";
 import dtsPlugin from "vite-plugin-dts";
 import solidPlugin from "vite-plugin-solid";
 import solidSvg from "vite-plugin-solid-svg";
