@@ -65,13 +65,16 @@ const CardToggleGroup = (properties: CardToggleGroupProperties) => {
     if (properties.selectionMode !== "single") {
       return;
     }
-    const firstOption = properties.options[0];
-    if (firstOption === undefined) {
+    // A single-select group defaults to its first SELECTABLE option so the control is never rendered
+    // with nothing chosen. Skip disabled options — auto-selecting one would hand the consumer a value
+    // the user is not allowed to pick (e.g. a sold-out choice), which then fails downstream.
+    const firstSelectableOption = properties.options.find((option) => option.disabled !== true);
+    if (firstSelectableOption === undefined) {
       return;
     }
     const valueMatchesAnOption = properties.options.some((option) => option.value === properties.value);
     if (!valueMatchesAnOption) {
-      properties.onChange?.(firstOption.value);
+      properties.onChange?.(firstSelectableOption.value);
     }
   });
 
