@@ -404,7 +404,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
         class={mergeClasses("relative", local.class)}
       >
         {local.children}
-        <Show when={!hasCustomContent() && dropdownOpen() && !disabledState() && properties.options.length > 0 && portalPosition()}>
+        <Show when={!hasCustomContent() && dropdownOpen() && !disabledState() && (isSearchable() || properties.options.length > 0) && portalPosition()}>
           {(position) => (
             <Portal mount={getPortalMount(dropdownContainerElement)}>
               <div
