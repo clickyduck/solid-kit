@@ -24,4 +24,21 @@
   --color-gray-800: #262626;
   --color-gray-900: #171717;
   --color-gray-950: #0a0a0a;
+
+  /*
+   * Primary accent. solid-kit's components use the Tailwind `blue-*` scale as
+   * the primary color (solid fills at 500/600, hover at 700, soft tints at
+   * 200-400). This remaps that scale to a ramp anchored on #3772ff at 500.
+   */
+  --color-blue-50: #eef2ff;
+  --color-blue-100: #dfe6ff;
+  --color-blue-200: #c2d0ff;
+  --color-blue-300: #9bb2ff;
+  --color-blue-400: #6a8dff;
+  --color-blue-500: #3772ff;
+  --color-blue-600: #1f57f0;
+  --color-blue-700: #1943c9;
+  --color-blue-800: #1838a1;
+  --color-blue-900: #19347f;
+  --color-blue-950: #10204d;
 }
