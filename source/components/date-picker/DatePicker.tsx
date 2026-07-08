@@ -2,7 +2,7 @@ import { Button } from "@/components/button/Button";
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon } from "@/components/icons";
 import { Text } from "@/components/typography";
-import { DROPDOWN_MENU_SURFACE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
+import { DROPDOWN_MENU_SURFACE_CLASSES, FADE_TRANSITION_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses, popoverStateClasses, usePopoverAnimation } from "@/utilities";
 import { VIEWPORT_EDGE_GAP_PIXELS, computeFlippedMenuPosition } from "@/utilities/computeFlippedMenuPosition";
 import { getPortalMount } from "@/utilities/getPortalMount";
 import type { JSX } from "solid-js";
@@ -105,31 +105,40 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
 
   const days = createMemo(() => buildCalendarDays(properties.year, properties.month));
 
-  const effectiveTo = createMemo((): Date | undefined => {
-    if (properties.mode === "range" && properties.rangeFrom && !properties.rangeTo && properties.hoverDate) {
-      return properties.hoverDate;
-    }
-    return properties.rangeTo;
+  // While picking the end date the user may hover a day *before* the start.
+  // Order the preview endpoints so the highlighted band always spans from the
+  // earlier day to the later one, mirroring the swap performed on completion.
+  const previewRange = createMemo((): { start: Date; end: Date | undefined } | undefined => {
+    if (properties.mode !== "range" || !properties.rangeFrom) return undefined;
+    const from = properties.rangeFrom;
+    // The pending end is the committed "to", or the hovered day while still picking.
+    const other = properties.rangeTo ?? properties.hoverDate;
+    if (!other) return { start: from, end: undefined };
+    return other.getTime() < from.getTime() ? { start: other, end: from } : { start: from, end: other };
   });
+
+  const previewStart = createMemo((): Date | undefined => previewRange()?.start);
+  const previewEnd = createMemo((): Date | undefined => previewRange()?.end);
 
   const makeDayState = (day: CalendarDay) => {
     const isToday = isSameDay(day.date, new Date());
     const isCurrentMonth = day.currentMonth;
     const mutedText = isCurrentMonth ? "text-gray-900 dark:text-gray-100" : "text-gray-400 dark:text-gray-600";
-    const base = "relative z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 ease-out focus:outline-none";
+    const base = "relative z-10 h-9 w-9 p-0";
     const todayRing = isToday ? "ring-1 ring-inset ring-blue-500" : "";
 
-    const isFrom = createMemo(() => properties.mode === "range" && !!properties.rangeFrom && isSameDay(day.date, properties.rangeFrom));
-    const isTo = createMemo(() => properties.mode === "range" && !!effectiveTo() && isSameDay(day.date, effectiveTo()!));
+    const isFrom = createMemo(() => properties.mode === "range" && !!previewStart() && isSameDay(day.date, previewStart()!));
+    const isTo = createMemo(() => properties.mode === "range" && !!previewEnd() && isSameDay(day.date, previewEnd()!));
     const isSingle = createMemo(() => properties.mode === "single" && !!properties.singleDate && isSameDay(day.date, properties.singleDate));
-    const inRange = createMemo(() => properties.mode === "range" && isInRange(day.date, properties.rangeFrom, effectiveTo()));
+    const inRange = createMemo(() => properties.mode === "range" && isInRange(day.date, previewStart(), previewEnd()));
     const isSelected = createMemo(() => isSingle() || isFrom() || isTo());
 
     const buttonClass = createMemo(() => {
-      if (isSelected()) return mergeClasses(base, "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600");
-      if (inRange()) return mergeClasses(base, "text-blue-800 hover:bg-blue-600/20 dark:text-blue-200 dark:hover:bg-blue-500/25");
-      if (isToday) return mergeClasses(base, mutedText, todayRing, "hover:bg-gray-100 dark:hover:bg-gray-700");
-      return mergeClasses(base, mutedText, "hover:bg-gray-100 dark:hover:bg-gray-700");
+      if (isSelected()) return mergeClasses(base, "bg-blue-600 text-white enabled:hover:bg-blue-700 dark:bg-blue-500 dark:enabled:hover:bg-blue-600");
+      if (inRange()) return mergeClasses(base, "text-blue-800 enabled:hover:bg-blue-600/20 dark:text-blue-200 dark:enabled:hover:bg-blue-500/25");
+      // Default/today cells inherit the ghost variant's own neutral hover wash (gray-700/50); no override needed.
+      if (isToday) return mergeClasses(base, mutedText, todayRing);
+      return mergeClasses(base, mutedText);
     });
 
     // Band visibility and shape — always rendered in DOM, shown/hidden via opacity.
@@ -145,13 +154,15 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
     return { buttonClass, bandClass };
   };
 
-  const chipBase = "cursor-pointer rounded-md px-2.5 py-1.5 text-sm transition-colors duration-100 ease-out focus:outline-none";
-  const chipActive = "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300";
-  const chipIdle = "text-gray-900 hover:bg-gray-100 dark:text-gray-100 dark:hover:bg-gray-700";
+  // Overrides layered onto Button's ghost variant; hover overrides need the enabled:hover prefix
+  // to conflict with (and win over) the variant's own enabled:hover wash in tailwind-merge.
+  const chipSize = "h-auto px-2.5 py-1.5";
+  const chipActive = "bg-blue-500/10 text-blue-700 enabled:hover:bg-blue-500/15 dark:bg-blue-500/15 dark:text-blue-300 dark:enabled:hover:bg-blue-500/20";
 
-  const itemBase = "flex cursor-pointer items-center justify-center rounded-lg text-sm font-normal transition-colors duration-100 ease-out focus:outline-none";
-  const itemDefault = "text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-700";
-  const itemSelected = "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600";
+  const itemSize = "h-10 px-1";
+  // Default month/year cells inherit the ghost variant's own neutral hover wash (gray-700/50).
+  const itemDefault = "text-gray-900 dark:text-gray-100";
+  const itemSelected = "bg-blue-600 text-white enabled:hover:bg-blue-700 dark:bg-blue-500 dark:enabled:hover:bg-blue-600";
 
   const toggleMonth = (): void => {
     setView((v) => (v === "months" ? "days" : "months"));
@@ -189,12 +200,12 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
       <div class="mb-3 flex items-center justify-between gap-1">
         <IconButton variant="ghost" icon="chevron_left" aria-label="Previous" onClick={handlePrev} />
         <div class="flex items-center gap-1">
-          <button type="button" class={mergeClasses(chipBase, view() === "months" ? chipActive : chipIdle)} onClick={() => toggleMonth()}>
+          <Button variant="ghost" class={mergeClasses(chipSize, view() === "months" && chipActive)} onClick={() => toggleMonth()}>
             {MONTHS[properties.month]}
-          </button>
-          <button type="button" class={mergeClasses(chipBase, view() === "years" ? chipActive : chipIdle)} onClick={() => toggleYear()}>
+          </Button>
+          <Button variant="ghost" class={mergeClasses(chipSize, view() === "years" && chipActive)} onClick={() => toggleYear()}>
             {properties.year}
-          </button>
+          </Button>
         </div>
         <IconButton variant="ghost" icon="chevron_right" aria-label="Next" onClick={handleNext} />
       </div>
@@ -216,9 +227,9 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
               return (
                 <div class="relative flex h-10 w-full items-center justify-center">
                   <div class={bandClass()} />
-                  <button type="button" class={buttonClass()} onClick={() => properties.onDayClick(day.date)} onMouseEnter={() => properties.onDayHover(day.date)}>
+                  <Button variant="ghost" class={buttonClass()} onClick={() => properties.onDayClick(day.date)} onMouseEnter={() => properties.onDayHover(day.date)}>
                     {day.date.getDate()}
-                  </button>
+                  </Button>
                 </div>
               );
             }}
@@ -230,9 +241,9 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
         <div class="grid grid-cols-3 gap-1">
           <For each={MONTHS}>
             {(name, i) => (
-              <button type="button" class={mergeClasses(itemBase, "h-10 px-1", i() === properties.month ? itemSelected : itemDefault)} onClick={() => handleMonthSelect(i())}>
+              <Button variant="ghost" class={mergeClasses(itemSize, i() === properties.month ? itemSelected : itemDefault)} onClick={() => handleMonthSelect(i())}>
                 {name.slice(0, 3)}
-              </button>
+              </Button>
             )}
           </For>
         </div>
@@ -242,9 +253,9 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
         <div class="grid grid-cols-3 gap-1">
           <For each={Array.from({ length: YEAR_RANGE }, (_, i) => yearPageStart() + i)}>
             {(yr) => (
-              <button type="button" class={mergeClasses(itemBase, "h-10 px-1", yr === properties.year ? itemSelected : itemDefault)} onClick={() => handleYearSelect(yr)}>
+              <Button variant="ghost" class={mergeClasses(itemSize, yr === properties.year ? itemSelected : itemDefault)} onClick={() => handleYearSelect(yr)}>
                 {yr}
-              </button>
+              </Button>
             )}
           </For>
         </div>
@@ -269,6 +280,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
   const placeholder = (): string => properties.placeholder ?? (mode() === "range" ? "Select date range" : "Select date");
 
   const [open, setOpen] = createSignal(false);
+  const popover = usePopoverAnimation(open);
 
   const today = new Date();
   const [viewYear, setViewYear] = createSignal(today.getFullYear());
@@ -369,14 +381,17 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
     }
     const { top, left } = computeFlippedMenuPosition(rect, popoverElement);
     setPortalPosition({ top, left, width: rect.width, measured: true });
+    // Positioned and about to become visible — start the enter transition.
+    popover.markMeasured();
   };
 
   createEffect(
     on(open, (isOpen) => {
       if (!isOpen) {
-        setPortalPosition(null);
+        // Keep portalPosition/popoverElement intact so the exit transition can
+        // paint from the last position; they are recomputed on the next open and
+        // the element unmounts once the close animation finishes.
         setHoverDate(undefined);
-        popoverElement = null;
         return;
       }
       // When the calendar opens with a complete range already set, always restart selection.
@@ -395,6 +410,17 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
         window.removeEventListener("scroll", updatePortalPosition, true);
         window.removeEventListener("resize", updatePortalPosition);
       });
+    })
+  );
+
+  // Once the exit animation finishes and the popover unmounts, drop the stale
+  // element ref / cached position so the next open re-measures cleanly.
+  createEffect(
+    on(popover.shouldRender, (rendered) => {
+      if (!rendered) {
+        popoverElement = null;
+        setPortalPosition(null);
+      }
     })
   );
 
@@ -466,7 +492,7 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
         )}
       </Show>
       <div class="border-t border-gray-200 px-3 py-2 dark:border-gray-700">
-        <Button variant="ghost" class="w-full text-xs text-gray-500 dark:text-gray-400" onClick={handleClear} disabled={!hasValue()}>
+        <Button variant="ghost" class="w-full" onClick={handleClear} disabled={!hasValue()}>
           Clear
         </Button>
       </div>
@@ -507,14 +533,14 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
         </span>
       </Button>
 
-      <Show when={open() && portalPosition()}>
+      <Show when={popover.shouldRender() && portalPosition()}>
         {(position) => (
           <Portal mount={getPortalMount(containerElement)}>
             <div
               ref={(el) => {
                 popoverElement = el;
               }}
-              class="z-50"
+              class={mergeClasses("z-50", FADE_TRANSITION_CLASSES, popoverStateClasses(popover.isEntered()))}
               style={{ position: "fixed", top: `${position().top}px`, left: `${position().left}px`, "min-width": `${position().width}px`, visibility: position().measured ? "visible" : "hidden" }}
             >
               {calendarElement()}

@@ -3,14 +3,15 @@
  */
 export const themedScrollControlClassName: string = [
   "[scrollbar-width:thin]",
-  "[scrollbar-color:rgb(203_213_225/0.95)_transparent] dark:[scrollbar-color:rgb(100_116_139/0.9)_transparent]",
+  // Firefox takes raw colors, so these mirror the neutral gray-300 / gray-500 values from theme.css.
+  "[scrollbar-color:rgb(212_212_212/0.95)_transparent] dark:[scrollbar-color:rgb(115_115_115/0.9)_transparent]",
   "[&::-webkit-scrollbar]:w-2",
   "[&::-webkit-scrollbar]:h-2",
   "[&::-webkit-scrollbar-track]:bg-transparent",
   "[&::-webkit-scrollbar-thumb]:rounded-full",
-  "[&::-webkit-scrollbar-thumb]:bg-slate-300/90",
-  "[&::-webkit-scrollbar-thumb]:hover:bg-slate-400/80",
-  "dark:[&::-webkit-scrollbar-thumb]:bg-slate-500/80",
-  "dark:[&::-webkit-scrollbar-thumb]:hover:bg-slate-400/75",
+  "[&::-webkit-scrollbar-thumb]:bg-gray-300/90",
+  "[&::-webkit-scrollbar-thumb]:hover:bg-gray-400/80",
+  "dark:[&::-webkit-scrollbar-thumb]:bg-gray-500/80",
+  "dark:[&::-webkit-scrollbar-thumb]:hover:bg-gray-400/75",
   "[&::-webkit-scrollbar-corner]:bg-transparent"
 ].join(" ");

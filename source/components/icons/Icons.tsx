@@ -32,16 +32,17 @@ interface IconProperties {
   [key: string]: unknown;
 }
 
+// Kept identical to typography's COLOR_CLASSES so an Icon and a Text with the same color name always match.
 const iconColorClass: Record<IconColor, string> = {
   default: "",
   inherit: "text-inherit",
-  muted: "text-gray-500 dark:text-gray-400",
-  primary: "text-blue-600 dark:text-blue-400",
+  muted: "text-gray-600 dark:text-gray-400",
+  primary: "text-blue-700 dark:text-blue-400",
   secondary: "text-gray-700 dark:text-gray-300",
-  success: "text-emerald-600 dark:text-emerald-400",
-  warning: "text-amber-600 dark:text-amber-400",
-  danger: "text-red-600 dark:text-red-400",
-  info: "text-sky-600 dark:text-sky-400"
+  success: "text-emerald-700 dark:text-emerald-400",
+  warning: "text-amber-800 dark:text-amber-400",
+  danger: "text-red-700 dark:text-red-400",
+  info: "text-sky-700 dark:text-sky-400"
 };
 
 /** Renders a Material Symbol (rounded, filled) by ligature name, e.g. `<Icon name="account_balance_wallet" size={20} />` */

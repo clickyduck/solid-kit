@@ -57,11 +57,11 @@ export function Tabs<TabValue extends string>(properties: TabsProperties<TabValu
                   disabled={resolvedIsDisabled()}
                   icon={tabDefinition.icon}
                   class={mergeClasses(
-                    "rounded-t-md rounded-b-none border-x-0 border-t-0 border-b-2 border-solid bg-transparent shadow-none hover:bg-transparent focus-visible:border-x-transparent focus-visible:border-t-transparent focus-visible:border-b-blue-500 dark:focus-visible:border-b-blue-400",
+                    "rounded-t-lg rounded-b-none border-x-0 border-t-0 border-b-2 border-solid bg-transparent shadow-none hover:bg-transparent focus-visible:border-x-transparent focus-visible:border-t-transparent focus-visible:border-b-blue-500 dark:focus-visible:border-b-blue-400",
                     properties.scrollable ? "w-auto whitespace-nowrap" : "w-full min-w-0",
                     isSelected()
                       ? "relative z-1 border-b-blue-500 text-blue-700 hover:border-b-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-400"
-                      : "border-b-transparent text-gray-600 hover:border-b-blue-600 hover:text-blue-600 dark:text-gray-400 dark:hover:border-b-blue-400 dark:hover:text-blue-400"
+                      : "border-b-transparent text-gray-600 hover:border-b-blue-500 hover:text-blue-600 dark:text-gray-400 dark:hover:border-b-blue-400 dark:hover:text-blue-400"
                   )}
                   onClick={() => {
                     properties.onTabSelect(tabDefinition.tabValue);

@@ -141,7 +141,7 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
     <div
       class={mergeClasses(
         "min-h-0 shrink-0",
-        resolvedVariant() === "grid" ? "max-md:contents md:min-w-0 md:overflow-hidden md:transition-[width] md:duration-200 md:ease-in-out" : "",
+        resolvedVariant() === "grid" ? "max-md:contents md:min-w-0 md:overflow-hidden md:transition-[width] md:duration-200 md:ease-out" : "",
         resolvedVariant() === "grid" ? (isPanelVisible() ? "md:w-md lg:w-xl" : "md:w-0") : ""
       )}
       style={resolvedVariant() === "grid" ? { "grid-area": "right" } : undefined}
@@ -152,8 +152,8 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
           "flex h-full min-h-0 w-full min-w-0 flex-col bg-white text-gray-900 shadow-xl dark:bg-gray-950 dark:text-gray-100",
           "border-l border-gray-200 dark:border-gray-700/80",
           resolvedVariant() === "overlay"
-            ? "fixed right-0 bottom-0 left-0 z-40 w-full max-w-full transform transition-transform duration-200 ease-in-out md:left-auto md:w-md lg:w-xl"
-            : "max-md:fixed max-md:right-0 max-md:bottom-0 max-md:left-0 max-md:z-40 max-md:transform max-md:transition-transform max-md:duration-200 max-md:ease-in-out md:static md:max-h-none",
+            ? "fixed right-0 bottom-0 left-0 z-40 w-full max-w-full transform transition-transform duration-200 ease-out md:left-auto md:w-md lg:w-xl"
+            : "max-md:fixed max-md:right-0 max-md:bottom-0 max-md:left-0 max-md:z-40 max-md:transform max-md:transition-transform max-md:duration-200 max-md:ease-out md:static md:max-h-none",
           resolvedVariant() === "overlay"
             ? isPanelVisible()
               ? "pointer-events-auto translate-x-0"
@@ -172,7 +172,7 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
         <header class="shrink-0 border-b border-gray-200 dark:border-gray-700/80">
           <div class="flex items-center justify-between gap-3 px-4 py-3">
             <div class="min-w-0">
-              <Text as="div" weight="semibold" color="default" display="block" truncate class="min-w-0 text-lg tracking-tight">
+              <Text as="div" size="heading" weight="semibold" color="default" display="block" truncate class="min-w-0">
                 {properties.title}
               </Text>
               <Show when={properties.subtitle}>

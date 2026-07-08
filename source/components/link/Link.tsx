@@ -16,7 +16,7 @@ import {
   WEIGHT_CLASSES,
   truncateTextChildren
 } from "@/components/typography/_typography";
-import type { IconPosition } from "@/utilities/componentClassStrings";
+import { FOCUS_OUTLINE_INLINE_CLASSES, type IconPosition } from "@/utilities/componentClassStrings";
 import { mergeClasses } from "@/utilities/mergeClasses";
 import { A } from "@solidjs/router";
 import type { ComponentProps, JSX } from "solid-js";
@@ -88,6 +88,7 @@ export const Link = (properties: LinkProperties): JSX.Element => {
   const containerClass = () =>
     mergeClasses(
       "m-0 no-underline cursor-pointer transition-opacity duration-100 ease-out hover:opacity-80 active:opacity-75",
+      FOCUS_OUTLINE_INLINE_CLASSES,
       DISPLAY_CLASSES[display()],
       config().textClass,
       config().gapClass,

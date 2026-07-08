@@ -1,7 +1,7 @@
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon } from "@/components/icons";
 import { Text } from "@/components/typography";
-import { mergeClasses } from "@/utilities";
+import { DROPDOWN_MENU_SURFACE_CLASSES, mergeClasses } from "@/utilities";
 import type { ComponentProps } from "solid-js";
 import { Match, Show, Switch, createSignal, splitProps } from "solid-js";
 
@@ -12,10 +12,29 @@ export type ToastData = {
   variant?: "success" | "danger" | "warning" | "default";
 };
 
+// Toasts slide in and out rather than fade: off-screen bottom on mobile (the
+// stack sits bottom-center), off-screen right on desktop (bottom-right stack).
+// The transform end-states compose with the container's layout classes — each
+// toast owns only its own translate. `ease-out` per the design system.
+const TOAST_TRANSITION_DURATION_MS = 300;
+const TOAST_TRANSITION_CLASSES = "transition-transform duration-300 ease-out motion-reduce:transition-none";
+// Hidden (enter-from / exit-to): below the viewport on mobile, right of it on desktop.
+const TOAST_HIDDEN_CLASSES = "translate-y-full sm:translate-x-full sm:translate-y-0";
+// Shown: settled into place.
+const TOAST_SHOWN_CLASSES = "translate-y-0 sm:translate-x-0";
+
 const [toastStore, setToastStore] = createSignal<ToastData[]>([]);
+// IDs currently sliding out. Kept separate from the store (rather than a field on
+// ToastData) so the store's objects keep stable references and the <For> in
+// Toaster reuses each toast's DOM row instead of remounting it — which would
+// otherwise restart the animation from scratch.
+const [exitingToastIds, setExitingToastIds] = createSignal<ReadonlySet<string>>(new Set());
 const toastTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 export { toastStore };
+
+/** Whether a toast is currently playing its exit (slide-out) transition. */
+export const isToastExiting = (toastId: string): boolean => exitingToastIds().has(toastId);
 
 const generateToastId = (): string => {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
@@ -41,7 +60,8 @@ export const addToast = (toast: Omit<ToastData, "id">): string => {
 };
 
 /**
- * Removes a toast from the store by id.
+ * Removes a toast from the store by id. The toast first slides out, then is
+ * dropped from the store once the exit transition finishes.
  */
 export const removeToast = (toastId: string): void => {
   const timerId = toastTimers.get(toastId);
@@ -49,11 +69,21 @@ export const removeToast = (toastId: string): void => {
     clearTimeout(timerId);
     toastTimers.delete(toastId);
   }
-  setToastStore(
-    toastStore().filter((toast) => {
-      return toast.id !== toastId;
-    })
-  );
+  // Already sliding out — nothing more to do (e.g. auto-timeout racing a manual close).
+  if (isToastExiting(toastId)) {
+    return;
+  }
+  const nextExiting = new Set(exitingToastIds());
+  nextExiting.add(toastId);
+  setExitingToastIds(nextExiting);
+  const purgeTimerId = setTimeout(() => {
+    toastTimers.delete(toastId);
+    setToastStore(toastStore().filter((toast) => toast.id !== toastId));
+    const remainingExiting = new Set(exitingToastIds());
+    remainingExiting.delete(toastId);
+    setExitingToastIds(remainingExiting);
+  }, TOAST_TRANSITION_DURATION_MS);
+  toastTimers.set(toastId, purgeTimerId);
 };
 
 const getIconContainerClasses = (variant: ToastData["variant"]): string => {
@@ -65,7 +95,7 @@ const getIconContainerClasses = (variant: ToastData["variant"]): string => {
     case "warning":
       return "bg-amber-500/15 text-amber-800 dark:text-amber-400";
     default:
-      return "bg-gray-500/15 text-gray-700 dark:bg-slate-500/15 dark:text-gray-300";
+      return "bg-gray-500/15 text-gray-700 dark:bg-gray-500/15 dark:text-gray-300";
   }
 };
 
@@ -76,9 +106,30 @@ export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) 
   const [local, rest] = splitProps(properties, ["toast", "class"]);
   const toast = () => local.toast;
 
+  // Slide in on the frame after mount so the transform transition runs from the
+  // off-screen start position rather than snapping into place.
+  const [entered, setEntered] = createSignal(false);
+  requestAnimationFrame(() => setEntered(true));
+  const visible = () => entered() && !isToastExiting(toast().id);
+
   return (
-    <div class={mergeClasses("flex w-full max-w-sm items-center rounded-lg border border-gray-200 bg-white/95 p-4 text-gray-600 shadow-lg backdrop-blur-sm dark:border-gray-700 dark:bg-gray-800/80 dark:text-gray-300", local.class)} role="alert" {...rest}>
-      <div class={mergeClasses("inline-flex h-7 w-7 shrink-0 items-center justify-center rounded", getIconContainerClasses(toast().variant))}>
+    <div
+      class={mergeClasses(
+        // Shares the floating-surface chrome (rounded-lg, border, shadow) with Dropdown/DatePicker
+        // menus; the toast layers a translucent, blurred fill on top so it reads as floating over
+        // page content rather than an opaque panel.
+        DROPDOWN_MENU_SURFACE_CLASSES,
+        // A toast floats free over arbitrary page content, so it keeps a fuller shadow than an
+        // anchored menu (which sits tight to its trigger and only needs shadow-lg/10).
+        "flex w-full max-w-sm items-center bg-white/95 p-4 text-gray-600 shadow-lg backdrop-blur-sm dark:bg-gray-800/80 dark:text-gray-300",
+        TOAST_TRANSITION_CLASSES,
+        visible() ? TOAST_SHOWN_CLASSES : TOAST_HIDDEN_CLASSES,
+        local.class
+      )}
+      role="alert"
+      {...rest}
+    >
+      <div class={mergeClasses("inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg", getIconContainerClasses(toast().variant))}>
         <Switch
           fallback={
             <>

@@ -1,4 +1,4 @@
-import { mergeClasses } from "@/utilities";
+import { LAYOUT_CHROME_BAR_SURFACE_CLASSES, mergeClasses } from "@/utilities";
 import type { ParentComponent } from "solid-js";
 import { Show } from "solid-js";
 
@@ -21,9 +21,7 @@ type FooterLayoutProperties = {
 export const FooterLayout: ParentComponent<FooterLayoutProperties> = (properties) => {
   return (
     <Show when={properties.children}>
-      <div class={mergeClasses("layout-footer fixed inset-x-0 bottom-0 border-t border-gray-200 bg-white/90 px-3 py-3 backdrop-blur-md dark:border-gray-700/80 dark:bg-gray-950/90", properties.zIndexClass ?? "z-20", properties.class)}>
-        {properties.children}
-      </div>
+      <div class={mergeClasses("layout-footer fixed inset-x-0 bottom-0 border-t", LAYOUT_CHROME_BAR_SURFACE_CLASSES, properties.zIndexClass ?? "z-20", properties.class)}>{properties.children}</div>
     </Show>
   );
 };

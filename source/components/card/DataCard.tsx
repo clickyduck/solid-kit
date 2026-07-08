@@ -1,4 +1,4 @@
-import { mergeClasses } from "@/utilities";
+import { CONTENT_CARD_SURFACE_CLASSES, FOCUS_RING_SURFACE_CLASSES, SURFACE_RADIUS_COMPACT, mergeClasses } from "@/utilities";
 import type { Component, ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
@@ -21,8 +21,10 @@ export const DataCard: Component<DataCardProperties> = (properties) => {
 
   const baseClass = () =>
     mergeClasses(
-      "group w-full rounded-xl border border-gray-200 bg-white text-left text-gray-900 transition-colors duration-100 ease-out focus-visible:ring-2 focus-visible:ring-blue-500/70 focus-visible:outline-none",
-      "dark:border-gray-800 dark:bg-gray-800/40 dark:text-gray-100",
+      "group w-full text-left transition-colors duration-100 ease-out",
+      CONTENT_CARD_SURFACE_CLASSES,
+      SURFACE_RADIUS_COMPACT,
+      FOCUS_RING_SURFACE_CLASSES,
       isClickable() ? "cursor-pointer hover:border-gray-300 dark:hover:border-gray-700" : "cursor-default",
       local.class
     );

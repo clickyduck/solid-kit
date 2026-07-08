@@ -1,7 +1,17 @@
 import { Dropdown, DropdownTrigger, DropdownValue } from "@/components/dropdown/Dropdown";
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Text } from "@/components/typography";
-import { TABLE_BODY_TEXT_CLASSES, TABLE_DATA_CELL_CLASSES, TABLE_HEADER_LABEL_CLASSES, TABLE_HEAD_CELL_CLASSES, TABLE_PAGINATION_BAR_CLASSES, mergeClasses } from "@/utilities";
+import {
+  CONTENT_CARD_SURFACE_CLASSES,
+  FOCUS_OUTLINE_INLINE_CLASSES,
+  SURFACE_RADIUS_SHELL,
+  TABLE_BODY_TEXT_CLASSES,
+  TABLE_DATA_CELL_CLASSES,
+  TABLE_HEADER_LABEL_CLASSES,
+  TABLE_HEAD_CELL_CLASSES,
+  TABLE_PAGINATION_BAR_CLASSES,
+  mergeClasses
+} from "@/utilities";
 import { type ComponentProps, type JSX, Show, createContext, createSignal, onCleanup, onMount, splitProps, useContext } from "solid-js";
 
 const TABLE_MIN_WIDTH = "min-w-[640px]";
@@ -29,7 +39,7 @@ export const Table = (properties: ComponentProps<"table">) => {
 
   return (
     <TableContext.Provider value={{ setPaginationSlot }}>
-      <div class="relative w-full overflow-hidden rounded-2xl border border-gray-200 bg-white text-gray-900 dark:border-gray-800 dark:bg-gray-800/40 dark:text-gray-100">
+      <div class={mergeClasses("relative w-full overflow-hidden", CONTENT_CARD_SURFACE_CLASSES, SURFACE_RADIUS_SHELL)}>
         <div class="overflow-x-auto">
           <table class={mergeClasses("w-full table-auto text-left", TABLE_BODY_TEXT_CLASSES, TABLE_MIN_WIDTH, local.class)} {...rest} />
         </div>
@@ -119,8 +129,8 @@ export const TableRow = (properties: TableRowProperties) => {
       class={mergeClasses(
         "bg-transparent transition-colors duration-100 ease-out",
         resolvedVerticalAlign() === "top" ? "align-top" : "align-middle",
-        clickable() ? "cursor-pointer hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 dark:hover:bg-gray-700/25" : "",
-        isActive() ? "bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20" : "",
+        clickable() ? mergeClasses("cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/25", FOCUS_OUTLINE_INLINE_CLASSES) : "",
+        isActive() ? "bg-blue-500/8 text-blue-700 hover:bg-blue-500/15 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20" : "",
         local.class
       )}
       {...rest}

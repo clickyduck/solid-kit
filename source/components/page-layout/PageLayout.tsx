@@ -40,11 +40,11 @@ export const PageHeader: Component<PageHeaderProperties> = (properties) => {
           <Show when={properties.back}>
             <div class="mb-2">{properties.back}</div>
           </Show>
-          <Text as="h2" size="title" weight="semibold" color="inherit" display="block" class="text-foreground min-w-0 text-2xl wrap-break-word whitespace-normal md:text-3xl">
+          <Text as="h2" size="title" weight="semibold" color="default" display="block" class="min-w-0 text-2xl wrap-break-word whitespace-normal md:text-3xl">
             {properties.title}
           </Text>
           <Show when={properties.caption}>
-            <Text as="p" size="small" color="inherit" display="block" class="text-muted-foreground mt-1 min-w-0 wrap-break-word whitespace-normal">
+            <Text as="p" size="small" color="muted" display="block" class="mt-1 min-w-0 wrap-break-word whitespace-normal">
               {properties.caption}
             </Text>
           </Show>
@@ -74,12 +74,12 @@ export const PageSection: ParentComponent<PageSectionProperties> = (properties) 
         <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
           <div class="min-w-0 flex-1">
             <Show when={properties.title}>
-              <Text as="h3" size="body" weight="semibold" color="inherit" display="block" class="text-foreground">
+              <Text as="h3" size="body" weight="semibold" color="default" display="block">
                 {properties.title}
               </Text>
             </Show>
             <Show when={properties.caption}>
-              <Text as="p" size="small" color="inherit" display="block" class="text-muted-foreground mt-0.5">
+              <Text as="p" size="small" color="muted" display="block" class="mt-0.5">
                 {properties.caption}
               </Text>
             </Show>

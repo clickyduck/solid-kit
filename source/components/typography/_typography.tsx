@@ -1,6 +1,6 @@
 export type TextColor = "default" | "inherit" | "muted" | "primary" | "secondary" | "success" | "warning" | "danger" | "info";
 export type TextWeight = "thin" | "normal" | "medium" | "semibold" | "bold";
-export type TextSize = "display" | "title" | "body" | "small" | "caption";
+export type TextSize = "display" | "title" | "heading" | "body" | "small" | "caption";
 export type TextAlign = "start" | "center" | "end";
 export type TextTransform = "none" | "uppercase" | "capitalize";
 export type TextDisplay = "flex" | "block" | "inline";
@@ -30,6 +30,7 @@ export type SizeConfig = { textClass: string; gapClass: string; iconSize: number
 export const SIZE_CONFIG: Record<TextSize, SizeConfig> = {
   display: { textClass: "text-4xl tracking-tight", gapClass: "gap-5", iconSize: 36, defaultWeight: "bold" },
   title: { textClass: "text-2xl tracking-tight", gapClass: "gap-3.5", iconSize: 24, defaultWeight: "semibold" },
+  heading: { textClass: "text-lg tracking-tight", gapClass: "gap-2.5", iconSize: 20, defaultWeight: "semibold" },
   body: { textClass: "text-base", gapClass: "gap-2", iconSize: 16, defaultWeight: "normal" },
   small: { textClass: "text-sm", gapClass: "gap-2", iconSize: 14, defaultWeight: "normal" },
   caption: { textClass: "text-xs", gapClass: "gap-1.5", iconSize: 12, defaultWeight: "normal" }

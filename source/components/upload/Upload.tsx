@@ -1,7 +1,7 @@
 import { IconButton } from "@/components/icon-button/IconButton";
 import { Icon } from "@/components/icons";
 import { Text } from "@/components/typography";
-import { FORM_CONTROL_ICON_SIZE, FORM_CONTROL_LINK_ACCENT_TEXT_CLASS, FORM_CONTROL_SIZE_CLASSES, mergeClasses } from "@/utilities";
+import { CONTENT_CARD_SURFACE_CLASSES, FORM_CONTROL_ICON_SIZE, FORM_CONTROL_LINK_ACCENT_TEXT_CLASS, FORM_CONTROL_SIZE_CLASSES, createEnterReveal, mergeClasses } from "@/utilities";
 import type { JSX } from "solid-js";
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, splitProps } from "solid-js";
 
@@ -318,17 +318,26 @@ export const Upload = (properties: UploadProperties) => {
                 return typeof value === "number" && value >= 0 && value < 100;
               };
               const isComplete = (): boolean => progress() === 100;
+              // Fade + slight rise as the row is added. Enter-only: selectedFiles is a
+              // controlled prop we don't own, so a removed row can't be held for an exit.
+              const entered = createEnterReveal();
               return (
-                <li class="relative flex items-center gap-2 overflow-hidden rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 dark:border-gray-700 dark:bg-gray-800/40">
+                <li
+                  class={mergeClasses(
+                    "relative flex items-center gap-2 overflow-hidden rounded-lg px-2.5 py-1.5 transition-[opacity,transform] duration-150 ease-out motion-reduce:transition-none",
+                    entered() ? "translate-y-0 opacity-100" : "-translate-y-1 opacity-0 motion-reduce:translate-y-0",
+                    CONTENT_CARD_SURFACE_CLASSES
+                  )}
+                >
                   <Show
                     when={previewsEnabled() && isImageFile(file) && getPreviewUrl(file) !== undefined}
                     fallback={
-                      <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-gray-100 text-gray-500 dark:bg-gray-700/60 dark:text-gray-400">
+                      <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-500 dark:bg-gray-700/60 dark:text-gray-400">
                         <Icon name={isImageFile(file) ? "image" : "draft"} size={FORM_CONTROL_ICON_SIZE} aria-hidden="true" />
                       </span>
                     }
                   >
-                    <img src={getPreviewUrl(file)!} alt="" class="h-8 w-8 shrink-0 rounded-md object-cover" />
+                    <img src={getPreviewUrl(file)!} alt="" class="h-8 w-8 shrink-0 rounded-lg object-cover" />
                   </Show>
                   <span class="flex min-w-0 flex-1 flex-col">
                     <Text as="span" size="small" color="default" display="block" truncate>
@@ -341,7 +350,7 @@ export const Upload = (properties: UploadProperties) => {
                     </Text>
                   </span>
                   <Show when={isComplete()}>
-                    <Icon name="check_circle" size={FORM_CONTROL_ICON_SIZE} class="shrink-0 text-emerald-500 dark:text-emerald-400" aria-hidden="true" />
+                    <Icon name="check_circle" size={FORM_CONTROL_ICON_SIZE} color="success" class="shrink-0" aria-hidden="true" />
                   </Show>
                   <IconButton variant="ghost" icon="close" aria-label={`Remove ${file.name}`} disabled={local.disabled} onClick={() => removeFile(key)} />
                   <Show when={isUploading()}>

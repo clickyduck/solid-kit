@@ -6,7 +6,7 @@ import { mergeClasses } from "@/utilities";
 import type { JSX } from "solid-js";
 import { Show } from "solid-js";
 
-type AccentColor = "emerald" | "blue" | "amber" | "violet" | "rose";
+type AccentColor = "emerald" | "blue" | "amber" | "violet" | "red";
 
 const ACCENT_CLASSES: Record<AccentColor, { card: string; iconBox: string; iconColor: string; link: string }> = {
   emerald: {
@@ -33,11 +33,11 @@ const ACCENT_CLASSES: Record<AccentColor, { card: string; iconBox: string; iconC
     iconColor: "text-violet-600",
     link: "text-violet-600 transition-colors duration-100 ease-out hover:text-violet-700"
   },
-  rose: {
-    card: "border-l-rose-500",
-    iconBox: "bg-rose-500/15",
-    iconColor: "text-rose-600",
-    link: "text-rose-600 transition-colors duration-100 ease-out hover:text-rose-700"
+  red: {
+    card: "border-l-red-500",
+    iconBox: "bg-red-500/15",
+    iconColor: "text-red-600",
+    link: "text-red-600 transition-colors duration-100 ease-out hover:text-red-700"
   }
 };
 

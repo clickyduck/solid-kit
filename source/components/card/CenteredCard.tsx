@@ -11,9 +11,9 @@ type CenteredCardProperties = {
   /** Supporting line shown beneath the title. */
   subtitle?: string;
   /**
-   * Adornment shown above the title. A Material Symbols name (string) renders inside the gradient
-   * icon badge; an element (e.g. an `<img>` logo or wordmark) renders bare — centred, at its own
-   * aspect ratio up to a fixed height — with no badge, so a wide wordmark is not squashed.
+   * Adornment shown above the title. A Material Symbols name (string) renders inside a neutral
+   * rounded icon tile; an element (e.g. an `<img>` logo or wordmark) renders bare — centred, at its
+   * own aspect ratio up to a fixed height — with no tile, so a wide wordmark is not squashed.
    */
   icon?: string | JSX.Element;
   /** Footer slot rendered below the body, separated by spacing (e.g. a sign-up link). */
@@ -46,7 +46,7 @@ export const CenteredCard: ParentComponent<CenteredCardProperties> = (properties
                 <div class="flex items-center [&>*]:max-h-10 [&>*]:w-auto">{properties.icon}</div>
               }
             >
-              <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100">
+              <div class="flex h-14 w-14 items-center justify-center rounded-lg bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100">
                 <RenderIcon icon={properties.icon} size={28} />
               </div>
             </Show>

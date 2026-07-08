@@ -1,4 +1,4 @@
-import { mergeClasses } from "@/utilities";
+import { CONTENT_CARD_SURFACE_CLASSES, SURFACE_RADIUS_SHELL, mergeClasses } from "@/utilities";
 import type { JSX, ParentComponent } from "solid-js";
 
 type BackgroundCardProperties = {
@@ -13,7 +13,7 @@ type BackgroundCardProperties = {
  * `<BackgroundCard>...content...</BackgroundCard>`
  */
 export const BackgroundCard: ParentComponent<BackgroundCardProperties> = (properties) => {
-  return <div class={mergeClasses("rounded-2xl border border-gray-200 bg-white p-3 text-gray-900 sm:p-4 md:p-5 lg:p-6 dark:border-gray-800 dark:bg-gray-800/40 dark:text-gray-100", properties.class)}>{properties.children}</div>;
+  return <div class={mergeClasses(SURFACE_RADIUS_SHELL, CONTENT_CARD_SURFACE_CLASSES, "p-3 sm:p-4 md:p-5 lg:p-6", properties.class)}>{properties.children}</div>;
 };
 
 export type { BackgroundCardProperties };

@@ -554,7 +554,7 @@ type DialogTitlePropertiesType = ComponentProps<"h3">;
 export const DialogTitle = (properties: DialogTitlePropertiesType) => {
   const [local, rest] = splitProps(properties, ["class", "children"]);
   return (
-    <Text as="h3" size="body" weight="medium" color="default" display="block" class={mergeClasses("text-lg", local.class)} {...rest}>
+    <Text as="h3" size="heading" weight="medium" color="default" display="block" class={local.class} {...rest}>
       {local.children}
     </Text>
   );

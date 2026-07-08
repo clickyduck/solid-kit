@@ -18,7 +18,8 @@ type SwipeButtonProperties = Omit<ComponentProps<"div">, "class" | "onPointerDow
   threshold?: number;
 };
 
-const THUMB_SIZE_PX = 36;
+// Thumb + 2 × track padding = 40px, so the control sits on the same h-10 grid as buttons and inputs.
+const THUMB_SIZE_PX = 32;
 const TRACK_PADDING_PX = 4;
 const DEFAULT_THRESHOLD = 0.9;
 const KEYBOARD_STEP_PX = 24;
@@ -162,7 +163,7 @@ export const SwipeButton = (properties: SwipeButtonProperties) => {
       ref={(element) => {
         trackElement = element;
       }}
-      class={mergeClasses("relative flex h-11 w-64 items-center overflow-hidden rounded-full bg-blue-600 text-white select-none", local.disabled ? "cursor-not-allowed opacity-50" : "cursor-grab", local.class)}
+      class={mergeClasses("relative flex h-10 w-64 items-center overflow-hidden rounded-full bg-blue-600 text-white select-none", local.disabled ? "cursor-not-allowed opacity-50" : "cursor-grab", local.class)}
       style={{ padding: `${TRACK_PADDING_PX}px` }}
       aria-hidden={local.disabled ? "true" : undefined}
       {...rest}
@@ -170,8 +171,10 @@ export const SwipeButton = (properties: SwipeButtonProperties) => {
       {/* Filled progress trail behind the thumb. */}
       <div class={mergeClasses("pointer-events-none absolute inset-y-1 left-1 rounded-full bg-white/20", motionClass())} style={{ width: `${offsetPx() + THUMB_SIZE_PX}px` }} aria-hidden="true" />
 
-      {/* Centred label; fades as the thumb advances. */}
-      <span class="pointer-events-none absolute inset-0 flex items-center justify-center px-12 text-center" style={{ opacity: `${Math.max(0, 1 - progressFraction() * 1.4)}` }} aria-hidden={isConfirmed() ? "true" : undefined}>
+      {/* Centred label; fades as the thumb advances. Horizontal padding only needs to clear the thumb
+          (32px + 4px track padding) on the left, so pad tighter on narrow tracks — px-12 both sides
+          clipped medium-length labels ("Swipe to request bill") on a phone-width control. */}
+      <span class="pointer-events-none absolute inset-0 flex items-center justify-center px-9 text-center" style={{ opacity: `${Math.max(0, 1 - progressFraction() * 1.4)}` }} aria-hidden={isConfirmed() ? "true" : undefined}>
         <Text as="span" size="small" weight="medium" color="inherit" display="inline" truncate>
           {isConfirmed() ? (local.confirmLabel ?? local.children) : local.children}
         </Text>
@@ -188,7 +191,7 @@ export const SwipeButton = (properties: SwipeButtonProperties) => {
         tabIndex={local.disabled ? -1 : 0}
         disabled={local.disabled}
         class={mergeClasses(
-          "relative z-10 flex aspect-square h-9 touch-none items-center justify-center rounded-full bg-white text-blue-600 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 disabled:cursor-not-allowed",
+          "relative z-10 flex aspect-square h-8 touch-none items-center justify-center rounded-full bg-white text-blue-600 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 disabled:cursor-not-allowed",
           local.disabled ? "" : "cursor-grab active:cursor-grabbing",
           motionClass()
         )}

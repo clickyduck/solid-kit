@@ -1,6 +1,7 @@
 import { Button } from "@/components/button/Button";
 import { Icon } from "@/components/icons";
 import { Text } from "@/components/typography";
+import { HOVER_WASH_NEUTRAL_CLASSES } from "@/utilities/componentClassStrings";
 import { mergeClasses } from "@/utilities/mergeClasses";
 import { themedScrollControlClassName } from "@/utilities/themedScrollControlClassName";
 import { useIsMobile } from "@/utilities/useIsMobile";
@@ -45,12 +46,15 @@ export type LeftPanelNavigationDocumentJson = {
 export type LeftPanelLayoutNavigationDocumentJson = LeftPanelNavigationDocumentJson;
 
 const NAVIGATION_LINK_ICON_CLASS = "nav-link-icon shrink-0 opacity-80 w-4.5 h-4.5";
-const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-10 min-h-10 max-h-10 text-sm transition-all duration-100 ease-out text-gray-800 dark:text-white";
+// transition-colors (not transition-all): the row only animates its hover/active background and
+// text color. Animating "all" would also tween the padding/width change between the expanded and
+// collapsed layouts, double-animating against the panel's own transition-[width] and reading janky.
+const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-10 min-h-10 max-h-10 text-sm transition-colors duration-100 ease-out text-gray-800 dark:text-white";
 const NAVIGATION_LINK_LABEL_CLASS = "min-w-0 truncate";
 const NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS = "px-2.5 space-x-3";
 const NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS = "size-10 mx-auto justify-center";
 const NAVIGATION_LINK_ACTIVE_CLASS = "bg-blue-500/10 text-blue-700 dark:text-blue-300 [&_.nav-link-icon]:opacity-100 [&_.nav-link-icon]:text-blue-600 dark:[&_.nav-link-icon]:text-blue-400";
-const NAVIGATION_LINK_INACTIVE_CLASS = "hover:bg-gray-100 dark:hover:bg-gray-700/50";
+const NAVIGATION_LINK_INACTIVE_CLASS = HOVER_WASH_NEUTRAL_CLASSES;
 /** Group label slot above each group's items, aligned to the same left edge so the label reads as belonging to the items beneath it. Sized to a standard control height (h-10) so the collapsible toggle matches every other button. */
 const NAVIGATION_GROUP_HEADING_SLOT_CLASS = "mb-1.5 flex h-10 min-h-10 max-h-10 w-full shrink-0 items-stretch";
 const GROUP_LABEL_TEXT_CLASS = "flex w-full min-w-0 items-center px-2.5 text-xs leading-none font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase";
@@ -219,7 +223,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                     <Button
                       type="button"
                       variant="ghost"
-                      class={mergeClasses("w-full min-w-0 justify-between gap-2 px-2.5 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800/60")}
+                      class={mergeClasses("w-full min-w-0 justify-between gap-2 px-2.5 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-400")}
                       aria-expanded={isNavigationGroupBodyExpandedMemo()}
                       onClick={() => {
                         toggleNavigationGroupBody(navigationGroupIdentifierMemo(), navigationGroupInitiallyCollapsedMemo());
@@ -228,15 +232,34 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                       <Text as="span" size="caption" weight="semibold" color="inherit" transform="uppercase" display="inline" truncate class="min-w-0 flex-1">
                         {group.groupLabel}
                       </Text>
-                      <span class={mergeClasses("inline-flex shrink-0 items-center justify-center text-gray-500 transition-transform duration-200 ease-in-out", isNavigationGroupBodyExpandedMemo() ? "rotate-180" : "rotate-0")} aria-hidden>
+                      <span class={mergeClasses("inline-flex shrink-0 items-center justify-center text-gray-500 transition-transform duration-200 ease-out", isNavigationGroupBodyExpandedMemo() ? "rotate-180" : "rotate-0")} aria-hidden>
                         <Icon name="keyboard_arrow_down" size={16} class="size-4" />
                       </span>
                     </Button>
                   </Show>
                 </div>
-                <Show when={!useCollapsibleNavigationGroupMemo() || isNavigationGroupBodyExpandedMemo()}>
-                  <div class={mergeClasses("space-y-1", properties.collapsed ? "" : "ml-3 border-l border-gray-200 pl-2 dark:border-gray-700/60")}>
-                    <For each={group.items}>{(item) => renderNavigationItemLink(item)}</For>
+                <Show
+                  when={useCollapsibleNavigationGroupMemo()}
+                  fallback={
+                    <div class={mergeClasses("space-y-1", properties.collapsed ? "" : "ml-3 border-l border-gray-200 pl-2 dark:border-gray-700/80")}>
+                      <For each={group.items}>{(item) => renderNavigationItemLink(item)}</For>
+                    </div>
+                  }
+                >
+                  {/* Collapsible body: animate the group open/closed at the layout tier via the
+                      grid-rows 0fr↔1fr trick — no height measuring, and the inner overflow-hidden
+                      clips the items as the track collapses. motion-reduce drops the height tween.
+                      The items stay mounted (so they can animate), so `inert` when collapsed takes
+                      them out of tab order and the accessibility tree. */}
+                  <div
+                    class={mergeClasses("grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none", isNavigationGroupBodyExpandedMemo() ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}
+                    inert={!isNavigationGroupBodyExpandedMemo()}
+                  >
+                    <div class="overflow-hidden">
+                      <div class={mergeClasses("space-y-1", properties.collapsed ? "" : "ml-3 border-l border-gray-200 pl-2 dark:border-gray-700/80")}>
+                        <For each={group.items}>{(item) => renderNavigationItemLink(item)}</For>
+                      </div>
+                    </div>
                   </div>
                 </Show>
               </div>
@@ -296,7 +319,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
         <div
           role="presentation"
           aria-hidden="true"
-          class={mergeClasses(properties.scrimZIndexClass ?? "z-30", "fixed inset-0 bg-black/50", "top-(--solid-kit-header-height,4rem)", "transition-opacity duration-200 ease-in-out")}
+          class={mergeClasses(properties.scrimZIndexClass ?? "z-30", "fixed inset-0 bg-black/50", "top-(--solid-kit-header-height,4rem)", "transition-opacity duration-200 ease-out")}
           onClick={() => {
             properties.onOpenChange?.(false);
           }}
@@ -308,10 +331,10 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setSidebarElement(element);
         }}
         class={mergeClasses(
-          "layout-left-panel flex min-h-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700/60 dark:bg-gray-950",
+          "layout-left-panel flex min-h-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700/80 dark:bg-gray-950",
           isMobileViewport()
-            ? [properties.panelZIndexClass ?? "z-40", "fixed inset-x-0 bottom-0 w-full transition-transform duration-200 ease-in-out", "top-(--solid-kit-header-height,4rem)", resolvedCollapsed() ? "-translate-x-full" : "translate-x-0"]
-            : ["static h-full transition-[width] duration-200 ease-in-out", resolvedCollapsed() ? (properties.collapsedWidthClass ?? "w-16") : (properties.expandedWidthClass ?? "w-64")]
+            ? [properties.panelZIndexClass ?? "z-40", "fixed inset-x-0 bottom-0 w-full transition-transform duration-200 ease-out", "top-(--solid-kit-header-height,4rem)", resolvedCollapsed() ? "-translate-x-full" : "translate-x-0"]
+            : ["static h-full transition-[width] duration-200 ease-out", resolvedCollapsed() ? (properties.collapsedWidthClass ?? "w-16") : (properties.expandedWidthClass ?? "w-64")]
         )}
         style={
           !resolvedCollapsed() && isMobileViewport()

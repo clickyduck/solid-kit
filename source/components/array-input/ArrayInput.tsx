@@ -1,5 +1,5 @@
 import { Badge } from "@/components/badge";
-import { type Color, mergeClasses } from "@/utilities";
+import { type Color, createEnterReveal, mergeClasses } from "@/utilities";
 import type { JSX } from "solid-js";
 import { For, createSignal, splitProps } from "solid-js";
 
@@ -71,21 +71,27 @@ export const ArrayInput = (properties: ArrayInputProperties): JSX.Element => {
   return (
     <div class={mergeClasses(CONTAINER_CLASSES, local.disabled ? "cursor-not-allowed opacity-50" : "", local.class)}>
       <For each={local.value}>
-        {(item, index) => (
-          <Badge
-            variant="outline"
-            color={local.color ?? "neutral"}
-            onRemove={
-              local.disabled
-                ? undefined
-                : () => {
-                    removeAt(index());
-                  }
-            }
-          >
-            {item}
-          </Badge>
-        )}
+        {(item, index) => {
+          // Fade + scale each chip in as it is added. Enter-only: `value` is a controlled
+          // prop we don't own, so a removed chip can't be held for an exit transition.
+          const entered = createEnterReveal();
+          return (
+            <Badge
+              variant="outline"
+              color={local.color ?? "neutral"}
+              class={mergeClasses("origin-left transition-[opacity,transform] duration-150 ease-out motion-reduce:transition-none", entered() ? "scale-100 opacity-100" : "scale-95 opacity-0 motion-reduce:scale-100")}
+              onRemove={
+                local.disabled
+                  ? undefined
+                  : () => {
+                      removeAt(index());
+                    }
+              }
+            >
+              {item}
+            </Badge>
+          );
+        }}
       </For>
       <input
         id={local.id}

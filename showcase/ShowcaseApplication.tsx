@@ -57,11 +57,12 @@ type ShowcaseCategoryProperties = {
 };
 
 const badgeVariants: BadgeVariant[] = ["solid", "outline"];
-const semanticColors: Color[] = ["primary", "secondary", "neutral", "success", "warning", "danger"];
+const semanticColors: Color[] = ["primary", "neutral", "success", "warning", "danger"];
 
 const textSizeScale: { size: TextSize; detail: string }[] = [
   { size: "display", detail: "36px · bold" },
   { size: "title", detail: "24px · semibold" },
+  { size: "heading", detail: "18px · semibold · dialog and panel titles" },
   { size: "body", detail: "16px · normal · default" },
   { size: "small", detail: "14px · normal" },
   { size: "caption", detail: "12px · normal" }
@@ -435,7 +436,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                   <MetricCard title="Active users" accent="blue" icon="dashboard" value="1,284" />
                   <MetricCard title="Risk score" accent="amber" icon="tag" value="Medium" />
                   <MetricCard title="Automation" accent="violet" icon="settings" value="Running" />
-                  <MetricCard title="Incidents" accent="rose" icon="check_circle" value="0 open" />
+                  <MetricCard title="Incidents" accent="red" icon="check_circle" value="0 open" />
                   <MetricCard title="Revenue" accent="emerald" icon="currency_rupee" value="—" loading />
                 </div>
               </ShowcaseSection>

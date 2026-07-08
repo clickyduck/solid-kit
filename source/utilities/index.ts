@@ -7,3 +7,4 @@ export * from "./formControlSizing";
 export * from "./mergeClasses";
 export * from "./themedScrollControlClassName";
 export * from "./useIsMobile";
+export * from "./usePopoverAnimation";

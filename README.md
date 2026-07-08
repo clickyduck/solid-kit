@@ -115,14 +115,14 @@ Chip/tag with optional icon and remove button.
 
 **Exports:** `Badge`, `BadgeVariant` (type), `BadgeProperties` (type), `Color` (type)
 
-| Prop       | Type                                                                          | Default     | Description                             |
-| ---------- | ----------------------------------------------------------------------------- | ----------- | --------------------------------------- |
-| `children` | `JSX.Element`                                                                 | —           | Badge label (required)                  |
-| `variant`  | `"solid" \| "outline"`                                                        | `"solid"`   | Visual style (`BadgeVariant`)           |
-| `color`    | `"primary" \| "secondary" \| "neutral" \| "success" \| "warning" \| "danger"` | `"neutral"` | Color scheme (the shared `Color` token) |
-| `icon`     | `string \| JSX.Element`                                                       | —           | Material Symbols name or an img/element |
-| `onRemove` | `() => void`                                                                  | —           | Shows × button; called on click         |
-| `class`    | `string`                                                                      | —           | Extra CSS classes                       |
+| Prop       | Type                                                           | Default     | Description                             |
+| ---------- | -------------------------------------------------------------- | ----------- | --------------------------------------- |
+| `children` | `JSX.Element`                                                  | —           | Badge label (required)                  |
+| `variant`  | `"solid" \| "outline"`                                         | `"solid"`   | Visual style (`BadgeVariant`)           |
+| `color`    | `"primary" \| "neutral" \| "success" \| "warning" \| "danger"` | `"neutral"` | Color scheme (the shared `Color` token) |
+| `icon`     | `string \| JSX.Element`                                        | —           | Material Symbols name or an img/element |
+| `onRemove` | `() => void`                                                   | —           | Shows × button; called on click         |
+| `class`    | `string`                                                       | —           | Extra CSS classes                       |
 
 ```tsx
 import { Badge } from "@clickyduck/solid-kit";
@@ -190,7 +190,7 @@ import { BackgroundCard } from "@clickyduck/solid-kit";
 
 ### CenteredCard
 
-Full-viewport centred card with a decorative gradient backdrop, built for login and other focused single-action screens. Centres a [`BackgroundCard`](#backgroundcard) in the middle of the page with optional icon badge, title, subtitle, and footer slots around the left-aligned body content (`children`).
+Full-viewport centred card, built for login and other focused single-action screens. Centres a [`BackgroundCard`](#backgroundcard) in the middle of the page with an optional icon tile, title, subtitle, and footer slots around the left-aligned body content (`children`).
 
 **Exports:** `CenteredCard`, `CenteredCardProperties` (type)
 
@@ -916,17 +916,17 @@ Stat card with accent color, icon, value, and optional link.
 
 **Exports:** `MetricCard`, `MetricCardProperties` (type)
 
-| Prop        | Type                                                   | Description                                                                           |
-| ----------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------- |
-| `title`     | `string`                                               | Metric label (rendered uppercase, required)                                           |
-| `accent`    | `"emerald" \| "blue" \| "amber" \| "violet" \| "rose"` | Left-border and icon box color (required)                                             |
-| `icon`      | `string \| JSX.Element`                                | Material Symbols name or an img/element for the top-right icon (required)             |
-| `value`     | `string`                                               | Large primary value (required)                                                        |
-| `loading`   | `boolean`                                              | Shows an em dash instead of `value`                                                   |
-| `linkHref`  | `string`                                               | Makes the footer a link                                                               |
-| `linkLabel` | `string`                                               | Link text                                                                             |
-| `anchorTag` | `"A" \| "a"`                                           | Tag for the link. `"A"` (default) uses `@solidjs/router`; use `"a"` outside a router. |
-| `class`     | `string`                                               | Extra CSS classes                                                                     |
+| Prop        | Type                                                  | Description                                                                           |
+| ----------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `title`     | `string`                                              | Metric label (rendered uppercase, required)                                           |
+| `accent`    | `"emerald" \| "blue" \| "amber" \| "violet" \| "red"` | Left-border and icon box color (required)                                             |
+| `icon`      | `string \| JSX.Element`                               | Material Symbols name or an img/element for the top-right icon (required)             |
+| `value`     | `string`                                              | Large primary value (required)                                                        |
+| `loading`   | `boolean`                                             | Shows an em dash instead of `value`                                                   |
+| `linkHref`  | `string`                                              | Makes the footer a link                                                               |
+| `linkLabel` | `string`                                              | Link text                                                                             |
+| `anchorTag` | `"A" \| "a"`                                          | Tag for the link. `"A"` (default) uses `@solidjs/router`; use `"a"` outside a router. |
+| `class`     | `string`                                              | Extra CSS classes                                                                     |
 
 ```tsx
 import { MetricCard } from "@clickyduck/solid-kit";

@@ -5,13 +5,17 @@ import { Input } from "@/components/input/Input";
 import { Text } from "@/components/typography";
 import {
   DROPDOWN_MENU_SURFACE_CLASSES,
+  FADE_TRANSITION_CLASSES,
+  FADE_TRANSITION_DURATION_MS,
   FORM_CONTROL_DROP_DOWN_CONTENT_MIN_WIDTH_CLASS_BY_SIZE,
   FORM_CONTROL_DROP_DOWN_MENU_ITEM_CLASS_BY_SIZE,
   FORM_CONTROL_DROP_DOWN_MENU_LIST_CLASS_BY_SIZE,
   FORM_CONTROL_DROP_DOWN_MENU_PANEL_CLASS_BY_SIZE,
   FORM_CONTROL_DROP_DOWN_MENU_SEARCH_WRAPPER_CLASS_BY_SIZE,
   FORM_CONTROL_ICON_SIZE,
-  mergeClasses
+  mergeClasses,
+  popoverStateClasses,
+  usePopoverAnimation
 } from "@/utilities";
 import { VIEWPORT_EDGE_GAP_PIXELS, computeFlippedMenuPosition } from "@/utilities/computeFlippedMenuPosition";
 import { getPortalMount } from "@/utilities/getPortalMount";
@@ -194,6 +198,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
   const [selectedValue, setSelectedValue] = createSignal(properties.value);
   const [selectedValues, setSelectedValues] = createSignal<string[]>(properties.multiSelectValue ?? []);
   const [dropdownOpen, setDropdownOpen] = createSignal(local.initialOpen ?? false);
+  const popover = usePopoverAnimation(dropdownOpen);
   const [searchQuery, setSearchQuery] = createSignal("");
   const [portalPosition, setPortalPosition] = createSignal<DropdownMenuPosition | null>(null);
   const [hasCustomContent, setHasCustomContent] = createSignal(false);
@@ -274,6 +279,17 @@ const Dropdown = (properties: DropdownRootProperties) => {
     })
   );
 
+  // Once the exit animation finishes and the menu unmounts, drop the stale
+  // element refs / cached position so the next open re-measures cleanly.
+  createEffect(
+    on(popover.shouldRender, (rendered) => {
+      if (!rendered) {
+        builtInMenuElement = undefined;
+        setPortalPosition(null);
+      }
+    })
+  );
+
   createEffect(
     on(dropdownOpen, (open) => {
       if (open && isSearchable()) {
@@ -291,8 +307,9 @@ const Dropdown = (properties: DropdownRootProperties) => {
   createEffect(
     on(dropdownOpen, (open) => {
       if (!open) {
-        setPortalPosition(null);
-        builtInMenuElement = undefined;
+        // Keep portalPosition/builtInMenuElement intact so the exit transition can
+        // paint from the last position; they are recomputed on the next open and
+        // the menu unmounts once the close animation finishes.
         return;
       }
       const updatePosition = () => {
@@ -311,14 +328,26 @@ const Dropdown = (properties: DropdownRootProperties) => {
         }
         const { top, left } = computeFlippedMenuPosition(triggerRectangle, builtInMenuElement);
         setPortalPosition({ top, left, width: triggerRectangle.width, measured: true });
+        // Positioned and about to become visible — start the enter transition.
+        popover.markMeasured();
       };
+      // Reposition when the menu's own size changes (e.g. search filtering shrinks
+      // the list), otherwise an upward-flipped menu stays pinned by its top edge
+      // and detaches from the trigger.
+      const menuResizeObserver = new ResizeObserver(() => {
+        updatePosition();
+      });
       requestAnimationFrame(() => {
         updatePosition();
+        if (builtInMenuElement) {
+          menuResizeObserver.observe(builtInMenuElement);
+        }
         requestAnimationFrame(updatePosition);
       });
       window.addEventListener("scroll", updatePosition, true);
       window.addEventListener("resize", updatePosition);
       onCleanup(() => {
+        menuResizeObserver.disconnect();
         window.removeEventListener("scroll", updatePosition, true);
         window.removeEventListener("resize", updatePosition);
       });
@@ -404,7 +433,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
         class={mergeClasses("relative", local.class)}
       >
         {local.children}
-        <Show when={!hasCustomContent() && dropdownOpen() && !disabledState() && (isSearchable() || properties.options.length > 0) && portalPosition()}>
+        <Show when={!hasCustomContent() && popover.shouldRender() && !disabledState() && (isSearchable() || properties.options.length > 0) && portalPosition()}>
           {(position) => (
             <Portal mount={getPortalMount(dropdownContainerElement)}>
               <div
@@ -412,7 +441,7 @@ const Dropdown = (properties: DropdownRootProperties) => {
                   contentPortalMenuElement = el;
                   builtInMenuElement = el;
                 }}
-                class={mergeClasses("z-50 min-w-min", builtInMenuChromeClass())}
+                class={mergeClasses("z-50 min-w-min", FADE_TRANSITION_CLASSES, popoverStateClasses(popover.isEntered()), builtInMenuChromeClass())}
                 style={{
                   position: "fixed",
                   top: `${position().top}px`,
@@ -538,6 +567,8 @@ const DropdownContent = (properties: DropdownContentProperties) => {
 
   const [local, rest] = splitProps(properties, ["class", "children", "wrapChildrenInList"]);
   let menuEl: HTMLDivElement | undefined;
+  let menuResizeObserver: ResizeObserver | undefined;
+  let closeTimer: number | undefined;
 
   const applyPosition = (): void => {
     const container = context.getDropdownContainerElement();
@@ -550,33 +581,59 @@ const DropdownContent = (properties: DropdownContentProperties) => {
     menuEl.style.left = `${left}px`;
   };
 
+  const teardown = (): void => {
+    menuResizeObserver?.disconnect();
+    menuResizeObserver = undefined;
+    window.removeEventListener("scroll", applyPosition, true);
+    window.removeEventListener("resize", applyPosition);
+  };
+
   createEffect(
     on(context.dropdownOpen, (open) => {
       if (!menuEl) return;
+      if (closeTimer !== undefined) {
+        window.clearTimeout(closeTimer);
+        closeTimer = undefined;
+      }
       if (open) {
         const mount = getPortalMount(context.getDropdownContainerElement());
         mount.appendChild(menuEl);
         menuEl.style.visibility = "hidden";
         menuEl.style.display = "";
+        menuEl.style.opacity = "0";
         applyPosition();
         menuEl.style.visibility = "";
         context.setContentPortalMenuElement(menuEl);
+        // Fade in on the next frame so the opacity transition runs from 0.
+        requestAnimationFrame(() => {
+          if (context.dropdownOpen() && menuEl) menuEl.style.opacity = "1";
+        });
         window.addEventListener("scroll", applyPosition, true);
         window.addEventListener("resize", applyPosition);
+        // Reposition when the menu's own size changes (e.g. search filtering hides
+        // items), otherwise an upward-flipped menu stays pinned by its top edge
+        // and detaches from the trigger.
+        menuResizeObserver = new ResizeObserver(() => applyPosition());
+        menuResizeObserver.observe(menuEl);
       } else {
-        menuEl.style.display = "none";
-        menuEl.remove();
-        context.setContentPortalMenuElement(null);
-        window.removeEventListener("scroll", applyPosition, true);
-        window.removeEventListener("resize", applyPosition);
+        // Fade out, then unmount once the transition has finished.
+        menuEl.style.opacity = "0";
+        teardown();
+        closeTimer = window.setTimeout(() => {
+          closeTimer = undefined;
+          if (!menuEl) return;
+          menuEl.style.display = "none";
+          menuEl.remove();
+          context.setContentPortalMenuElement(null);
+        }, FADE_TRANSITION_DURATION_MS);
       }
     })
   );
 
   onCleanup(() => {
+    if (closeTimer !== undefined) window.clearTimeout(closeTimer);
+    teardown();
     menuEl?.remove();
-    window.removeEventListener("scroll", applyPosition, true);
-    window.removeEventListener("resize", applyPosition);
   });
 
   return (
@@ -585,8 +642,8 @@ const DropdownContent = (properties: DropdownContentProperties) => {
         ref={(el) => {
           menuEl = el;
         }}
-        style={{ display: "none", position: "fixed", "z-index": "50" }}
-        class={mergeClasses(FORM_CONTROL_DROP_DOWN_CONTENT_MIN_WIDTH_CLASS_BY_SIZE, DROPDOWN_MENU_SURFACE_CLASSES, local.class)}
+        style={{ display: "none", opacity: "0", position: "fixed", "z-index": "50" }}
+        class={mergeClasses(FADE_TRANSITION_CLASSES, FORM_CONTROL_DROP_DOWN_CONTENT_MIN_WIDTH_CLASS_BY_SIZE, DROPDOWN_MENU_SURFACE_CLASSES, local.class)}
         {...rest}
       >
         <Show when={context.isSearchable()}>
@@ -648,7 +705,7 @@ const DropdownItem = (properties: DropdownItemProperties) => {
         <button
           type="button"
           class={mergeClasses(
-            "inline-flex min-h-10 w-full items-center rounded-lg px-3 py-2 text-left transition-colors duration-100 ease-out hover:bg-gray-100 hover:text-gray-900 focus:outline-none dark:hover:bg-gray-700/60 dark:hover:text-white",
+            FORM_CONTROL_DROP_DOWN_MENU_ITEM_CLASS_BY_SIZE,
             local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : !isClickable() ? "pointer-events-none cursor-default" : "cursor-pointer transition-opacity duration-100 ease-out active:opacity-75",
             isSelected() && isClickable() ? "bg-blue-500/8 hover:bg-blue-500/15 hover:text-gray-900 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:hover:text-white" : ""
           )}

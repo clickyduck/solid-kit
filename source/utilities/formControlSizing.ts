@@ -25,7 +25,7 @@ export const FORM_CONTROL_DROP_DOWN_MENU_PANEL_CLASS_BY_SIZE = "max-h-60 overflo
 export const FORM_CONTROL_DROP_DOWN_MENU_LIST_CLASS_BY_SIZE = "max-h-60 space-y-1 overflow-auto p-1.5 text-sm text-gray-700 dark:text-white";
 
 export const FORM_CONTROL_DROP_DOWN_MENU_ITEM_CLASS_BY_SIZE =
-  "inline-flex h-10 w-full items-center rounded-lg px-3 text-left transition-colors duration-100 ease-out hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700/60 dark:hover:text-white focus:outline-none";
+  "inline-flex min-h-10 w-full items-center rounded-lg px-3 py-2 text-left transition-colors duration-100 ease-out hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700/50 dark:hover:text-white focus:outline-none";
 
 export const FORM_CONTROL_DROP_DOWN_MENU_SEARCH_WRAPPER_CLASS_BY_SIZE = "sticky top-0 border-b border-gray-200 bg-white p-1.5 dark:border-gray-700 dark:bg-gray-800";
 
