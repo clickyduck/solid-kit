@@ -736,9 +736,7 @@ export function AppWithPanel() {
   const [selectedId, setSelectedId] = createSignal<string>();
 
   const nav: LeftPanelLayoutNavigationDocumentJson = {
-    groups: [
-      /* … */
-    ]
+    groups: [/* … */]
   };
 
   return (
