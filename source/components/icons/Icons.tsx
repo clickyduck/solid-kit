@@ -19,22 +19,15 @@ const requestMaterialSymbolsRoundedStylesheetLoad = (): void => {
 
   hasMaterialSymbolsStylesheetLoadBeenRequested = true;
 
-  // `material-symbols` is an OPTIONAL peer dependency: consumers may instead load the stylesheet
-  // globally (a <link> tag or their own import), or ship their own icon font. So this dynamic import
-  // must never be able to break a consumer's build.
-  //
-  // The import is routed through `new Function` so that neither this library's bundler nor the
-  // consumer's (Vite / Rolldown) can statically see the specifier: a bare `import("material-symbols/
-  // rounded.css")` — even one built by string concatenation or tagged `/* @vite-ignore */` — is
-  // constant-folded back to a literal and then statically resolved at optimize/build time, which
-  // hard-fails the consumer's dev server or build when the peer is absent, regardless of the
-  // `.catch()`. Routing through a function body constructed from a string defeats that folding:
-  // resolution is deferred to true runtime, where a genuine miss (package not installed) is caught
-  // and ignored below. `dynamicImport` returns the native `import()` promise.
-  const dynamicImport = new Function("specifier", "return import(specifier);") as (specifier: string) => Promise<unknown>;
-
-  dynamicImport("material-symbols/rounded.css").catch(() => {
-    // Intentionally ignore: the stylesheet is optional and may be provided globally by the consumer.
+  // `material-symbols` is a required peer dependency (see package.json / README install line). It is
+  // imported lazily on first icon use — as a normal dynamic import so the consumer's bundler resolves
+  // and serves the stylesheet + font. The `.catch()` only guards a consumer that deliberately loads
+  // the stylesheet another way (global <link> or their own import); it does NOT make the package
+  // optional. Do not route this through `new Function`/string-built specifiers to "hide" it from the
+  // bundler: that stops the bundler from serving the CSS, so the font never loads and every icon
+  // silently degrades to its raw ligature name.
+  import("material-symbols/rounded.css").catch(() => {
+    // Intentionally ignore: a consumer may instead provide the stylesheet globally.
   });
 };
 

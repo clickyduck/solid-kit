@@ -363,11 +363,6 @@
     "tailwind-merge": ">=3.0.0",
     "tailwindcss": "^4.2.4"
   },
-  "peerDependenciesMeta": {
-    "material-symbols": {
-      "optional": true
-    }
-  },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
