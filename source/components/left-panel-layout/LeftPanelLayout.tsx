@@ -49,12 +49,17 @@ const NAVIGATION_LINK_ICON_CLASS = "nav-link-icon shrink-0 opacity-80 w-4.5 h-4.
 // transition-colors (not transition-all): the row only animates its hover/active background and
 // text color. Animating "all" would also tween the padding/width change between the expanded and
 // collapsed layouts, double-animating against the panel's own transition-[width] and reading janky.
-const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-10 min-h-10 max-h-10 text-sm transition-colors duration-100 ease-out text-gray-800 dark:text-white";
+// The default (inactive) text color lives on NAVIGATION_LINK_INACTIVE_CLASS, not here, so the active
+// and inactive classes are mutually exclusive on the text-color utility. @solidjs/router's <A>
+// concatenates activeClass/inactiveClass onto this base as raw strings (no tailwind-merge), so a base
+// text color would sit alongside the active blue and let stylesheet order — not intent — pick the
+// winner. Keeping the color only in the two state classes avoids that.
+const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-10 min-h-10 max-h-10 text-sm transition-colors duration-100 ease-out";
 const NAVIGATION_LINK_LABEL_CLASS = "min-w-0 truncate";
 const NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS = "px-2.5 space-x-3";
 const NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS = "size-10 mx-auto justify-center";
 const NAVIGATION_LINK_ACTIVE_CLASS = "bg-blue-500/10 text-blue-700 dark:text-blue-300 [&_.nav-link-icon]:opacity-100 [&_.nav-link-icon]:text-blue-600 dark:[&_.nav-link-icon]:text-blue-400";
-const NAVIGATION_LINK_INACTIVE_CLASS = HOVER_WASH_NEUTRAL_CLASSES;
+const NAVIGATION_LINK_INACTIVE_CLASS = `text-gray-800 dark:text-white ${HOVER_WASH_NEUTRAL_CLASSES}`;
 /** Group label slot above each group's items, aligned to the same left edge so the label reads as belonging to the items beneath it. Sized to a standard control height (h-10) so the collapsible toggle matches every other button. */
 const NAVIGATION_GROUP_HEADING_SLOT_CLASS = "mb-1.5 flex h-10 min-h-10 max-h-10 w-full shrink-0 items-stretch";
 const GROUP_LABEL_TEXT_CLASS = "flex w-full min-w-0 items-center px-2.5 text-xs leading-none font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase";
@@ -159,12 +164,51 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
             });
 
             const renderNavigationItemLink = (item: LeftPanelLayoutNavigationItemJson): JSX.Element => {
+              const usePlainAnchor = (properties.anchorTag ?? "A") === "a";
+              const isHashLink = item.href.startsWith("#");
+              const baseLinkClass = mergeClasses(NAVIGATION_LINK_ROW_CLASS, properties.collapsed ? NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS : NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS);
+              const linkChildren = (
+                <>
+                  <Icon name={item.icon} size={18} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
+                  <Show when={!properties.collapsed}>
+                    <Text as="span" size="small" weight="normal" color="inherit" display="inline" truncate class={NAVIGATION_LINK_LABEL_CLASS}>
+                      {item.label}
+                    </Text>
+                  </Show>
+                </>
+              );
+
+              // Router route link: let @solidjs/router's <A> own active detection. It derives active
+              // state from the reactive router location, so it updates on any navigation — including a
+              // programmatic navigate() from elsewhere (e.g. the header account menu) that fires no
+              // popstate/hashchange event, which the window-listener path below would miss. `end` maps
+              // to exact matching; <A> also sets aria-current="page" itself.
+              if (!usePlainAnchor && !isHashLink) {
+                return (
+                  <A
+                    href={item.href}
+                    end={item.matchRouteExactly === true}
+                    class={baseLinkClass}
+                    activeClass={NAVIGATION_LINK_ACTIVE_CLASS}
+                    inactiveClass={NAVIGATION_LINK_INACTIVE_CLASS}
+                    aria-label={item.label}
+                    onClick={() => {
+                      properties.onItemClick?.();
+                    }}
+                  >
+                    {linkChildren}
+                  </A>
+                );
+              }
+
+              // Hash-anchor links and non-router (plain <a>) links have no router-native active state,
+              // so they keep the window-location signal + manual class. Hash links also intercept the
+              // click to smooth-scroll to the in-page target.
               const isActive = (): boolean => computeIsNavigationItemActive(item, pathname(), hash());
-              const linkClass = (): string =>
-                mergeClasses(NAVIGATION_LINK_ROW_CLASS, properties.collapsed ? NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS : NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS, isActive() ? NAVIGATION_LINK_ACTIVE_CLASS : NAVIGATION_LINK_INACTIVE_CLASS);
+              const linkClass = (): string => mergeClasses(baseLinkClass, isActive() ? NAVIGATION_LINK_ACTIVE_CLASS : NAVIGATION_LINK_INACTIVE_CLASS);
               const handleClick = (event: MouseEvent): void => {
                 if (typeof window === "undefined") return;
-                if (item.href.startsWith("#")) {
+                if (isHashLink) {
                   event.preventDefault();
                   const targetIdentifier = item.href.slice(1);
                   if (targetIdentifier.length === 0) return;
@@ -190,18 +234,8 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                 }
                 properties.onItemClick?.();
               };
-              const linkChildren = (
-                <>
-                  <Icon name={item.icon} size={18} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
-                  <Show when={!properties.collapsed}>
-                    <Text as="span" size="small" weight="normal" color="inherit" display="inline" truncate class={NAVIGATION_LINK_LABEL_CLASS}>
-                      {item.label}
-                    </Text>
-                  </Show>
-                </>
-              );
               return (
-                <Dynamic component={(properties.anchorTag ?? "A") === "a" ? "a" : A} href={item.href} class={linkClass()} aria-current={isActive() ? "page" : undefined} aria-label={item.label} onClick={handleClick}>
+                <Dynamic component={usePlainAnchor ? "a" : A} href={item.href} class={linkClass()} aria-current={isActive() ? "page" : undefined} aria-label={item.label} onClick={handleClick}>
                   {linkChildren}
                 </Dynamic>
               );
