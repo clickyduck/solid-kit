@@ -26,6 +26,7 @@ export * from "./table";
 export * from "./textarea";
 export * from "./toast";
 export * from "./tabs";
+export * from "./time-picker";
 export * from "./upload";
 export * from "./page-layout";
 export * from "./typography";

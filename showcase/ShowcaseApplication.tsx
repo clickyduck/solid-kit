@@ -27,6 +27,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TablePagination, T
 import type { TabDefinition } from "@/components/tabs/Tabs";
 import { Tabs } from "@/components/tabs/Tabs";
 import { Textarea } from "@/components/textarea/Textarea";
+import { TimePicker, type TimePickerValue } from "@/components/time-picker/TimePicker";
 import { addToast } from "@/components/toast/Toast";
 import { Toaster } from "@/components/toast/Toaster";
 import { CardToggleGroup } from "@/components/toggle-group/CardToggleGroup";
@@ -105,6 +106,9 @@ export const ShowcaseApplication = (): JSX.Element => {
 
   const [singleDateValue, setSingleDateValue] = createSignal<DatePickerValue>({ mode: "single", date: undefined });
   const [rangeDateValue, setRangeDateValue] = createSignal<DatePickerValue>({ mode: "range", from: undefined, to: undefined });
+
+  const [timeValue, setTimeValue] = createSignal<TimePickerValue>(undefined);
+  const [meetingTimeValue, setMeetingTimeValue] = createSignal<TimePickerValue>("09:30");
 
   const [dropdownValue, setDropdownValue] = createSignal<string | undefined>("Cherry");
   const [itemizedDropdownValue, setItemizedDropdownValue] = createSignal<string | undefined>("Banana");
@@ -685,6 +689,31 @@ export const ShowcaseApplication = (): JSX.Element => {
                           return v.mode === "range" && v.to ? v.to.toISOString() : "—";
                         })()}
                       </Text>
+                    </div>
+                  </div>
+                </BackgroundCard>
+              </ShowcaseSection>
+
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-time-picker" sectionTitle="Time picker" sectionDescription="An inline row of hour · minute · AM/PM dropdowns. Displays 12-hour, emits a 24-hour “HH:MM” string.">
+                <div class="grid gap-6 lg:grid-cols-2">
+                  <Field label="Time" for="showcase-time-picker" hint="Nothing selected — any first pick completes the value.">
+                    <TimePicker id="showcase-time-picker" value={timeValue()} onChange={setTimeValue} />
+                  </Field>
+                  <Field label="Meeting time" for="showcase-time-picker-preset" hint="Pre-filled with 09:30.">
+                    <TimePicker id="showcase-time-picker-preset" value={meetingTimeValue()} onChange={setMeetingTimeValue} />
+                  </Field>
+                  <Field label="Disabled" for="showcase-time-picker-disabled">
+                    <TimePicker id="showcase-time-picker-disabled" value="14:05" onChange={() => {}} disabled />
+                  </Field>
+                </div>
+                <BackgroundCard>
+                  <div class="space-y-2">
+                    <Text size="caption" weight="semibold">
+                      Selected values
+                    </Text>
+                    <div class="space-y-1">
+                      <Text size="caption">Time: {timeValue() ?? "—"}</Text>
+                      <Text size="caption">Meeting time: {meetingTimeValue() ?? "—"}</Text>
                     </div>
                   </div>
                 </BackgroundCard>

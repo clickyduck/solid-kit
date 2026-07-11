@@ -79,6 +79,7 @@ keep Tailwind's default `gray` for the original blue cast.
 - [Tabs](#tabs)
 - [Text](#text)
 - [Textarea](#textarea)
+- [TimePicker](#timepicker)
 - [Toast](#toast)
 - [ToggleGroup](#togglegroup)
 - [CardToggleGroup](#cardtogglegroup)
@@ -309,6 +310,44 @@ const [date, setDate] = createSignal<DatePickerValue>({ mode: "single", date: un
 const [range, setRange] = createSignal<DatePickerValue>({ mode: "range", from: undefined, to: undefined });
 
 <DatePicker mode="range" value={range()} onChange={setRange} />;
+```
+
+---
+
+### TimePicker
+
+Inline row of three dropdowns — hour, minute, and AM/PM — for picking a time of day. Controlled and holds no state of its own. The dropdowns display 12-hour with an AM/PM period, but the value is a 24-hour `"HH:MM"` string, matching the native `<input type="time">`. Built from [`Dropdown`](#dropdown), so the hour/minute/period menus render via a portal above any modal dialog backdrop.
+
+**Exports:** `TimePicker`, `TimePickerValue` (type)
+
+| Prop       | Type                               | Default | Description                                                    |
+| ---------- | ---------------------------------- | ------- | -------------------------------------------------------------- |
+| `value`    | `TimePickerValue`                  | —       | Controlled value — a `"HH:MM"` string, or `undefined` if unset |
+| `onChange` | `(value: TimePickerValue) => void` | —       | Called when the selection changes                              |
+| `disabled` | `boolean`                          | —       | Disables all three dropdowns                                   |
+| `id`       | `string`                           | —       | `id` on the root wrapper; pair with `<Field for="…">`          |
+| `class`    | `string`                           | —       | Extra CSS classes on the root wrapper                          |
+
+**`TimePickerValue`** is a 24-hour time string or `undefined`:
+
+```ts
+type TimePickerValue = string | undefined; // e.g. "09:30", "14:05"
+```
+
+Until all three fields are chosen the value is `undefined`. When the first field is picked from an empty state, the other two default (to `12:00 AM`) so `onChange` immediately fires a complete `"HH:MM"` rather than a partial one. The minute list is searchable — type digits to jump to a minute. Hour and period render placeholders (`HH` / `MM` / `AM`) while unset.
+
+```tsx
+import { TimePicker, type TimePickerValue } from "@clickyduck/solid-kit";
+import { createSignal } from "solid-js";
+
+const [time, setTime] = createSignal<TimePickerValue>(undefined);
+
+<TimePicker value={time()} onChange={setTime} />;
+
+// Pre-filled — 09:30
+const [meeting, setMeeting] = createSignal<TimePickerValue>("09:30");
+
+<TimePicker value={meeting()} onChange={setMeeting} />;
 ```
 
 ---
