@@ -362,6 +362,12 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
     }
   };
 
+  const handleToday = (): void => {
+    const now = new Date();
+    setViewYear(now.getFullYear());
+    setViewMonth(now.getMonth());
+  };
+
   const hasValue = (): boolean => (mode() === "single" ? singleDate() !== undefined : rangeFrom() !== undefined || rangeTo() !== undefined);
 
   const triggerLabel = (): string => {
@@ -491,8 +497,11 @@ const DatePicker = (properties: DatePickerProperties): JSX.Element => {
           </Text>
         )}
       </Show>
-      <div class="border-t border-gray-200 px-3 py-2 dark:border-gray-700">
-        <Button variant="ghost" class="w-full" onClick={handleClear} disabled={!hasValue()}>
+      <div class="flex gap-1 border-t border-gray-200 px-3 py-2 dark:border-gray-700">
+        <Button variant="ghost" class="flex-1" onClick={handleToday}>
+          Today
+        </Button>
+        <Button variant="ghost" class="flex-1" onClick={handleClear} disabled={!hasValue()}>
           Clear
         </Button>
       </div>
