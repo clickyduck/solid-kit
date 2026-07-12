@@ -45,33 +45,36 @@ const TREND_ICON: Record<MetricTrendDirection, string> = {
 // near-black dark surface — matching the semantic reading-text tier in COLOR_CLASSES (light -700 / dark -300).
 // The icon sits on a `/15` tinted box, so its dark shade is one step brighter (`dark:text-*-400`) to read on
 // that tint. Without the dark variants these rendered as dark -600/-700 text on a near-black card.
-const ACCENT_CLASSES: Record<AccentColor, { card: string; iconBox: string; iconColor: string; link: string }> = {
+//
+// `notch` colours the accent bar pinned to the card's left edge (see `NOTCH_CLASSES`). It is a background,
+// not a border, so it is decoupled from the card's padding and always hugs the edge at every breakpoint.
+const ACCENT_CLASSES: Record<AccentColor, { notch: string; iconBox: string; iconColor: string; link: string }> = {
   emerald: {
-    card: "border-l-emerald-500",
+    notch: "bg-emerald-500",
     iconBox: "bg-emerald-500/15",
     iconColor: "text-emerald-600 dark:text-emerald-400",
     link: "text-emerald-700 transition-colors duration-100 ease-out hover:text-emerald-800 dark:text-emerald-300 dark:hover:text-emerald-200"
   },
   blue: {
-    card: "border-l-blue-500",
+    notch: "bg-blue-500",
     iconBox: "bg-blue-500/15",
     iconColor: "text-blue-600 dark:text-blue-400",
     link: "text-blue-700 transition-colors duration-100 ease-out hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200"
   },
   amber: {
-    card: "border-l-amber-500",
+    notch: "bg-amber-500",
     iconBox: "bg-amber-500/15",
     iconColor: "text-amber-700 dark:text-amber-400",
     link: "text-amber-800 transition-colors duration-100 ease-out hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-200"
   },
   violet: {
-    card: "border-l-violet-500",
+    notch: "bg-violet-500",
     iconBox: "bg-violet-500/15",
     iconColor: "text-violet-600 dark:text-violet-400",
     link: "text-violet-700 transition-colors duration-100 ease-out hover:text-violet-800 dark:text-violet-300 dark:hover:text-violet-200"
   },
   red: {
-    card: "border-l-red-500",
+    notch: "bg-red-500",
     iconBox: "bg-red-500/15",
     iconColor: "text-red-600 dark:text-red-400",
     link: "text-red-700 transition-colors duration-100 ease-out hover:text-red-800 dark:text-red-300 dark:hover:text-red-200"
@@ -116,16 +119,23 @@ export const MetricCard = (properties: MetricCardProperties) => {
   const accent = () => ACCENT_CLASSES[properties.accent];
   const isLoading = (): boolean => properties.loading === true;
   return (
-    <BackgroundCard class={mergeClasses("overflow-hidden p-4 md:p-5", properties.class)}>
-      <div class={mergeClasses("-ml-4 border-l-4 pl-4 md:-ml-5 md:pl-5", accent().card)}>
-        <div class="flex flex-row items-center justify-between">
-          <Text as="h3" size="small" weight="semibold" transform="title" color="muted">
-            {properties.title}
-          </Text>
-          <span class={mergeClasses("flex size-9 items-center justify-center rounded-lg", accent().iconBox, accent().iconColor)}>
-            <RenderIcon icon={properties.icon} size={20} />
-          </span>
-        </div>
+    // `relative` + `overflow-hidden` host the accent notch (see below). Padding is set explicitly on both axes
+    // at every breakpoint the card cares about — including `sm:` and `lg:` — so BackgroundCard's own
+    // `p-3 sm:p-4 md:p-5 lg:p-6` never leaks through. That leak is what made desktop balloon to 24px top and
+    // bottom; here the vertical rhythm stays a tight 16px→20px. Left padding runs one step larger than the
+    // right to clear the 4px accent notch pinned to the edge.
+    <BackgroundCard class={mergeClasses("relative overflow-hidden py-4 pl-5 pr-4 sm:py-4 sm:pl-5 sm:pr-4 md:py-5 md:pl-6 md:pr-5 lg:py-5 lg:pl-6 lg:pr-5", properties.class)}>
+      {/* Accent notch: a full-height 4px bar pinned to the card's left edge. As a positioned background bar
+          (not a `border-l` cancelled by negative margins) it is decoupled from the card padding, so it always
+          hugs the edge at every breakpoint rather than drifting inward when the padding grows. */}
+      <span aria-hidden="true" class={mergeClasses("absolute inset-y-0 left-0 w-1", accent().notch)} />
+      <div class="flex flex-row items-center justify-between">
+        <Text as="h3" size="small" weight="semibold" transform="title" color="muted">
+          {properties.title}
+        </Text>
+        <span class={mergeClasses("flex size-9 items-center justify-center rounded-lg", accent().iconBox, accent().iconColor)}>
+          <RenderIcon icon={properties.icon} size={20} />
+        </span>
       </div>
       <div class="space-y-1.5 pt-2 sm:space-y-2 sm:pt-3">
         {/* Stable live region: the value slot stays mounted across the loading→loaded transition so screen
