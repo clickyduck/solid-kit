@@ -590,7 +590,7 @@ export const DialogHeader = (properties: ComponentProps<"div"> & { actions?: JSX
       // The header is the bottom sheet's drag handle on mobile. `touch-none` (mobile only) lets it own vertical
       // drags without the browser hijacking them as scroll; the grab cursor hints the affordance. Interactive
       // controls inside (the close button) are excluded from the drag and still receive their own events.
-      class={mergeClasses("flex shrink-0 cursor-grab touch-none items-center justify-between border-b border-gray-200 p-3 active:cursor-grabbing sm:cursor-auto sm:touch-auto sm:p-4 md:p-5 lg:p-6 dark:border-gray-700", local.class)}
+      class={mergeClasses("flex shrink-0 cursor-grab touch-none items-center justify-between border-b border-gray-200 p-3 active:cursor-grabbing sm:cursor-auto sm:touch-auto sm:px-4 sm:py-3 md:px-5 md:py-4 lg:px-6 lg:py-4 dark:border-gray-700", local.class)}
       onPointerDown={contentContext?.onDragHandlePointerDown}
       onPointerMove={contentContext?.onDragHandlePointerMove}
       onPointerUp={contentContext?.onDragHandlePointerEnd}
@@ -691,7 +691,7 @@ export const DialogBody = (properties: DialogBodyPropertiesType) => {
         bodyElement = element;
         contentContext?.registerBodyElement(element);
       }}
-      class={mergeClasses("min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain p-3 sm:p-4 md:p-5 lg:p-6", local.class)}
+      class={mergeClasses("min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain bg-gray-50 p-3 sm:p-4 md:p-5 lg:p-6 dark:bg-gray-800/40", local.class)}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerEnd}
@@ -710,5 +710,5 @@ export const DialogBody = (properties: DialogBodyPropertiesType) => {
  */
 export const DialogFooter = (properties: ComponentProps<"div">) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return <div class={mergeClasses("flex w-full shrink-0 flex-row items-center gap-3 border-t border-gray-200 p-3 sm:p-4 md:p-5 lg:p-6 dark:border-gray-700 [&>button]:flex-1 [&>div]:hidden", local.class)} {...rest} />;
+  return <div class={mergeClasses("flex w-full shrink-0 flex-row items-center gap-3 border-t border-gray-200 p-3 sm:px-4 sm:py-3 md:px-5 md:py-4 lg:px-6 lg:py-4 dark:border-gray-700 [&>button]:flex-1 [&>div]:hidden", local.class)} {...rest} />;
 };

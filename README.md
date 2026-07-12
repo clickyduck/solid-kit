@@ -1454,7 +1454,7 @@ addToast({ title: "Saved", description: "Your changes were saved.", variant: "su
 
 ### ToggleGroup
 
-Native radio (single) or checkbox (multiple) group with labels and optional descriptions. Uses the browser's native input with `accent-color` styling so it matches the rest of the form controls in look and size.
+Native radio (single) or checkbox (multiple) group with labels and optional descriptions. The native input is custom-styled (a blue-filled box with a drawn check/dot indicator) so it matches the rest of the form controls in look and size, and the selected option's label steps to `font-medium`.
 
 **Exports:** `ToggleGroup`, `ToggleGroupOption`, `ToggleGroupProperties` (type)
 
@@ -1513,11 +1513,25 @@ const [plan, setPlan] = createSignal<string>();
 
 ### CardToggleGroup
 
-Same selection model as [ToggleGroup](#togglegroup), but each option renders as a selectable card instead of a radio/checkbox row. The native `<input>` is visually hidden behind the card so form submission, keyboard navigation (Tab + Space/Arrow), and screen-reader semantics still work — no custom focus or selection logic.
+Same selection model as [ToggleGroup](#togglegroup), rendered as a single **merged surface**: one bordered, rounded container with the options joined edge-to-edge by hairline dividers (a horizontal group divides its columns vertically). Each row shows its label and optional description on the left, an optional `amount` field before the control, and the actual radio (single) or checkbox (multiple) at the far right — the same visible control as [ToggleGroup](#togglegroup). The whole row is a `<label>`, so clicking anywhere in it toggles the native `<input>`; form submission, keyboard navigation, and screen-reader semantics come from that input with no custom focus logic. Selection is signalled by the control and a `font-medium` step on the label only — the row keeps its neutral border and background when checked (no fill tint).
 
 **Exports:** `CardToggleGroup`, `CardToggleGroupOption`, `CardToggleGroupProperties` (type)
 
-`CardToggleGroupOption` and the props are identical in shape to `ToggleGroupOption` / `ToggleGroupProperties` (single vs. multiple discriminated by `selectionMode`). See the [ToggleGroup](#togglegroup) tables for the field reference.
+The props match `ToggleGroupProperties` (single vs. multiple discriminated by `selectionMode`) with one extra layout option, `orientation`. `CardToggleGroupOption` extends `ToggleGroupOption` with one extra field:
+
+| Field         | Type      | Description                                                                            |
+| ------------- | --------- | ------------------------------------------------------------------------------------- |
+| `value`       | `string`  | Option value (required)                                                                |
+| `label`       | `string`  | Display label (required)                                                               |
+| `description` | `string`  | Optional secondary text                                                                |
+| `amount`      | `string`  | Optional trailing field rendered to the left of the radio/checkbox (e.g. a price)      |
+| `disabled`    | `boolean` | Disables this option                                                                   |
+
+**Extra `CardToggleGroup` prop** (beyond the [ToggleGroup](#togglegroup) props):
+
+| Prop          | Type                         | Default      | Description                                                             |
+| ------------- | ---------------------------- | ------------ | ---------------------------------------------------------------------- |
+| `orientation` | `"vertical" \| "horizontal"` | `"vertical"` | `vertical` stacks the rows; `horizontal` lays them out as equal columns |
 
 ```tsx
 import { CardToggleGroup } from "@clickyduck/solid-kit";
@@ -1529,8 +1543,8 @@ const [plan, setPlan] = createSignal<string>("pro");
   selectionMode="single"
   name="plan"
   options={[
-    { value: "starter", label: "Starter", description: "Up to 5 users and basic reports." },
-    { value: "pro", label: "Pro", description: "Unlimited users, advanced analytics, priority support." }
+    { value: "starter", label: "Starter", description: "Up to 5 users and basic reports.", amount: "$9/mo" },
+    { value: "pro", label: "Pro", description: "Unlimited users, advanced analytics, priority support.", amount: "$29/mo" }
   ]}
   value={plan()}
   onChange={setPlan}
