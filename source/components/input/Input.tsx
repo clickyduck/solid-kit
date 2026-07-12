@@ -11,6 +11,44 @@ export type InputProperties = Omit<ComponentProps<"input">, "class"> & {
   currency?: boolean;
 };
 
+// Characters the caret is anchored to across a reformat. Commas are grouping separators the formatter
+// inserts/removes freely, so they are NOT significant — anchoring on them is exactly what makes the caret
+// drift. Digits, a decimal point, and a leading minus are the characters the user actually typed.
+const isSignificantCurrencyCharacter = (character: string): boolean => {
+  return /[\d.-]/.test(character);
+};
+
+// Count significant characters (see above) in `text` up to `caretOffset`. After reformatting, placing the
+// caret just past this many significant characters keeps it visually anchored to the digit the user was
+// editing, regardless of how many commas the formatter added or removed to the left of it.
+const countSignificantCurrencyCharactersBeforeCaret = (text: string, caretOffset: number): number => {
+  let significantCharacterCount = 0;
+  for (let characterIndex = 0; characterIndex < caretOffset && characterIndex < text.length; characterIndex = characterIndex + 1) {
+    if (isSignificantCurrencyCharacter(text[characterIndex])) {
+      significantCharacterCount = significantCharacterCount + 1;
+    }
+  }
+  return significantCharacterCount;
+};
+
+// Find the offset in `formattedValue` that sits just after `significantCharacterCount` significant
+// characters, so the restored caret lands on the same digit boundary the user was at pre-format.
+const resolveCaretOffsetAfterSignificantCharacters = (formattedValue: string, significantCharacterCount: number): number => {
+  if (significantCharacterCount === 0) {
+    return 0;
+  }
+  let remainingSignificantCharacters = significantCharacterCount;
+  for (let characterIndex = 0; characterIndex < formattedValue.length; characterIndex = characterIndex + 1) {
+    if (isSignificantCurrencyCharacter(formattedValue[characterIndex])) {
+      remainingSignificantCharacters = remainingSignificantCharacters - 1;
+      if (remainingSignificantCharacters === 0) {
+        return characterIndex + 1;
+      }
+    }
+  }
+  return formattedValue.length;
+};
+
 const formatCurrencyInputValue = (value: string): string => {
   if (value === "") {
     return value;
@@ -71,7 +109,26 @@ const Input = (properties: InputProperties) => {
   const resolvedInputProps = local.currency ? { ...inputProps, type: "text", inputMode: "decimal" as const, autocomplete: "off" } : inputProps;
 
   const handleCurrencyInput: JSX.InputEventHandler<HTMLInputElement, InputEvent> = (event) => {
-    event.currentTarget.value = formatCurrencyInputValue(event.currentTarget.value);
+    // Reformatting rewrites the whole value, which collapses the caret to the end. Anchor it on the count
+    // of significant characters (digits / decimal / minus) before the caret, then restore that anchor after
+    // the reformat so mid-string edits keep the cursor where the user put it rather than jumping to the end.
+    const inputElement = event.currentTarget;
+    const previousValue = inputElement.value;
+    const caretOffsetBeforeFormat = inputElement.selectionStart ?? previousValue.length;
+    // Capture the collapsed-caret check BEFORE rewriting `.value`, since assigning `.value` collapses any
+    // selection to the end and would make the comparison trivially true afterwards.
+    const hadCollapsedCaret = inputElement.selectionStart === inputElement.selectionEnd;
+    const significantCharactersBeforeCaret = countSignificantCurrencyCharactersBeforeCaret(previousValue, caretOffsetBeforeFormat);
+
+    const formattedValue = formatCurrencyInputValue(previousValue);
+    inputElement.value = formattedValue;
+
+    // Only reposition when the user had a collapsed caret; leave range selections alone.
+    if (hadCollapsedCaret) {
+      const restoredCaretOffset = resolveCaretOffsetAfterSignificantCharacters(formattedValue, significantCharactersBeforeCaret);
+      inputElement.setSelectionRange(restoredCaretOffset, restoredCaretOffset);
+    }
+
     callBoundHandler(local.onInput, event);
   };
 

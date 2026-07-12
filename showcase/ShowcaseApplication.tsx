@@ -1211,10 +1211,14 @@ const ShowcaseCategory = (properties: ShowcaseCategoryProperties): JSX.Element =
 
 const ShowcaseSection = (properties: ShowcaseSectionProperties): JSX.Element => {
   return (
-    <div class="scroll-mt-20" aria-labelledby={properties.sectionHeadingIdentifier}>
+    <div aria-labelledby={properties.sectionHeadingIdentifier}>
       <BackgroundCard>
         <header class="space-y-1.5 pb-5">
-          <SectionHeading id={properties.sectionHeadingIdentifier}>{properties.sectionTitle}</SectionHeading>
+          {/* scroll-mt lives on the id target itself: the nav's smooth-scroll reads scrollMarginTop off the
+              element it scrolls to (the heading), so the offset is ignored if it sits on an ancestor. */}
+          <SectionHeading id={properties.sectionHeadingIdentifier} class="scroll-mt-20">
+            {properties.sectionTitle}
+          </SectionHeading>
           <Show when={properties.sectionDescription}>
             <Text size="small" color="muted">
               {properties.sectionDescription}

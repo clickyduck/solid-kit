@@ -590,7 +590,10 @@ export const DialogHeader = (properties: ComponentProps<"div"> & { actions?: JSX
       // The header is the bottom sheet's drag handle on mobile. `touch-none` (mobile only) lets it own vertical
       // drags without the browser hijacking them as scroll; the grab cursor hints the affordance. Interactive
       // controls inside (the close button) are excluded from the drag and still receive their own events.
-      class={mergeClasses("flex shrink-0 cursor-grab touch-none items-center justify-between border-b border-gray-200 p-3 active:cursor-grabbing sm:cursor-auto sm:touch-auto sm:px-4 sm:py-3 md:px-5 md:py-4 lg:px-6 lg:py-4 dark:border-gray-700", local.class)}
+      class={mergeClasses(
+        "flex shrink-0 cursor-grab touch-none items-center justify-between border-b border-gray-200 p-3 active:cursor-grabbing sm:cursor-auto sm:touch-auto sm:px-4 sm:py-3 md:px-5 md:py-4 lg:px-6 lg:py-4 dark:border-gray-700",
+        local.class
+      )}
       onPointerDown={contentContext?.onDragHandlePointerDown}
       onPointerMove={contentContext?.onDragHandlePointerMove}
       onPointerUp={contentContext?.onDragHandlePointerEnd}

@@ -67,14 +67,28 @@ export function createDocumentColorSchemePreferenceSignal(): [Accessor<DocumentC
         return;
       }
       if (event.newValue === null) {
-        const resolvedDocumentColorSchemeName: DocumentColorSchemeName = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        const resolvedDocumentColorSchemeName: DocumentColorSchemeName = prefersColorSchemeDarkMediaQuery.matches ? "dark" : "light";
         applyDocumentColorSchemeNameToRootElement(resolvedDocumentColorSchemeName);
         setDocumentColorSchemeNameInternal(resolvedDocumentColorSchemeName);
       }
     };
+    // Follow the OS theme live, but only while the user has made no explicit choice: an explicit stored
+    // value always wins, so the query is re-checked against storage on every change rather than assuming
+    // "no preference" stays true. This makes OS auto-dark (e.g. a sunset schedule) update the open app.
+    const prefersColorSchemeDarkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handlePrefersColorSchemeChange = (event: MediaQueryListEvent): void => {
+      if (readDocumentColorSchemeNameFromLocalStorage() !== undefined) {
+        return;
+      }
+      const resolvedDocumentColorSchemeName: DocumentColorSchemeName = event.matches ? "dark" : "light";
+      applyDocumentColorSchemeNameToRootElement(resolvedDocumentColorSchemeName);
+      setDocumentColorSchemeNameInternal(resolvedDocumentColorSchemeName);
+    };
     window.addEventListener("storage", handleStorage);
+    prefersColorSchemeDarkMediaQuery.addEventListener("change", handlePrefersColorSchemeChange);
     onCleanup(() => {
       window.removeEventListener("storage", handleStorage);
+      prefersColorSchemeDarkMediaQuery.removeEventListener("change", handlePrefersColorSchemeChange);
     });
   });
 

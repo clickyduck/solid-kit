@@ -1,4 +1,5 @@
 import { RenderIcon } from "@/components/icons";
+import { Spinner } from "@/components/spinner";
 import { FORM_CONTROL_ICON_SIZE, FORM_CONTROL_SIZE_CLASSES, type IconPosition, mergeClasses } from "@/utilities";
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
@@ -16,7 +17,18 @@ type ButtonProps = Omit<ComponentProps<"button">, "class"> & {
   class?: string;
   icon?: string | JSX.Element;
   iconPosition?: IconPosition;
+  // Busy state for async actions. While `true` the button shows a spinner in the leading position
+  // (replacing any leading icon), is disabled so it cannot be re-triggered, and sets `aria-busy`.
+  loading?: boolean;
+  // Optional copy shown in place of `children` while `loading`, e.g. "Saving…". Falls back to
+  // `children` when omitted so the label simply keeps its width beside the spinner.
+  loadingText?: JSX.Element;
 };
+
+// Spinner sized to the shared control icon size (18px) and inheriting the button's text color via
+// `currentColor`, so a loading button keeps the same footprint and the spinner tints per variant
+// (white on solid, gray on outline / ghost) instead of the Spinner's default blue.
+const LOADING_SPINNER_CLASSES = "size-[18px] border-current text-current";
 
 const getVariantClasses = (variant: ButtonVariant = "solid"): string => {
   switch (variant) {
@@ -39,7 +51,11 @@ const getRadiusClass = (radius: ButtonRadius = "default"): string => {
 };
 
 export const Button = (properties: ButtonProps) => {
-  const [local, rest] = splitProps(properties, ["class", "variant", "radius", "icon", "iconPosition", "children"]);
+  const [local, rest] = splitProps(properties, ["class", "variant", "radius", "icon", "iconPosition", "loading", "loadingText", "children", "disabled"]);
+
+  // Label shown while loading: explicit `loadingText` when given, otherwise the original children so
+  // the button keeps its width beside the spinner.
+  const loadingLabel = (): JSX.Element => (local.loadingText !== undefined ? local.loadingText : local.children);
 
   return (
     <button
@@ -51,19 +67,40 @@ export const Button = (properties: ButtonProps) => {
         FORM_CONTROL_SIZE_CLASSES,
         local.class
       )}
+      // Loading forces the disabled state so the action cannot be re-triggered mid-flight, without
+      // dropping an explicit `disabled` the caller passed.
+      disabled={local.loading === true || local.disabled === true}
+      aria-busy={local.loading === true ? "true" : undefined}
       {...rest}
     >
-      <Show when={local.icon != null} fallback={local.children}>
-        <>
-          <Show when={local.iconPosition !== "end"}>
-            <RenderIcon icon={local.icon!} size={FORM_CONTROL_ICON_SIZE} />
-          </Show>
-          {local.children}
-          <Show when={local.iconPosition === "end"}>
-            <RenderIcon icon={local.icon!} size={FORM_CONTROL_ICON_SIZE} class="ml-auto" />
-          </Show>
-        </>
+      <Show
+        when={local.loading === true}
+        fallback={
+          <ButtonContent icon={local.icon} iconPosition={local.iconPosition}>
+            {local.children}
+          </ButtonContent>
+        }
+      >
+        {/* Spinner always leads, regardless of `iconPosition`: a trailing progress indicator reads oddly. */}
+        <Spinner class={LOADING_SPINNER_CLASSES} />
+        {loadingLabel()}
       </Show>
     </button>
+  );
+};
+
+const ButtonContent = (properties: { icon?: string | JSX.Element; iconPosition?: IconPosition; children?: JSX.Element }): JSX.Element => {
+  return (
+    <Show when={properties.icon != null} fallback={properties.children}>
+      <>
+        <Show when={properties.iconPosition !== "end"}>
+          <RenderIcon icon={properties.icon!} size={FORM_CONTROL_ICON_SIZE} />
+        </Show>
+        {properties.children}
+        <Show when={properties.iconPosition === "end"}>
+          <RenderIcon icon={properties.icon!} size={FORM_CONTROL_ICON_SIZE} class="ml-auto" />
+        </Show>
+      </>
+    </Show>
   );
 };

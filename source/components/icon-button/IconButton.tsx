@@ -1,4 +1,5 @@
 import { RenderIcon } from "@/components/icons";
+import { Spinner } from "@/components/spinner";
 import { FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
@@ -9,7 +10,14 @@ type IconButtonProperties = Omit<ComponentProps<"button">, "class"> & {
   variant?: IconButtonVariant;
   class?: string;
   icon?: string | JSX.Element;
+  // Busy state for async actions. While `true` the icon is replaced by a spinner, the button is
+  // disabled so it cannot be re-triggered, and `aria-busy` is set. Kept in lockstep with Button.
+  loading?: boolean;
 };
+
+// Spinner sized to the shared control icon size (18px) and inheriting the button's text color via
+// `currentColor`, matching Button's loading spinner.
+const LOADING_SPINNER_CLASSES = "size-[18px] border-current text-current";
 
 const getVariantClasses = (variant: IconButtonVariant = "solid"): string => {
   switch (variant) {
@@ -31,7 +39,7 @@ const getVariantClasses = (variant: IconButtonVariant = "solid"): string => {
  * Compact icon-only button sized to match the sibling form controls.
  */
 export const IconButton = (properties: IconButtonProperties) => {
-  const [local, rest] = splitProps(properties, ["class", "variant", "icon", "children"]);
+  const [local, rest] = splitProps(properties, ["class", "variant", "icon", "loading", "children", "disabled"]);
 
   return (
     <button
@@ -42,12 +50,15 @@ export const IconButton = (properties: IconButtonProperties) => {
         FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES,
         local.class
       )}
+      // Loading forces the disabled state without dropping an explicit `disabled` the caller passed.
+      disabled={local.loading === true || local.disabled === true}
+      aria-busy={local.loading === true ? "true" : undefined}
       {...rest}
     >
-      <Show when={local.icon != null}>
-        <RenderIcon icon={local.icon!} size={FORM_CONTROL_ICON_SIZE} />
+      <Show when={local.loading === true} fallback={<Show when={local.icon != null}>{<RenderIcon icon={local.icon!} size={FORM_CONTROL_ICON_SIZE} />}</Show>}>
+        <Spinner class={LOADING_SPINNER_CLASSES} />
       </Show>
-      {local.children}
+      <Show when={local.loading !== true}>{local.children}</Show>
     </button>
   );
 };

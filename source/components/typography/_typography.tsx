@@ -33,10 +33,16 @@ export const WEIGHT_CLASSES: Record<TextWeight, string> = {
 
 export type SizeConfig = { textClass: string; gapClass: string; iconSize: number; defaultWeight: TextWeight };
 
+// The three heading-tier sizes step down one notch on mobile and up at `md` (≥768px): large type that reads
+// well on a wide canvas overflows and wraps awkwardly on a phone, so it's the only place responsive sizing earns
+// its keep. The body tier (`body`/`small`/`caption`) is deliberately flat across breakpoints — reading distance
+// to a phone is the same or closer than to a monitor, so shrinking body copy on mobile only hurts legibility
+// (and dropping an input below 16px triggers iOS focus-zoom). `iconSize` tracks the desktop (larger) step so the
+// inline glyph stays matched to the text at the size the tier is named for.
 export const SIZE_CONFIG: Record<TextSize, SizeConfig> = {
-  display: { textClass: "text-4xl tracking-tight", gapClass: "gap-5", iconSize: 36, defaultWeight: "bold" },
-  title: { textClass: "text-2xl tracking-tight", gapClass: "gap-3.5", iconSize: 24, defaultWeight: "semibold" },
-  heading: { textClass: "text-lg tracking-tight", gapClass: "gap-2.5", iconSize: 20, defaultWeight: "semibold" },
+  display: { textClass: "text-3xl md:text-4xl tracking-tight", gapClass: "gap-5", iconSize: 36, defaultWeight: "bold" },
+  title: { textClass: "text-xl md:text-2xl tracking-tight", gapClass: "gap-3.5", iconSize: 24, defaultWeight: "semibold" },
+  heading: { textClass: "text-base md:text-lg tracking-tight", gapClass: "gap-2.5", iconSize: 20, defaultWeight: "semibold" },
   body: { textClass: "text-base", gapClass: "gap-2", iconSize: 16, defaultWeight: "normal" },
   small: { textClass: "text-sm", gapClass: "gap-2", iconSize: 14, defaultWeight: "normal" },
   caption: { textClass: "text-xs", gapClass: "gap-1.5", iconSize: 12, defaultWeight: "normal" }

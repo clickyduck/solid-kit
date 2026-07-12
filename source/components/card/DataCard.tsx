@@ -16,8 +16,10 @@ type DataCardProperties = {
  * use `CardToggleGroup` instead.
  */
 export const DataCard: Component<DataCardProperties> = (properties) => {
-  const [local, rest] = splitProps(properties, ["clickable", "children", "onClick", "type", "class"]);
+  const [local, rest] = splitProps(properties, ["clickable", "children", "onClick", "type", "disabled", "class"]);
   const isClickable = (): boolean => local.clickable === true || typeof local.onClick === "function";
+  // Only meaningful on the clickable (`<button>`) branch — a static `<div>` has no disabled semantics.
+  const isDisabled = (): boolean => isClickable() && local.disabled === true;
 
   const baseClass = () =>
     mergeClasses(
@@ -25,7 +27,10 @@ export const DataCard: Component<DataCardProperties> = (properties) => {
       CONTENT_CARD_SURFACE_CLASSES,
       SURFACE_RADIUS_COMPACT,
       FOCUS_RING_SURFACE_CLASSES,
-      isClickable() ? "cursor-pointer hover:border-gray-300 dark:hover:border-gray-700" : "cursor-default",
+      // Disabled clickable cards drop the interactive affordances (no pointer cursor, no hover border,
+      // dimmed) so they read as inert, matching Button's disabled treatment. Non-disabled clickable cards
+      // keep the hover/cursor cues; static cards get neither.
+      isDisabled() ? "cursor-not-allowed opacity-50" : isClickable() ? "cursor-pointer hover:border-gray-300 dark:hover:border-gray-700" : "cursor-default",
       local.class
     );
 
@@ -38,7 +43,7 @@ export const DataCard: Component<DataCardProperties> = (properties) => {
         </div>
       }
     >
-      <button type={local.type ?? "button"} class={baseClass()} onClick={local.onClick as ComponentProps<"button">["onClick"]} {...(rest as Omit<ComponentProps<"button">, "class" | "children">)}>
+      <button type={local.type ?? "button"} class={baseClass()} disabled={local.disabled} onClick={local.onClick as ComponentProps<"button">["onClick"]} {...(rest as Omit<ComponentProps<"button">, "class" | "children">)}>
         <div class="p-3">{local.children}</div>
       </button>
     </Show>

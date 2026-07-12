@@ -271,7 +271,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                       <Text as="span" size="caption" weight="semibold" color="inherit" transform="uppercase" display="inline" truncate class="min-w-0 flex-1">
                         {group.groupLabel}
                       </Text>
-                      <span class={mergeClasses("inline-flex shrink-0 items-center justify-center text-gray-600 dark:text-gray-400 transition-transform duration-200 ease-out", isNavigationGroupBodyExpandedMemo() ? "rotate-180" : "rotate-0")} aria-hidden>
+                      <span class={mergeClasses("inline-flex shrink-0 items-center justify-center text-gray-600 transition-transform duration-200 ease-out dark:text-gray-400", isNavigationGroupBodyExpandedMemo() ? "rotate-180" : "rotate-0")} aria-hidden>
                         <Icon name="keyboard_arrow_down" size={16} class="size-4" />
                       </span>
                     </Button>

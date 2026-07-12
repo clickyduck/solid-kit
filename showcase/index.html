@@ -4,6 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Solid Kit Component Showcase</title>
+    <meta name="description" content="Live showcase of solid-kit — a SolidJS + Tailwind CSS component library with buttons, forms, overlays, tables, and layout primitives." />
+    <!-- Mobile browser chrome color, matched per theme so the address bar tracks the app's light/dark surface. -->
+    <meta name="theme-color" content="#f9fafb" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#030712" media="(prefers-color-scheme: dark)" />
+    <!-- Inline SVG favicon (data URI) so the showcase needs no separate asset and works offline. -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232563eb'/%3E%3Ctext x='16' y='22' font-family='system-ui,sans-serif' font-size='18' font-weight='700' text-anchor='middle' fill='white'%3ES%3C/text%3E%3C/svg%3E"
+    />
     <script>
       const savedTheme = localStorage.getItem("solid-kit-theme");
       const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;

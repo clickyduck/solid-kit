@@ -19,14 +19,28 @@ type TextareaProperties = Omit<ComponentProps<"textarea">, "class"> & {
   maxRows?: number;
 };
 
+// Cached once rather than recomputed per keystroke: the root font size only changes on a rare rem
+// change (zoom / user font-size setting), and `getComputedStyle` forces a synchronous style flush that
+// is wasteful to run on every input event. Read lazily on first use so it reflects the loaded document.
+let cachedRootFontSizePx: number | undefined;
+const readRootFontSizePx = (): number => {
+  if (cachedRootFontSizePx === undefined) {
+    cachedRootFontSizePx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  }
+  return cachedRootFontSizePx;
+};
+
 const adjustAutoGrowHeight = (element: HTMLTextAreaElement, minRows: number, maxRows: number): void => {
   element.style.height = "auto";
   const minHeightRem = minRows * FORM_CONTROL_TEXTAREA_LINE_HEIGHT_REM;
   const maxHeightRem = maxRows * FORM_CONTROL_TEXTAREA_LINE_HEIGHT_REM;
-  const rootFontSizePx = parseFloat(getComputedStyle(document.documentElement).fontSize);
-  const scrollHeightRem = element.scrollHeight / (rootFontSizePx || 16);
+  const scrollHeightRem = element.scrollHeight / readRootFontSizePx();
   const clampedRem = Math.min(maxHeightRem, Math.max(minHeightRem, scrollHeightRem));
   element.style.height = `${clampedRem}rem`;
+  // Once content exceeds maxRows the height is clamped, so the overflow must become scrollable — otherwise
+  // the extra lines are silently clipped with no scrollbar. Below the clamp, keep overflow hidden so the
+  // browser never flashes a scrollbar mid-grow.
+  element.style.overflowY = scrollHeightRem > maxHeightRem ? "auto" : "hidden";
 };
 
 /**

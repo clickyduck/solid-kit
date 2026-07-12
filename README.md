@@ -143,18 +143,51 @@ Standard action button with optional icon.
 
 Extends all native `<button>` HTML attributes.
 
-| Prop           | Type                              | Default     | Description                                                                                                      |
-| -------------- | --------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
-| `children`     | `JSX.Element`                     | —           | Button label                                                                                                     |
-| `variant`      | `"solid" \| "outline" \| "ghost"` | `"solid"`   | Visual style                                                                                                     |
-| `radius`       | `"default" \| "none"`             | `"default"` | Corner rounding. `"none"` squares the corners for a full-bleed action bar (e.g. a sticky bottom "View cart" bar) |
-| `icon`         | `string \| JSX.Element`           | —           | Material Symbols name or an img/element                                                                          |
-| `iconPosition` | `"start" \| "end"`                | `"start"`   | Icon placement relative to label (when `"end"`, the icon is pushed to the far right with `ml-auto`)              |
-| `class`        | `string`                          | —           | Extra CSS classes                                                                                                |
-| `disabled`     | `boolean`                         | —           | Native disabled attribute                                                                                        |
-| `type`         | `"button" \| "submit" \| "reset"` | `"button"`  | Native type attribute (defaults to `"button"`)                                                                   |
+| Prop           | Type                              | Default     | Description                                                                                                                    |
+| -------------- | --------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `children`     | `JSX.Element`                     | —           | Button label                                                                                                                   |
+| `variant`      | `"solid" \| "outline" \| "ghost"` | `"solid"`   | Visual style                                                                                                                   |
+| `radius`       | `"default" \| "none"`             | `"default"` | Corner rounding. `"none"` squares the corners for a full-bleed action bar (e.g. a sticky bottom "View cart" bar)               |
+| `icon`         | `string \| JSX.Element`           | —           | Material Symbols name or an img/element                                                                                        |
+| `iconPosition` | `"start" \| "end"`                | `"start"`   | Icon placement relative to label (when `"end"`, the icon is pushed to the far right with `ml-auto`)                            |
+| `loading`      | `boolean`                         | `false`     | Busy state. Shows a leading spinner (in the button's own color), **auto-disables the button**, and sets `aria-busy`. See below |
+| `loadingText`  | `JSX.Element`                     | —           | Label shown in place of `children` while `loading` (e.g. `"Saving…"`). Falls back to `children` when omitted                   |
+| `class`        | `string`                          | —           | Extra CSS classes                                                                                                              |
+| `disabled`     | `boolean`                         | —           | Native disabled attribute                                                                                                      |
+| `type`         | `"button" \| "submit" \| "reset"` | `"button"`  | Native type attribute (defaults to `"button"`)                                                                                 |
 
 Sized to match all other form controls (`h-10`, `text-sm`) via the shared `FORM_CONTROL_SIZE_CLASSES`. The `type` defaults to `"button"` so it will not submit a surrounding form unless you set `type="submit"`.
+
+**Loading state.** When `loading` is `true` the button:
+
+- shows a spinner in the leading position, replacing any `icon` (the label stays visible so the width does not jump);
+- swaps the label to `loadingText` if provided, otherwise keeps `children`;
+- **auto-disables** — the underlying `<button>` gets the native `disabled` attribute, so it cannot be clicked, keyboard-activated, or submit a form while busy. This is OR-ed with any `disabled` you pass, so you never need to set both; and
+- sets `aria-busy="true"` for assistive tech.
+
+Drive it from your own request signal — the button does not manage async state itself, it only reflects the flag you give it:
+
+```tsx
+import { Button } from "@clickyduck/solid-kit";
+import { createSignal } from "solid-js";
+
+const [saving, setSaving] = createSignal(false);
+
+const handleSave = async (): Promise<void> => {
+  setSaving(true);
+  try {
+    await saveWorkspace();
+  } finally {
+    setSaving(false); // clearing the flag re-enables the button
+  }
+};
+
+<Button loading={saving()} loadingText="Saving…" icon="save" onClick={handleSave}>
+  Save
+</Button>;
+```
+
+Because `loading` auto-disables, there is no double-submit window: a second click cannot fire until you clear the flag. For a plain (non-async) button, just omit `loading`:
 
 ```tsx
 import { Button } from "@clickyduck/solid-kit";
@@ -243,18 +276,23 @@ Ticket-style data surface card. Clickable (renders as a `<button>` with hover af
 
 **Exports:** `DataCard`
 
-| Prop        | Type      | Description                                                                              |
-| ----------- | --------- | ---------------------------------------------------------------------------------------- |
-| `clickable` | `boolean` | Enables hover/cursor affordance + renders as a `<button>`. Implied when `onClick` is set |
-| `class`     | `string`  | Extra CSS classes                                                                        |
+| Prop        | Type      | Description                                                                                                    |
+| ----------- | --------- | -------------------------------------------------------------------------------------------------------------- |
+| `clickable` | `boolean` | Enables hover/cursor affordance + renders as a `<button>`. Implied when `onClick` is set                       |
+| `disabled`  | `boolean` | Clickable cards only: disables the `<button>` and drops the interactive affordances (no pointer/hover, dimmed) |
+| `class`     | `string`  | Extra CSS classes                                                                                              |
 
-Extends all native `<div>` (static) or `<button>` (clickable) HTML attributes.
+Extends all native `<div>` (static) or `<button>` (clickable) HTML attributes. `disabled` applies only to the clickable (`<button>`) variant; a static `<div>` card has no disabled semantics.
 
 ```tsx
 import { DataCard } from "@clickyduck/solid-kit";
 
 <DataCard clickable onClick={() => {}}>
   <div>Any content</div>
+</DataCard>
+
+<DataCard clickable disabled onClick={() => {}}>
+  <div>Unavailable</div>
 </DataCard>;
 ```
 
@@ -639,18 +677,22 @@ Square icon-only button sized to match form controls.
 
 Extends all native `<button>` HTML attributes.
 
-| Prop      | Type                              | Default   | Description                             |
-| --------- | --------------------------------- | --------- | --------------------------------------- |
-| `icon`    | `string \| JSX.Element`           | —         | Material Symbols name or an img/element |
-| `variant` | `"solid" \| "outline" \| "ghost"` | `"solid"` | Visual style                            |
-| `class`   | `string`                          | —         | Extra CSS classes                       |
+| Prop      | Type                              | Default   | Description                                                                                                       |
+| --------- | --------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------- |
+| `icon`    | `string \| JSX.Element`           | —         | Material Symbols name or an img/element                                                                           |
+| `variant` | `"solid" \| "outline" \| "ghost"` | `"solid"` | Visual style                                                                                                      |
+| `loading` | `boolean`                         | `false`   | Busy state. Replaces the icon with a spinner (in the button's own color), **auto-disables**, and sets `aria-busy` |
+| `class`   | `string`                          | —         | Extra CSS classes                                                                                                 |
 
 Square (`h-10 w-10`), sized to match the sibling form controls via `FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES`. The `type` defaults to `"button"`. Always pass an `aria-label` since the button has no text.
+
+`loading` behaves exactly as it does on [Button](#button) — the icon becomes a spinner, the button auto-disables (OR-ed with any `disabled` you pass) so it cannot be re-triggered mid-flight, and `aria-busy` is set. Keep the `aria-label` describing the action (e.g. `"Refresh"`), not the loading state.
 
 ```tsx
 import { IconButton } from "@clickyduck/solid-kit";
 
-<IconButton icon="close" variant="ghost" aria-label="Close" />;
+<IconButton icon="close" variant="ghost" aria-label="Close" />
+<IconButton icon="refresh" loading={refreshing()} aria-label="Refresh" onClick={handleRefresh} />;
 ```
 
 ---
@@ -972,22 +1014,28 @@ Stat card with accent color, icon, value, and optional link.
 
 **Exports:** `MetricCard`, `MetricCardProperties` (type)
 
-| Prop        | Type                                                  | Description                                                                           |
-| ----------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `title`     | `string`                                              | Metric label (rendered uppercase, required)                                           |
-| `accent`    | `"emerald" \| "blue" \| "amber" \| "violet" \| "red"` | Left-border and icon box color (required)                                             |
-| `icon`      | `string \| JSX.Element`                               | Material Symbols name or an img/element for the top-right icon (required)             |
-| `value`     | `string`                                              | Large primary value (required)                                                        |
-| `loading`   | `boolean`                                             | Shows an em dash instead of `value`                                                   |
-| `linkHref`  | `string`                                              | Makes the footer a link                                                               |
-| `linkLabel` | `string`                                              | Link text                                                                             |
-| `anchorTag` | `"A" \| "a"`                                          | Tag for the link. `"A"` (default) uses `@solidjs/router`; use `"a"` outside a router. |
-| `class`     | `string`                                              | Extra CSS classes                                                                     |
+| Prop        | Type                                                  | Description                                                                                                          |
+| ----------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `title`     | `string`                                              | Metric label (rendered uppercase, required)                                                                          |
+| `accent`    | `"emerald" \| "blue" \| "amber" \| "violet" \| "red"` | Left-border and icon box color (required)                                                                            |
+| `icon`      | `string \| JSX.Element`                               | Material Symbols name or an img/element for the top-right icon (required)                                            |
+| `value`     | `string`                                              | Large primary value (required)                                                                                       |
+| `loading`   | `boolean`                                             | Shows a pulsing skeleton bar in place of `value`; the resolved value is announced politely when it lands (see below) |
+| `linkHref`  | `string`                                              | Makes the footer a link                                                                                              |
+| `linkLabel` | `string`                                              | Link text                                                                                                            |
+| `anchorTag` | `"A" \| "a"`                                          | Tag for the link. `"A"` (default) uses `@solidjs/router`; use `"a"` outside a router.                                |
+| `class`     | `string`                                              | Extra CSS classes                                                                                                    |
+
+**Loading state.** While `loading` is `true`, the value slot shows a pulsing skeleton bar sized to the value line (so the card does not reflow when the value arrives). The pulse is disabled under `prefers-reduced-motion`. The value area is a persistent `aria-live="polite"` region with `aria-busy` toggled, so a screen reader announces the resolved value even if focus is elsewhere; while loading, a visually-hidden "Loading {title}" gives the busy state a spoken name. Drive `loading` from your own fetch signal:
 
 ```tsx
 import { MetricCard } from "@clickyduck/solid-kit";
 
-<MetricCard title="Revenue" accent="emerald" icon="currency_rupee" value="₹1,24,000" linkHref="/revenue" linkLabel="View report" />;
+// static
+<MetricCard title="Revenue" accent="emerald" icon="currency_rupee" value="₹1,24,000" linkHref="/revenue" linkLabel="View report" />
+
+// loading until the value resolves
+<MetricCard title="Revenue" accent="emerald" icon="currency_rupee" loading={revenue.loading} value={revenue()?.formatted ?? ""} />;
 ```
 
 ---
@@ -1519,18 +1567,18 @@ Same selection model as [ToggleGroup](#togglegroup), rendered as a single **merg
 
 The props match `ToggleGroupProperties` (single vs. multiple discriminated by `selectionMode`) with one extra layout option, `orientation`. `CardToggleGroupOption` extends `ToggleGroupOption` with one extra field:
 
-| Field         | Type      | Description                                                                            |
-| ------------- | --------- | ------------------------------------------------------------------------------------- |
-| `value`       | `string`  | Option value (required)                                                                |
-| `label`       | `string`  | Display label (required)                                                               |
-| `description` | `string`  | Optional secondary text                                                                |
-| `amount`      | `string`  | Optional trailing field rendered to the left of the radio/checkbox (e.g. a price)      |
-| `disabled`    | `boolean` | Disables this option                                                                   |
+| Field         | Type      | Description                                                                       |
+| ------------- | --------- | --------------------------------------------------------------------------------- |
+| `value`       | `string`  | Option value (required)                                                           |
+| `label`       | `string`  | Display label (required)                                                          |
+| `description` | `string`  | Optional secondary text                                                           |
+| `amount`      | `string`  | Optional trailing field rendered to the left of the radio/checkbox (e.g. a price) |
+| `disabled`    | `boolean` | Disables this option                                                              |
 
 **Extra `CardToggleGroup` prop** (beyond the [ToggleGroup](#togglegroup) props):
 
 | Prop          | Type                         | Default      | Description                                                             |
-| ------------- | ---------------------------- | ------------ | ---------------------------------------------------------------------- |
+| ------------- | ---------------------------- | ------------ | ----------------------------------------------------------------------- |
 | `orientation` | `"vertical" \| "horizontal"` | `"vertical"` | `vertical` stacks the rows; `horizontal` lays them out as equal columns |
 
 ```tsx
@@ -1612,12 +1660,18 @@ mergeClasses("px-4 py-2", conditionalClass, "py-4"); // → "px-4 py-4 …"
 
 ### `useIsMobile`
 
-Solid.js signal tracking whether the viewport is ≤767 px.
+Solid.js signal tracking whether the viewport is narrower than the desktop breakpoint (i.e. `< 768px`, matching Tailwind's `md` screen).
 
 ```ts
 import { useIsMobile } from "@clickyduck/solid-kit";
 
 const isMobile = useIsMobile(); // Accessor<boolean>
+```
+
+The boundary is a single shared constant, `MOBILE_BREAKPOINT_MIN_WIDTH_PX` (`768`), so the JS behaviour and the CSS `md:` / `max-md:` variants stay on one source of truth. If you retune the `md` screen in your Tailwind config, set this constant to the same value so JS and CSS do not desync. `MOBILE_MEDIA_QUERY` (the derived `max-width` query used internally) is also exported.
+
+```ts
+import { MOBILE_BREAKPOINT_MIN_WIDTH_PX, MOBILE_MEDIA_QUERY } from "@clickyduck/solid-kit";
 ```
 
 ### `themedScrollControlClassName`
