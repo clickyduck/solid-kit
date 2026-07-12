@@ -43,7 +43,7 @@ export const CenteredCard: ParentComponent<CenteredCardProperties> = (properties
               fallback={
                 // An element adornment (img/wordmark) renders bare: no badge, no forced square, so it
                 // keeps its aspect ratio. `[&>*]:` targets the passed child (e.g. <img>) to cap height.
-                <div class="flex items-center [&>*]:max-h-10 [&>*]:w-auto">{properties.icon}</div>
+                <div class="flex items-center *:max-h-10 *:w-auto">{properties.icon}</div>
               }
             >
               <div class="flex size-14 items-center justify-center rounded-lg bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100">
