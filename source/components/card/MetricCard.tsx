@@ -124,7 +124,7 @@ export const MetricCard = (properties: MetricCardProperties) => {
     // `p-3 sm:p-4 md:p-5 lg:p-6` never leaks through. That leak is what made desktop balloon to 24px top and
     // bottom; here the vertical rhythm stays a tight 16px→20px. Left padding runs one step larger than the
     // right to clear the 4px accent notch pinned to the edge.
-    <BackgroundCard class={mergeClasses("relative overflow-hidden py-4 pl-5 pr-4 sm:py-4 sm:pl-5 sm:pr-4 md:py-5 md:pl-6 md:pr-5 lg:py-5 lg:pl-6 lg:pr-5", properties.class)}>
+    <BackgroundCard class={mergeClasses("relative overflow-hidden py-4 pr-4 pl-5 sm:py-4 sm:pr-4 sm:pl-5 md:py-5 md:pr-5 md:pl-6 lg:py-5 lg:pr-5 lg:pl-6", properties.class)}>
       {/* Accent notch: a full-height 4px bar pinned to the card's left edge. As a positioned background bar
           (not a `border-l` cancelled by negative margins) it is decoupled from the card padding, so it always
           hugs the edge at every breakpoint rather than drifting inward when the padding grows. */}
