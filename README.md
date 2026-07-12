@@ -546,10 +546,11 @@ Page-level header row with title, back link, and actions slot.
 
 | Prop           | Type          | Description                                                                          |
 | -------------- | ------------- | ------------------------------------------------------------------------------------ |
-| `title`        | `string`      | Page title; component renders when `title`, `titleElement`, or `children` is present |
-| `titleElement` | `JSX.Element` | Replaces the default `<h2>` title element                                            |
-| `back`         | `JSX.Element` | Back link or button rendered to the left                                             |
-| `children`     | `JSX.Element` | Actions rendered on the right side                                                   |
+| `title`          | `string`      | Page title; component renders when `title`, `titleElement`, or `children` is present            |
+| `titleElement`   | `JSX.Element` | Replaces the default `<h2>` title element                                                       |
+| `back`           | `JSX.Element` | Back link or button rendered to the left                                                        |
+| `truncateTitle`  | `boolean`     | Clip the title to one line with an ellipsis instead of wrapping (see note below)                |
+| `children`       | `JSX.Element` | Actions rendered on the right side                                                               |
 | `class`        | `string`      | Extra CSS classes                                                                    |
 
 ```tsx
@@ -557,6 +558,24 @@ import { Button, HeaderLayout } from "@clickyduck/solid-kit";
 
 <HeaderLayout title="Users">
   <Button>Invite</Button>
+</HeaderLayout>;
+```
+
+`truncateTitle` makes the title column a shrinking flex item (`flex-1 min-w-0 overflow-hidden`) so a long title yields width to the actions and clips instead of wrapping to a second line. The built-in string `title` is clipped for you. When you pass a custom `titleElement`, the column is bounded but the ellipsis is yours to place — put `truncate` on the `<Text>` inside that should be shortened:
+
+```tsx
+<HeaderLayout
+  truncateTitle
+  titleElement={
+    <div class="flex min-w-0 items-center gap-2">
+      <IconButton variant="ghost" icon="arrow_back" aria-label="Back" />
+      <Text size="title" weight="bold" truncate>
+        {restaurantName()}
+      </Text>
+    </div>
+  }
+>
+  <Badge>OTP 1234</Badge>
 </HeaderLayout>;
 ```
 
