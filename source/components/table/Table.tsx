@@ -54,7 +54,7 @@ export const Table = (properties: ComponentProps<"table">) => {
  */
 export const TableHeader = (properties: ComponentProps<"thead">) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return <thead class={mergeClasses("border-b border-gray-200 bg-gray-50 tracking-wide text-gray-500 uppercase dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-400", TABLE_HEADER_LABEL_CLASSES, local.class)} {...rest} />;
+  return <thead class={mergeClasses("border-b border-gray-200 bg-gray-50 tracking-wide text-gray-600 uppercase dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-300", TABLE_HEADER_LABEL_CLASSES, local.class)} {...rest} />;
 };
 
 /**
@@ -70,7 +70,7 @@ export const TableBody = (properties: ComponentProps<"tbody">) => {
  */
 export const TableFooter = (properties: ComponentProps<"tfoot">) => {
   const [local, rest] = splitProps(properties, ["class"]);
-  return <tfoot class={mergeClasses("border-t border-gray-200 bg-gray-50 tracking-wide text-gray-500 dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-400", TABLE_HEADER_LABEL_CLASSES, local.class)} {...rest} />;
+  return <tfoot class={mergeClasses("border-t border-gray-200 bg-gray-50 tracking-wide text-gray-600 dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-300", TABLE_HEADER_LABEL_CLASSES, local.class)} {...rest} />;
 };
 
 type TableRowProperties = ComponentProps<"tr"> & {
@@ -247,7 +247,7 @@ export const TablePagination = (properties: TablePaginationProperties) => {
   const paginationElement = (
     <div
       class={mergeClasses(
-        "flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 bg-gray-50 text-gray-600 dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-400",
+        "flex flex-wrap items-center justify-between gap-3 border-t border-gray-200 bg-gray-50 text-gray-700 dark:border-gray-700/60 dark:bg-gray-700/20 dark:text-gray-300",
         TABLE_PAGINATION_BAR_CLASSES,
         TABLE_BODY_TEXT_CLASSES,
         properties.class

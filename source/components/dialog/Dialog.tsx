@@ -691,7 +691,7 @@ export const DialogBody = (properties: DialogBodyPropertiesType) => {
         bodyElement = element;
         contentContext?.registerBodyElement(element);
       }}
-      class={mergeClasses("min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain bg-gray-50 p-3 sm:p-4 md:p-5 lg:p-6 dark:bg-gray-800/40", local.class)}
+      class={mergeClasses("min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain bg-gray-100 p-3 sm:p-4 md:p-5 lg:p-6 dark:bg-gray-950", local.class)}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerEnd}

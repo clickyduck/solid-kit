@@ -66,7 +66,7 @@ const formatCurrencyInputValue = (value: string): string => {
 const Input = (properties: InputProperties) => {
   const [local, rest] = splitProps(properties, ["class", "icon", "trailingText", "currency", "autocomplete", "disabled", "value", "onInput"]);
   const baseClasses =
-    "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-400 transition-colors duration-100 ease-out focus:border-blue-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800/50 dark:text-white dark:placeholder-gray-500 dark:focus:border-blue-400 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
+    "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-500 transition-colors duration-100 ease-out focus:border-blue-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:border-blue-400 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
   const inputProps = { step: properties.type === "number" ? "0.01" : undefined, ...rest, autocomplete: local.autocomplete ?? "off" };
   const resolvedInputProps = local.currency ? { ...inputProps, type: "text", inputMode: "decimal" as const, autocomplete: "off" } : inputProps;
 
@@ -96,7 +96,7 @@ const Input = (properties: InputProperties) => {
         {...resolvedInputProps}
       />
       <Show when={local.trailingText}>
-        <Text as="div" size="small" color="inherit" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 dark:text-gray-500">
+        <Text as="div" size="small" color="inherit" class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 text-gray-600 dark:text-gray-400">
           {local.trailingText}
         </Text>
       </Show>

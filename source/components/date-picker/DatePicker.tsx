@@ -123,7 +123,7 @@ const Calendar = (properties: CalendarProperties): JSX.Element => {
   const makeDayState = (day: CalendarDay) => {
     const isToday = isSameDay(day.date, new Date());
     const isCurrentMonth = day.currentMonth;
-    const mutedText = isCurrentMonth ? "text-gray-900 dark:text-gray-100" : "text-gray-400 dark:text-gray-600";
+    const mutedText = isCurrentMonth ? "text-gray-900 dark:text-gray-100" : "text-gray-500 dark:text-gray-500";
     const base = "relative z-10 h-9 w-9 p-0";
     const todayRing = isToday ? "ring-1 ring-inset ring-blue-500" : "";
 

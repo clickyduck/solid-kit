@@ -32,8 +32,10 @@ export const REVEAL_TRANSITION_DURATION = "duration-150";
 export const LAYOUT_TRANSITION_DURATION = "duration-200";
 export const TRANSITION_EASING = "ease-out";
 
-/** Muted inline icons (leading search, decorative) with balanced contrast in light and dark. */
-export const CHROME_MUTED_ICON_CLASSES = "text-gray-400 dark:text-gray-500";
+/** Muted inline icons (leading search, decorative). Tuned to the placeholder de-emphasis level (gray-500 light /
+ * gray-400 dark) so a leading icon and the field's placeholder read at the same weight, while staying clearly
+ * subordinate to the entered value. */
+export const CHROME_MUTED_ICON_CLASSES = "text-gray-500 dark:text-gray-400";
 
 /**
  * Neutral hover wash for borderless clickables on a plain surface — ghost Button/IconButton,

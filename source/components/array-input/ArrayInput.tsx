@@ -96,7 +96,7 @@ export const ArrayInput = (properties: ArrayInputProperties): JSX.Element => {
       <input
         id={local.id}
         type="text"
-        class="min-w-24 flex-1 border-0 bg-transparent p-0 text-gray-900 placeholder-gray-400 focus:ring-0 focus:outline-none disabled:cursor-not-allowed dark:text-white dark:placeholder-gray-500"
+        class="min-w-24 flex-1 border-0 bg-transparent p-0 text-gray-900 placeholder-gray-500 focus:ring-0 focus:outline-none disabled:cursor-not-allowed dark:text-gray-100 dark:placeholder-gray-400"
         placeholder={local.placeholder}
         disabled={local.disabled}
         autocomplete="off"

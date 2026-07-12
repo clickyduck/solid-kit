@@ -38,7 +38,7 @@ const BADGE_REMOVE_BUTTON_CLASSES_BY_VARIANT_AND_COLOR: Record<BadgeVariant, Rec
   },
   outline: {
     primary: "text-blue-600 hover:text-blue-700 dark:text-blue-500 dark:hover:text-blue-400",
-    neutral: "text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300",
+    neutral: "text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100",
     success: "text-emerald-600 hover:text-emerald-700 dark:text-emerald-500 dark:hover:text-emerald-400",
     warning: "text-amber-600 hover:text-amber-700 dark:text-amber-500 dark:hover:text-amber-400",
     danger: "text-red-600 hover:text-red-700 dark:text-red-500 dark:hover:text-red-400"

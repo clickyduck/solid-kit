@@ -64,10 +64,10 @@ const NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS = "size-10 mx-auto justify-center";
 // on the row would lose to it. Router's <A> concatenates activeClass as a raw string (no
 // tailwind-merge), which the `!` also sidesteps: important wins regardless of source order.
 const NAVIGATION_LINK_ACTIVE_CLASS = "bg-blue-500/10 text-blue-700 dark:text-blue-300 [&_.nav-link-label]:font-medium! [&_.nav-link-icon]:opacity-100 [&_.nav-link-icon]:text-blue-600 dark:[&_.nav-link-icon]:text-blue-400";
-const NAVIGATION_LINK_INACTIVE_CLASS = `text-gray-800 dark:text-white ${HOVER_WASH_NEUTRAL_CLASSES}`;
+const NAVIGATION_LINK_INACTIVE_CLASS = `text-gray-800 dark:text-gray-100 ${HOVER_WASH_NEUTRAL_CLASSES}`;
 /** Group label slot above each group's items, aligned to the same left edge so the label reads as belonging to the items beneath it. Sized to a standard control height (h-10) so the collapsible toggle matches every other button. */
 const NAVIGATION_GROUP_HEADING_SLOT_CLASS = "mb-1.5 flex h-10 min-h-10 max-h-10 w-full shrink-0 items-stretch";
-const GROUP_LABEL_TEXT_CLASS = "flex w-full min-w-0 items-center px-2.5 text-xs leading-none font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase";
+const GROUP_LABEL_TEXT_CLASS = "flex w-full min-w-0 items-center px-2.5 text-xs leading-none font-semibold tracking-wide text-gray-600 dark:text-gray-300 uppercase";
 
 const computeIsNavigationItemActive = (item: LeftPanelNavigationItemJson, pathname: string, hash: string): boolean => {
   if (item.href.startsWith("#")) {
@@ -262,7 +262,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                     <Button
                       type="button"
                       variant="ghost"
-                      class={mergeClasses("w-full min-w-0 justify-between gap-2 px-2.5 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-400")}
+                      class={mergeClasses("w-full min-w-0 justify-between gap-2 px-2.5 text-left text-xs font-semibold tracking-wide text-gray-600 uppercase dark:text-gray-300")}
                       aria-expanded={isNavigationGroupBodyExpandedMemo()}
                       onClick={() => {
                         toggleNavigationGroupBody(navigationGroupIdentifierMemo(), navigationGroupInitiallyCollapsedMemo());
@@ -271,7 +271,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                       <Text as="span" size="caption" weight="semibold" color="inherit" transform="uppercase" display="inline" truncate class="min-w-0 flex-1">
                         {group.groupLabel}
                       </Text>
-                      <span class={mergeClasses("inline-flex shrink-0 items-center justify-center text-gray-500 transition-transform duration-200 ease-out", isNavigationGroupBodyExpandedMemo() ? "rotate-180" : "rotate-0")} aria-hidden>
+                      <span class={mergeClasses("inline-flex shrink-0 items-center justify-center text-gray-600 dark:text-gray-400 transition-transform duration-200 ease-out", isNavigationGroupBodyExpandedMemo() ? "rotate-180" : "rotate-0")} aria-hidden>
                         <Icon name="keyboard_arrow_down" size={16} class="size-4" />
                       </span>
                     </Button>

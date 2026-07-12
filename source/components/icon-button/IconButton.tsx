@@ -16,14 +16,14 @@ const getVariantClasses = (variant: IconButtonVariant = "solid"): string => {
     case "solid":
       return "border-2 border-transparent text-white bg-blue-600 enabled:hover:bg-blue-700 focus-visible:border-white dark:focus-visible:border-gray-100";
     case "outline":
-      return "border border-solid border-gray-300 bg-white text-gray-700 enabled:hover:bg-gray-50 focus-visible:border-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:enabled:hover:bg-gray-700 dark:focus-visible:border-blue-400";
+      return "border border-solid border-gray-300 bg-white text-gray-800 enabled:hover:bg-gray-50 focus-visible:border-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:enabled:hover:bg-gray-700 dark:focus-visible:border-blue-400";
     case "ghost":
       // Ghost is borderless in every state: unlike solid/outline it never draws a visible border, so focusing it
       // (which happens the moment it is clicked) must not paint one either. The transparent border is kept only to
       // preserve the shared box model so a ghost button lines up with solid / outline siblings.
       // Hover wash is asymmetric on purpose: solid gray-100 over white and gray-700/50 over a near-black page
       // produce a similar perceived step; equal alphas make dark mode flare far brighter than light.
-      return "border-2 border-transparent text-gray-700 enabled:hover:bg-gray-100 dark:text-white dark:enabled:hover:bg-gray-700/50";
+      return "border-2 border-transparent text-gray-800 enabled:hover:bg-gray-100 dark:text-gray-100 dark:enabled:hover:bg-gray-700/50";
   }
 };
 

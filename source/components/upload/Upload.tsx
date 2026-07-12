@@ -277,7 +277,7 @@ export const Upload = (properties: UploadProperties) => {
           when={local.selectedFiles.length > 0}
           fallback={
             <>
-              <Icon name="cloud_upload" size={24} class="text-gray-400 dark:text-gray-500" aria-hidden="true" />
+              <Icon name="cloud_upload" size={24} class="text-gray-500 dark:text-gray-400" aria-hidden="true" />
               <span class="flex flex-col items-center gap-0.5">
                 <Text as="span" size="small" weight="normal" color="default" display="block">
                   {isDragOver() ? "Drop to upload" : "Drop files here or click to browse"}
@@ -332,7 +332,7 @@ export const Upload = (properties: UploadProperties) => {
                   <Show
                     when={previewsEnabled() && isImageFile(file) && getPreviewUrl(file) !== undefined}
                     fallback={
-                      <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-500 dark:bg-gray-700/60 dark:text-gray-400">
+                      <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-700/60 dark:text-gray-300">
                         <Icon name={isImageFile(file) ? "image" : "draft"} size={FORM_CONTROL_ICON_SIZE} aria-hidden="true" />
                       </span>
                     }

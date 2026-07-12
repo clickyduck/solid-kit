@@ -5,16 +5,22 @@ export type TextAlign = "start" | "center" | "end";
 export type TextTransform = "none" | "uppercase" | "capitalize";
 export type TextDisplay = "flex" | "block" | "inline";
 
+// Neutral text emphasis ladder, tuned for high readability in both themes while keeping visible steps between
+// tiers. `default` is the strongest (near-black / near-white) and is the only tier that reaches the palette
+// extremes — headings, body copy, and control values. `secondary` and `muted` sit one and two steps softer but
+// are deliberately kept high-contrast (gray-800/700 light, gray-200/300 dark) so de-emphasized text stays easy
+// to read rather than fading toward the background. Semantic hues run at -700 (light) / -300 (dark): dark shades
+// are one step brighter than a mid accent so colored text reads clearly on the near-black surface.
 export const COLOR_CLASSES: Record<TextColor, string> = {
   inherit: "",
   default: "text-gray-900 dark:text-gray-100",
-  muted: "text-gray-600 dark:text-gray-400",
-  primary: "text-blue-700 dark:text-blue-400",
-  secondary: "text-gray-700 dark:text-gray-300",
-  success: "text-emerald-700 dark:text-emerald-400",
-  warning: "text-amber-800 dark:text-amber-400",
-  danger: "text-red-700 dark:text-red-400",
-  info: "text-sky-700 dark:text-sky-400"
+  muted: "text-gray-700 dark:text-gray-300",
+  primary: "text-blue-700 dark:text-blue-300",
+  secondary: "text-gray-800 dark:text-gray-200",
+  success: "text-emerald-700 dark:text-emerald-300",
+  warning: "text-amber-800 dark:text-amber-300",
+  danger: "text-red-700 dark:text-red-300",
+  info: "text-sky-700 dark:text-sky-300"
 };
 
 export const WEIGHT_CLASSES: Record<TextWeight, string> = {
@@ -54,7 +60,10 @@ export const DISPLAY_CLASSES: Record<TextDisplay, string> = {
   inline: "inline-flex items-center"
 };
 
-export const TYPOGRAPHY_ICON_CLASSES = "align-middle opacity-70 [&_svg]:fill-current";
+// Inline icons in a Text row sit just slightly under the text weight so a leading/trailing glyph reads as
+// supporting the label rather than competing with it — but only a touch (opacity-90), so the icon stays clearly
+// legible rather than fading. (Was opacity-70, which dimmed inline icons enough to hurt readability.)
+export const TYPOGRAPHY_ICON_CLASSES = "align-middle opacity-90 [&_svg]:fill-current";
 
 /** Truncates string children with `…` at `maxLength`. Non-string children pass through unchanged. */
 export const truncateTextChildren = <T,>(children: T, maxLength: number | undefined): T => {

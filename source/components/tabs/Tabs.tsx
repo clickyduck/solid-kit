@@ -32,7 +32,7 @@ export function Tabs<TabValue extends string>(properties: TabsProperties<TabValu
   };
 
   return (
-    <div class={mergeClasses("w-full min-w-0 border-b border-gray-200 text-center text-gray-600 dark:border-gray-700 dark:text-gray-400", properties.class)}>
+    <div class={mergeClasses("w-full min-w-0 border-b border-gray-200 text-center text-gray-700 dark:border-gray-700 dark:text-gray-300", properties.class)}>
       <ul
         class={mergeClasses(
           "-mb-px flex w-full flex-nowrap",
@@ -60,8 +60,8 @@ export function Tabs<TabValue extends string>(properties: TabsProperties<TabValu
                     "rounded-t-lg rounded-b-none border-x-0 border-t-0 border-b-2 border-solid bg-transparent shadow-none hover:bg-transparent focus-visible:border-x-transparent focus-visible:border-t-transparent focus-visible:border-b-blue-500 dark:focus-visible:border-b-blue-400",
                     properties.scrollable ? "w-auto whitespace-nowrap" : "w-full min-w-0",
                     isSelected()
-                      ? "relative z-1 border-b-blue-500 text-blue-700 hover:border-b-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-400"
-                      : "border-b-transparent text-gray-600 hover:border-b-blue-500 hover:text-blue-600 dark:text-gray-400 dark:hover:border-b-blue-400 dark:hover:text-blue-400"
+                      ? "relative z-1 border-b-blue-500 text-blue-700 hover:border-b-blue-500 hover:text-blue-700 dark:text-blue-300 dark:hover:text-blue-300"
+                      : "border-b-transparent text-gray-700 hover:border-b-blue-500 hover:text-blue-700 dark:text-gray-300 dark:hover:border-b-blue-400 dark:hover:text-blue-300"
                   )}
                   onClick={() => {
                     properties.onTabSelect(tabDefinition.tabValue);

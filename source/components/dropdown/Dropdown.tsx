@@ -147,7 +147,7 @@ const DropdownBuiltInOptionsList: Component<DropdownBuiltInOptionsListProperties
         <For each={properties.filteredOptions()}>
           {(option: string) => {
             const isSelected = (): boolean => (properties.isMultiSelect() ? properties.selectedValues().includes(option) : properties.selectedValue() === option);
-            const selectedClasses = (): string => (isSelected() ? "bg-blue-500/8 hover:bg-blue-500/15 hover:text-gray-900 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:hover:text-white" : "");
+            const selectedClasses = (): string => (isSelected() ? "bg-blue-500/8 hover:bg-blue-500/15 hover:text-gray-900 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:hover:text-gray-100" : "");
             return (
               <li>
                 <button
@@ -707,7 +707,7 @@ const DropdownItem = (properties: DropdownItemProperties) => {
           class={mergeClasses(
             FORM_CONTROL_DROP_DOWN_MENU_ITEM_CLASS_BY_SIZE,
             local.disabled || context.disabled() ? "pointer-events-none cursor-not-allowed opacity-50" : !isClickable() ? "pointer-events-none cursor-default" : "cursor-pointer transition-opacity duration-100 ease-out active:opacity-75",
-            isSelected() && isClickable() ? "bg-blue-500/8 hover:bg-blue-500/15 hover:text-gray-900 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:hover:text-white" : ""
+            isSelected() && isClickable() ? "bg-blue-500/8 hover:bg-blue-500/15 hover:text-gray-900 dark:bg-blue-500/10 dark:hover:bg-blue-500/20 dark:hover:text-gray-100" : ""
           )}
           onClick={(event) => {
             event.stopPropagation();

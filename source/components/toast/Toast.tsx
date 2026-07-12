@@ -121,7 +121,7 @@ export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) 
         DROPDOWN_MENU_SURFACE_CLASSES,
         // A toast floats free over arbitrary page content, so it keeps a fuller shadow than an
         // anchored menu (which sits tight to its trigger and only needs shadow-lg/10).
-        "flex w-full max-w-sm items-center bg-white/95 p-4 text-gray-600 shadow-lg backdrop-blur-sm dark:bg-gray-800/80 dark:text-gray-300",
+        "flex w-full max-w-sm items-center bg-white/95 p-4 text-gray-700 shadow-lg backdrop-blur-sm dark:bg-gray-800/80 dark:text-gray-200",
         TOAST_TRANSITION_CLASSES,
         visible() ? TOAST_SHOWN_CLASSES : TOAST_HIDDEN_CLASSES,
         local.class

@@ -8,36 +8,40 @@ import { Show } from "solid-js";
 
 type AccentColor = "emerald" | "blue" | "amber" | "violet" | "red";
 
+// Accent link text carries an explicit dark variant (`dark:text-*-300`) so it stays high-contrast on the card's
+// near-black dark surface — matching the semantic reading-text tier in COLOR_CLASSES (light -700 / dark -300).
+// The icon sits on a `/15` tinted box, so its dark shade is one step brighter (`dark:text-*-400`) to read on
+// that tint. Without the dark variants these rendered as dark -600/-700 text on a near-black card.
 const ACCENT_CLASSES: Record<AccentColor, { card: string; iconBox: string; iconColor: string; link: string }> = {
   emerald: {
     card: "border-l-emerald-500",
     iconBox: "bg-emerald-500/15",
-    iconColor: "text-emerald-600",
-    link: "text-emerald-600 transition-colors duration-100 ease-out hover:text-emerald-700"
+    iconColor: "text-emerald-600 dark:text-emerald-400",
+    link: "text-emerald-700 transition-colors duration-100 ease-out hover:text-emerald-800 dark:text-emerald-300 dark:hover:text-emerald-200"
   },
   blue: {
     card: "border-l-blue-500",
     iconBox: "bg-blue-500/15",
-    iconColor: "text-blue-600",
-    link: "text-blue-600 transition-colors duration-100 ease-out hover:text-blue-700"
+    iconColor: "text-blue-600 dark:text-blue-400",
+    link: "text-blue-700 transition-colors duration-100 ease-out hover:text-blue-800 dark:text-blue-300 dark:hover:text-blue-200"
   },
   amber: {
     card: "border-l-amber-500",
     iconBox: "bg-amber-500/15",
-    iconColor: "text-amber-700",
-    link: "text-amber-700 transition-colors duration-100 ease-out hover:text-amber-800"
+    iconColor: "text-amber-700 dark:text-amber-400",
+    link: "text-amber-800 transition-colors duration-100 ease-out hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-200"
   },
   violet: {
     card: "border-l-violet-500",
     iconBox: "bg-violet-500/15",
-    iconColor: "text-violet-600",
-    link: "text-violet-600 transition-colors duration-100 ease-out hover:text-violet-700"
+    iconColor: "text-violet-600 dark:text-violet-400",
+    link: "text-violet-700 transition-colors duration-100 ease-out hover:text-violet-800 dark:text-violet-300 dark:hover:text-violet-200"
   },
   red: {
     card: "border-l-red-500",
     iconBox: "bg-red-500/15",
-    iconColor: "text-red-600",
-    link: "text-red-600 transition-colors duration-100 ease-out hover:text-red-700"
+    iconColor: "text-red-600 dark:text-red-400",
+    link: "text-red-700 transition-colors duration-100 ease-out hover:text-red-800 dark:text-red-300 dark:hover:text-red-200"
   }
 };
 
