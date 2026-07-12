@@ -21,7 +21,7 @@ const ROW_DIVIDER_HORIZONTAL_CLASS = "border-l border-gray-200 first:border-l-0 
 // Visible radio/checkbox at the end of each row — shared styling with ToggleGroup so the two controls
 // match. Shares the surface focus ring and adds a ring offset that separates it from the small box.
 const TOGGLE_INPUT_BASE_CLASS = mergeClasses(
-  "peer relative m-0 h-5 w-5 shrink-0 cursor-[inherit] appearance-none border border-solid border-gray-300 bg-white transition-colors duration-100 ease-out checked:border-transparent checked:bg-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:checked:border-transparent dark:checked:bg-blue-500",
+  "peer relative m-0 size-5 shrink-0 cursor-[inherit] appearance-none border border-solid border-gray-300 bg-white transition-colors duration-100 ease-out checked:border-transparent checked:bg-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:checked:border-transparent dark:checked:bg-blue-500",
   FOCUS_RING_SURFACE_CLASSES,
   "focus-visible:ring-offset-1 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-900"
 );
@@ -136,7 +136,7 @@ const CardToggleGroup = (properties: CardToggleGroupProperties) => {
                   {/* Indicator scales/fades in on check at the 150ms reveal tier; centering translate is kept
                       constant so only opacity+scale animate. motion-reduce drops the scale to a plain fade. */}
                   <svg
-                    class="pointer-events-none absolute top-1/2 left-1/2 h-4 w-4 origin-center -translate-x-1/2 -translate-y-1/2 scale-75 text-white opacity-0 transition-[opacity,transform] duration-150 ease-out peer-checked:scale-100 peer-checked:opacity-100 motion-reduce:transition-none motion-reduce:peer-checked:scale-100"
+                    class="pointer-events-none absolute top-1/2 left-1/2 size-4 origin-center -translate-1/2 scale-75 text-white opacity-0 transition-[opacity,transform] duration-150 ease-out peer-checked:scale-100 peer-checked:opacity-100 motion-reduce:transition-none motion-reduce:peer-checked:scale-100"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="none"
@@ -149,7 +149,7 @@ const CardToggleGroup = (properties: CardToggleGroupProperties) => {
                   </svg>
                 </Show>
                 <Show when={properties.selectionMode === "single"}>
-                  <span class="pointer-events-none absolute top-1/2 left-1/2 h-2 w-2 origin-center -translate-x-1/2 -translate-y-1/2 scale-75 rounded-full bg-white opacity-0 transition-[opacity,transform] duration-150 ease-out peer-checked:scale-100 peer-checked:opacity-100 motion-reduce:transition-none motion-reduce:peer-checked:scale-100" />
+                  <span class="pointer-events-none absolute top-1/2 left-1/2 size-2 origin-center -translate-1/2 scale-75 rounded-full bg-white opacity-0 transition-[opacity,transform] duration-150 ease-out peer-checked:scale-100 peer-checked:opacity-100 motion-reduce:transition-none motion-reduce:peer-checked:scale-100" />
                 </Show>
               </span>
             </label>

@@ -378,7 +378,7 @@ export const ShowcaseApplication = (): JSX.Element => {
                     <Text icon="arrow_forward" iconPosition="end" color="primary">
                       Trailing
                     </Text>
-                    <Text icon={<span class="inline-block h-[1em] w-[1em] rounded-full bg-emerald-500" />} color="success">
+                    <Text icon={<span class="inline-block size-[1em] rounded-full bg-emerald-500" />} color="success">
                       JSX element
                     </Text>
                   </div>

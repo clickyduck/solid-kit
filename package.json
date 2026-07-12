@@ -382,6 +382,7 @@
     "clsx": "^2.1.1",
     "dotenv-cli": "^11.0.0",
     "eslint": "^10.6.0",
+    "eslint-plugin-better-tailwindcss": "^4.6.1",
     "material-symbols": "^0.45.6",
     "postcss": "^8.5.16",
     "prettier": "^3.9.4",

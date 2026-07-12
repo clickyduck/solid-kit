@@ -129,7 +129,7 @@ export const Toast = (properties: ComponentProps<"div"> & { toast: ToastData }) 
       role="alert"
       {...rest}
     >
-      <div class={mergeClasses("inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg", getIconContainerClasses(toast().variant))}>
+      <div class={mergeClasses("inline-flex size-7 shrink-0 items-center justify-center rounded-lg", getIconContainerClasses(toast().variant))}>
         <Switch
           fallback={
             <>

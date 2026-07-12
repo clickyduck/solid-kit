@@ -332,12 +332,12 @@ export const Upload = (properties: UploadProperties) => {
                   <Show
                     when={previewsEnabled() && isImageFile(file) && getPreviewUrl(file) !== undefined}
                     fallback={
-                      <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-700/60 dark:text-gray-300">
+                      <span class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-700/60 dark:text-gray-300">
                         <Icon name={isImageFile(file) ? "image" : "draft"} size={FORM_CONTROL_ICON_SIZE} aria-hidden="true" />
                       </span>
                     }
                   >
-                    <img src={getPreviewUrl(file)!} alt="" class="h-8 w-8 shrink-0 rounded-lg object-cover" />
+                    <img src={getPreviewUrl(file)!} alt="" class="size-8 shrink-0 rounded-lg object-cover" />
                   </Show>
                   <span class="flex min-w-0 flex-1 flex-col">
                     <Text as="span" size="small" color="default" display="block" truncate>

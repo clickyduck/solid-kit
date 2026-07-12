@@ -46,7 +46,7 @@ export const CenteredCard: ParentComponent<CenteredCardProperties> = (properties
                 <div class="flex items-center [&>*]:max-h-10 [&>*]:w-auto">{properties.icon}</div>
               }
             >
-              <div class="flex h-14 w-14 items-center justify-center rounded-lg bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100">
+              <div class="flex size-14 items-center justify-center rounded-lg bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100">
                 <RenderIcon icon={properties.icon} size={28} />
               </div>
             </Show>

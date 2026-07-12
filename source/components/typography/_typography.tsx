@@ -85,35 +85,7 @@ export const truncateTextChildren = <T,>(children: T, maxLength: number | undefi
 
 // Minor words kept lowercase in the middle of a title: articles, coordinating conjunctions, and short
 // prepositions (≤4 letters). First and last words are always capitalized regardless of this set.
-const TITLE_CASE_MINOR_WORDS = new Set([
-  "a",
-  "an",
-  "and",
-  "as",
-  "at",
-  "but",
-  "by",
-  "for",
-  "from",
-  "if",
-  "in",
-  "into",
-  "nor",
-  "of",
-  "off",
-  "on",
-  "onto",
-  "or",
-  "over",
-  "per",
-  "the",
-  "to",
-  "up",
-  "via",
-  "vs",
-  "with",
-  "yet"
-]);
+const TITLE_CASE_MINOR_WORDS = new Set(["a", "an", "and", "as", "at", "but", "by", "for", "from", "if", "in", "into", "nor", "of", "off", "on", "onto", "or", "over", "per", "the", "to", "up", "via", "vs", "with", "yet"]);
 
 // A word already carrying its own casing — a PascalCase/camelCase name (`BackgroundCard`, `DropdownItem`),
 // an all-caps acronym (`SMS`, `PDF`), or a mixed token (`AM/PM`) — is left verbatim: it has an intended

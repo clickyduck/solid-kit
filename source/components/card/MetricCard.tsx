@@ -116,18 +116,18 @@ export const MetricCard = (properties: MetricCardProperties) => {
   const accent = () => ACCENT_CLASSES[properties.accent];
   const isLoading = (): boolean => properties.loading === true;
   return (
-    <BackgroundCard class={mergeClasses("overflow-hidden", properties.class)}>
-      <div class={mergeClasses("-ml-3 border-l-4 pl-3 sm:-ml-4 sm:pl-4 md:-ml-5 md:pl-5 lg:-ml-6 lg:pl-6", accent().card)}>
+    <BackgroundCard class={mergeClasses("overflow-hidden p-4 md:p-5", properties.class)}>
+      <div class={mergeClasses("-ml-4 border-l-4 pl-4 md:-ml-5 md:pl-5", accent().card)}>
         <div class="flex flex-row items-center justify-between">
           <Text as="h3" size="small" weight="semibold" transform="title" color="muted">
             {properties.title}
           </Text>
-          <span class={mergeClasses("flex h-9 w-9 items-center justify-center rounded-lg", accent().iconBox, accent().iconColor)}>
+          <span class={mergeClasses("flex size-9 items-center justify-center rounded-lg", accent().iconBox, accent().iconColor)}>
             <RenderIcon icon={properties.icon} size={20} />
           </span>
         </div>
       </div>
-      <div class="space-y-2 pt-3 sm:space-y-3 sm:pt-4">
+      <div class="space-y-1.5 pt-2 sm:space-y-2 sm:pt-3">
         {/* Stable live region: the value slot stays mounted across the loading→loaded transition so screen
             readers announce the resolved value even when focus is elsewhere. `aria-busy` toggles here rather
             than on a node that unmounts. A hidden "Loading {title}" label gives the busy state a spoken name. */}
