@@ -102,11 +102,14 @@ const CardToggleGroup = (properties: CardToggleGroupProperties) => {
               />
               <span class={mergeClasses(CARD_BASE_CLASS, isDisabled() ? CARD_DISABLED_CLASS : "")}>
                 <span class="flex min-w-0 flex-col gap-0.5">
-                  <Text as="span" size="small" weight="normal" color="secondary" display="block">
+                  {/* Label at the default `body` size so a card option reads as normal primary text,
+                      in line with sibling form labels, rather than a step down. The supporting
+                      description sits one tier below at `small`. */}
+                  <Text as="span" size="body" weight="normal" color="secondary" display="block">
                     {option.label}
                   </Text>
                   <Show when={option.description != null}>
-                    <Text as="span" size="caption" color="muted" display="block">
+                    <Text as="span" size="small" color="muted" display="block">
                       {option.description}
                     </Text>
                   </Show>

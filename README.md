@@ -544,14 +544,14 @@ Page-level header row with title, back link, and actions slot.
 
 **Exports:** `HeaderLayout`, `HeaderLayoutProperties` (type)
 
-| Prop           | Type          | Description                                                                          |
-| -------------- | ------------- | ------------------------------------------------------------------------------------ |
-| `title`          | `string`      | Page title; component renders when `title`, `titleElement`, or `children` is present            |
-| `titleElement`   | `JSX.Element` | Replaces the default `<h2>` title element                                                       |
-| `back`           | `JSX.Element` | Back link or button rendered to the left                                                        |
-| `truncateTitle`  | `boolean`     | Clip the title to one line with an ellipsis instead of wrapping (see note below)                |
-| `children`       | `JSX.Element` | Actions rendered on the right side                                                               |
-| `class`        | `string`      | Extra CSS classes                                                                    |
+| Prop            | Type          | Description                                                                          |
+| --------------- | ------------- | ------------------------------------------------------------------------------------ |
+| `title`         | `string`      | Page title; component renders when `title`, `titleElement`, or `children` is present |
+| `titleElement`  | `JSX.Element` | Replaces the default `<h2>` title element                                            |
+| `back`          | `JSX.Element` | Back link or button rendered to the left                                             |
+| `truncateTitle` | `boolean`     | Clip the title to one line with an ellipsis instead of wrapping (see note below)     |
+| `children`      | `JSX.Element` | Actions rendered on the right side                                                   |
+| `class`         | `string`      | Extra CSS classes                                                                    |
 
 ```tsx
 import { Button, HeaderLayout } from "@clickyduck/solid-kit";
@@ -576,7 +576,7 @@ import { Button, HeaderLayout } from "@clickyduck/solid-kit";
   }
 >
   <Badge>OTP 1234</Badge>
-</HeaderLayout>;
+</HeaderLayout>
 ```
 
 ---
