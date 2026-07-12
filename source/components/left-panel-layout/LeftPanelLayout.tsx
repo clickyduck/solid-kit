@@ -55,10 +55,15 @@ const NAVIGATION_LINK_ICON_CLASS = "nav-link-icon shrink-0 opacity-80 w-4.5 h-4.
 // text color would sit alongside the active blue and let stylesheet order — not intent — pick the
 // winner. Keeping the color only in the two state classes avoids that.
 const NAVIGATION_LINK_ROW_CLASS = "group flex min-w-0 items-center rounded-lg h-10 min-h-10 max-h-10 text-sm transition-colors duration-100 ease-out";
-const NAVIGATION_LINK_LABEL_CLASS = "min-w-0 truncate";
+const NAVIGATION_LINK_LABEL_CLASS = "nav-link-label min-w-0 truncate";
 const NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS = "px-2.5 space-x-3";
 const NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS = "size-10 mx-auto justify-center";
-const NAVIGATION_LINK_ACTIVE_CLASS = "bg-blue-500/10 text-blue-700 dark:text-blue-300 [&_.nav-link-icon]:opacity-100 [&_.nav-link-icon]:text-blue-600 dark:[&_.nav-link-icon]:text-blue-400";
+// The active row also steps its label to font-medium (matching Tabs/ToggleGroup's selected-state
+// emphasis). The label is a <Text> that stamps its own `font-normal` on the span, so the bump is a
+// descendant override with `!` to beat that element-level class — a plain inherited `font-medium`
+// on the row would lose to it. Router's <A> concatenates activeClass as a raw string (no
+// tailwind-merge), which the `!` also sidesteps: important wins regardless of source order.
+const NAVIGATION_LINK_ACTIVE_CLASS = "bg-blue-500/10 text-blue-700 dark:text-blue-300 [&_.nav-link-label]:font-medium! [&_.nav-link-icon]:opacity-100 [&_.nav-link-icon]:text-blue-600 dark:[&_.nav-link-icon]:text-blue-400";
 const NAVIGATION_LINK_INACTIVE_CLASS = `text-gray-800 dark:text-white ${HOVER_WASH_NEUTRAL_CLASSES}`;
 /** Group label slot above each group's items, aligned to the same left edge so the label reads as belonging to the items beneath it. Sized to a standard control height (h-10) so the collapsible toggle matches every other button. */
 const NAVIGATION_GROUP_HEADING_SLOT_CLASS = "mb-1.5 flex h-10 min-h-10 max-h-10 w-full shrink-0 items-stretch";

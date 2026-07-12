@@ -110,13 +110,14 @@ const ToggleGroup = (properties: ToggleGroupProperties) => {
                 </Show>
               </span>
               <span class="flex min-w-0 flex-1 flex-col gap-0.5">
-                {/* Label at the default `body` size so an option reads as normal primary text, in
-                    line with sibling form labels and CardToggleGroup; description one tier below. */}
-                <Text as="span" size="body" weight="normal" color="secondary" display="block">
+                {/* Label at `small` (text-sm) so an option matches the value text of sibling form
+                    controls — typed Input values, Button text, Dropdown selections all render at
+                    text-sm — and CardToggleGroup; description one tier below at `caption`. */}
+                <Text as="span" size="small" weight={isSelected(option.value) ? "medium" : "normal"} color="secondary" display="block">
                   {option.label}
                 </Text>
                 <Show when={option.description != null}>
-                  <Text as="span" size="small" color="muted" display="block">
+                  <Text as="span" size="caption" color="muted" display="block">
                     {option.description}
                   </Text>
                 </Show>

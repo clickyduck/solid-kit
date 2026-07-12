@@ -67,7 +67,7 @@ export function Tabs<TabValue extends string>(properties: TabsProperties<TabValu
                     properties.onTabSelect(tabDefinition.tabValue);
                   }}
                 >
-                  <Text as="span" size="body" weight="normal" color="inherit" display="inline" truncate={!properties.scrollable} class={properties.scrollable ? "" : "min-w-0"}>
+                  <Text as="span" size="small" weight={isSelected() ? "medium" : "normal"} color="inherit" display="inline" truncate={!properties.scrollable} class={properties.scrollable ? "" : "min-w-0"}>
                     {tabDefinition.label}
                   </Text>
                 </Button>

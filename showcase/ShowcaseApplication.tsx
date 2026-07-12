@@ -129,6 +129,7 @@ export const ShowcaseApplication = (): JSX.Element => {
   const [cardPlanSelection, setCardPlanSelection] = createSignal<string | undefined>("pro");
   const [cardFeatureSelection, setCardFeatureSelection] = createSignal<string[]>(["analytics"]);
   const [cardBillingSelection, setCardBillingSelection] = createSignal<string | undefined>("annual");
+  const [cardChannelSelection, setCardChannelSelection] = createSignal<string[]>(["email"]);
 
   const [swipeConfirmedCount, setSwipeConfirmedCount] = createSignal(0);
   const [swipeResetKey, setSwipeResetKey] = createSignal(1);
@@ -781,35 +782,48 @@ export const ShowcaseApplication = (): JSX.Element => {
                 </Field>
               </ShowcaseSection>
 
-              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-card-toggle-group" sectionTitle="Card toggle group" sectionDescription="ToggleGroup's option model, rendered as selectable cards.">
+              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-card-toggle-group" sectionTitle="Card toggle group" sectionDescription="Merged cards with a trailing radio/checkbox; each option can show an optional amount before the control.">
                 <div class="grid gap-6 lg:grid-cols-2">
-                  <Field label="Plan — single">
+                  <Field label="Plan — single, with amount">
                     <CardToggleGroup
                       name="showcase-card-toggle-plan"
                       selectionMode="single"
                       value={cardPlanSelection()}
                       onChange={setCardPlanSelection}
                       options={[
-                        { label: "Starter", value: "starter", description: "Up to 5 users and basic reports." },
-                        { label: "Pro", value: "pro", description: "Unlimited users, advanced analytics, priority support." },
-                        { label: "Enterprise", value: "enterprise", description: "Custom contracts, SSO, dedicated success manager." }
+                        { label: "Starter", value: "starter", description: "Up to 5 users and basic reports.", amount: "$9/mo" },
+                        { label: "Pro", value: "pro", description: "Unlimited users, advanced analytics, priority support.", amount: "$29/mo" },
+                        { label: "Enterprise", value: "enterprise", description: "Custom contracts, SSO, dedicated success manager.", amount: "Custom" }
                       ]}
                     />
                   </Field>
-                  <Field label="Features — multiple">
+                  <Field label="Features — multiple, with amount">
                     <CardToggleGroup
                       name="showcase-card-toggle-features"
                       selectionMode="multiple"
                       value={cardFeatureSelection()}
                       onChange={setCardFeatureSelection}
                       options={[
-                        { label: "Analytics", value: "analytics", description: "Daily traffic and conversion dashboards." },
-                        { label: "Automations", value: "automations", description: "Trigger workflows from any event." },
-                        { label: "Integrations", value: "integrations", description: "Connect Slack, Stripe, and more.", disabled: true }
+                        { label: "Analytics", value: "analytics", description: "Daily traffic and conversion dashboards.", amount: "+$5" },
+                        { label: "Automations", value: "automations", description: "Trigger workflows from any event.", amount: "+$8" },
+                        { label: "Integrations", value: "integrations", description: "Connect Slack, Stripe, and more.", amount: "+$12", disabled: true }
                       ]}
                     />
                   </Field>
                 </div>
+                <Field label="Labels only — no descriptions or amounts">
+                  <CardToggleGroup
+                    name="showcase-card-toggle-plain"
+                    selectionMode="multiple"
+                    value={cardChannelSelection()}
+                    onChange={setCardChannelSelection}
+                    options={[
+                      { label: "Email", value: "email" },
+                      { label: "SMS", value: "sms" },
+                      { label: "Push", value: "push" }
+                    ]}
+                  />
+                </Field>
                 <Field label="Disabled group">
                   <CardToggleGroup
                     name="showcase-card-toggle-disabled"
@@ -818,8 +832,8 @@ export const ShowcaseApplication = (): JSX.Element => {
                     disabled
                     onChange={() => {}}
                     options={[
-                      { label: "Starter", value: "starter", description: "Up to 5 users and basic reports." },
-                      { label: "Pro", value: "pro", description: "Unlimited users, advanced analytics, priority support." }
+                      { label: "Starter", value: "starter", description: "Up to 5 users and basic reports.", amount: "$9/mo" },
+                      { label: "Pro", value: "pro", description: "Unlimited users, advanced analytics, priority support.", amount: "$29/mo" }
                     ]}
                   />
                 </Field>
@@ -831,8 +845,8 @@ export const ShowcaseApplication = (): JSX.Element => {
                     value={cardBillingSelection()}
                     onChange={setCardBillingSelection}
                     options={[
-                      { label: "Monthly", value: "monthly", description: "Billed every month. Cancel any time." },
-                      { label: "Annual", value: "annual", description: "Billed yearly at a discount." }
+                      { label: "Monthly", value: "monthly", description: "Billed every month. Cancel any time.", amount: "$29" },
+                      { label: "Annual", value: "annual", description: "Billed yearly at a discount.", amount: "$290" }
                     ]}
                   />
                 </Field>
