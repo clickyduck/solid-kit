@@ -56,7 +56,7 @@ export const CenteredCard: ParentComponent<CenteredCardProperties> = (properties
         <Show when={properties.title !== undefined || properties.subtitle !== undefined}>
           <div class="mb-6 space-y-1.5">
             <Show when={properties.title !== undefined}>
-              <Text as="h1" size="title" display="block">
+              <Text as="h1" size="title" transform="title" display="block">
                 {properties.title}
               </Text>
             </Show>

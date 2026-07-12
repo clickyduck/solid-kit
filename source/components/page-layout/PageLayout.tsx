@@ -40,7 +40,7 @@ export const PageHeader: Component<PageHeaderProperties> = (properties) => {
           <Show when={properties.back}>
             <div class="mb-2">{properties.back}</div>
           </Show>
-          <Text as="h2" size="title" weight="semibold" color="default" display="block" class="min-w-0 text-2xl wrap-break-word whitespace-normal md:text-3xl">
+          <Text as="h2" size="title" weight="semibold" transform="title" color="default" display="block" class="min-w-0 text-2xl wrap-break-word whitespace-normal md:text-3xl">
             {properties.title}
           </Text>
           <Show when={properties.caption}>
@@ -74,7 +74,7 @@ export const PageSection: ParentComponent<PageSectionProperties> = (properties) 
         <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
           <div class="min-w-0 flex-1">
             <Show when={properties.title}>
-              <Text as="h3" size="body" weight="semibold" color="default" display="block">
+              <Text as="h3" size="body" weight="semibold" transform="title" color="default" display="block">
                 {properties.title}
               </Text>
             </Show>

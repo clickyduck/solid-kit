@@ -2,7 +2,7 @@ export type TextColor = "default" | "inherit" | "muted" | "primary" | "secondary
 export type TextWeight = "thin" | "normal" | "medium" | "semibold" | "bold";
 export type TextSize = "display" | "title" | "heading" | "body" | "small" | "caption";
 export type TextAlign = "start" | "center" | "end";
-export type TextTransform = "none" | "uppercase" | "capitalize";
+export type TextTransform = "none" | "uppercase" | "capitalize" | "title";
 export type TextDisplay = "flex" | "block" | "inline";
 
 // Neutral text emphasis ladder, tuned for high readability in both themes while keeping visible steps between
@@ -57,7 +57,11 @@ export const ALIGN_CLASSES: Record<TextAlign, string> = {
 export const TRANSFORM_CLASSES: Record<TextTransform, string> = {
   none: "",
   uppercase: "uppercase tracking-wide",
-  capitalize: "capitalize"
+  capitalize: "capitalize",
+  // `title` is cased in JS (see `toTitleCase`), not CSS: strict title case has to lowercase minor words
+  // ("and", "of", "to"), which `text-transform` cannot do — it only ever uppercases the first letter of
+  // every word. No class is emitted; the string children are rewritten before render instead.
+  title: ""
 };
 
 export const DISPLAY_CLASSES: Record<TextDisplay, string> = {
@@ -75,6 +79,88 @@ export const TYPOGRAPHY_ICON_CLASSES = "align-middle opacity-90 [&_svg]:fill-cur
 export const truncateTextChildren = <T,>(children: T, maxLength: number | undefined): T => {
   if (maxLength !== undefined && typeof children === "string" && children.length > maxLength) {
     return (children.slice(0, maxLength) + "…") as unknown as T;
+  }
+  return children;
+};
+
+// Minor words kept lowercase in the middle of a title: articles, coordinating conjunctions, and short
+// prepositions (≤4 letters). First and last words are always capitalized regardless of this set.
+const TITLE_CASE_MINOR_WORDS = new Set([
+  "a",
+  "an",
+  "and",
+  "as",
+  "at",
+  "but",
+  "by",
+  "for",
+  "from",
+  "if",
+  "in",
+  "into",
+  "nor",
+  "of",
+  "off",
+  "on",
+  "onto",
+  "or",
+  "over",
+  "per",
+  "the",
+  "to",
+  "up",
+  "via",
+  "vs",
+  "with",
+  "yet"
+]);
+
+// A word already carrying its own casing — a PascalCase/camelCase name (`BackgroundCard`, `DropdownItem`),
+// an all-caps acronym (`SMS`, `PDF`), or a mixed token (`AM/PM`) — is left verbatim: it has an intended
+// shape that generic title-casing would destroy. Detected as "has an uppercase letter anywhere past the
+// first character," which no plain lowercase word ever does.
+const hasIntrinsicCasing = (word: string): boolean => /[A-Z]/.test(word.slice(1));
+
+// Title-case a single whitespace-delimited word. Hyphen/slash-joined compounds ("3–5", "AM/PM",
+// "auto-grow") are cased part-by-part so each segment follows the same rules. `forceCapital` capitalizes
+// the segment even when it is a minor word (used for the first and last word of the whole title).
+const titleCaseWord = (word: string, forceCapital: boolean): string => {
+  if (word === "") {
+    return word;
+  }
+  // Split on hyphens and slashes but keep the separators, so "AM/PM" and "3-5" recombine unchanged.
+  const parts = word.split(/([-/])/);
+  if (parts.length > 1) {
+    return parts.map((part, index) => (index % 2 === 1 ? part : titleCaseWord(part, forceCapital || index === 0))).join("");
+  }
+  if (hasIntrinsicCasing(word)) {
+    return word;
+  }
+  const lower = word.toLowerCase();
+  if (!forceCapital && TITLE_CASE_MINOR_WORDS.has(lower)) {
+    return lower;
+  }
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+};
+
+/**
+ * Strict title case: capitalize the first and last word and every major word; keep minor words
+ * ("and", "of", "to", …) lowercase in between. Words that already carry their own casing (component
+ * names like `BackgroundCard`, acronyms like `SMS`) are preserved verbatim.
+ */
+export const toTitleCase = (value: string): string => {
+  const words = value.split(/(\s+)/);
+  // Indices of the actual words (not the whitespace runs), so the first and last can be force-capitalized.
+  const wordIndices = words.map((segment, index) => (/\S/.test(segment) ? index : -1)).filter((index) => index !== -1);
+  const firstWordIndex = wordIndices[0];
+  const lastWordIndex = wordIndices[wordIndices.length - 1];
+  return words.map((segment, index) => (/\S/.test(segment) ? titleCaseWord(segment, index === firstWordIndex || index === lastWordIndex) : segment)).join("");
+};
+
+/** Applies strict title case to string children; non-string children pass through unchanged. */
+export const titleCaseTextChildren = <T,>(children: T): T => {
+  if (typeof children === "string") {
+    return toTitleCase(children) as unknown as T;
   }
   return children;
 };

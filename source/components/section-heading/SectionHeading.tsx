@@ -10,7 +10,7 @@ type SectionHeadingProperties = ComponentProps<"h3">;
 export const SectionHeading: ParentComponent<SectionHeadingProperties> = (properties) => {
   const [local, rest] = splitProps(properties, ["class", "children"]);
   return (
-    <Text as="h3" size="body" weight="semibold" transform="uppercase" color="muted" display="block" class={local.class} {...rest}>
+    <Text as="h3" size="body" weight="semibold" transform="title" color="muted" display="block" class={local.class} {...rest}>
       {local.children}
     </Text>
   );

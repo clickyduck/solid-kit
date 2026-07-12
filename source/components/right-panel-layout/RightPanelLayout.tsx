@@ -172,7 +172,7 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
         <header class="shrink-0 border-b border-gray-200 dark:border-gray-700/80">
           <div class="flex items-center justify-between gap-3 px-4 py-3">
             <div class="min-w-0">
-              <Text as="div" size="heading" weight="semibold" color="default" display="block" truncate class="min-w-0">
+              <Text as="div" size="heading" weight="semibold" transform="title" color="default" display="block" truncate class="min-w-0">
                 {properties.title}
               </Text>
               <Show when={properties.subtitle}>

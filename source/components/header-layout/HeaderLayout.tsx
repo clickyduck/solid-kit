@@ -37,7 +37,7 @@ export const HeaderLayout: ParentComponent<HeaderLayoutProperties> = (properties
             when={properties.titleElement}
             fallback={
               <Show when={properties.title}>
-                <Text as="h2" size="title" weight="semibold" color="default" display="block" truncate={properties.truncateTitle}>
+                <Text as="h2" size="title" weight="semibold" transform="title" color="default" display="block" truncate={properties.truncateTitle}>
                   {properties.title}
                 </Text>
               </Show>

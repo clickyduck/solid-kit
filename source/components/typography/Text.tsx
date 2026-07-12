@@ -20,6 +20,7 @@ import {
   type TextTransform,
   type TextWeight,
   WEIGHT_CLASSES,
+  titleCaseTextChildren,
   truncateTextChildren
 } from "./_typography";
 
@@ -59,7 +60,12 @@ export const Text = (properties: TextProperties): JSX.Element => {
   const display = (): TextDisplay => local.display ?? "flex";
   const iconPosition = (): IconPosition => local.iconPosition ?? "start";
 
-  const text = () => truncateTextChildren(local.children, local.maxLength);
+  // `transform="title"` rewrites string children into strict title case (see `toTitleCase`); CSS can only
+  // ever uppercase every word's first letter, so this casing has to happen on the string itself.
+  const text = () => {
+    const truncated = truncateTextChildren(local.children, local.maxLength);
+    return local.transform === "title" ? titleCaseTextChildren(truncated) : truncated;
+  };
 
   const truncationClass = () => {
     if (local.lineClamp !== undefined) {

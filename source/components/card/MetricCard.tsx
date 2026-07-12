@@ -1,12 +1,45 @@
+import { Badge } from "@/components/badge";
 import { BackgroundCard } from "@/components/card/BackgroundCard";
 import { RenderIcon } from "@/components/icons";
 import { Link } from "@/components/link";
 import { Text } from "@/components/typography";
-import { mergeClasses } from "@/utilities";
+import { type Color, mergeClasses } from "@/utilities";
 import type { JSX } from "solid-js";
 import { Show } from "solid-js";
 
 type AccentColor = "emerald" | "blue" | "amber" | "violet" | "red";
+
+// The direction a trend chip points, driving its colour and arrow. `up` reads as good (rising),
+// `down` as bad (falling), `flat` as no meaningful change; `neutral` is for an informational trend
+// that is neither good nor bad (e.g. a "New" marker where there is no prior value to compare against).
+// The card never decides whether a rise is good — the consumer picks the direction, so a metric where
+// "down is good" can pass `direction: "up"` for a fall. Colour is always paired with the arrow icon
+// and the text label, so meaning never rests on colour alone.
+type MetricTrendDirection = "up" | "down" | "flat" | "neutral";
+
+// An optional period-over-period (or any comparative) trend shown beside the value. `label` is the
+// already-formatted change (e.g. "+20%", "New", "0%") — the card does no numeric formatting, so the
+// consumer keeps control of precision, sign glyph, and units. `sublabel` is optional supporting
+// context shown under the value (e.g. "vs prior 30 days").
+type MetricCardTrend = {
+  direction: MetricTrendDirection;
+  label: string;
+  sublabel?: string;
+};
+
+const TREND_COLOR: Record<MetricTrendDirection, Color> = {
+  up: "success",
+  down: "danger",
+  flat: "neutral",
+  neutral: "neutral"
+};
+
+const TREND_ICON: Record<MetricTrendDirection, string> = {
+  up: "trending_up",
+  down: "trending_down",
+  flat: "trending_flat",
+  neutral: "trending_up"
+};
 
 // Accent link text carries an explicit dark variant (`dark:text-*-300`) so it stays high-contrast on the card's
 // near-black dark surface — matching the semantic reading-text tier in COLOR_CLASSES (light -700 / dark -300).
@@ -51,6 +84,14 @@ type MetricCardProperties = {
   icon: string | JSX.Element;
   loading?: boolean;
   value: string;
+  /**
+   * Optional period-over-period (or any comparative) trend. When present, a coloured ▲/▼ chip is shown
+   * beside the value and, if given, a sublabel beneath it. Omit it entirely to show no chip — the card
+   * does not fabricate a "0%" for you, so an unchanged metric can either pass `direction: "flat"` to say
+   * so explicitly or leave the trend off to stay quiet. The consumer supplies the direction (so a
+   * metric where a fall is good can point the chip up) and the already-formatted label.
+   */
+  trend?: MetricCardTrend;
   linkHref?: string;
   linkLabel?: string;
   /** Tag used for the optional link. "A" (default) is @solidjs/router's <A>; "a" is a plain anchor for non-router contexts. */
@@ -78,7 +119,7 @@ export const MetricCard = (properties: MetricCardProperties) => {
     <BackgroundCard class={mergeClasses("overflow-hidden", properties.class)}>
       <div class={mergeClasses("-ml-3 border-l-4 pl-3 sm:-ml-4 sm:pl-4 md:-ml-5 md:pl-5 lg:-ml-6 lg:pl-6", accent().card)}>
         <div class="flex flex-row items-center justify-between">
-          <Text as="h3" size="small" weight="semibold" transform="uppercase" color="muted">
+          <Text as="h3" size="small" weight="semibold" transform="title" color="muted">
             {properties.title}
           </Text>
           <span class={mergeClasses("flex h-9 w-9 items-center justify-center rounded-lg", accent().iconBox, accent().iconColor)}>
@@ -100,9 +141,27 @@ export const MetricCard = (properties: MetricCardProperties) => {
               </div>
             }
           >
-            <Text as="div" size="title" display="block" color="default">
-              {properties.value}
-            </Text>
+            {/* Value and trend chip share a baseline row; the chip wraps beneath on a narrow card
+                rather than crushing the value. The sublabel sits under both as quiet context. */}
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <Text as="div" size="title" display="block" color="default">
+                {properties.value}
+              </Text>
+              <Show when={properties.trend}>
+                {(trend) => (
+                  <Badge variant="outline" color={TREND_COLOR[trend().direction]} icon={TREND_ICON[trend().direction]}>
+                    {trend().label}
+                  </Badge>
+                )}
+              </Show>
+            </div>
+            <Show when={properties.trend?.sublabel}>
+              {(sublabel) => (
+                <Text as="div" size="caption" display="block" color="muted" class="pt-1">
+                  {sublabel()}
+                </Text>
+              )}
+            </Show>
           </Show>
         </div>
         <Show when={properties.linkHref !== undefined && properties.linkLabel !== undefined}>
@@ -115,4 +174,4 @@ export const MetricCard = (properties: MetricCardProperties) => {
   );
 };
 
-export type { MetricCardProperties };
+export type { MetricCardProperties, MetricCardTrend, MetricTrendDirection };
