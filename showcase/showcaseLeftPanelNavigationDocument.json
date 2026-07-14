@@ -16,6 +16,11 @@
           "icon": "check_circle"
         },
         {
+          "href": "#showcase-heading-swipe-button",
+          "label": "Swipe button",
+          "icon": "swipe_right"
+        },
+        {
           "href": "#showcase-heading-icons",
           "label": "Icons",
           "icon": "interests"

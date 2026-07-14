@@ -4,11 +4,17 @@ import { FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
 import type { ComponentProps, JSX } from "solid-js";
 import { createMemo, createSignal, onCleanup, splitProps } from "solid-js";
 
+// The same solid / outline looks as Button, so a swipe control drops in beside one: `solid` is the
+// filled primary track, `outline` a bordered track on a plain surface.
+type SwipeButtonVariant = "solid" | "outline";
+
 type SwipeButtonProperties = Omit<ComponentProps<"div">, "class" | "onPointerDown" | "onPointerMove" | "onPointerUp"> & {
   /** Track label, e.g. "Swipe to pay". */
   children: JSX.Element;
   /** Called once when the thumb is dragged (or keyed) past the confirmation threshold. */
   onConfirm: () => void;
+  /** Visual style, matching Button: `solid` (default) or `outline`. */
+  variant?: SwipeButtonVariant;
   class?: string;
   /** Label shown once confirmed. Defaults to the resting `children`. */
   confirmLabel?: JSX.Element;
@@ -16,6 +22,31 @@ type SwipeButtonProperties = Omit<ComponentProps<"div">, "class" | "onPointerDow
   disabled?: boolean;
   /** Fraction of the track (0–1) the thumb must pass to confirm. */
   threshold?: number;
+};
+
+// Track surface per variant, translated 1:1 from Button.getVariantClasses onto the full-bleed track.
+// `solid` is the blue fill with white label text; `outline` is the bordered look on a plain surface,
+// whose label sets its own neutral colour via <Text>, so the track only owns border + background.
+const getTrackVariantClasses = (variant: SwipeButtonVariant = "solid"): string => {
+  return variant === "solid" ? "border-2 border-transparent bg-blue-600 text-white" : "border border-solid border-gray-300 bg-white dark:border-gray-700 dark:bg-gray-800";
+};
+
+// The label colour follows the variant the same way Button's does: white on solid, secondary neutral
+// (gray-800 / dark:gray-100) on outline.
+const getTrackTextColor = (variant: SwipeButtonVariant = "solid"): "inherit" | "secondary" => (variant === "solid" ? "inherit" : "secondary");
+
+// The thumb stays a filled disc so it reads as the grabbable affordance in either variant: a white
+// disc with a blue glyph on the solid (coloured) track, and a blue disc with a white glyph on the
+// outline (plain) track. The focus ring flips with it so it stays legible against whichever surface
+// the thumb sits on — white ring over the blue track, blue ring over the plain one.
+const getThumbVariantClasses = (variant: SwipeButtonVariant = "solid"): string => {
+  return variant === "solid" ? "bg-white text-blue-600 focus-visible:ring-white/70" : "bg-blue-600 text-white focus-visible:ring-blue-500/70";
+};
+
+// Progress trail behind the thumb: a white wash reads over the solid blue track, a blue wash over the
+// plain outline track.
+const getTrailClass = (variant: SwipeButtonVariant = "solid"): string => {
+  return variant === "solid" ? "bg-white/20" : "bg-blue-500/15";
 };
 
 // Thumb + 2 × track padding = 40px, so the control sits on the same h-10 grid as buttons and inputs.
@@ -29,11 +60,12 @@ const THUMB_CONFIRMED_ICON = "check";
 
 /**
  * Swipe-to-confirm control: the user drags (or keys) the thumb across the track
- * to commit a deliberate action. Primary look only; pass `class` to size it
- * (e.g. `w-full`) or reshape it (e.g. `rounded-none`).
+ * to commit a deliberate action. Takes the same `variant` looks as Button
+ * (`solid` / `outline`); pass `class` to size it (e.g. `w-full`) or reshape it
+ * (e.g. `rounded-none`).
  */
 export const SwipeButton = (properties: SwipeButtonProperties) => {
-  const [local, rest] = splitProps(properties, ["children", "onConfirm", "class", "confirmLabel", "disabled", "threshold"]);
+  const [local, rest] = splitProps(properties, ["children", "onConfirm", "variant", "class", "confirmLabel", "disabled", "threshold"]);
 
   let trackElement: HTMLDivElement | undefined;
   const [offsetPx, setOffsetPx] = createSignal(0);
@@ -163,19 +195,19 @@ export const SwipeButton = (properties: SwipeButtonProperties) => {
       ref={(element) => {
         trackElement = element;
       }}
-      class={mergeClasses("relative flex h-10 w-64 items-center overflow-hidden rounded-full bg-blue-600 text-white select-none", local.disabled ? "cursor-not-allowed opacity-50" : "cursor-grab", local.class)}
+      class={mergeClasses("relative flex h-10 w-64 items-center overflow-hidden rounded-full select-none", getTrackVariantClasses(local.variant), local.disabled ? "cursor-not-allowed opacity-50" : "cursor-grab", local.class)}
       style={{ padding: `${TRACK_PADDING_PX}px` }}
       aria-hidden={local.disabled ? "true" : undefined}
       {...rest}
     >
       {/* Filled progress trail behind the thumb. */}
-      <div class={mergeClasses("pointer-events-none absolute inset-y-1 left-1 rounded-full bg-white/20", motionClass())} style={{ width: `${offsetPx() + THUMB_SIZE_PX}px` }} aria-hidden="true" />
+      <div class={mergeClasses("pointer-events-none absolute inset-y-1 left-1 rounded-full", getTrailClass(local.variant), motionClass())} style={{ width: `${offsetPx() + THUMB_SIZE_PX}px` }} aria-hidden="true" />
 
       {/* Centred label; fades as the thumb advances. Horizontal padding only needs to clear the thumb
           (32px + 4px track padding) on the left, so pad tighter on narrow tracks — px-12 both sides
           clipped medium-length labels ("Swipe to request bill") on a phone-width control. */}
       <span class="pointer-events-none absolute inset-0 flex items-center justify-center px-9 text-center" style={{ opacity: `${Math.max(0, 1 - progressFraction() * 1.4)}` }} aria-hidden={isConfirmed() ? "true" : undefined}>
-        <Text as="span" size="small" weight="medium" color="inherit" display="inline" truncate>
+        <Text as="span" size="small" weight="medium" color={getTrackTextColor(local.variant)} display="inline" truncate>
           {isConfirmed() ? (local.confirmLabel ?? local.children) : local.children}
         </Text>
       </span>
@@ -191,7 +223,8 @@ export const SwipeButton = (properties: SwipeButtonProperties) => {
         tabIndex={local.disabled ? -1 : 0}
         disabled={local.disabled}
         class={mergeClasses(
-          "relative z-10 flex aspect-square h-8 touch-none items-center justify-center rounded-full bg-white text-blue-600 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 disabled:cursor-not-allowed",
+          "relative z-10 flex aspect-square h-8 touch-none items-center justify-center rounded-full shadow-sm focus:outline-none focus-visible:ring-2 disabled:cursor-not-allowed",
+          getThumbVariantClasses(local.variant),
           local.disabled ? "" : "cursor-grab active:cursor-grabbing",
           motionClass()
         )}

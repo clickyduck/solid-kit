@@ -257,12 +257,15 @@ export const ShowcaseApplication = (): JSX.Element => {
               <ShowcaseSection
                 sectionHeadingIdentifier="showcase-heading-swipe-button"
                 sectionTitle="Swipe button"
-                sectionDescription="Swipe-to-confirm for deliberate actions. Drag the thumb (or focus it and press → / End / Enter). Primary look only; size and shape it with class."
+                sectionDescription="Swipe-to-confirm for deliberate actions. Drag the thumb (or focus it and press → / End / Enter). Takes the same solid / outline variants as Button; size and shape it with class."
               >
                 <div class="space-y-6">
-                  <div class="max-w-sm">
+                  <div class="grid max-w-sm gap-3">
                     <SwipeButton class="w-full" onConfirm={() => setSwipeConfirmedCount((count) => count + 1)}>
-                      Swipe to pay
+                      Swipe to pay (solid)
+                    </SwipeButton>
+                    <SwipeButton class="w-full" variant="outline" onConfirm={() => setSwipeConfirmedCount((count) => count + 1)}>
+                      Swipe to pay (outline)
                     </SwipeButton>
                   </div>
                   <div class="flex flex-wrap items-center gap-3">

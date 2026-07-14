@@ -9,7 +9,7 @@ export type BadgeVariant = "solid" | "outline";
 export type { Color };
 
 const BADGE_REMOVE_BUTTON_BASE_CLASS =
-  "-mr-1 -ml-0.5 inline-flex shrink-0 cursor-pointer items-center justify-center self-center rounded-full p-0.5 transition-[color,background-color,border-color,opacity] duration-100 ease-out focus-visible:outline-2 focus-visible:outline-current active:opacity-75";
+  "-mr-0.5 -ml-0.5 inline-flex shrink-0 cursor-pointer items-center justify-center self-center rounded-full p-0.5 transition-[color,background-color,border-color,opacity] duration-100 ease-out focus-visible:outline-2 focus-visible:outline-current active:opacity-75";
 
 const BADGE_CONTAINER_CLASSES_BY_VARIANT_AND_COLOR: Record<BadgeVariant, Record<Color, string>> = {
   solid: {
@@ -59,10 +59,10 @@ export const Badge = (properties: BadgeProperties): JSX.Element => {
   const color = (): Color => properties.color ?? "neutral";
 
   return (
-    <span class={mergeClasses("inline-flex items-stretch gap-1.5 rounded-full px-3 py-1.5 text-xs", BADGE_CONTAINER_CLASSES_BY_VARIANT_AND_COLOR[variant()][color()], properties.class)}>
-      <span class="inline-flex min-w-0 items-center gap-1.5 self-center">
+    <span class={mergeClasses("inline-flex items-stretch gap-1 rounded-full px-2.5 py-0.5 text-xs", BADGE_CONTAINER_CLASSES_BY_VARIANT_AND_COLOR[variant()][color()], properties.class)}>
+      <span class="inline-flex min-w-0 items-center gap-1 self-center">
         <Show when={properties.icon != null}>
-          <RenderIcon icon={properties.icon!} size={14} class={BADGE_ICON_CLASSES} />
+          <RenderIcon icon={properties.icon!} size={12} class={BADGE_ICON_CLASSES} />
         </Show>
         <Text as="span" size="caption" weight="normal" color="inherit" display="inline" class="min-w-0">
           {properties.children}
@@ -77,7 +77,7 @@ export const Badge = (properties: BadgeProperties): JSX.Element => {
             properties.onRemove?.();
           }}
         >
-          <Icon name="cancel" size={14} aria-hidden="true" />
+          <Icon name="cancel" size={12} aria-hidden="true" />
         </button>
       </Show>
     </span>

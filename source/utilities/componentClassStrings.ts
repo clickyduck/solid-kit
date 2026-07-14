@@ -92,7 +92,7 @@ export const CONTENT_CARD_SURFACE_CLASSES = "border border-gray-200 bg-white tex
 export const DROPDOWN_MENU_SURFACE_CLASSES = "overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg/10 dark:border-gray-700 dark:bg-gray-800 dark:shadow-black/30";
 
 // Badge leading icon: sized to `text-xs` row; `align-middle` keeps inline alignment with adjacent text.
-export const BADGE_ICON_CLASSES = "size-3.5 shrink-0 align-middle pointer-events-none text-current";
+export const BADGE_ICON_CLASSES = "size-3 shrink-0 align-middle pointer-events-none text-current";
 
 // Table
 // Rows share one height (h-10, 40px — matching inputs/buttons/dropdown triggers). On a table cell `height`
