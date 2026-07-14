@@ -171,7 +171,13 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
             const renderNavigationItemLink = (item: LeftPanelLayoutNavigationItemJson): JSX.Element => {
               const usePlainAnchor = (properties.anchorTag ?? "A") === "a";
               const isHashLink = item.href.startsWith("#");
-              const baseLinkClass = mergeClasses(NAVIGATION_LINK_ROW_CLASS, properties.collapsed ? NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS : NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS);
+              // A function, not a plain string: <For> renders each item's element once and only re-runs
+              // this callback when the *item* changes, so a `collapsed`-derived const captured here would
+              // freeze at mount time. When the panel is first expanded from a persisted-collapsed load,
+              // the row would keep the icon-only layout (fixed width, centred) while the label <Show>
+              // below reactively reveals its text — crushing it to a truncated "H…". Passing a getter to
+              // `class` keeps the layout class tracking `collapsed`.
+              const baseLinkClass = (): string => mergeClasses(NAVIGATION_LINK_ROW_CLASS, properties.collapsed ? NAVIGATION_LINK_COLLAPSED_LAYOUT_CLASS : NAVIGATION_LINK_EXPANDED_LAYOUT_CLASS);
               const linkChildren = (
                 <>
                   <Icon name={item.icon} size={18} class={NAVIGATION_LINK_ICON_CLASS} aria-hidden="true" />
@@ -193,7 +199,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
                   <A
                     href={item.href}
                     end={item.matchRouteExactly === true}
-                    class={baseLinkClass}
+                    class={baseLinkClass()}
                     activeClass={NAVIGATION_LINK_ACTIVE_CLASS}
                     inactiveClass={NAVIGATION_LINK_INACTIVE_CLASS}
                     aria-label={item.label}
@@ -210,7 +216,7 @@ const LeftPanelNavigationBody: Component<LeftPanelNavigationBodyProperties> = (p
               // so they keep the window-location signal + manual class. Hash links also intercept the
               // click to smooth-scroll to the in-page target.
               const isActive = (): boolean => computeIsNavigationItemActive(item, pathname(), hash());
-              const linkClass = (): string => mergeClasses(baseLinkClass, isActive() ? NAVIGATION_LINK_ACTIVE_CLASS : NAVIGATION_LINK_INACTIVE_CLASS);
+              const linkClass = (): string => mergeClasses(baseLinkClass(), isActive() ? NAVIGATION_LINK_ACTIVE_CLASS : NAVIGATION_LINK_INACTIVE_CLASS);
               const handleClick = (event: MouseEvent): void => {
                 if (typeof window === "undefined") return;
                 if (isHashLink) {
