@@ -37,8 +37,9 @@ const matchesReducedMotion = (): boolean => {
 /**
  * Dialog root using native <dialog> element. Controls open state and provides context for sub-components.
  *
- * Opening animates the panel up from the bottom (mobile sheet) with a backdrop fade; every dismissal animates
- * the panel back down before the native dialog actually closes. Both respect `prefers-reduced-motion`.
+ * Mobile is a bottom sheet: opening slides the panel up from the viewport edge and every dismissal slides it back
+ * down before the native dialog closes. Desktop is a centered dialog that plainly fades in and out. The backdrop
+ * (both) fades its opacity and blur together. All of it respects `prefers-reduced-motion`.
  */
 export const Dialog = (properties: DialogRootProperties) => {
   const closeable = (): boolean => {
@@ -195,10 +196,13 @@ export const Dialog = (properties: DialogRootProperties) => {
         // No z-index by design: showModal() promotes the dialog to the browser's top layer, which paints above all
         // z-indexed content regardless of value. A z-index here would do nothing. The backdrop is the modal's own
         // scrim. This is why a dropdown/date-picker opened *outside* a dialog can never cover it — expected.
-        // The backdrop fades in via the `starting:` from-state and fades out while the `closing` state is set.
+        // The backdrop fades its opacity AND its blur together — in via the `starting:` from-state, out while the
+        // `closing` state is set — so the page softens into focus on open and sharpens back on close instead of the
+        // blur popping on/off. Both the `starting:` and `closing` states hold the blur at 0 so the transition has
+        // real endpoints in both directions.
         class={mergeClasses(
-          "m-0 h-dvh max-h-dvh w-full max-w-full border-0 bg-transparent p-0 backdrop:bg-black/30 backdrop:opacity-100 backdrop:backdrop-blur-xl backdrop:transition-opacity backdrop:duration-200 backdrop:ease-out open:flex open:items-end open:justify-center motion-reduce:backdrop:transition-none sm:m-auto sm:h-auto sm:max-h-none sm:max-w-2xl sm:p-4 sm:open:items-center dark:backdrop:bg-gray-900/50 starting:open:backdrop:opacity-0",
-          isClosing() && "backdrop:opacity-0"
+          "m-0 h-dvh max-h-dvh w-full max-w-full border-0 bg-transparent p-0 backdrop:bg-black/30 backdrop:opacity-100 backdrop:backdrop-blur-xl backdrop:transition-[opacity,backdrop-filter] backdrop:duration-200 backdrop:ease-out open:flex open:items-end open:justify-center motion-reduce:backdrop:transition-none sm:m-auto sm:h-auto sm:max-h-none sm:max-w-2xl sm:p-4 sm:open:items-center dark:backdrop:bg-gray-900/50 starting:open:backdrop:opacity-0 starting:open:backdrop:backdrop-blur-none",
+          isClosing() && "backdrop:opacity-0 backdrop:backdrop-blur-none"
         )}
       >
         {properties.children}
@@ -308,13 +312,21 @@ export const DialogContent = (properties: DialogContentPropertiesType) => {
   const animatedTransition = `transform ${DIALOG_ANIMATION_DURATION_MILLISECONDS}ms ease-out`;
 
   // Apply a translateY to the panel directly. Inline style is the single source of transform truth on mobile;
-  // on desktop the transform is never set, so the desktop fade classes apply unobstructed.
+  // on desktop the transform is cleared (empty value) so the desktop fade classes apply unobstructed. Clearing sets
+  // the inline transition to "" — NOT "none" — because an inline `transition: none` would override the desktop
+  // `sm:transition-opacity` class and freeze the fade. Every mobile caller passes a concrete offset; only the
+  // desktop/reduced-motion branch passes "".
   const setPanelTransform = (value: string, animate: boolean): void => {
     if (!panelElement) {
       return;
     }
+    if (value === "") {
+      panelElement.style.transition = "";
+      panelElement.style.transform = "";
+      return;
+    }
     panelElement.style.transition = animate ? animatedTransition : "none";
-    panelElement.style.transform = value === "" ? "" : `translateY(${value})`;
+    panelElement.style.transform = `translateY(${value})`;
   };
 
   // The panel's current downward offset in pixels, read from its live transform matrix (m42 is translateY).
@@ -528,13 +540,16 @@ export const DialogContent = (properties: DialogContentPropertiesType) => {
             panelElement = element;
           }}
           // Mobile: bottom sheet — content height capped at 85dvh with a rounded top, slid down imperatively
-          // while dragging/settling. Desktop: centered modal card that fades/rises in. The drag handlers live on
-          // DialogHeader (the drag handle); the body hands its downward swipe off once scrolled to the top.
+          // while dragging/settling. Desktop: centered modal card that plainly fades in and out. The drag handlers
+          // live on DialogHeader (the drag handle); the body hands its downward swipe off once scrolled to the top.
           class={mergeClasses(
-            "relative flex max-h-[85dvh] flex-col rounded-t-2xl border-t border-gray-200 bg-white shadow-lg sm:rounded-lg sm:border sm:border-gray-200 sm:shadow-lg sm:transition-none md:max-h-[calc(100dvh-4rem)] dark:border-gray-700 dark:bg-gray-900 dark:sm:border-gray-700 dark:sm:shadow-sm [&>form]:flex [&>form]:min-h-0 [&>form]:flex-1 [&>form]:flex-col",
+            "relative flex max-h-[85dvh] flex-col rounded-t-2xl border-t border-gray-200 bg-white shadow-lg sm:rounded-lg sm:border sm:border-gray-200 sm:shadow-lg md:max-h-[calc(100dvh-4rem)] dark:border-gray-700 dark:bg-gray-900 dark:sm:border-gray-700 dark:sm:shadow-sm [&>form]:flex [&>form]:min-h-0 [&>form]:flex-1 [&>form]:flex-col",
             "sm:max-h-[calc(100dvh-0.75rem)]",
-            // Desktop-only entrance fade/rise, keyed off the root's open state.
-            !(context?.hasEntered() ?? true) || (context?.isClosing() ?? false) ? "sm:translate-y-1 sm:opacity-0" : "sm:translate-y-0 sm:opacity-100",
+            // Desktop-only entrance/exit: a plain opacity fade (no slide, no scale), keyed off the root's open state
+            // and matched to the backdrop's `duration-200` / `ease-out`. Mobile drives its transform imperatively, so
+            // this `sm:` opacity transition never applies below the breakpoint. Reduced motion drops the transition.
+            "sm:transition-opacity sm:duration-200 sm:ease-out motion-reduce:sm:transition-none",
+            !(context?.hasEntered() ?? true) || (context?.isClosing() ?? false) ? "sm:opacity-0" : "sm:opacity-100",
             local.class
           )}
           {...rest}

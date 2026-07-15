@@ -167,7 +167,13 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
           top: resolvedTopOffset(),
           "max-height": `calc(100dvh - ${resolvedTopOffset()})`
         }}
-        aria-hidden={isPanelVisible() ? undefined : true}
+        // `inert` (not `aria-hidden`) while closed: the panel stays mounted for the 200ms close
+        // animation, and it may still be `opacity-0`/`translate-x-full` but focusable. If the user
+        // closed it via the header close button (or a header action), that button keeps DOM focus —
+        // `aria-hidden` on this ancestor would then hide a *focused* element from AT, which the
+        // browser warns about. `inert` hides the subtree from AT AND pulls focus out of it, so the
+        // retained-focus case can't happen. Matches LeftPanelLayout's collapsed-group treatment.
+        inert={isPanelVisible() ? undefined : true}
       >
         <header class="shrink-0 border-b border-gray-200 dark:border-gray-700/80">
           <div class="flex items-center justify-between gap-3 px-4 py-3">
