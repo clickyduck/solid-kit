@@ -79,6 +79,19 @@ export const SURFACE_RADIUS_COMPACT = "rounded-xl";
 export const LAYOUT_CHROME_BAR_SURFACE_CLASSES = "border-gray-200 bg-white/90 px-3 py-3 backdrop-blur-md dark:border-gray-700/80 dark:bg-gray-950/90";
 
 /**
+ * The page column's horizontal gutter (see `PageLayout`) and its exact inverse (see `Bleed`).
+ *
+ * `PageLayout` insets its content by `LAYOUT_PAGE_INLINE_PADDING` on both sides; `Bleed` negates the
+ * SAME amount so a descendant can reach the screen edges without the consumer hardcoding the value.
+ * These three MUST stay in lockstep — the padding is `1rem` below `md` and `1.5rem` from `md` up, so
+ * the full bleed is `-mx-4 md:-mx-6` and the mobile-only bleed (leaving the desktop gutter intact) is
+ * `max-md:-mx-4`. Change the padding, change both bleeds.
+ */
+export const LAYOUT_PAGE_INLINE_PADDING = "px-4 md:px-6";
+export const LAYOUT_PAGE_INLINE_BLEED = "-mx-4 md:-mx-6";
+export const LAYOUT_PAGE_INLINE_BLEED_MOBILE = "max-md:-mx-4";
+
+/**
  * Content-card surface: border, background, and body text color for cards that sit in the page
  * flow (BackgroundCard, DataCard, Table, CardToggleGroup, Upload file rows). Dark cards border at
  * the softer `gray-800` and fill with `gray-800/40` so they recede into the page — distinct from

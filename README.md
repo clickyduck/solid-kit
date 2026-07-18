@@ -1061,7 +1061,7 @@ import { MetricCard } from "@clickyduck/solid-kit";
 
 Main application page column content wrapper.
 
-**Exports:** `PageLayout`, `PageHeader`, `PageSection`
+**Exports:** `PageLayout`, `Bleed`, `PageHeader`, `PageSection`
 
 **`PageLayout` props:**
 
@@ -1069,6 +1069,8 @@ Main application page column content wrapper.
 | ---------- | ------------- | ----------------- |
 | `children` | `JSX.Element` | Page content      |
 | `class`    | `string`      | Extra CSS classes |
+
+`PageLayout` insets its content with a horizontal gutter (`1rem` on phone, `1.5rem` from `md` up). Use `Bleed` to pull a block back out to the screen edges.
 
 **`PageHeader` props:**
 
@@ -1089,6 +1091,29 @@ Main application page column content wrapper.
 | `sidebuttons` | `JSX.Element` | Actions rendered on the right side |
 | `children`    | `JSX.Element` | Section content                    |
 | `class`       | `string`      | Extra CSS classes                  |
+
+**`Bleed` props:**
+
+| Prop         | Type          | Default | Description                                                                                                        |
+| ------------ | ------------- | ------- | ------------------------------------------------------------------------------------------------------------------ |
+| `mobileOnly` | `boolean`     | `false` | Bleed only below the `md` breakpoint — edge-to-edge on phone, normal gutters on desktop (matches `flush="mobile"`) |
+| `children`   | `JSX.Element` | —       | Content pulled out to the screen edges                                                                             |
+| `class`      | `string`      | —       | Extra CSS classes (e.g. the list's own `flex`/`grid` + `max-md:gap-0`)                                             |
+
+`Bleed` negates exactly `PageLayout`'s gutter, so it **must** be a descendant of `PageLayout` with no other horizontal padding in between — otherwise it over- or under-shoots the edge. It pairs with the `flush` prop on [DataCard](#datacard) / [Button](#button) / [Input](#input) / [DropdownTrigger](#dropdown): `flush` squares a control's corners so it _looks_ edge-to-edge; `Bleed` moves its container _to_ the edge. Stack `flush` cards with `max-md:gap-0` so their bottom hairlines line up as one divided list.
+
+```tsx
+import { Bleed, DataCard, PageLayout, PageSection } from "@clickyduck/solid-kit";
+
+// A flush, full-bleed list on a phone; a normal boxed, gutter-inset list on desktop.
+<PageLayout>
+  <PageSection title="Orders">
+    <Bleed mobileOnly class="flex flex-col gap-4 max-md:gap-0">
+      <For each={orders()}>{(order) => <DataCard flush="mobile">{/* … */}</DataCard>}</For>
+    </Bleed>
+  </PageSection>
+</PageLayout>;
+```
 
 ---
 

@@ -1,7 +1,7 @@
 import { Text } from "@/components/typography";
-import { mergeClasses, themedScrollControlClassName } from "@/utilities";
-import type { Component, JSX, ParentComponent } from "solid-js";
-import { Show } from "solid-js";
+import { LAYOUT_PAGE_INLINE_BLEED, LAYOUT_PAGE_INLINE_BLEED_MOBILE, LAYOUT_PAGE_INLINE_PADDING, mergeClasses, themedScrollControlClassName } from "@/utilities";
+import type { Component, ComponentProps, JSX, ParentComponent } from "solid-js";
+import { Show, splitProps } from "solid-js";
 
 type PageLayoutProperties = {
   children: JSX.Element;
@@ -11,12 +11,40 @@ type PageLayoutProperties = {
 /**
  * Main application page column content wrapper (grid area: `main`).
  *
- * Provides consistent shell gutters to complement `HeaderLayout` and the `RightPanelLayout`.
+ * Provides consistent shell gutters to complement `HeaderLayout` and the `RightPanelLayout`. The
+ * horizontal gutter is `LAYOUT_PAGE_INLINE_PADDING`, which `Bleed` negates for edge-to-edge content.
  */
 export const PageLayout: ParentComponent<PageLayoutProperties> = (properties) => {
   return (
-    <div class={mergeClasses("layout-page min-h-0 w-full min-w-0 space-y-6 overflow-y-auto px-4 py-6 md:px-6", themedScrollControlClassName, properties.class)} style={{ "grid-area": "main" }}>
+    <div class={mergeClasses("layout-page min-h-0 w-full min-w-0 space-y-6 overflow-y-auto py-6", LAYOUT_PAGE_INLINE_PADDING, themedScrollControlClassName, properties.class)} style={{ "grid-area": "main" }}>
       {properties.children}
+    </div>
+  );
+};
+
+type BleedProperties = {
+  // Restrict the bleed to below the `md` breakpoint — edge-to-edge on a phone, normal page gutters on
+  // desktop, matching `flush="mobile"`. Omit to bleed at every width.
+  mobileOnly?: boolean;
+  class?: string;
+  children: JSX.Element;
+} & Omit<ComponentProps<"div">, "class" | "children">;
+
+/**
+ * Full-bleed layout helper: pulls its content out past `PageLayout`'s horizontal gutter so it reaches
+ * the screen edges — the fluid, edge-to-edge list/toolbar pattern on a phone. It negates exactly the
+ * page gutter (`LAYOUT_PAGE_INLINE_BLEED[_MOBILE]`), so it must be a descendant of `PageLayout` with
+ * no other horizontal padding in between; anything more would over- or under-shoot the edge.
+ *
+ * Pairs with the `flush` prop on DataCard / Button / Input / DropdownTrigger: `flush` squares a
+ * control's corners so it *looks* edge-to-edge; `Bleed` moves its container *to* the edge. Stack the
+ * children with `max-md:gap-0` when they are `flush` cards so their hairlines line up as one list.
+ */
+export const Bleed: ParentComponent<BleedProperties> = (properties) => {
+  const [local, rest] = splitProps(properties, ["mobileOnly", "class", "children"]);
+  return (
+    <div class={mergeClasses(local.mobileOnly ? LAYOUT_PAGE_INLINE_BLEED_MOBILE : LAYOUT_PAGE_INLINE_BLEED, local.class)} {...rest}>
+      {local.children}
     </div>
   );
 };
@@ -94,4 +122,4 @@ export const PageSection: ParentComponent<PageSectionProperties> = (properties) 
   );
 };
 
-export type { PageLayoutProperties, PageHeaderProperties, PageSectionProperties };
+export type { PageLayoutProperties, BleedProperties, PageHeaderProperties, PageSectionProperties };
