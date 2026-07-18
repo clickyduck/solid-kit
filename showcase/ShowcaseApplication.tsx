@@ -1171,7 +1171,11 @@ export const ShowcaseApplication = (): JSX.Element => {
                 </Dialog>
               </ShowcaseSection>
 
-              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-toast" sectionTitle="Toasts" sectionDescription="Auto-dismiss after 5 seconds. Place Toaster once in your app root; call addToast from anywhere.">
+              <ShowcaseSection
+                sectionHeadingIdentifier="showcase-heading-toast"
+                sectionTitle="Toasts"
+                sectionDescription="Auto-dismiss after 5 seconds. Place Toaster once in your app root; call addToast from anywhere. Pass bottomOffset (e.g. 7rem) to lift the stack above a pinned bottom bar while it still rises from the edge."
+              >
                 <div class="flex flex-wrap gap-3">
                   <Button variant="outline" onClick={() => addToast({ title: "Saved", description: "Workspace preferences were updated.", variant: "success" })}>
                     Success

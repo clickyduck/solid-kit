@@ -1524,11 +1524,21 @@ Toasts auto-dismiss after 5 seconds. `variant` controls the icon:
 
 **`Toaster` props:**
 
-| Prop    | Type     | Description       |
-| ------- | -------- | ----------------- |
-| `class` | `string` | Extra CSS classes |
+| Prop           | Type     | Description                                                                        |
+| -------------- | -------- | ---------------------------------------------------------------------------------- |
+| `class`        | `string` | Extra CSS classes                                                                  |
+| `bottomOffset` | `string` | CSS length that lifts the stack above the bottom edge to clear a pinned bottom bar |
 
 Renders a fixed bottom-center region (bottom-right on `sm` and wider).
+
+Pass `bottomOffset` (e.g. `"7rem"`) on mobile-first screens with a pinned bottom bar (cart total,
+"swipe to pay") so toasts settle above the bar instead of covering it. It keeps the edge-anchored
+entrance — the toast still rises from the screen bottom — whereas nudging the position with a
+`bottom-*` class via `class` leaves it appearing mid-air with a gap beneath.
+
+```tsx
+<Toaster bottomOffset="7rem" />
+```
 
 ```tsx
 // App root

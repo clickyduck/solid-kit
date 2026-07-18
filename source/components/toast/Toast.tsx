@@ -19,7 +19,12 @@ export type ToastData = {
 const TOAST_TRANSITION_DURATION_MS = 300;
 const TOAST_TRANSITION_CLASSES = "transition-transform duration-300 ease-out motion-reduce:transition-none";
 // Hidden (enter-from / exit-to): below the viewport on mobile, right of it on desktop.
-const TOAST_HIDDEN_CLASSES = "translate-y-full sm:translate-x-full sm:translate-y-0";
+// The mobile travel is the toast's own height PLUS `--sk-toast-offset` — the distance
+// the Toaster has lifted the stack above the screen edge (0 when unlifted). Adding it
+// keeps the toast starting fully below the edge, so a lifted stack (one clearing a
+// pinned bottom bar) still rises from the edge instead of appearing mid-air. Unset →
+// `calc(100% + 0px)` = the plain own-height travel, i.e. the default is unchanged.
+const TOAST_HIDDEN_CLASSES = "translate-y-[calc(100%_+_var(--sk-toast-offset,0px))] sm:translate-x-full sm:translate-y-0";
 // Shown: settled into place.
 const TOAST_SHOWN_CLASSES = "translate-y-0 sm:translate-x-0";
 
