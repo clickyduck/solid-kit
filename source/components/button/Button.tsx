@@ -1,6 +1,6 @@
 import { RenderIcon } from "@/components/icons";
 import { Spinner } from "@/components/spinner";
-import { FORM_CONTROL_ICON_SIZE, FORM_CONTROL_SIZE_CLASSES, type IconPosition, mergeClasses } from "@/utilities";
+import { FORM_CONTROL_ICON_SIZE, FORM_CONTROL_SIZE_CLASSES, type FlushControlBreakpoint, flushControlRadiusClasses, type IconPosition, mergeClasses } from "@/utilities";
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
@@ -9,11 +9,17 @@ type ButtonVariant = "solid" | "outline" | "ghost";
 // Corner rounding. `default` is the standard rounded-lg button; `none` squares the corners for a
 // full-bleed action bar (e.g. a sticky "View cart" bar pinned edge-to-edge at the bottom of the
 // viewport) so consumers don't reach past the component with a `rounded-*` class override.
+// Prefer the `flush` prop (shared across the kit's controls) for new code; `radius` is kept for
+// callers that square the corners at every width without opting into the `flush` vocabulary.
 type ButtonRadius = "default" | "none";
 
 type ButtonProps = Omit<ComponentProps<"button">, "class"> & {
   variant?: ButtonVariant;
   radius?: ButtonRadius;
+  // Square the corners so the button sits flush against the viewport edges or a neighbour — the
+  // full-bleed sticky-bar pattern, made native. `true` at every width, `"mobile"` only below `md`.
+  // Combine with `w-full` for the classic edge-to-edge action bar. Wins over `radius` when both set.
+  flush?: FlushControlBreakpoint;
   class?: string;
   icon?: string | JSX.Element;
   iconPosition?: IconPosition;
@@ -51,7 +57,7 @@ const getRadiusClass = (radius: ButtonRadius = "default"): string => {
 };
 
 export const Button = (properties: ButtonProps) => {
-  const [local, rest] = splitProps(properties, ["class", "variant", "radius", "icon", "iconPosition", "loading", "loadingText", "children", "disabled"]);
+  const [local, rest] = splitProps(properties, ["class", "variant", "radius", "flush", "icon", "iconPosition", "loading", "loadingText", "children", "disabled"]);
 
   // Label shown while loading: explicit `loadingText` when given, otherwise the original children so
   // the button keeps its width beside the spinner.
@@ -63,6 +69,8 @@ export const Button = (properties: ButtonProps) => {
       class={mergeClasses(
         "flex cursor-pointer items-center justify-center gap-2 text-center font-normal transition-[color,background-color,border-color,opacity] duration-100 ease-out focus:outline-none focus-visible:ring-0 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:opacity-50",
         getRadiusClass(local.radius),
+        // After getRadiusClass so a set `flush` wins the rounding conflict via tailwind-merge.
+        flushControlRadiusClasses(local.flush),
         getVariantClasses(local.variant),
         FORM_CONTROL_SIZE_CLASSES,
         local.class

@@ -1,5 +1,29 @@
 export const FORM_CONTROL_SIZE_CLASSES = "h-10 px-3 text-sm";
 
+/**
+ * A control's `flush` setting: `true` squares the corners at every width, `"mobile"` only below the
+ * `md` breakpoint (rounded on desktop, square on phone), and `undefined`/`false` leaves the default
+ * rounding. Mirrors DataCard's `flush` so the whole kit speaks one vocabulary.
+ */
+export type FlushControlBreakpoint = boolean | "mobile";
+
+/**
+ * Corner-rounding override for a `flush` form control (Button, IconButton, Input, DropdownTrigger).
+ * `flush` lets a control sit edge-to-edge — flush against the viewport edges or a neighbouring
+ * control — instead of as a rounded island, which reclaims space on a narrow phone. It only drops
+ * the rounding; spanning the full width stays the consumer's concern (`w-full`, or the control's own
+ * default). `mergeClasses` places the result after the base `rounded-*` so it wins the conflict.
+ */
+export const flushControlRadiusClasses = (flush: FlushControlBreakpoint | undefined): string => {
+  if (flush === true) {
+    return "rounded-none";
+  }
+  if (flush === "mobile") {
+    return "max-md:rounded-none";
+  }
+  return "";
+};
+
 export const FORM_CONTROL_TEXTAREA_SIZE_CLASSES = "min-h-10 px-3 py-2 text-sm";
 
 export const FORM_CONTROL_ICON_SIZE = 18;

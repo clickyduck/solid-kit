@@ -1,6 +1,6 @@
 import { RenderIcon } from "@/components/icons";
 import { Text } from "@/components/typography";
-import { CHROME_MUTED_ICON_CLASSES, FORM_CONTROL_ICON_SIZE, FORM_CONTROL_LEADING_ICON_INPUT_CLASS, FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS, FORM_CONTROL_SIZE_CLASSES, callBoundHandler, mergeClasses } from "@/utilities";
+import { CHROME_MUTED_ICON_CLASSES, FORM_CONTROL_ICON_SIZE, FORM_CONTROL_LEADING_ICON_INPUT_CLASS, FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS, FORM_CONTROL_SIZE_CLASSES, type FlushControlBreakpoint, flushControlRadiusClasses, callBoundHandler, mergeClasses } from "@/utilities";
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
@@ -9,6 +9,10 @@ export type InputProperties = Omit<ComponentProps<"input">, "class"> & {
   icon?: string | JSX.Element;
   trailingText?: string;
   currency?: boolean;
+  // Square the corners so the field sits flush against the viewport edges or a neighbouring control
+  // (e.g. a full-bleed search bar). `true` at every width, `"mobile"` only below `md`. The field is
+  // already full width by default, so `flush` only drops the rounding.
+  flush?: FlushControlBreakpoint;
 };
 
 // Characters the caret is anchored to across a reformat. Commas are grouping separators the formatter
@@ -102,7 +106,9 @@ const formatCurrencyInputValue = (value: string): string => {
 };
 
 const Input = (properties: InputProperties) => {
-  const [local, rest] = splitProps(properties, ["class", "icon", "trailingText", "currency", "autocomplete", "disabled", "value", "onInput"]);
+  const [local, rest] = splitProps(properties, ["class", "icon", "trailingText", "currency", "flush", "autocomplete", "disabled", "value", "onInput"]);
+  // Placed after the base `rounded-lg` so a set `flush` wins the rounding conflict via tailwind-merge.
+  const flushClasses = flushControlRadiusClasses(local.flush);
   const baseClasses =
     "block w-full rounded-lg border border-solid border-gray-300 bg-white text-gray-900 placeholder-gray-500 transition-colors duration-100 ease-out focus:border-blue-500 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-100 dark:placeholder-gray-400 dark:focus:border-blue-400 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
   const inputProps = { step: properties.type === "number" ? "0.01" : undefined, ...rest, autocomplete: local.autocomplete ?? "off" };
@@ -135,7 +141,7 @@ const Input = (properties: InputProperties) => {
   const resolvedOnInput = local.currency ? handleCurrencyInput : local.onInput;
 
   if (!local.icon && !local.trailingText) {
-    return <input class={mergeClasses(baseClasses, FORM_CONTROL_SIZE_CLASSES, local.class)} disabled={local.disabled} value={local.value} onInput={resolvedOnInput} {...resolvedInputProps} />;
+    return <input class={mergeClasses(baseClasses, FORM_CONTROL_SIZE_CLASSES, flushClasses, local.class)} disabled={local.disabled} value={local.value} onInput={resolvedOnInput} {...resolvedInputProps} />;
   }
 
   return (
@@ -146,7 +152,7 @@ const Input = (properties: InputProperties) => {
         </div>
       </Show>
       <input
-        class={mergeClasses(baseClasses, FORM_CONTROL_SIZE_CLASSES, local.icon ? FORM_CONTROL_LEADING_ICON_INPUT_CLASS : "", local.trailingText ? "pr-12" : "", local.class)}
+        class={mergeClasses(baseClasses, FORM_CONTROL_SIZE_CLASSES, local.icon ? FORM_CONTROL_LEADING_ICON_INPUT_CLASS : "", local.trailingText ? "pr-12" : "", flushClasses, local.class)}
         disabled={local.disabled}
         value={local.value}
         onInput={resolvedOnInput}

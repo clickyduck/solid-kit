@@ -147,7 +147,8 @@ Extends all native `<button>` HTML attributes.
 | -------------- | --------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | `children`     | `JSX.Element`                     | —           | Button label                                                                                                                   |
 | `variant`      | `"solid" \| "outline" \| "ghost"` | `"solid"`   | Visual style                                                                                                                   |
-| `radius`       | `"default" \| "none"`             | `"default"` | Corner rounding. `"none"` squares the corners for a full-bleed action bar (e.g. a sticky bottom "View cart" bar)               |
+| `radius`       | `"default" \| "none"`             | `"default"` | Corner rounding. `"none"` squares the corners for a full-bleed action bar (e.g. a sticky bottom "View cart" bar). Prefer `flush` for new code |
+| `flush`        | `boolean \| "mobile"`             | —           | Squares the corners so the button sits flush against the viewport edges or a neighbour (the native full-bleed action-bar pattern). `true` at every width, `"mobile"` only below the `md` breakpoint. Combine with `w-full` for the classic edge-to-edge bar. Only drops the rounding — width stays yours. Wins over `radius` when both set |
 | `icon`         | `string \| JSX.Element`           | —           | Material Symbols name or an img/element                                                                                        |
 | `iconPosition` | `"start" \| "end"`                | `"start"`   | Icon placement relative to label (when `"end"`, the icon is pushed to the far right with `ml-auto`)                            |
 | `loading`      | `boolean`                         | `false`     | Busy state. Shows a leading spinner (in the button's own color), **auto-disables the button**, and sets `aria-busy`. See below |
@@ -488,6 +489,8 @@ Accessible select-style dropdown with optional search.
 
 All menus render via a portal above any modal dialog backdrop. Opening direction is chosen automatically by measuring the trigger against the viewport — the menu flips upward or leftward when it would otherwise overflow.
 
+**`DropdownTrigger` extra props:** the trigger forwards remaining props to its underlying [Button](#button) (labelled trigger) or [IconButton](#iconbutton) (icon-only), so `flush` (`boolean \| "mobile"`) works on it too — squaring the trigger's corners for a full-bleed filter/search bar. `"mobile"` squares only below the `md` breakpoint.
+
 **`DropdownContent` extra props:**
 
 | Prop                 | Type      | Default | Description          |
@@ -693,6 +696,7 @@ Extends all native `<button>` HTML attributes.
 | --------- | --------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------- |
 | `icon`    | `string \| JSX.Element`           | —         | Material Symbols name or an img/element                                                                           |
 | `variant` | `"solid" \| "outline" \| "ghost"` | `"solid"` | Visual style                                                                                                      |
+| `flush`   | `boolean \| "mobile"`             | —         | Squares the corners so the button sits flush against a neighbour (e.g. an icon trigger butted onto an input). `true` at every width, `"mobile"` only below the `md` breakpoint |
 | `loading` | `boolean`                         | `false`   | Busy state. Replaces the icon with a spinner (in the button's own color), **auto-disables**, and sets `aria-busy` |
 | `class`   | `string`                          | —         | Extra CSS classes                                                                                                 |
 
@@ -751,6 +755,7 @@ Extends all native `<input>` HTML attributes.
 | `icon`         | `string \| JSX.Element` | Material Symbols name or an img/element for a leading icon |
 | `trailingText` | `string`                | Right-side label (e.g. a unit or currency symbol)          |
 | `currency`     | `boolean`               | Indian currency formatting: comma grouping, max 2 decimals |
+| `flush`        | `boolean \| "mobile"`   | Squares the corners so the field sits flush against the viewport edges or a neighbour (e.g. a full-bleed search bar). `true` at every width, `"mobile"` only below the `md` breakpoint. The field is already full-width, so this only drops the rounding |
 | `class`        | `string`                | Extra CSS classes                                          |
 
 ```tsx

@@ -1,6 +1,6 @@
 import { RenderIcon } from "@/components/icons";
 import { Spinner } from "@/components/spinner";
-import { FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES, FORM_CONTROL_ICON_SIZE, mergeClasses } from "@/utilities";
+import { FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES, FORM_CONTROL_ICON_SIZE, type FlushControlBreakpoint, flushControlRadiusClasses, mergeClasses } from "@/utilities";
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
@@ -10,6 +10,9 @@ type IconButtonProperties = Omit<ComponentProps<"button">, "class"> & {
   variant?: IconButtonVariant;
   class?: string;
   icon?: string | JSX.Element;
+  // Square the corners so the button sits flush against a neighbour (e.g. an icon-only dropdown
+  // trigger butted against an input). `true` at every width, `"mobile"` only below `md`.
+  flush?: FlushControlBreakpoint;
   // Busy state for async actions. While `true` the icon is replaced by a spinner, the button is
   // disabled so it cannot be re-triggered, and `aria-busy` is set. Kept in lockstep with Button.
   loading?: boolean;
@@ -39,13 +42,15 @@ const getVariantClasses = (variant: IconButtonVariant = "solid"): string => {
  * Compact icon-only button sized to match the sibling form controls.
  */
 export const IconButton = (properties: IconButtonProperties) => {
-  const [local, rest] = splitProps(properties, ["class", "variant", "icon", "loading", "children", "disabled"]);
+  const [local, rest] = splitProps(properties, ["class", "variant", "flush", "icon", "loading", "children", "disabled"]);
 
   return (
     <button
       type="button"
       class={mergeClasses(
         "inline-flex cursor-pointer items-center justify-center rounded-lg transition-[color,background-color,border-color,opacity] duration-100 ease-out focus:outline-none focus-visible:ring-0 active:opacity-75 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:opacity-50",
+        // After the base rounded-lg so a set `flush` wins the rounding conflict via tailwind-merge.
+        flushControlRadiusClasses(local.flush),
         getVariantClasses(local.variant),
         FORM_CONTROL_ICON_BUTTON_SIZE_CLASSES,
         local.class
