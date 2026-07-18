@@ -1,6 +1,6 @@
 import { RenderIcon } from "@/components/icons";
 import { Spinner } from "@/components/spinner";
-import { FORM_CONTROL_ICON_SIZE, FORM_CONTROL_SIZE_CLASSES, type FlushControlBreakpoint, flushControlRadiusClasses, type IconPosition, mergeClasses } from "@/utilities";
+import { FORM_CONTROL_ICON_SIZE, FORM_CONTROL_SIZE_CLASSES, type FlushControlBreakpoint, type IconPosition, flushControlRadiusClasses, mergeClasses } from "@/utilities";
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
 

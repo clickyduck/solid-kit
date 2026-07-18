@@ -1,6 +1,16 @@
 import { RenderIcon } from "@/components/icons";
 import { Text } from "@/components/typography";
-import { CHROME_MUTED_ICON_CLASSES, FORM_CONTROL_ICON_SIZE, FORM_CONTROL_LEADING_ICON_INPUT_CLASS, FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS, FORM_CONTROL_SIZE_CLASSES, type FlushControlBreakpoint, flushControlRadiusClasses, callBoundHandler, mergeClasses } from "@/utilities";
+import {
+  CHROME_MUTED_ICON_CLASSES,
+  FORM_CONTROL_ICON_SIZE,
+  FORM_CONTROL_LEADING_ICON_INPUT_CLASS,
+  FORM_CONTROL_LEADING_ICON_WRAPPER_CLASS,
+  FORM_CONTROL_SIZE_CLASSES,
+  type FlushControlBreakpoint,
+  callBoundHandler,
+  flushControlRadiusClasses,
+  mergeClasses
+} from "@/utilities";
 import type { ComponentProps, JSX } from "solid-js";
 import { Show, splitProps } from "solid-js";
 
