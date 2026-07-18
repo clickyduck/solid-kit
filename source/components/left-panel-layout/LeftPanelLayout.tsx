@@ -376,7 +376,7 @@ export const LeftPanelLayout: Component<LeftPanelLayoutProperties> = (properties
           setSidebarElement(element);
         }}
         class={mergeClasses(
-          "layout-left-panel flex min-h-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700/80 dark:bg-gray-950",
+          "layout-left-panel flex min-h-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700/80 dark:bg-gray-900",
           isMobileViewport()
             ? [properties.panelZIndexClass ?? "z-40", "fixed inset-x-0 bottom-0 w-full transition-transform duration-200 ease-out", "top-(--solid-kit-header-height,4rem)", resolvedCollapsed() ? "-translate-x-full" : "translate-x-0"]
             : ["static h-full transition-[width] duration-200 ease-out", resolvedCollapsed() ? (properties.collapsedWidthClass ?? "w-16") : (properties.expandedWidthClass ?? "w-64")]

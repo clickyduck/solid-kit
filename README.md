@@ -1376,7 +1376,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TablePagination, T
 
 ### Tabs
 
-Accessible tab bar with ARIA roles. The selected tab is marked in blue (label + `font-medium` + underline); in the default equal-width strip the underline is a single bar that slides between tabs, while hovering an unselected tab shows a neutral gray preview underline so hover never reads as selection.
+Accessible tab bar with ARIA roles. The selected tab is marked in blue (label + `font-medium` + underline); the underline is a single bar that slides to the active tab — in both the default equal-width strip and the `scrollable` strip, where it is measured from each tab's live width so it tracks variable-width tabs — while hovering an unselected tab shows a neutral gray preview underline so hover never reads as selection.
 
 **Exports:** `Tabs`, `TabDefinition`, `TabsProperties`
 
@@ -1394,14 +1394,14 @@ Accessible tab bar with ARIA roles. The selected tab is marked in blue (label + 
 
 **`Tabs` props:**
 
-| Prop             | Type                                 | Description                                                                                                                                                                                                         |
-| ---------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tabDefinitions` | `readonly TabDefinition<TabValue>[]` | Tab configuration (required)                                                                                                                                                                                        |
-| `activeTabValue` | `Accessor<TabValue>`                 | Currently active tab (required)                                                                                                                                                                                     |
-| `onTabSelect`    | `(value: TabValue) => void`          | Called when a tab is clicked (required)                                                                                                                                                                             |
-| `isDisabled`     | `Accessor<boolean>`                  | Disables all tabs                                                                                                                                                                                                   |
-| `scrollable`     | `boolean`                            | Tabs keep their natural width and the strip scrolls horizontally instead of sharing the row equally and truncating — use for an unbounded set (e.g. menu categories). The underline falls back to a per-tab border. |
-| `class`          | `string`                             | Extra classes on the root element                                                                                                                                                                                   |
+| Prop             | Type                                 | Description                                                                                                                                                                                                                                            |
+| ---------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `tabDefinitions` | `readonly TabDefinition<TabValue>[]` | Tab configuration (required)                                                                                                                                                                                                                           |
+| `activeTabValue` | `Accessor<TabValue>`                 | Currently active tab (required)                                                                                                                                                                                                                        |
+| `onTabSelect`    | `(value: TabValue) => void`          | Called when a tab is clicked (required)                                                                                                                                                                                                                |
+| `isDisabled`     | `Accessor<boolean>`                  | Disables all tabs                                                                                                                                                                                                                                      |
+| `scrollable`     | `boolean`                            | Tabs keep their natural width and the strip scrolls horizontally instead of sharing the row equally and truncating — use for an unbounded set (e.g. menu categories). The sliding underline still tracks the active tab, measured from its live width. |
+| `class`          | `string`                             | Extra classes on the root element                                                                                                                                                                                                                      |
 
 ```tsx
 import { Tabs } from "@clickyduck/solid-kit";

@@ -149,7 +149,7 @@ export const RightPanelLayout: Component<RightPanelLayoutProperties> = (properti
       <aside
         {...panelPropsRest()}
         class={mergeClasses(
-          "flex size-full min-h-0 min-w-0 flex-col bg-white text-gray-900 shadow-xl dark:bg-gray-950 dark:text-gray-100",
+          "flex size-full min-h-0 min-w-0 flex-col bg-white text-gray-900 shadow-xl dark:bg-gray-900 dark:text-gray-100",
           "border-l border-gray-200 dark:border-gray-700/80",
           resolvedVariant() === "overlay"
             ? "fixed right-0 bottom-0 left-0 z-40 w-full max-w-full transform transition-transform duration-200 ease-out md:left-auto md:w-md lg:w-xl"

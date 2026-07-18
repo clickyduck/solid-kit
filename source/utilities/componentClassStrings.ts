@@ -76,7 +76,7 @@ export const SURFACE_RADIUS_SHELL = "rounded-2xl";
 export const SURFACE_RADIUS_COMPACT = "rounded-xl";
 
 /** Shared translucent, blurred chrome for the fixed header/footer bars so the two stay identical. The bar adds its own border side (`border-b` / `border-t`). */
-export const LAYOUT_CHROME_BAR_SURFACE_CLASSES = "border-gray-200 bg-white/90 px-3 py-3 backdrop-blur-md dark:border-gray-700/80 dark:bg-gray-950/90";
+export const LAYOUT_CHROME_BAR_SURFACE_CLASSES = "border-gray-200 bg-white/90 px-3 py-3 backdrop-blur-md dark:border-gray-700/80 dark:bg-gray-900/90";
 
 /**
  * The page column's horizontal gutter (see `PageLayout`) and its exact inverse (see `Bleed`).

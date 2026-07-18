@@ -14,7 +14,7 @@ type MainLayoutProperties = object;
 export const MainLayout: ParentComponent<MainLayoutProperties> = (properties) => {
   return (
     <div
-      class="grid h-dvh w-full min-w-0 bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100"
+      class="grid h-dvh w-full min-w-0 bg-gray-100 text-gray-900 dark:bg-gray-950 dark:text-gray-100"
       style={{
         "--solid-kit-header-height": "4rem",
         "grid-template-areas": `"header header header" "left main right"`,

@@ -45,6 +45,10 @@ const showcaseLeftPanelNavigationDocument = showcaseLeftPanelNavigationDocumentJ
 
 type ShowcaseTabValue = "overview" | "reports" | "settings";
 
+// Variable-width labels for the scrollable strip, so the measured sliding underline has differently
+// sized tabs to glide between (and enough of them to overflow and scroll on a narrow viewport).
+type ShowcaseCategoryTabValue = "all" | "appetizers" | "mains" | "desserts" | "beverages" | "sides" | "specials" | "seasonal";
+
 type ShowcaseSectionProperties = {
   sectionHeadingIdentifier: string;
   sectionTitle: string;
@@ -82,6 +86,17 @@ const tabDefinitions: readonly TabDefinition<ShowcaseTabValue>[] = [
   { tabValue: "overview", label: "Overview", tabElementIdentifier: "showcase-tab-overview", panelElementIdentifier: "showcase-panel-overview", icon: "dashboard" },
   { tabValue: "reports", label: "Reports", tabElementIdentifier: "showcase-tab-reports", panelElementIdentifier: "showcase-panel-reports", icon: "bar_chart" },
   { tabValue: "settings", label: "Settings", tabElementIdentifier: "showcase-tab-settings", panelElementIdentifier: "showcase-panel-settings", icon: "settings" }
+];
+
+const scrollableTabDefinitions: readonly TabDefinition<ShowcaseCategoryTabValue>[] = [
+  { tabValue: "all", label: "All", tabElementIdentifier: "showcase-category-tab-all", panelElementIdentifier: "showcase-category-panel", icon: "restaurant_menu" },
+  { tabValue: "appetizers", label: "Appetizers", tabElementIdentifier: "showcase-category-tab-appetizers", panelElementIdentifier: "showcase-category-panel", icon: "tapas" },
+  { tabValue: "mains", label: "Mains", tabElementIdentifier: "showcase-category-tab-mains", panelElementIdentifier: "showcase-category-panel", icon: "lunch_dining" },
+  { tabValue: "desserts", label: "Desserts", tabElementIdentifier: "showcase-category-tab-desserts", panelElementIdentifier: "showcase-category-panel", icon: "icecream" },
+  { tabValue: "beverages", label: "Beverages", tabElementIdentifier: "showcase-category-tab-beverages", panelElementIdentifier: "showcase-category-panel", icon: "local_bar" },
+  { tabValue: "sides", label: "Sides", tabElementIdentifier: "showcase-category-tab-sides", panelElementIdentifier: "showcase-category-panel", icon: "bakery_dining" },
+  { tabValue: "specials", label: "Chef's specials", tabElementIdentifier: "showcase-category-tab-specials", panelElementIdentifier: "showcase-category-panel", icon: "star" },
+  { tabValue: "seasonal", label: "Seasonal picks", tabElementIdentifier: "showcase-category-tab-seasonal", panelElementIdentifier: "showcase-category-panel", icon: "eco" }
 ];
 
 export const ShowcaseApplication = (): JSX.Element => {
@@ -135,6 +150,7 @@ export const ShowcaseApplication = (): JSX.Element => {
   const [swipeResetKey, setSwipeResetKey] = createSignal(1);
 
   const [activeShowcaseTab, setActiveShowcaseTab] = createSignal<ShowcaseTabValue>("overview");
+  const [activeScrollableTab, setActiveScrollableTab] = createSignal<ShowcaseCategoryTabValue>("all");
   const [tablePagination, setTablePagination] = createSignal<{ limit: number; offset: number }>({ limit: 25, offset: 0 });
   const [isRightPanelOpen, setIsRightPanelOpen] = createSignal(false);
 
@@ -858,11 +874,31 @@ export const ShowcaseApplication = (): JSX.Element => {
 
             {/* Navigation */}
             <ShowcaseCategory categoryTitle="Navigation">
-              <ShowcaseSection sectionHeadingIdentifier="showcase-heading-tabs" sectionTitle="Tabs" sectionDescription="Accessible tab bar with ARIA roles and underline indicator.">
-                <Tabs tabDefinitions={tabDefinitions} activeTabValue={activeShowcaseTab} onTabSelect={setActiveShowcaseTab} />
-                <BackgroundCard>
-                  <Text color="muted">{tabPanelCopy()}</Text>
-                </BackgroundCard>
+              <ShowcaseSection
+                sectionHeadingIdentifier="showcase-heading-tabs"
+                sectionTitle="Tabs"
+                sectionDescription="Accessible tab bar with ARIA roles and a sliding underline indicator that glides to the active tab in both the equal-width and the scrollable strip."
+              >
+                <div class="space-y-6">
+                  <div class="space-y-4">
+                    <Text size="small" color="muted">
+                      Equal-width strip — tabs share the row and the underline slides between them.
+                    </Text>
+                    <Tabs tabDefinitions={tabDefinitions} activeTabValue={activeShowcaseTab} onTabSelect={setActiveShowcaseTab} />
+                    <BackgroundCard>
+                      <Text color="muted">{tabPanelCopy()}</Text>
+                    </BackgroundCard>
+                  </div>
+                  <div class="space-y-4">
+                    <Text size="small" color="muted">
+                      Scrollable strip — variable-width tabs that overflow horizontally; the underline is measured from each tab and glides to the active one, scrolling with it.
+                    </Text>
+                    <Tabs scrollable tabDefinitions={scrollableTabDefinitions} activeTabValue={activeScrollableTab} onTabSelect={setActiveScrollableTab} />
+                    <BackgroundCard>
+                      <Text color="muted">Showing: {activeScrollableTab()}</Text>
+                    </BackgroundCard>
+                  </div>
+                </div>
               </ShowcaseSection>
 
               <ShowcaseSection sectionHeadingIdentifier="showcase-heading-dropdowns" sectionTitle="Dropdowns" sectionDescription="Single-select closes on pick. Multi-select keeps the menu open and marks each chosen item with a checkmark.">
