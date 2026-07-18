@@ -280,7 +280,7 @@ Ticket-style data surface card. Clickable (renders as a `<button>` with hover af
 | ----------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `clickable` | `boolean`             | Enables hover/cursor affordance + renders as a `<button>`. Implied when `onClick` is set                                                                                                                                 |
 | `disabled`  | `boolean`             | Clickable cards only: disables the `<button>` and drops the interactive affordances (no pointer/hover, dimmed)                                                                                                           |
-| `flush`     | `boolean \| "mobile"` | Sheds the card's own border + corner rounding so stacked cards read as one flush, full-width list — reclaiming the space that chrome wastes on a narrow phone. `"mobile"` sheds them only below the `md` breakpoint (boxed on desktop, flush row on phone); `true` at every width. Default: boxed card. The parent list owns row separation (e.g. a `divide-y` container), since flush cards no longer draw their own edges |
+| `flush`     | `boolean \| "mobile"` | Renders the card as a flush, full-width list row instead of a box: drops the side/top borders + corner rounding, keeping a bottom hairline so stacked cards read as one divided list — decluttering repeated boxes on a narrow phone. `"mobile"` only below the `md` breakpoint (boxed on desktop, flush row on phone); `true` at every width. Default: boxed card. Stack flush cards with no gap (e.g. `max-md:gap-0`) so their bottom rules line up into the separators |
 | `class`     | `string`              | Extra CSS classes                                                                                                                                                                                                       |
 
 Extends all native `<div>` (static) or `<button>` (clickable) HTML attributes. `disabled` applies only to the clickable (`<button>`) variant; a static `<div>` card has no disabled semantics.
@@ -296,9 +296,9 @@ import { DataCard } from "@clickyduck/solid-kit";
   <div>Unavailable</div>
 </DataCard>;
 
-// Mobile-first list: flush full-width rows on a phone, boxed cards from `md` up. The container
-// draws the row separators the flush cards drop, and only below `md` where the cards are flush.
-<div class="max-md:divide-y max-md:divide-gray-200 dark:max-md:divide-gray-800">
+// Mobile-first list: flush full-width rows on a phone (each keeps a bottom hairline as its row
+// separator), boxed cards from `md` up. Stack them with no gap on mobile so the rules line up.
+<div class="flex flex-col gap-4 max-md:gap-0">
   <DataCard flush="mobile">
     <div>Row one</div>
   </DataCard>
