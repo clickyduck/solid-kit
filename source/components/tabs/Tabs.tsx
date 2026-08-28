@@ -132,13 +132,19 @@ export function Tabs<TabValue extends string>(properties: TabsProperties<TabValu
             const isSelected = (): boolean => {
               return properties.activeTabValue() === tabDefinition.tabValue;
             };
+            // Only the selected tab's panel is in the document, so only the selected tab may point
+            // at one. An aria-controls naming an element that does not exist is an invalid attribute
+            // value, and assistive technology follows the reference into nothing.
+            const controlledPanelIdentifier = (): string | undefined => {
+              return isSelected() ? tabDefinition.panelElementIdentifier : undefined;
+            };
             return (
               <li class={mergeClasses("flex", properties.scrollable ? "shrink-0" : "min-w-0 flex-1 basis-0")} role="presentation">
                 <Button
                   variant="ghost"
                   id={tabDefinition.tabElementIdentifier}
                   role="tab"
-                  aria-controls={tabDefinition.panelElementIdentifier}
+                  aria-controls={controlledPanelIdentifier()}
                   aria-selected={isSelected()}
                   disabled={resolvedIsDisabled()}
                   icon={tabDefinition.icon}
